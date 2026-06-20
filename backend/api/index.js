@@ -32,8 +32,19 @@ app.get('/api/partite/:partitaId/distinta', async (req, res) => { const { data: 
 
 // ── FORMAZIONE PARTITA (GET e PUT batch) ──
 app.get('/api/partite/:partitaId/formazione', async (req, res) => {
-  const { data } = await supabase.from('formazione_partita').select('id, calciatore_id, numero_maglia, posizione, capitano, vice_capitano').eq('partita_id', req.params.partitaId);
-  res.json((data||[]).map(f => ({ id: f.id, calciatoreId: f.calciatore_id, numeroMaglia: f.numero_maglia, posizione: f.posizione, capitano: f.capitano, viceCapitano: f.vice_capitano })));
+  const { data } = await supabase.from('formazione_partita')
+    .select('id, calciatore_id, numero_maglia, posizione, capitano, vice_capitano, calciatore:calciatore_id(nome, cognome)')
+    .eq('partita_id', req.params.partitaId);
+  res.json((data||[]).map(f => ({
+    id: f.id,
+    calciatoreId: f.calciatore_id,
+    numeroMaglia: f.numero_maglia,
+    posizione: f.posizione,
+    capitano: f.capitano,
+    viceCapitano: f.vice_capitano,
+    nome: f.calciatore?.nome,
+    cognome: f.calciatore?.cognome
+  })));
 });
 
 app.put('/api/partite/:partitaId/formazione', async (req, res) => {
