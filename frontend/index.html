@@ -252,12 +252,19 @@
     .vice { background: #E8F5E9 !important; }
     
     @media print {
+      @page { margin: 10mm; size: A4 landscape; }
       body * { visibility: hidden; }
-      .modal-overlay { position: static; background: none; padding: 0; }
-      .modal-overlay * { visibility: visible; }
-      .modal-content { box-shadow: none; border-radius: 0; max-height: none; position: static; width: 100%; }
-      .modal-header button, .modal-footer { display: none; }
-      .modal-header { border-radius: 0; }
+      #currentModal { visibility: visible; position: absolute; left: 0; top: 0; width: 100%; height: auto; background: white; padding: 0; margin: 0; }
+      #currentModal * { visibility: visible; }
+      #currentModal .modal-content { box-shadow: none; border-radius: 0; max-height: none; overflow: visible; width: 100%; }
+      #currentModal .modal-header button, #currentModal .modal-footer { display: none; }
+      #currentModal .modal-header { border-radius: 0; border-bottom: 2px solid #000; }
+      #currentModal .modal-body { padding: 10px; overflow: visible; }
+      #currentModal .distinta-table { font-size: 9px; width: 100%; }
+      #currentModal .distinta-table th, #currentModal .distinta-table td { padding: 2px 4px; }
+      #currentModal .distinta-header h2 { font-size: 14px; }
+      #currentModal .distinta-header h3 { font-size: 12px; }
+      #currentModal .distinta-header p { font-size: 10px; margin: 2px 0; }
     }
     
     #menuBtn { 
