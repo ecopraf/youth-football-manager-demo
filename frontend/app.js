@@ -356,7 +356,36 @@ async function openDistinta(matchId) {
   const footer = `<button class="btn btn-secondary" onclick="window._closeModal()">Chiudi</button><button class="btn btn-primary" id="printDistBtn">🖨️ Stampa</button>`;
   createModal('📄 Distinta Gara', content, footer, '950px');
   
-  document.getElementById('printDistBtn').addEventListener('click', () => window.print());
+  document.getElementById('printDistBtn').addEventListener('click', () => {
+    const distintaEl = document.getElementById('distintaInner');
+    if (distintaEl) {
+      const printWindow = window.open('', '_blank', 'width=1000,height=800');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html><head>
+          <meta charset="UTF-8">
+          <title>Distinta Gara</title>
+          <style>
+            @page { margin: 8mm; size: A4 portrait; }
+            body { font-family: 'Courier New', monospace; font-size: 12px; margin: 0; padding: 10mm; }
+            .distinta-header { text-align: center; margin-bottom: 20px; }
+            .distinta-header h2 { font-size: 16px; margin-bottom: 4px; }
+            .distinta-header h3 { font-size: 14px; margin: 8px 0; }
+            .distinta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .distinta-table th, .distinta-table td { border: 1px solid #333; padding: 6px 8px; text-align: center; font-size: 11px; }
+            .distinta-table th { background: #f0f0f0; font-weight: bold; }
+            .capitano { background: #FFF9C4; }
+            .vice { background: #E8F5E9; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head><body>
+          ${distintaEl.innerHTML}
+          <script>window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };<\/script>
+        </body></html>
+      `);
+      printWindow.document.close();
+    }
+  });
   
   try {
     const distinta = await apiFetch(`/partite/${matchId}/distinta`);
