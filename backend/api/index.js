@@ -107,7 +107,7 @@ app.get('/api/partite/:partitaId/convocazioni-pdf', async (req, res) => {
   const { data: partita } = await supabase.from('partita').select('*, squadra:squadra_id(nome, categoria)').eq('id', req.params.partitaId).single();
   if(!partita) return res.status(404).json({ error:'Partita non trovata' });
   const { data: convocazioni } = await supabase.from('convocazione').select('presente, calciatore:calciatore_id(nome, cognome, ruolo)').eq('partita_id', req.params.partitaId).eq('presente', true);
-  const convocati = (convocazioni||[]).map(c => ({ nome: c.calciatore.nome, cognome: c.calciatore.cognome, ruolo: c.calciatore.ruolo })).sort((a,b) => a.cognome.localeCompare(b.cognome));
+  const convocati = (convocazioni||[]).filter(c => c.presente !== false).map(c => ({ nome: c.calciatore.nome, cognome: c.calciatore.cognome, ruolo: c.calciatore.ruolo })).sort((a,b) => a.cognome.localeCompare(b.cognome));
   res.json({ partita, convocati });
 });
 
