@@ -84,7 +84,7 @@ app.post('/api/partite/:partitaId/convocazioni', async (req, res) => {
     if(existing && existing.length > 0) {
       await supabase.from('convocazione').update({ presente }).eq('partita_id', req.params.partitaId).eq('calciatore_id', calciatoreId);
     } else {
-      await supabase.from('convocazione').insert({ partita_id: req.params.partitaId, calciatore_id: calciatoreId, presente });
+      await supabase.from('convocazione').insert({ partita_id: req.params.partitaId, calciatore_id: calciatoreId, presente: presente === true ? true : false });
     }
     // Aggiorna formazione
     if(presente) {
@@ -106,7 +106,7 @@ app.post('/api/partite/:partitaId/convocazioni', async (req, res) => {
 app.get('/api/partite/:partitaId/convocazioni-pdf', async (req, res) => {
   const { data: partita } = await supabase.from('partita').select('*, squadra:squadra_id(nome, categoria)').eq('id', req.params.partitaId).single();
   if(!partita) return res.status(404).json({ error:'Partita non trovata' });
-  const { data: convocazioni } = await supabase.from('convocazione').select('presente, calciatore:calciatore_id(nome, cognome, ruolo)').eq('partita_id', req.params.partitaId).eq('presente', true);
+  const { data: convocazioni } = await supabase.from('convocazione').select('presente, calciatore:calciatore_id(nome, cognome, ruolo)').eq('partita_id', req.params.partitaId);
   const convocati = (convocazioni||[]).filter(c => c.presente !== false).map(c => ({ nome: c.calciatore.nome, cognome: c.calciatore.cognome, ruolo: c.calciatore.ruolo })).sort((a,b) => a.cognome.localeCompare(b.cognome));
   res.json({ partita, convocati });
 });
