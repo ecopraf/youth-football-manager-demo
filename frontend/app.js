@@ -64,6 +64,37 @@ async function openMatchDetail(mid){
     if(eventi.length===0)html+='<tr><td colspan="3" style="padding:20px;text-align:center;color:var(--gray);">Nessun evento registrato</td></tr>';
     else eventi.forEach(e=>{const icona=e.tipo==='GOAL'?'⚽':e.tipo==='ASSIST'?'🅰️':e.tipo==='YELLOW'?'🟨':'🟥';const label=e.tipo==='GOAL'?'Gol':e.tipo==='ASSIST'?'Assist':e.tipo==='YELLOW'?'Ammonizione':'Espulsione';html+='<tr style="border-bottom:1px solid var(--border);"><td style="padding:10px;font-weight:bold;">'+e.minuto+"'</td><td style=\"padding:10px;\">"+icona+' '+label+'</td><td style="padding:10px;">'+e.principale+(e.secondario?' <span style="color:var(--gray);font-size:12px;">(Assist: '+e.secondario+')</span>':'')+'</td></tr>';});
     html+='</tbody></table>';
+    
+    // Recupera la formazione (solo se non è una partita futura)
+    if(!isFuture) {
+      try {
+        const form = await apiFetch('/partite/'+mid+'/formazione');
+        if(form && form.length > 0) {
+          const titolari = form.filter(f => f.posizione === 'Titolare');
+          const panchina = form.filter(f => f.posizione === 'Panchina');
+          html+='<div style="margin-top:20px;"><strong>Formazione</strong></div>';
+          if(titolari.length > 0) {
+            html+='<div style="font-weight:600;margin-top:8px;">Titolari ('+titolari.length+')</div>';
+            html+='<div style="display:flex;flex-wrap:wrap;gap:4px 12px;">';
+            titolari.sort((a,b)=>a.cognome.localeCompare(b.cognome)).forEach(f=>{
+              html+='<span>'+f.cognome+' '+f.nome+' ('+f.numeroMaglia+')</span>';
+            });
+            html+='</div>';
+          }
+          if(panchina.length > 0) {
+            html+='<div style="font-weight:600;margin-top:8px;">Panchina ('+panchina.length+')</div>';
+            html+='<div style="display:flex;flex-wrap:wrap;gap:4px 12px;">';
+            panchina.sort((a,b)=>a.cognome.localeCompare(b.cognome)).forEach(f=>{
+              html+='<span>'+f.cognome+' '+f.nome+' ('+f.numeroMaglia+')</span>';
+            });
+            html+='</div>';
+          }
+        }
+      } catch(e) {
+        // formazione non disponibile, ignora
+      }
+    }
+    
     document.getElementById('detailInner').innerHTML=html;
   }catch(err){document.getElementById('detailInner').innerHTML='<div class="error-box">Errore nel caricamento del dettaglio.</div>';}
 }
@@ -87,13 +118,13 @@ async function openFormazioneForm(mid){
   (formazioneEsistente||[]).forEach(f=>{formMap[f.calciatoreId]=f;});
   let html='<p style="margin-bottom:16px;"><strong>Formazione - '+getSocietaName()+' vs '+match.avversario+'</strong></p>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
-  html+='<div><h4 style="margin-bottom:8px;">Titolari</h4>';
+  html+='<div><h4 style="margin-bottom:8px;">Titolari <span id="cntTitolari" style="font-size:12px;color:var(--gray);"></span></h4>';
   giocatoriConvocati.forEach(g=>{
     const f=formMap[g.id];
     const checked=f&&f.posizione==='Titolare'?' checked':'';
     html+='<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"'+checked+' data-pid="'+g.id+'" class="form-check-tit" style="accent-color:var(--green);"><span style="flex:1;">'+g.nome+' '+g.cognome+' <span style="color:var(--gray);font-size:12px;">('+g.ruolo+')</span></span><input type="number" value="'+(f?f.numeroMaglia:g.numeroMaglia)+'" data-pid="'+g.id+'" class="form-num-tit" style="width:50px;padding:4px;" placeholder="N."></div>';
   });
-  html+='</div><div><h4 style="margin-bottom:8px;">Panchina</h4>';
+  html+='</div><div><h4 style="margin-bottom:8px;">Panchina <span id="cntRiserve" style="font-size:12px;color:var(--gray);"></span></h4>';
   giocatoriConvocati.forEach(g=>{
     const f=formMap[g.id];
     const checked=f&&f.posizione==='Panchina'?' checked':'';
@@ -102,13 +133,24 @@ async function openFormazioneForm(mid){
   html+='</div></div>';
   const footer='<button class="btn btn-secondary" onclick="window._closeModal()">Annulla</button><button class="btn btn-primary" id="saveFormBtn">💾 Salva Formazione</button>';
   const{closeModal}=createModal('👥 Formazione',html,footer,'800px');
-  // Mutua esclusione: titolare e panchina per lo stesso giocatore non possono coesistere
+  // Mutua esclusione e contatori
+  const updateCounters = () => {
+    const titChecked = document.querySelectorAll('#currentModal .form-check-tit:checked').length;
+    const panChecked = document.querySelectorAll('#currentModal .form-check-pan:checked').length;
+    document.getElementById('cntTitolari').textContent = titChecked + '/11 titolari';
+    document.getElementById('cntRiserve').textContent = panChecked + ' riserve';
+    // Blocca la selezione di nuovi titolari se già 11
+    document.querySelectorAll('#currentModal .form-check-tit:not(:checked)').forEach(cb => {
+      cb.disabled = titChecked >= 11;
+    });
+  };
   document.querySelectorAll('#currentModal .form-check-tit').forEach(cbTit=>{
     cbTit.addEventListener('change',()=>{
       if(cbTit.checked){
         const pan=document.querySelector('#currentModal .form-check-pan[data-pid="'+cbTit.dataset.pid+'"]');
         if(pan)pan.checked=false;
       }
+      updateCounters();
     });
   });
   document.querySelectorAll('#currentModal .form-check-pan').forEach(cbPan=>{
@@ -117,8 +159,10 @@ async function openFormazioneForm(mid){
         const tit=document.querySelector('#currentModal .form-check-tit[data-pid="'+cbPan.dataset.pid+'"]');
         if(tit)tit.checked=false;
       }
+      updateCounters();
     });
   });
+  updateCounters();
   document.getElementById('saveFormBtn').addEventListener('click',async()=>{
     const formazione=[];
     document.querySelectorAll('#currentModal .form-check-tit:checked').forEach(cb=>{
