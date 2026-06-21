@@ -292,6 +292,42 @@ function showConvocationPreview(match,convocatiList){
 
 
 
+
+async function openNoteAvversario(mid){
+  var match = allMatches.find(function(m){ return m.id===mid; }) || {};
+  var inherited = getNoteAvversario(match);
+  var note = match.note_avversario || inherited.text || '';
+  var info = '';
+  if(inherited.source && !match.note_avversario) {
+    info = '<p style="color:var(--gray);font-size:12px;margin-bottom:8px;">[Note ereditate'+inherited.source+']</p>';
+  }
+  var content = '<p style="margin-bottom:8px;"><strong>'+getSocietaName()+' vs '+match.avversario+'</strong></p>' +
+    info +
+    '<textarea id="noteAvvText" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;min-height:150px;font-size:14px;">'+note+'</textarea>';
+  var footer = '<button class="btn btn-secondary" onclick="window._closeModal()">Chiudi</button><button class="btn btn-primary" id="saveNoteBtn">Salva Note</button>';
+  var modal = createModal('Note Avversario', content, footer, '600px');
+  document.getElementById('saveNoteBtn').addEventListener('click', async function(){
+    var newNote = document.getElementById('noteAvvText').value;
+    showLoading();
+    try {
+      await apiFetch('/partite/'+mid, {method:'PUT', body:JSON.stringify({
+        dataOra: match.data_ora,
+        avversario: match.avversario,
+        luogo: match.luogo,
+        competizione: match.competizione,
+        giornata: match.giornata,
+        noteAvversario: newNote
+      })});
+      match.note_avversario = newNote;
+      hideLoading();
+      modal.closeModal();
+      alert('Note salvate!');
+    } catch(e) {
+      hideLoading();
+      alert('Errore: '+e.message);
+    }
+  });
+}
 async function openDistinta(mid,staffOverrides){const content='<div id="distintaInner"><div class="loading"><div class="spinner"></div>Caricamento...</div></div>';const footer='<button class="btn btn-secondary" onclick="window._closeModal()">Chiudi</button><button class="btn btn-secondary" id="staffBtn">👥 Staff</button><button class="btn btn-primary" id="printBtn">🖨️ Stampa</button>';createModal('📄 Distinta Gara',content,footer,'980px');let curStaff=null;try{const data=await apiFetch('/partite/'+mid+'/distinta');curStaff=staffOverrides||data.staff||{};renderDistinta(data,curStaff);}catch(e){document.getElementById('distintaInner').innerHTML='<div class="error-box">Formazione non disponibile</div>';}document.getElementById('printBtn').addEventListener('click',()=>{const el=document.getElementById('distintaInner');if(el){const w=window.open('','_blank','width=1000,height=800');w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Distinta</title><style>@page{margin:6mm;size:A4 portrait}body{font-family:Courier New,monospace;font-size:9px;margin:0;padding:6mm}.center{text-align:center}.distinta-table{width:100%;border-collapse:collapse;margin:8px 0}.distinta-table th,.distinta-table td{border:1px solid #333;padding:2px 4px;text-align:center;font-size:8px}th{background:#f0f0f0}.capitano{background:#FFF9C4}.vice{background:#E8F5E9}.staff-section td{font-size:7px}.firme{margin-top:12px;display:flex;justify-content:space-between;font-size:9px}.note-finali{font-size:6px;margin-top:4px;text-align:center}@media print{body{padding:0}}</style></head><body>'+el.innerHTML+'<script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script></body></html>');w.document.close();}});document.getElementById('staffBtn').addEventListener('click',()=>openStaffForm(mid,curStaff));}
 
 function buildStaffRows(s){
