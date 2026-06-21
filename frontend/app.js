@@ -39,6 +39,13 @@ function openMatchForm(mid){const m=mid?allMatches.find(x=>x.id===mid):null;cons
 async function deleteMatch(id){if(confirm('Eliminare?')){await apiFetch('/partite/'+id,{method:'DELETE'});loadCalendar();}}
 
 // ── DETTAGLIO PARTITA + FORMAZIONE ──
+
+function getNoteAvversario(match){
+  if(match.note_avversario) return {text: match.note_avversario, source: ''};
+  var altre = allMatches.filter(function(m){ return m.id !== match.id && m.avversario === match.avversario && m.note_avversario; });
+  if(altre.length > 0) return {text: altre[0].note_avversario, source: ' (dalla partita del '+formatDateShort(altre[0].data_ora)+')'};
+  return {text: '', source: ''};
+}
 async function openMatchDetail(mid){
   const content='<div id="detailInner"><div class="loading"><div class="spinner"></div>Caricamento...</div></div>';
   const match=allMatches.find(m=>m.id===mid);
@@ -119,7 +126,7 @@ async function openMatchDetail(mid){
   noteContainer.innerHTML = '<h4 style="margin-bottom:8px;">📝 Note sull\'avversario</h4>' +
     (isFuture
       ? '<textarea id="noteAvvText" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;min-height:100px;">' + (p.note_avversario || '') + '</textarea><button class="btn btn-primary btn-small" style="margin-top:8px;" id="saveNoteAvv">💾 Salva Note</button>'
-      : '<p style="color:var(--gray);">' + (p.note_avversario || 'Nessuna nota inserita.') + '</p>');
+      : '<p style="color:var(--gray);">' + (getNoteAvversario(p).text || 'Nessuna nota inserita.') + '</p>');
   document.getElementById('detailInner').appendChild(noteContainer);
   
   if(isFuture){
@@ -285,8 +292,8 @@ function showConvocationPreview(match,convocatiList){
 
 async function openNoteAvversario(mid){
   const match = allMatches.find(m=>m.id===mid)||{};
-  const note = match.note_avversario || '';
-  const content = '<p style="margin-bottom:8px;"><strong>'+getSocietaName()+' vs '+match.avversario+'</strong></p>'+
+  var inherited = getNoteAvversario(match); var note = match.note_avversario || inherited.text || '';
+  const content = '<p style="margin-bottom:8px;"><strong>'+getSocietaName()+' vs '+match.avversario+'</strong></p>'+(inherited.source ? '<p style="color:var(--gray);font-size:12px;margin-bottom:8px;">📋 Note ereditate'+inherited.source+'</p>' : '')+'
     '<textarea id="noteAvvText" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;min-height:150px;font-size:14px;">'+note+'</textarea>';
   const footer = '<button class="btn btn-secondary" onclick="window._closeModal()">Chiudi</button><button class="btn btn-primary" id="saveNoteBtn">💾 Salva Note</button>';
   const {closeModal} = createModal('📝 Note Avversario', content, footer, '600px');
@@ -381,4 +388,3 @@ function openImportCSV(){const content='<p style="margin-bottom:12px;">Incolla i
 function loadReports(){document.getElementById('pageContent').innerHTML='<h1 class="page-title">Report '+getSquadraName()+'</h1><p>In sviluppo</p>';}
 async function loadSettings(){const c=document.getElementById('pageContent');const s=getSquadra();c.innerHTML='<h1 class="page-title">Impostazioni '+getSquadraName()+'</h1><div class="card" style="margin-bottom:20px;"><h3>⚙️ Modifica</h3><div class="form-grid"><div class="form-group"><label>Nome</label><input id="sN" value="'+(s.nome||'')+'"></div><div class="form-group"><label>Categoria</label><input id="sC" value="'+(s.categoria||'')+'"></div><div class="form-group"><label>Allenatore</label><input id="sA" value="'+(s.allenatore||'')+'"></div><div class="form-group"><label>1° Dirigente</label><input id="sD" value="'+(s.dirigente||'')+'"></div><div class="form-group"><label>2° Dirigente</label><input id="sD2" value="'+(s.dirigente2||'')+'"></div><div class="form-group"><label>Prep. Atletico</label><input id="sP" value="'+(s.preparatore_atletico||'')+'"></div><div class="form-group"><label>All. Portieri</label><input id="sAP" value="'+(s.allenatore_portieri||'')+'"></div></div><div style="display:flex;gap:12px;margin-top:16px;"><button class="btn btn-primary" id="btnSave">💾 Salva</button><button class="btn btn-danger" id="btnDel" style="background:#E74C3C;color:white;">🗑️ Elimina</button></div></div><div class="card"><h3>➕ Nuova</h3><div class="form-grid"><div class="form-group"><label>Nome</label><input id="nN"></div><div class="form-group"><label>Categoria</label><input id="nC"></div><div class="form-group"><label>Allenatore</label><input id="nA"></div><div class="form-group"><label>1° Dirigente</label><input id="nD"></div><div class="form-group"><label>2° Dirigente</label><input id="nD2"></div><div class="form-group"><label>Prep. Atletico</label><input id="nP"></div><div class="form-group"><label>All. Portieri</label><input id="nAP"></div></div><button class="btn btn-primary" id="btnNew" style="margin-top:16px;">➕ Crea</button></div>';document.getElementById('btnSave').addEventListener('click',async()=>{showLoading();await apiFetch('/squadre/'+squadraId,{method:'PUT',body:JSON.stringify({nome:document.getElementById('sN').value,categoria:document.getElementById('sC').value,allenatore:document.getElementById('sA').value,dirigente:document.getElementById('sD').value,dirigente2:document.getElementById('sD2').value,preparatore_atletico:document.getElementById('sP').value,allenatore_portieri:document.getElementById('sAP').value})});await loadSquadre();hideLoading();alert('✅ Aggiornato!');loadSettings();});document.getElementById('btnDel').addEventListener('click',async()=>{if(!confirm('⚠️ Eliminare?'))return;await apiFetch('/squadre/'+squadraId,{method:'DELETE'});await loadSquadre();if(allSquadre.length>0){squadraId=allSquadre[0].id;navigateTo('dashboard');}});document.getElementById('btnNew').addEventListener('click',async()=>{showLoading();await apiFetch('/stagioni/'+STAGIONE_ID+'/squadre',{method:'POST',body:JSON.stringify({nome:document.getElementById('nN').value,categoria:document.getElementById('nC').value,allenatore:document.getElementById('nA').value,dirigente:document.getElementById('nD').value,dirigente2:document.getElementById('nD2').value,preparatore_atletico:document.getElementById('nP').value,allenatore_portieri:document.getElementById('nAP').value})});await loadSquadre();hideLoading();alert('✅ Creata!');loadSettings();});}
 // force refresh Sat Jun 20 23:32:35 UTC 2026
-// note avversario ereditate Sun Jun 21 00:39:12 UTC 2026
