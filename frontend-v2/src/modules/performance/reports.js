@@ -431,45 +431,49 @@ function renderSeasonalReport(report) {
       <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:24px;">
         <h2 style="margin:0 0 8px 0;">${report.societa}</h2>
         <h1 style="margin:0;font-size:28px;">Report Stagionale</h1>
-        <p style="margin:8px 0 0 0;color:#666;">${report.squadra.categoria}</p>
+        <p style="margin:8px 0 0 0;color:#666;font-size:18px;font-weight:600;">${report.squadra.categoria}</p>
         <p style="margin:4px 0 0 0;color:#666;">${report.stagione}</p>
       </div>
       
       <!-- Stats Squadra -->
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
-        <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:14px 18px;border-radius:10px;text-align:center;color:white;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;">${report.punti || 0}</div>
-          <div style="font-size:11px;opacity:0.9;">Punti</div>
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:20px;">
+        <div class="stat-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:12px 8px;border-radius:8px;text-align:center;color:white;">
+          <div style="font-size:20px;font-weight:bold;">${report.punti || 0}</div>
+          <div style="font-size:10px;opacity:0.9;">Punti</div>
         </div>
-        <div style="background:#cce5ff;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#004085;">${report.partiteGiocate || 0}</div>
-          <div style="color:#666;font-size:11px;">Giocate</div>
+        <div class="stat-card" style="background:#cce5ff;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#004085;">${report.partiteGiocate || 0}</div>
+          <div style="color:#666;font-size:10px;">Giocate</div>
         </div>
-        <div style="background:#d4edda;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#28a745;">${report.vittorie || 0}</div>
-          <div style="color:#666;font-size:11px;">Vittorie</div>
+        <div class="stat-card" style="background:#d4edda;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#28a745;">${report.vittorie || 0}</div>
+          <div style="color:#666;font-size:10px;">Vittorie</div>
         </div>
-        <div style="background:#fff3cd;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#856404;">${report.pareggi || 0}</div>
-          <div style="color:#666;font-size:11px;">Pareggi</div>
+        <div class="stat-card" style="background:#fff3cd;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#856404;">${report.pareggi || 0}</div>
+          <div style="color:#666;font-size:10px;">Pareggi</div>
         </div>
-        <div style="background:#f8d7da;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#dc3545;">${report.sconfitte || 0}</div>
-          <div style="color:#666;font-size:11px;">Sconfitte</div>
+        <div class="stat-card" style="background:#f8d7da;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#dc3545;">${report.sconfitte || 0}</div>
+          <div style="color:#666;font-size:10px;">Sconfitte</div>
         </div>
-        <div style="background:#cce5ff;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#28a745;">${report.golFatti || 0}</div>
-          <div style="color:#666;font-size:11px;">GF</div>
+        <div class="stat-card" style="background:#cce5ff;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#28a745;">${report.golFatti || 0}</div>
+          <div style="color:#666;font-size:10px;">GF</div>
         </div>
-        <div style="background:#e2e3e5;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#495057;">${report.golSubiti || 0}</div>
-          <div style="color:#666;font-size:11px;">GS</div>
+        <div class="stat-card" style="background:#e2e3e5;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#495057;">${report.golSubiti || 0}</div>
+          <div style="color:#666;font-size:10px;">GS</div>
         </div>
-        <div style="background:#f8f9fa;padding:14px 18px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:24px;font-weight:bold;color:#495057;">${report.differenzaReti > 0 ? '+' : ''}${report.differenzaReti || 0}</div>
-          <div style="color:#666;font-size:11px;">DR</div>
+        <div class="stat-card" style="background:#f8f9fa;padding:12px 8px;border-radius:8px;text-align:center;">
+          <div style="font-size:20px;font-weight:bold;color:#495057;">${report.differenzaReti > 0 ? '+' : ''}${report.differenzaReti || 0}</div>
+          <div style="color:#666;font-size:10px;">DR</div>
         </div>
       </div>
+      <style>
+        @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+      </style>
       
       <!-- Top Rankings -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:24px;">
@@ -546,32 +550,46 @@ function renderSeasonalReport(report) {
         </div>
       </div>
       
-      <!-- Calendario Stagionale -->
+      <!-- Calendario Stagionale Raggruppato -->
       <div>
         <h3 style="margin:0 0 12px 0;">📅 Calendario Stagionale</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          <thead>
-            <tr style="background:#f8f9fa;">
-              <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:11px;">G.</th>
-              <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:11px;">Data</th>
-              <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:11px;">Avversario</th>
-              <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:11px;">GF</th>
-              <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:11px;">GS</th>
-              <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:11px;">Luogo</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${report.partite.map((p, i) => `
-              <tr style="background:${i % 2 === 0 ? 'white' : '#f8f9fa'};">
-                <td style="padding:6px;text-align:center;font-weight:bold;color:#667eea;font-size:11px;">${p.giornata || '-'}</td>
-                <td style="padding:6px;font-size:10px;">${formatDateShort(p.data)}</td>
-                <td style="padding:6px;font-size:11px;">${p.avversario}</td>
-                <td style="padding:6px;text-align:center;font-weight:bold;color:#28a745;font-size:11px;">${p.golCasa}</td>
-                <td style="padding:6px;text-align:center;font-weight:bold;color:#dc3545;font-size:11px;">${p.golOspiti}</td>
-                <td style="padding:6px;font-size:10px;color:#666;">${p.luogo || '-'}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
+        ${(() => {
+          // Raggruppa partite per competizione
+          const gruppi = {};
+          (report.partite || []).forEach(p => {
+            const comp = p.competizione || 'Altro';
+            if (!gruppi[comp]) gruppi[comp] = [];
+            gruppi[comp].push(p);
+          });
+          return Object.entries(gruppi).map(([comp, partite]) => `
+            <div style="margin-bottom:20px;">
+              <h4 style="margin:0 0 8px 0;padding:8px 12px;background:#667eea;color:white;border-radius:6px;font-size:13px;">${comp}</h4>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr style="background:#f0f0f0;">
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">G.</th>
+                    <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;">Data</th>
+                    <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;">Avversario</th>
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">GF</th>
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">GS</th>
+                    <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;display:none;@media(min-width:600px){display:table-cell;}">Luogo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${partite.map((p, i) => `
+                    <tr style="background:${i % 2 === 0 ? 'white' : '#f8f9fa'};">
+                      <td style="padding:6px;text-align:center;font-weight:bold;color:#667eea;font-size:10px;">${p.giornata || '-'}</td>
+                      <td style="padding:6px;font-size:10px;">${formatDateShort(p.data)}</td>
+                      <td style="padding:6px;font-size:10px;">${p.avversario}</td>
+                      <td style="padding:6px;text-align:center;font-weight:bold;color:#28a745;font-size:10px;">${p.golCasa}</td>
+                      <td style="padding:6px;text-align:center;font-weight:bold;color:#dc3545;font-size:10px;">${p.golOspiti}</td>
+                      <td style="padding:6px;font-size:10px;color:#666;display:none;@media(min-width:600px){display:table-cell;}">${p.luogo || '-'}</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          `).join('');
+        })()}
       </div>
     </div>
   `;
@@ -630,6 +648,14 @@ function renderPlayerReport(report) {
     ? (report.stats.gol / report.stats.partiteGiocate).toFixed(2) : 0;
   const minutiTotali = report.stats.partiteGiocate * 90;
   
+  // Raggruppa storico per competizione
+  const gruppiStorico = {};
+  (report.storico || []).forEach(e => {
+    const key = e.competizione || 'Altro';
+    if (!gruppiStorico[key]) gruppiStorico[key] = [];
+    gruppiStorico[key].push(e);
+  });
+  
   container.innerHTML = `
     <div id="playerPrintArea" style="background:white;padding:24px;">
       <!-- Header -->
@@ -641,48 +667,55 @@ function renderPlayerReport(report) {
         </p>
       </div>
       
-      <!-- Stats Grid - Una riga -->
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;justify-content:center;">
-        <div style="background:#cce5ff;padding:12px 16px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:22px;font-weight:bold;color:#004085;">${report.stats.partiteGiocate}</div>
-          <div style="color:#666;font-size:11px;">Partite</div>
+      <!-- Stats Grid - Auto sizing -->
+      <div class="player-stats-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;">
+        <div style="background:#cce5ff;padding:10px 6px;border-radius:8px;text-align:center;">
+          <div style="font-size:18px;font-weight:bold;color:#004085;">${report.stats.partiteGiocate}</div>
+          <div style="color:#666;font-size:9px;">Partite</div>
         </div>
-        <div style="background:#667eea;padding:12px 16px;border-radius:10px;text-align:center;color:white;min-width:90px;">
-          <div style="font-size:22px;font-weight:bold;">${minutiTotali}'</div>
-          <div style="font-size:11px;opacity:0.9;">Min. Giocati</div>
+        <div style="background:#667eea;padding:10px 6px;border-radius:8px;text-align:center;color:white;">
+          <div style="font-size:18px;font-weight:bold;">${minutiTotali}'</div>
+          <div style="font-size:9px;opacity:0.9;">Min.</div>
         </div>
-        <div style="background:#d4edda;padding:12px 16px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:22px;font-weight:bold;color:#28a745;">${report.stats.gol}</div>
-          <div style="color:#666;font-size:11px;">Gol</div>
+        <div style="background:#d4edda;padding:10px 6px;border-radius:8px;text-align:center;">
+          <div style="font-size:18px;font-weight:bold;color:#28a745;">${report.stats.gol}</div>
+          <div style="color:#666;font-size:9px;">Gol</div>
         </div>
-        <div style="background:#e2e3e5;padding:12px 16px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:22px;font-weight:bold;color:#495057;">${avgGolPerPartita}</div>
-          <div style="color:#666;font-size:11px;">Gol/P</div>
+        <div style="background:#e2e3e5;padding:10px 6px;border-radius:8px;text-align:center;">
+          <div style="font-size:18px;font-weight:bold;color:#495057;">${avgGolPerPartita}</div>
+          <div style="color:#666;font-size:9px;">Gol/P</div>
         </div>
-        <div style="background:#fff3cd;padding:12px 16px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:22px;font-weight:bold;color:#856404;">${report.stats.assist}</div>
-          <div style="color:#666;font-size:11px;">Assist</div>
+        <div style="background:#fff3cd;padding:10px 6px;border-radius:8px;text-align:center;">
+          <div style="font-size:18px;font-weight:bold;color:#856404;">${report.stats.assist}</div>
+          <div style="color:#666;font-size:9px;">Assist</div>
         </div>
-        <div style="background:#ffe6e6;padding:12px 16px;border-radius:10px;text-align:center;min-width:70px;">
-          <div style="font-size:22px;font-weight:bold;color:#dc3545;">${report.stats.ammonizioni + report.stats.espulsioni}</div>
-          <div style="color:#666;font-size:11px;">Cartellini</div>
+        <div style="background:#ffe6e6;padding:10px 6px;border-radius:8px;text-align:center;">
+          <div style="font-size:18px;font-weight:bold;color:#dc3545;">${report.stats.ammonizioni + report.stats.espulsioni}</div>
+          <div style="color:#666;font-size:9px;">Cartellini</div>
         </div>
       </div>
+      <style>
+        @media (max-width: 700px) { .player-stats-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (max-width: 450px) { .player-stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+      </style>
       
-      <!-- Storico Eventi Compact -->
+      <!-- Storico Eventi Raggruppato -->
       <div>
         <h3 style="margin:0 0 8px 0;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:6px;">📋 Storico Eventi</h3>
-        ${report.storico.length > 0 ? `
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          ${report.storico.map(e => `
-            <div style="background:#f5f5f5;padding:6px 10px;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:6px;">
-              <span style="font-weight:bold;color:#666;">${e.minuto}'</span>
-              <span>${getEventIcon(e.tipo)}</span>
-              <span>${e.partita || 'Evento'}</span>
+        ${Object.keys(gruppiStorico).length > 0 ? Object.entries(gruppiStorico).map(([comp, eventi]) => `
+          <div style="margin-bottom:16px;">
+            <h4 style="margin:0 0 6px 0;padding:6px 10px;background:#667eea;color:white;border-radius:6px;font-size:11px;">${comp}</h4>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              ${eventi.map(e => `
+                <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#f8f9fa;border-radius:6px;font-size:11px;">
+                  <span style="font-weight:bold;color:#667eea;min-width:35px;">${e.minuto}'</span>
+                  <span>${getEventIcon(e.tipo)}</span>
+                  <span style="flex:1;">${e.partita || 'Evento'}</span>
+                </div>
+              `).join('')}
             </div>
-          `).join('')}
-        </div>
-        ` : '<p style="color:#666;font-size:13px;text-align:center;padding:20px;">Nessun evento registrato</p>'}
+          </div>
+        `).join('') : '<p style="color:#666;font-size:13px;text-align:center;padding:20px;">Nessun evento registrato</p>'}
       </div>
     </div>
   `;
@@ -702,27 +735,22 @@ function printPlayerReport() {
   const printArea = document.getElementById('playerPrintArea');
   if (!printArea) return;
   const printWindow = window.open('', '_blank');
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Report Giocatore</title>
-      <meta charset="UTF-8">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; padding: 10px; color: #333; font-size: 10px; }
-        h1 { font-size: 16px; margin: 0 0 4px 0; }
-        .stats-row { display: flex; gap: 6px; margin-bottom: 8px; }
-        .stat-box { padding: 6px 10px; border-radius: 4px; text-align: center; min-width: 50px; }
-        .stat-value { font-size: 14px; font-weight: bold; }
-        .stat-label { font-size: 8px; }
-        .event-chip { display: inline-block; background: #f5f5f5; padding: 3px 6px; border-radius: 3px; margin: 2px; font-size: 9px; }
-        @media print { body { padding: 5px; } @page { size: A5; margin: 5mm; } }
-      </style>
-    </head>
-    <body>${printArea.innerHTML}</body>
-    </html>
-  `);
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Report Giocatore</title>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 10px; color: #333; font-size: 10px; }
+    h1 { font-size: 16px; margin: 0 0 4px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 9px; }
+    th, td { padding: 3px 5px; border-bottom: 1px solid #eee; }
+    @media print { body { padding: 5px; } @page { size: A4; margin: 8mm; } }
+  </style>
+</head>
+<body>${printArea.innerHTML}</body>
+</html>`);
   printWindow.document.close();
   printWindow.focus();
   setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
