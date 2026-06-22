@@ -310,7 +310,7 @@ function generateSocialComment(report) {
   comment += `\n${partita.competizione}${partita.giornata ? ' - Giornata ' + partita.giornata : ''}\n\n`;
   
   // Hashtag
-  comment += `#${societa.replace(/\s+/g, '')} #${categoria.replace(/\s+/g, '')} #calciogiovanile #squadragiovanile`;
+  comment += `#${societa.replace(/\s+/g, '')} #${categoria.replace(/\s+/g, '')} #calciogiovanile`;
   
   return comment;
 }
