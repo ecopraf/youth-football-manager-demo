@@ -425,11 +425,6 @@ function renderSeasonalReport(report) {
   const container = document.getElementById('seasonalReportContent');
   container.style.display = 'block';
   
-  // Calcola punti e differenza reti
-  const punti = (report.vittorie * 3) + report.pareggi;
-  const differenzaReti = report.golFatti - report.golSubiti;
-  const DR = differenzaReti > 0 ? '+' + differenzaReti : differenzaReti;
-  
   container.innerHTML = `
     <div id="seasonalPrintArea" style="background:white;padding:24px;">
       <!-- Header -->
@@ -440,35 +435,23 @@ function renderSeasonalReport(report) {
         <p style="margin:4px 0 0 0;color:#666;">${report.stagione}</p>
       </div>
       
-      <!-- Classifica Sintetica -->
+      <!-- Stats Squadra -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px;margin-bottom:24px;">
-        <div style="background:#667eea;padding:20px;border-radius:12px;text-align:center;color:white;">
-          <div style="font-size:36px;font-weight:bold;">${punti}</div>
-          <div style="font-size:12px;opacity:0.9;">Punti</div>
-        </div>
-        <div style="background:#d4edda;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#28a745;">${report.vittorie}</div>
-          <div style="color:#666;font-size:12px;">Vittorie</div>
-        </div>
-        <div style="background:#fff3cd;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#ffc107;">${report.pareggi}</div>
-          <div style="color:#666;font-size:12px;">Pareggi</div>
-        </div>
-        <div style="background:#f8d7da;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#dc3545;">${report.sconfitte}</div>
-          <div style="color:#666;font-size:12px;">Sconfitte</div>
+        <div style="background:#cce5ff;padding:20px;border-radius:12px;text-align:center;">
+          <div style="font-size:36px;font-weight:bold;color:#004085;">${report.partiteGiocate}</div>
+          <div style="color:#666;font-size:12px;">Partite</div>
         </div>
         <div style="background:#cce5ff;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#004085;">${report.golFatti}</div>
-          <div style="color:#666;font-size:12px;">GF</div>
+          <div style="font-size:36px;font-weight:bold;color:#28a745;">${report.golFatti}</div>
+          <div style="color:#666;font-size:12px;">Gol Fatti</div>
         </div>
         <div style="background:#e2e3e5;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#383d41;">${report.golSubiti}</div>
-          <div style="color:#666;font-size:12px;">GS</div>
+          <div style="font-size:36px;font-weight:bold;color:#495057;">${report.topMarcatori.length}</div>
+          <div style="color:#666;font-size:12px;">Marcatori</div>
         </div>
         <div style="background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;">
-          <div style="font-size:36px;font-weight:bold;color:#495057;">${DR}</div>
-          <div style="color:#666;font-size:12px;">DR</div>
+          <div style="font-size:36px;font-weight:bold;color:#495057;">${report.topPresenze.reduce((a, p) => a + p.presenze, 0)}</div>
+          <div style="color:#666;font-size:12px;">Presenze Tot.</div>
         </div>
       </div>
       
@@ -549,29 +532,24 @@ function renderSeasonalReport(report) {
       
       <!-- Risultati Stagionali -->
       <div>
-        <h3 style="margin:0 0 12px 0;">📊 Risultati Stagionali</h3>
+        <h3 style="margin:0 0 12px 0;">📊 Calendario Stagionale</h3>
         <table style="width:100%;border-collapse:collapse;">
           <thead>
             <tr style="background:#f8f9fa;">
               <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:12px;">Data</th>
               <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:12px;">Avversario</th>
-              <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:12px;">Ris.</th>
+              <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:12px;">GF</th>
               <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:12px;">Luogo</th>
             </tr>
           </thead>
           <tbody>
-            ${report.partite.map((p, i) => {
-              const risColor = p.risultato === 'V' ? '#28a745' : p.risultato === 'S' ? '#dc3545' : '#ffc107';
-              return `
+            ${report.partite.map((p, i) => `
               <tr style="background:${i % 2 === 0 ? 'white' : '#f8f9fa'};">
                 <td style="padding:6px;font-size:11px;">${formatDateShort(p.data)}</td>
                 <td style="padding:6px;font-size:12px;">${p.avversario}</td>
-                <td style="padding:6px;text-align:center;">
-                  <span style="background:${risColor};color:white;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:bold;">${p.golCasa} - ${p.golOspiti}</span>
-                </td>
+                <td style="padding:6px;text-align:center;font-weight:bold;color:${p.golCasa > 0 ? '#28a745' : '#999'};">${p.golCasa}</td>
                 <td style="padding:6px;font-size:10px;color:#666;">${p.luogo || '-'}</td>
-              </tr>`;
-            }).join('')}
+              </tr>`).join('')}
           </tbody>
         </table>
       </div>

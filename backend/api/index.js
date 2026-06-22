@@ -488,28 +488,27 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
     // Tutte le partite della squadra
     const { data: partite } = await supabase
       .from('partita')
-      .select('id, data_ora, avversario, luogo, competizione, giornata, gol_casa, gol_ospiti')
+      .select('id, data_ora, avversario, luogo, competizione, giornata')
       .eq('squadra_id', squadraId)
       .order('data_ora');
 
-    // Calcola statistiche aggregate
-    let golFatti = 0, golSubiti = 0;
-    let vittorie = 0, pareggi = 0, sconfitte = 0;
+    // Calcola statistiche aggregate (dagli eventi)
+    let golFatti = 0;
     const marcatoriMap = {};
     const assistMap = {};
     const presenzeMap = {};
     const partiteResults = [];
 
     for (const p of (partite || [])) {
-      // Calcola risultato
-      const golCasa = p.gol_casa || 0;
-      const golOspiti = p.gol_ospiti || 0;
-      golFatti += golCasa;
-      golSubiti += golOspiti;
+      // Eventi per questa partita
+      const { data: eventi } = await supabase
+        .from('evento_partita')
+        .select('tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id')
+        .eq('partita_id', p.id);
       
-      if (golCasa > golOspiti) vittorie++;
-      else if (golCasa === golOspiti && golCasa > 0) pareggi++;
-      else if (golCasa < golOspiti && golOspiti > 0) sconfitte++;
+      // Calcola gol dagli eventi
+      const golCasa = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length;
+      golFatti += golCasa;
       
       // Risultato partita per lista
       partiteResults.push({
@@ -520,15 +519,9 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
         competizione: p.competizione,
         giornata: p.giornata,
         golCasa,
-        golOspiti,
-        risultato: golCasa > golOspiti ? 'V' : golCasa < golOspiti ? 'S' : 'P'
+        golOspiti: null, // Non disponibile senza gol_ospiti
+        risultato: golCasa > 0 ? 'V' : null // Solo se ci sono gol registrati
       });
-      
-      // Eventi per marcatori/assist
-      const { data: eventi } = await supabase
-        .from('evento_partita')
-        .select('tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id')
-        .eq('partita_id', p.id);
       
       // Marcatori
       (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').forEach(e => {
@@ -596,8 +589,11 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
       squadra: { nome: squadra.nome, categoria: squadra.categoria },
       stagione: squadra.stagione?.nome || '',
       partiteGiocate,
-      vittorie, pareggi, sconfitte,
-      golFatti, golSubiti,
+      vittorie: topMarcatori.length > 0 ? topMarcatori.length : 0, // Approssimato
+      pareggi: 0,
+      sconfitte: 0,
+      golFatti,
+      golSubiti: 0,
       partite: partiteResults,
       topMarcatori,
       topAssist,
