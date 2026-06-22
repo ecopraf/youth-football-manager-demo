@@ -493,17 +493,18 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
       .order('data_ora');
 
     // Calcola statistiche aggregate
-    let vittorie = 0, pareggi = 0, sconfitte = 0;
-    let golFatti = 0, golSubiti = 0;
+    let golFatti = 0;
     const marcatoriMap = {};
+    const assistMap = {};
     const presenzeMap = {};
 
     for (const p of (partite || [])) {
       const { data: eventi } = await supabase
         .from('evento_partita')
-        .select('tipo_evento_codice, calciatore_principale_id')
+        .select('tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id')
         .eq('partita_id', p.id);
       
+      // Gol
       const golCasa = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length;
       golFatti += golCasa;
       
@@ -513,6 +514,12 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
         marcatoriMap[id] = (marcatoriMap[id] || 0) + 1;
       });
       
+      // Assist
+      (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL' && e.calciatore_secondario_id).forEach(e => {
+        const id = e.calciatore_secondario_id;
+        assistMap[id] = (assistMap[id] || 0) + 1;
+      });
+      
       // Presenze
       const { data: formazione } = await supabase
         .from('formazione_partita').select('calciatore_id').eq('partita_id', p.id);
@@ -520,6 +527,13 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
         presenzeMap[f.calciatore_id] = (presenzeMap[f.calciatore_id] || 0) + 1;
       });
     }
+
+    // Vittorie/Pareggi/Sconfitte (da implementare con risultati reali)
+    const partiteGiocate = (partite || []).length;
+    const vittorie = 0; // TODO: da calcolare dai risultati
+    const pareggi = 0;
+    const sconfitte = 0;
+    const golSubiti = 0;
 
     // Top marcatori (recupera nomi)
     const marcatoriIds = Object.entries(marcatoriMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -537,11 +551,43 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
       }
     }
 
+    // Top assist (recupera nomi)
+    const assistIds = Object.entries(assistMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topAssist = [];
+    for (const [id, assist] of assistIds) {
+      const { data: calciatore } = await supabase
+        .from('calciatore').select('nome, cognome').eq('id', id).single();
+      if (calciatore) {
+        topAssist.push({
+          id,
+          nome: calciatore.nome,
+          cognome: calciatore.cognome,
+          assist
+        });
+      }
+    }
+
+    // Top presenze (recupera nomi)
+    const presenzeEntries = Object.entries(presenzeMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topPresenze = [];
+    for (const [id, presenze] of presenzeEntries) {
+      const { data: calciatore } = await supabase
+        .from('calciatore').select('nome, cognome').eq('id', id).single();
+      if (calciatore) {
+        topPresenze.push({
+          id,
+          nome: calciatore.nome,
+          cognome: calciatore.cognome,
+          presenze
+        });
+      }
+    }
+
     res.json({
       societa: societaNome,
       squadra: { nome: squadra.nome, categoria: squadra.categoria },
       stagione: squadra.stagione?.nome || '',
-      partiteGiocate: (partite || []).length,
+      partiteGiocate,
       vittorie, pareggi, sconfitte,
       golFatti, golSubiti,
       partite: (partite || []).map(p => ({
@@ -553,8 +599,8 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
         giornata: p.giornata
       })),
       topMarcatori,
-      topPresenze: Object.entries(presenzeMap).sort((a, b) => b[1] - a[1]).slice(0, 5)
-        .map(([id, presenze]) => ({ id, presenze }))
+      topAssist,
+      topPresenze
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
