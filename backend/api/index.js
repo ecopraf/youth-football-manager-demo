@@ -256,4 +256,105 @@ app.get('/api/calciatori/:id/last-matches', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ── REPORT PARTITA ──
+app.get('/api/partite/:partitaId/report', async (req, res) => {
+  try {
+    // 1. Dati partita
+    const { data: partita } = await supabase
+      .from('partita')
+      .select('*, squadra:squadra_id(nome, categoria, allenatore, dirigente)')
+      .eq('id', req.params.partitaId)
+      .single();
+    if (!partita) return res.status(404).json({ error: 'Partita non trovata' });
+
+    // 2. Eventi
+    const { data: eventi } = await supabase
+      .from('evento_partita')
+      .select('tipo_evento_codice, minuto, calciatore_principale:calciatore_principale_id(nome, cognome), calciatore_secondario:calciatore_secondario_id(nome, cognome)')
+      .eq('partita_id', req.params.partitaId)
+      .order('minuto');
+
+    // 3. Formazione completa con stats
+    const { data: formazione } = await supabase
+      .from('formazione_partita')
+      .select('numero_maglia, posizione, calciatore:calciatore_id(id, nome, cognome, data_nascita)')
+      .eq('partita_id', req.params.partitaId)
+      .order('numero_maglia');
+
+    // 4. Convocazioni (per minuti giocati simulati se non presenti)
+    const { data: convocazioni } = await supabase
+      .from('convocazione')
+      .select('presente, calciatore:calciatore_id(id)')
+      .eq('partita_id', req.params.partitaId);
+
+    // Calcola stats per ogni giocatore
+    const statsMap = {};
+    (eventi || []).forEach(e => {
+      const pid = e.calciatore_principale_id;
+      if (!statsMap[pid]) statsMap[pid] = { gol: 0, assist: 0, ammonizioni: 0, espulsioni: 0 };
+      if (e.tipo_evento_codice === 'GOAL') statsMap[pid].gol++;
+      if (e.tipo_evento_codice === 'YELLOW') statsMap[pid].ammonizioni++;
+      if (e.tipo_evento_codice === 'RED') statsMap[pid].espulsioni++;
+      if (e.tipo_evento_codice === 'GOAL' && e.calciatore_secondario_id) {
+        const sid = e.calciatore_secondario_id;
+        if (!statsMap[sid]) statsMap[sid] = { gol: 0, assist: 0, ammonizioni: 0, espulsioni: 0 };
+        statsMap[sid].assist++;
+      }
+    });
+
+    // Costruisci array giocatori con stats
+    const giocatoriReport = (formazione || []).map(f => {
+      const s = statsMap[f.calciatore.id] || { gol: 0, assist: 0, ammonizioni: 0, espulsioni: 0 };
+      const convocato = (convocazioni || []).find(c => c.calciatore.id === f.calciatore.id);
+      return {
+        numeroMaglia: f.numero_maglia,
+        nome: f.calciatore.nome,
+        cognome: f.calciatore.cognome,
+        ruolo: f.posizione === 'Titolare' ? 'T' : 'P',
+        gol: s.gol,
+        assist: s.assist,
+        ammonizioni: s.ammonizioni,
+        espulsioni: s.espulsioni,
+        presente: convocato?.presente ?? true
+      };
+    });
+
+    // Calcola score
+    const golCasa = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length;
+    const ammonizioni = (eventi || []).filter(e => e.tipo_evento_codice === 'YELLOW').length;
+    const espulsioni = (eventi || []).filter(e => e.tipo_evento_codice === 'RED').length;
+
+    res.json({
+      partita: {
+        dataOra: partita.data_ora,
+        avversario: partita.avversario,
+        luogo: partita.luogo,
+        competizione: partita.competizione,
+        giornata: partita.giornata,
+        note: partita.note || ''
+      },
+      societa: partita.squadra?.nome || 'ASD',
+      categoria: partita.squadra?.categoria || '',
+      allenatore: partita.squadra?.allenatore || '',
+      dirigente: partita.squadra?.dirigente || '',
+      score: { golCasa, golOspiti: 0 },
+      ammonizioni,
+      espulsioni,
+      eventi: (eventi || []).map(e => ({
+        minuto: e.minuto,
+        tipo: e.tipo_evento_codice,
+        principale: e.calciatore_principale?.nome + ' ' + e.calciatore_principale?.cognome,
+        secondario: e.calciatore_secondario ? e.calciatore_secondario.nome + ' ' + e.calciatore_secondario.cognome : null
+      })),
+      giocatori: giocatoriReport.sort((a, b) => {
+        if (a.ruolo !== b.ruolo) return a.ruolo === 'T' ? -1 : 1;
+        return a.numeroMaglia - b.numeroMaglia;
+      })
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = app;
