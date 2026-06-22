@@ -90,9 +90,19 @@ function renderReport(report) {
   const container = document.getElementById('reportContent');
   const titolari = report.giocatori.filter(g => g.ruolo === 'T');
   const panchina = report.giocatori.filter(g => g.ruolo === 'P');
+  const socialComment = generateSocialComment(report);
 
   container.innerHTML = `
     <div id="reportPrintArea" style="background:white;padding:24px;border:1px solid var(--border);border-radius:12px;">
+      <!-- Commento Social -->
+      <div style="margin-bottom:24px;padding:20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;color:white;">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+          <h3 style="margin:0;font-size:16px;">📱 Commento Social</h3>
+          <button class="btn btn-secondary btn-small" onclick="copySocialComment()" style="background:white;color:#667eea;border:none;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer;">📋 Copia</button>
+        </div>
+        <div id="socialCommentBox" style="font-size:14px;line-height:1.6;white-space:pre-wrap;background:rgba(255,255,255,0.15);padding:16px;border-radius:8px;">${socialComment}</div>
+      </div>
+
       <!-- Header Report -->
       <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:24px;">
         <h2 style="margin:0 0 8px 0;">${report.societa}</h2>
@@ -256,3 +266,70 @@ function printReport() {
     printWindow.close();
   }, 250);
 }
+
+function generateSocialComment(report) {
+  const { societa, categoria, partita, score, ammonizioni, espulsioni, eventi } = report;
+  const golFatti = score.golCasa;
+  const golSubiti = score.golOspiti;
+  const marcatori = eventi.filter(e => e.tipo === 'GOAL');
+  
+  // Determina il risultato
+  let intro = '';
+  if (golFatti > golSubiti) {
+    intro = '🏆 GRANDE VITTORIA!';
+  } else if (golFatti === golSubiti) {
+    intro = '🤝 BEL PUNTO!';
+  } else {
+    intro = '💪 SI CONTINUA A LAVORARE!';
+  }
+
+  // Costruisce il commento
+  let comment = `${intro}\n\n`;
+  comment += `${societa} ${golFatti}-${golSubiti} ${partita.avversario}\n`;
+  
+  if (marcatori.length > 0) {
+    const marcatoriList = marcatori.map(m => {
+      const nome = m.principale.split(' ')[0]; // Solo il nome
+      return `${nome} (${m.minuto}')`;
+    }).join(', ');
+    comment += `⚽ Marcatori: ${marcatoriList}\n`;
+  }
+  
+  if (golSubiti === 0 && golFatti > 0) {
+    comment += `🧤 PORTA INVOLATA!\n`;
+  }
+  
+  if (ammonizioni > 0) {
+    comment += `🟨 ${ammonizioni} ammonizion${ammonizioni > 1 ? 'i' : 'e'}\n`;
+  }
+  
+  if (espulsioni > 0) {
+    comment += `🟥 ${espulsioni} espulsion${espulsioni > 1 ? 'i' : 'e'}\n`;
+  }
+  
+  comment += `\n${partita.competizione}${partita.giornata ? ' - Giornata ' + partita.giornata : ''}\n\n`;
+  
+  // Hashtag
+  comment += `#${societa.replace(/\s+/g, '')} #${categoria.replace(/\s+/g, '')} #calciogiovanile #squadragiovanile`;
+  
+  return comment;
+}
+
+// Funzione globale per copiare il commento
+window.copySocialComment = function() {
+  const text = document.getElementById('socialCommentBox')?.textContent;
+  if (text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Commento copiato negli appunti!');
+    }).catch(() => {
+      // Fallback per browser più vecchi
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('✅ Commento copiato negli appunti!');
+    });
+  }
+};
