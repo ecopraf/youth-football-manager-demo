@@ -104,40 +104,80 @@ export default async function loadDashboard() {
         <div class="card">
           <h3 class="section-title">📋 Ultimi Risultati</h3>
           ${(() => {
-            const risultati = (stats.risultati || []).slice(0, 10);
+            const risultati = (stats.risultati || []).slice(0, 5);
+            if (risultati.length === 0) return '<p style="color:var(--gray);text-align:center;padding:20px;">Nessuna partita disputata</p>';
+            
+            // Trend: ultimi 5 risultati
+            const trendHtml = risultati.map(r => {
+              const esito = r.golFatti > r.golSubiti ? 'V' : r.golFatti === r.golSubiti ? 'P' : 'S';
+              const color = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
+              return `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:${color};color:white;font-size:11px;font-weight:bold;border-radius:6px;">${esito}</span>`;
+            }).join('<span style="color:#ddd;margin:0 4px;">—</span>');
+            
             const gruppi = {};
-            risultati.forEach(r => {
+            (stats.risultati || []).slice(0, 5).forEach(r => {
               const comp = r.competizione || 'Altro';
               if (!gruppi[comp]) gruppi[comp] = [];
               gruppi[comp].push(r);
             });
-            return Object.entries(gruppi).map(([comp, partite]) => `
-              <div style="margin-bottom:16px;">
-                <h4 style="margin:0 0 8px 0;padding:6px 10px;background:#f0f4ff;color:#667eea;border-radius:6px;font-size:12px;font-weight:600;">
-                  ${comp}
-                </h4>
-                ${partite.map(r => {
-                  const isCasa = r.luogo === 'Casa';
-                  const resultColor = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
-                  const resultIcon = r.golFatti > r.golSubiti ? '✅' : r.golFatti === r.golSubiti ? '🤝' : '❌';
-                  return `
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-bottom:1px solid #f0f0f0;cursor:pointer;" 
-                         onclick="window.YFM.openMatchDetail('${r.id}')">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                        <span style="font-size:11px;color:#667eea;font-weight:600;min-width:20px;">G.${r.giornata || '-'}</span>
-                        <span style="font-size:12px;color:var(--gray);">${formatDateShort(r.dataOra)}</span>
-                        <span title="${isCasa ? 'Casa' : 'Trasferta'}" style="font-size:14px;">${isCasa ? '🏠' : '✈️'}</span>
-                      </div>
-                      <div style="display:flex;align-items:center;gap:8px;">
-                        <span style="font-size:12px;color:var(--gray);">vs ${r.avversario}</span>
-                        <span style="font-size:16px;font-weight:bold;color:${resultColor};">${r.golFatti} - ${r.golSubiti}</span>
-                        <span style="font-size:12px;">${resultIcon}</span>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
+            
+            return `
+              <!-- Trend Grafico -->
+              <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;padding:16px;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                  <span style="color:white;font-size:11px;font-weight:600;opacity:0.9;">ANDAMENTO ULTIME 5</span>
+                  <span style="color:white;font-size:10px;opacity:0.8;">V = Vittoria · P = Pareggio · S = Sconfitta</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
+                  ${trendHtml}
+                </div>
+                <div style="display:flex;justify-content:space-around;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);">
+                  <div style="text-align:center;">
+                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.vittorie}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Vittorie</div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.pareggi}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Pareggi</div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.sconfitte}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Sconfitte</div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.punti}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Punti</div>
+                  </div>
+                </div>
               </div>
-            `).join('');
+              
+              ${Object.entries(gruppi).map(([comp, partite]) => `
+                <div style="margin-bottom:12px;">
+                  <h4 style="margin:0 0 6px 0;padding:4px 8px;background:#f0f4ff;color:#667eea;border-radius:6px;font-size:11px;font-weight:600;">
+                    ${comp}
+                  </h4>
+                  ${partite.map(r => {
+                    const isCasa = r.luogo === 'Casa';
+                    const resultColor = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
+                    const resultIcon = r.golFatti > r.golSubiti ? '✅' : r.golFatti === r.golSubiti ? '🤝' : '❌';
+                    return `
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 6px;border-bottom:1px solid #f0f0f0;cursor:pointer;" 
+                           onclick="window.YFM.openMatchDetail('${r.id}')">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                          <span style="font-size:10px;color:#667eea;font-weight:600;min-width:24px;">G.${String(r.giornata || '-').padStart(2,'0')}</span>
+                          <span style="font-size:11px;color:var(--gray);">${formatDateShort(r.dataOra)}</span>
+                          <span title="${isCasa ? 'Casa' : 'Trasferta'}" style="font-size:12px;">${isCasa ? '🏠' : '✈️'}</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                          <span style="font-size:11px;color:var(--gray);">${r.avversario}</span>
+                          <span style="font-size:14px;font-weight:bold;color:${resultColor};">${r.golFatti} - ${r.golSubiti}</span>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              `).join('')}
+            `;
           })()}
         </div>
         
