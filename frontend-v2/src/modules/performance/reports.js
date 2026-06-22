@@ -23,7 +23,8 @@ export default async function loadReports() {
             <option value="">-- Caricamento partite --</option>
           </select>
           <button class="btn btn-primary" id="btnGenerateReport" disabled>Genera Report</button>
-          <button class="btn btn-secondary" id="btnPrintReport" style="display:none;">🖨️ Stampa / PDF</button>
+          <button class="btn btn-secondary" id="btnPrintReport" style="display:none;">🖨️ Stampa</button>
+          <button class="btn btn-secondary" id="btnSaveReport" style="display:none;" onclick="saveReportAsPDF('match')">💾 Salva PDF</button>
         </div>
         <div id="reportContent" style="display:none;"></div>
       </div>
@@ -34,7 +35,8 @@ export default async function loadReports() {
       <div class="card">
         <div style="display:flex;gap:16px;margin-bottom:16px;">
           <button class="btn btn-primary" id="btnGenerateSeasonalReport">Genera Report Stagionale</button>
-          <button class="btn btn-secondary" id="btnPrintSeasonalReport" style="display:none;">🖨️ Stampa / PDF</button>
+          <button class="btn btn-secondary" id="btnPrintSeasonalReport" style="display:none;">🖨️ Stampa</button>
+          <button class="btn btn-secondary" id="btnSaveSeasonalReport" style="display:none;" onclick="saveReportAsPDF('seasonal')">💾 Salva PDF</button>
         </div>
         <div id="seasonalReportContent" style="display:none;"></div>
       </div>
@@ -49,7 +51,8 @@ export default async function loadReports() {
             <option value="">-- Seleziona giocatore --</option>
           </select>
           <button class="btn btn-primary" id="btnGeneratePlayerReport" disabled>Genera Report</button>
-          <button class="btn btn-secondary" id="btnPrintPlayerReport" style="display:none;">🖨️ Stampa / PDF</button>
+          <button class="btn btn-secondary" id="btnPrintPlayerReport" style="display:none;">🖨️ Stampa</button>
+          <button class="btn btn-secondary" id="btnSavePlayerReport" style="display:none;" onclick="saveReportAsPDF('player')">💾 Salva PDF</button>
         </div>
         <div id="playerReportContent" style="display:none;"></div>
       </div>
@@ -290,44 +293,42 @@ function renderReport(report) {
 
   container.style.display = 'block';
   document.getElementById('btnPrintReport').style.display = 'inline-block';
+  document.getElementById('btnSaveReport').style.display = 'inline-block';
 }
 
 function printReport() {
   const printArea = document.getElementById('reportPrintArea');
-  if (!printArea) return;
+  if (!printArea) { alert('Area di stampa non trovata'); return; }
 
   const clone = printArea.cloneNode(true);
   const socialSection = clone.querySelector('[style*="linear-gradient"]');
   if (socialSection) socialSection.remove();
 
-  const printWindow = window.open('', '_blank', 'width=800,height=600');
-  printWindow.document.write(`
-<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html>
 <head>
   <title>Report Partita</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 12px; background: white; min-height: 100vh; }
-    h1 { font-size: 18px; margin: 0 0 8px 0; }
-    h2 { font-size: 16px; margin: 12px 0 6px 0; }
-    h3 { font-size: 12px; margin: 10px 0 6px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px; }
-    th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #eee; }
+    body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 11px; background: white; }
+    h1 { font-size: 16px; margin: 0 0 6px 0; }
+    h2 { font-size: 14px; margin: 10px 0 5px 0; }
+    h3 { font-size: 12px; margin: 10px 0 5px 0; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 10px; }
+    th, td { padding: 3px 5px; text-align: left; border: 1px solid #eee; }
     th { background: #f5f5f5; font-weight: 600; }
-    @media print { body { padding: 10px; } @page { size: A4; margin: 10mm; } }
+    @page { size: A4; margin: 8mm; }
   </style>
 </head>
-<body>
-  ${clone.innerHTML}
-</body>
-</html>
-  `);
-  printWindow.document.close();
-  printWindow.focus();
-  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+<body>${clone.innerHTML}</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const printWindow = window.open(url, '_blank');
+  if (!printWindow) { alert('Popup bloccato! Abilita i popup per questo sito.'); return; }
+  printWindow.onload = () => { printWindow.print(); };
 }
 
 function generateSocialComment(report) {
@@ -404,6 +405,7 @@ async function generateSeasonalReport() {
     const report = await apiFetch('/squadre/' + window.YFM.squadraId + '/report-stagionale');
     renderSeasonalReport(report);
     document.getElementById('btnPrintSeasonalReport').style.display = 'inline-block';
+    document.getElementById('btnSaveSeasonalReport').style.display = 'inline-block';
   } catch (err) {
     alert('Errore: ' + err.message);
   } finally {
@@ -590,31 +592,33 @@ function renderSeasonalReport(report) {
 
 function printSeasonalReport() {
   const printArea = document.getElementById('seasonalPrintArea');
-  if (!printArea) return;
-  const printWindow = window.open('', '_blank', 'width=900,height=600');
-  printWindow.document.write(`<!DOCTYPE html>
+  if (!printArea) { alert('Area di stampa non trovata'); return; }
+
+  const html = `<!DOCTYPE html>
 <html>
 <head>
   <title>Report Stagionale</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; background: white; min-height: 100vh; }
-    h1 { font-size: 16px; margin: 0 0 6px 0; }
-    h2 { font-size: 14px; margin: 10px 0 6px 0; }
-    h3 { font-size: 12px; margin: 10px 0 6px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px; }
-    th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #eee; }
+    body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 10px; background: white; }
+    h1 { font-size: 14px; margin: 0 0 5px 0; }
+    h2 { font-size: 12px; margin: 8px 0 4px 0; }
+    h3 { font-size: 11px; margin: 8px 0 4px 0; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 9px; }
+    th, td { padding: 2px 4px; text-align: left; border: 1px solid #eee; }
     th { background: #f5f5f5; font-weight: 600; }
-    @media print { body { padding: 10px; } @page { size: A4 landscape; margin: 8mm; } }
+    @page { size: A4 landscape; margin: 5mm; }
   </style>
 </head>
-<body>` + printArea.innerHTML + `</body>
-</html>`);
-  printWindow.document.close();
-  printWindow.focus();
-  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+<body>${printArea.innerHTML}</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const printWindow = window.open(url, '_blank');
+  if (!printWindow) { alert('Popup bloccato! Abilita i popup per questo sito.'); return; }
+  printWindow.onload = () => { printWindow.print(); };
 }
 
 // ── REPORT GIOCATORE ──
@@ -627,6 +631,7 @@ async function generatePlayerReport() {
     const report = await apiFetch('/calciatori/' + playerId + '/report');
     renderPlayerReport(report);
     document.getElementById('btnPrintPlayerReport').style.display = 'inline-block';
+    document.getElementById('btnSavePlayerReport').style.display = 'inline-block';
   } catch (err) {
     alert('Errore: ' + err.message);
   } finally {
@@ -659,9 +664,14 @@ function renderPlayerReport(report) {
     gruppiStorico[key].eventi.push(e);
   });
   
-  // Ordina eventi per minuto
+  // Ordina eventi per minuto e gruppi per giornata crescente
   Object.values(gruppiStorico).forEach(g => {
     g.eventi.sort((a, b) => a.minuto - b.minuto);
+  });
+  const gruppiOrdinati = Object.values(gruppiStorico).sort((a, b) => {
+    const gA = parseInt(a.giornata) || 0;
+    const gB = parseInt(b.giornata) || 0;
+    return gA - gB;
   });
   
   container.innerHTML = `
@@ -710,11 +720,11 @@ function renderPlayerReport(report) {
       <!-- Storico Eventi Raggruppato per partita -->
       <div>
         <h3 style="margin:0 0 8px 0;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:6px;">📋 Storico Eventi</h3>
-        ${Object.keys(gruppiStorico).length > 0 ? Object.entries(gruppiStorico).map(([key, gruppo]) => `
+        ${gruppiOrdinati.length > 0 ? gruppiOrdinati.map(gruppo => `
           <div style="margin-bottom:14px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="background:#667eea;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;">
-                ${gruppo.giornata ? 'G.' + gruppo.giornata : ''}
+              <span style="background:#667eea;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;min-width:50px;text-align:center;">
+                ${gruppo.giornata ? 'G.' + String(gruppo.giornata).padStart(2, '0') : ''}
               </span>
               <span style="font-size:12px;font-weight:500;color:#333;">
                 vs ${gruppo.partita || 'Avversario'}
@@ -748,26 +758,66 @@ function getEventLabel(tipo) {
 
 function printPlayerReport() {
   const printArea = document.getElementById('playerPrintArea');
-  if (!printArea) return;
-  const printWindow = window.open('', '_blank', 'width=800,height=600');
-  printWindow.document.write(`<!DOCTYPE html>
+  if (!printArea) { alert('Area di stampa non trovata'); return; }
+
+  const html = `<!DOCTYPE html>
 <html>
 <head>
   <title>Report Giocatore</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; background: white; min-height: 100vh; }
-    h1 { font-size: 18px; margin: 0 0 8px 0; }
+    body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 11px; background: white; }
+    h1 { font-size: 16px; margin: 0 0 6px 0; }
     table { width: 100%; border-collapse: collapse; font-size: 10px; }
-    th, td { padding: 4px 6px; border-bottom: 1px solid #eee; }
-    @media print { body { padding: 10px; } @page { size: A4; margin: 8mm; } }
+    th, td { padding: 3px 5px; border: 1px solid #eee; }
+    @page { size: A4; margin: 8mm; }
   </style>
 </head>
-<body>` + printArea.innerHTML + `</body>
-</html>`);
-  printWindow.document.close();
-  printWindow.focus();
-  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+<body>${printArea.innerHTML}</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const printWindow = window.open(url, '_blank');
+  if (!printWindow) { alert('Popup bloccato! Abilita i popup per questo sito.'); return; }
+  printWindow.onload = () => { printWindow.print(); };
+}
+
+// Funzione Salva PDF (usa Blob per evitare problemi di popup)
+function saveReportAsPDF(reportType) {
+  const printAreaId = reportType === 'match' ? 'reportPrintArea' : 
+                      reportType === 'seasonal' ? 'seasonalPrintArea' : 'playerPrintArea';
+  const printArea = document.getElementById(printAreaId);
+  if (!printArea) { alert('Area di stampa non trovata'); return; }
+
+  const title = reportType === 'match' ? 'Report Partita' : 
+                reportType === 'seasonal' ? 'Report Stagionale' : 'Report Giocatore';
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <title>${title}</title>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 11px; background: white; }
+    h1 { font-size: 16px; margin: 0 0 6px 0; }
+    h2 { font-size: 14px; margin: 10px 0 5px 0; }
+    h3 { font-size: 12px; margin: 10px 0 5px 0; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 10px; }
+    th, td { padding: 3px 5px; text-align: left; border: 1px solid #eee; }
+    th { background: #f5f5f5; font-weight: 600; }
+    @page { size: A4; margin: 8mm; }
+  </style>
+</head>
+<body>${printArea.innerHTML}</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'application/pdf' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${title.replace(' ', '_')}_${new Date().toISOString().split('T')[0]}.html`;
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
