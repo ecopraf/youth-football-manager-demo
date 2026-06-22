@@ -98,65 +98,68 @@ export default async function loadDashboard() {
         @media (max-width: 900px) { .top-cards-grid { grid-template-columns: 1fr !important; } }
       </style>
       
-      <!-- Ultimi Risultati - Raggruppati per competizione -->
-      <div class="card" style="margin-bottom:20px;">
-        <h3 class="section-title">📋 Ultimi Risultati</h3>
-        ${(() => {
-          const risultati = (stats.risultati || []).slice(0, 10);
-          const gruppi = {};
-          risultati.forEach(r => {
-            const comp = r.competizione || 'Altro';
-            if (!gruppi[comp]) gruppi[comp] = [];
-            gruppi[comp].push(r);
-          });
-          return Object.entries(gruppi).map(([comp, partite]) => `
-            <div style="margin-bottom:16px;">
-              <h4 style="margin:0 0 8px 0;padding:6px 10px;background:#f0f4ff;color:#667eea;border-radius:6px;font-size:12px;font-weight:600;">
-                ${comp}
-              </h4>
-              ${partite.map(r => {
-                const isCasa = r.luogo === 'Casa';
-                const risultato = r.golFatti > r.golSubiti ? 'V' : r.golFatti === r.golSubiti ? 'P' : 'S';
-                const resultColor = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
-                const resultIcon = r.golFatti > r.golSubiti ? '✅' : r.golFatti === r.golSubiti ? '🤝' : '❌';
-                return `
-                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-bottom:1px solid #f0f0f0;cursor:pointer;" 
-                       onclick="window.YFM.openMatchDetail('${r.id}')">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                      <span style="font-size:11px;color:#667eea;font-weight:600;min-width:24px;">G.${r.giornata || '-'}</span>
-                      <span style="font-size:12px;color:var(--gray);">${formatDateShort(r.dataOra)}</span>
-                      <span style="font-size:11px;padding:2px 6px;background:${isCasa ? '#e6f3ff' : '#fff3cd'};border-radius:4px;color:${isCasa ? '#004085' : '#856404'};">
-                        ${isCasa ? '🏠 Casa' : '✈️ Trasferta'}
-                      </span>
+      <!-- Ultimi Risultati + Staff (2 colonne desktop) -->
+      <div class="dashboard-bottom-grid" style="display:grid;gap:20px;grid-template-columns:1fr;">
+        <!-- Ultimi Risultati -->
+        <div class="card">
+          <h3 class="section-title">📋 Ultimi Risultati</h3>
+          ${(() => {
+            const risultati = (stats.risultati || []).slice(0, 10);
+            const gruppi = {};
+            risultati.forEach(r => {
+              const comp = r.competizione || 'Altro';
+              if (!gruppi[comp]) gruppi[comp] = [];
+              gruppi[comp].push(r);
+            });
+            return Object.entries(gruppi).map(([comp, partite]) => `
+              <div style="margin-bottom:16px;">
+                <h4 style="margin:0 0 8px 0;padding:6px 10px;background:#f0f4ff;color:#667eea;border-radius:6px;font-size:12px;font-weight:600;">
+                  ${comp}
+                </h4>
+                ${partite.map(r => {
+                  const isCasa = r.luogo === 'Casa';
+                  const resultColor = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
+                  const resultIcon = r.golFatti > r.golSubiti ? '✅' : r.golFatti === r.golSubiti ? '🤝' : '❌';
+                  return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-bottom:1px solid #f0f0f0;cursor:pointer;" 
+                         onclick="window.YFM.openMatchDetail('${r.id}')">
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                        <span style="font-size:11px;color:#667eea;font-weight:600;min-width:20px;">G.${r.giornata || '-'}</span>
+                        <span style="font-size:12px;color:var(--gray);">${formatDateShort(r.dataOra)}</span>
+                        <span title="${isCasa ? 'Casa' : 'Trasferta'}" style="font-size:14px;">${isCasa ? '🏠' : '✈️'}</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:12px;color:var(--gray);">vs ${r.avversario}</span>
+                        <span style="font-size:16px;font-weight:bold;color:${resultColor};">${r.golFatti} - ${r.golSubiti}</span>
+                        <span style="font-size:12px;">${resultIcon}</span>
+                      </div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                      <span style="font-size:12px;color:var(--gray);">${isCasa ? '' : 'vs '}${r.avversario}${isCasa ? '' : ''}</span>
-                      <span style="font-size:16px;font-weight:bold;color:${resultColor};">${r.golFatti} - ${r.golSubiti}</span>
-                      <span style="font-size:12px;">${resultIcon}</span>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `).join('');
-        })()}
-      </div>
-      
-      <!-- Staff -->
-      <div class="card">
-        <h3 class="section-title">👥 Staff</h3>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${['allenatore','dirigente','dirigente2','preparatore_atletico','allenatore_portieri'].filter(r => s[r]).map(r => `
-            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f0f0f0;">
-              <span style="font-size:11px;font-weight:600;color:var(--primary);min-width:80px;">
-                ${r==='allenatore'?'Allenatore':r==='dirigente'?'1° Dirigente':r==='dirigente2'?'2° Dirigente':r==='preparatore_atletico'?'Prep. Atl.':'All. Portieri'}
-              </span>
-              <span style="font-weight:500;">${s[r]}</span>
-            </div>
-          `).join('')}
-          ${!s.allenatore && !s.dirigente ? '<p style="color:var(--gray);">Nessuno staff registrato</p>' : ''}
+                  `;
+                }).join('')}
+              </div>
+            `).join('');
+          })()}
+        </div>
+        
+        <!-- Staff -->
+        <div class="card">
+          <h3 class="section-title">👥 Staff</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${['allenatore','dirigente','dirigente2','preparatore_atletico','allenatore_portieri'].filter(r => s[r]).map(r => `
+              <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f0f0f0;">
+                <span style="font-size:11px;font-weight:600;color:var(--primary);min-width:80px;">
+                  ${r==='allenatore'?'Allenatore':r==='dirigente'?'1° Dirigente':r==='dirigente2'?'2° Dirigente':r==='preparatore_atletico'?'Prep. Atl.':'All. Portieri'}
+                </span>
+                <span style="font-weight:500;">${s[r]}</span>
+              </div>
+            `).join('')}
+            ${!s.allenatore && !s.dirigente ? '<p style="color:var(--gray);">Nessuno staff registrato</p>' : ''}
+          </div>
         </div>
       </div>
+      <style>
+        @media (min-width: 900px) { .dashboard-bottom-grid { grid-template-columns: 1.5fr 1fr !important; } }
+      </style>
     `;
     
     document.getElementById('btnNewMatch').addEventListener('click', () => {

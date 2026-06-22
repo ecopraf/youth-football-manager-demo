@@ -296,48 +296,38 @@ function printReport() {
   const printArea = document.getElementById('reportPrintArea');
   if (!printArea) return;
 
-  // Clona l'area e rimuove il commento social
   const clone = printArea.cloneNode(true);
   const socialSection = clone.querySelector('[style*="linear-gradient"]');
   if (socialSection) socialSection.remove();
 
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
   printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Report Partita</title>
-      <meta charset="UTF-8">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 11px; }
-        h1 { font-size: 18px; margin: 0 0 8px 0; }
-        h2 { font-size: 16px; margin: 12px 0 6px 0; }
-        h3 { font-size: 12px; margin: 10px 0 6px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px; }
-        th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f5f5f5; font-weight: 600; }
-        .score { font-size: 28px; font-weight: bold; }
-        .stats-row { margin-bottom: 8px; }
-        .event-item { padding: 4px 6px; margin: 2px 0; background: #f8f8f8; border-radius: 4px; font-size: 10px; }
-        .event-item span { margin-right: 8px; }
-        @media print { 
-          body { padding: 10px; }
-          @page { size: A4; margin: 10mm; }
-        }
-      </style>
-    </head>
-    <body>
-      ${clone.innerHTML}
-    </body>
-    </html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Report Partita</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 12px; background: white; min-height: 100vh; }
+    h1 { font-size: 18px; margin: 0 0 8px 0; }
+    h2 { font-size: 16px; margin: 12px 0 6px 0; }
+    h3 { font-size: 12px; margin: 10px 0 6px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px; }
+    th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f5f5f5; font-weight: 600; }
+    @media print { body { padding: 10px; } @page { size: A4; margin: 10mm; } }
+  </style>
+</head>
+<body>
+  ${clone.innerHTML}
+</body>
+</html>
   `);
   printWindow.document.close();
   printWindow.focus();
-  setTimeout(() => {
-    printWindow.print();
-    printWindow.close();
-  }, 250);
+  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
 }
 
 function generateSocialComment(report) {
@@ -601,29 +591,30 @@ function renderSeasonalReport(report) {
 function printSeasonalReport() {
   const printArea = document.getElementById('seasonalPrintArea');
   if (!printArea) return;
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open('', '_blank', 'width=900,height=600');
   printWindow.document.write(`<!DOCTYPE html>
 <html>
 <head>
   <title>Report Stagionale</title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; padding: 8px; color: #333; font-size: 9px; }
-    h1 { font-size: 14px; margin: 0 0 4px 0; }
-    h2 { font-size: 12px; margin: 6px 0 4px 0; }
-    h3 { font-size: 10px; margin: 6px 0 4px 0; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 8px; }
-    th, td { padding: 2px 4px; text-align: left; border-bottom: 1px solid #eee; }
+    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; background: white; min-height: 100vh; }
+    h1 { font-size: 16px; margin: 0 0 6px 0; }
+    h2 { font-size: 14px; margin: 10px 0 6px 0; }
+    h3 { font-size: 12px; margin: 10px 0 6px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px; }
+    th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #eee; }
     th { background: #f5f5f5; font-weight: 600; }
-    @media print { body { padding: 5px; } @page { size: A4 landscape; margin: 5mm; } }
+    @media print { body { padding: 10px; } @page { size: A4 landscape; margin: 8mm; } }
   </style>
 </head>
-<body>${printArea.innerHTML}</body>
+<body>` + printArea.innerHTML + `</body>
 </html>`);
   printWindow.document.close();
   printWindow.focus();
-  setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
+  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
 }
 
 // ── REPORT GIOCATORE ──
@@ -651,12 +642,26 @@ function renderPlayerReport(report) {
     ? (report.stats.gol / report.stats.partiteGiocate).toFixed(2) : 0;
   const minutiTotali = report.stats.partiteGiocate * 90;
   
-  // Raggruppa storico per competizione
+  // Raggruppa storico per competizione e partita (giornata)
   const gruppiStorico = {};
   (report.storico || []).forEach(e => {
-    const key = e.competizione || 'Altro';
-    if (!gruppiStorico[key]) gruppiStorico[key] = [];
-    gruppiStorico[key].push(e);
+    // Crea chiave univoca per partita: competizione + giornata
+    const key = (e.competizione || 'Altro') + '||' + (e.giornata || '') + '||' + (e.partita || '') + '||' + (e.data || '');
+    if (!gruppiStorico[key]) {
+      gruppiStorico[key] = {
+        competizione: e.competizione || 'Altro',
+        giornata: e.giornata,
+        partita: e.partita,
+        data: e.data,
+        eventi: []
+      };
+    }
+    gruppiStorico[key].eventi.push(e);
+  });
+  
+  // Ordina eventi per minuto
+  Object.values(gruppiStorico).forEach(g => {
+    g.eventi.sort((a, b) => a.minuto - b.minuto);
   });
   
   container.innerHTML = `
@@ -702,20 +707,26 @@ function renderPlayerReport(report) {
         @media (max-width: 450px) { .player-stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
       </style>
       
-      <!-- Storico Eventi Raggruppato -->
+      <!-- Storico Eventi Raggruppato per partita -->
       <div>
         <h3 style="margin:0 0 8px 0;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:6px;">📋 Storico Eventi</h3>
-        ${Object.keys(gruppiStorico).length > 0 ? Object.entries(gruppiStorico).map(([comp, eventi]) => `
-          <div style="margin-bottom:16px;">
-            <h4 style="margin:0 0 6px 0;padding:6px 10px;background:#667eea;color:white;border-radius:6px;font-size:11px;">${comp}</h4>
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              ${eventi.map(e => `
-                <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#f8f9fa;border-radius:6px;font-size:11px;">
-                  <span style="font-weight:bold;color:#667eea;min-width:35px;">${e.minuto}'</span>
+        ${Object.keys(gruppiStorico).length > 0 ? Object.entries(gruppiStorico).map(([key, gruppo]) => `
+          <div style="margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#667eea;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;">
+                ${gruppo.giornata ? 'G.' + gruppo.giornata : ''}
+              </span>
+              <span style="font-size:12px;font-weight:500;color:#333;">
+                vs ${gruppo.partita || 'Avversario'}
+              </span>
+              <span style="font-size:10px;color:#888;">${formatDateShort(gruppo.data)}</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;">
+              ${gruppo.eventi.map(e => `
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:${e.tipo === 'GOAL' ? '#d4edda' : e.tipo === 'ASSIST' ? '#cce5ff' : e.tipo === 'YELLOW' ? '#fff3cd' : '#f8d7da'};border-radius:4px;font-size:11px;">
+                  <span style="font-weight:bold;color:#667eea;">${e.minuto}'</span>
                   <span>${getEventIcon(e.tipo)}</span>
-                  <span style="flex:1;">${e.partita || 'Evento'}</span>
-                  ${e.giornata ? `<span style="background:#e0e0e0;padding:2px 6px;border-radius:4px;font-size:10px;color:#666;">G.${e.giornata}</span>` : ''}
-                </div>
+                </span>
               `).join('')}
             </div>
           </div>
@@ -738,24 +749,25 @@ function getEventLabel(tipo) {
 function printPlayerReport() {
   const printArea = document.getElementById('playerPrintArea');
   if (!printArea) return;
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
   printWindow.document.write(`<!DOCTYPE html>
 <html>
 <head>
   <title>Report Giocatore</title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; padding: 10px; color: #333; font-size: 10px; }
-    h1 { font-size: 16px; margin: 0 0 4px 0; }
-    table { width: 100%; border-collapse: collapse; font-size: 9px; }
-    th, td { padding: 3px 5px; border-bottom: 1px solid #eee; }
-    @media print { body { padding: 5px; } @page { size: A4; margin: 8mm; } }
+    body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; background: white; min-height: 100vh; }
+    h1 { font-size: 18px; margin: 0 0 8px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    th, td { padding: 4px 6px; border-bottom: 1px solid #eee; }
+    @media print { body { padding: 10px; } @page { size: A4; margin: 8mm; } }
   </style>
 </head>
-<body>${printArea.innerHTML}</body>
+<body>` + printArea.innerHTML + `</body>
 </html>`);
   printWindow.document.close();
   printWindow.focus();
-  setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
+  setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
 }
