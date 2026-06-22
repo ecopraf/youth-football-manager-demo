@@ -105,14 +105,12 @@ function renderReport(report) {
 
       <!-- Header Report -->
       <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:24px;">
-        <h2 style="margin:0 0 8px 0;">${report.societa}</h2>
-        <p style="margin:0;color:#666;">${report.categoria}</p>
-        <h1 style="margin:16px 0;font-size:28px;">${report.societa} vs ${report.partita.avversario}</h1>
+        <h1 style="margin:0 0 8px 0;font-size:28px;">${report.societa} vs ${report.partita.avversario}</h1>
         <p style="margin:0;color:#666;">
           ${formatDate(report.partita.dataOra)} · ${report.partita.competizione}
           ${report.partita.giornata ? ' · Giornata ' + report.partita.giornata : ''}
+          ${report.partita.luogo ? (report.partita.luogo.toLowerCase().includes('casa') ? '(Casa)' : '(Trasferta)') : ''}
         </p>
-        <p style="margin:4px 0 0 0;color:#666;">${report.partita.luogo}</p>
       </div>
 
       <!-- Score e Stats -->
