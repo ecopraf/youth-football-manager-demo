@@ -436,7 +436,7 @@ function renderSeasonalReport(report) {
       </div>
       
       <!-- Stats Squadra -->
-      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;">
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;">
         <div class="stat-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:12px 6px;border-radius:8px;text-align:center;color:white;">
           <div style="font-size:18px;font-weight:bold;">${report.punti || 0}</div>
           <div style="font-size:9px;opacity:0.9;">Punti</div>
@@ -471,8 +471,8 @@ function renderSeasonalReport(report) {
         </div>
       </div>
       <style>
-        @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(4, 1fr) !important; } }
-        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 800px) { .stats-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
         @media (max-width: 400px) { .stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
       </style>
       
@@ -565,27 +565,29 @@ function renderSeasonalReport(report) {
           return Object.entries(gruppi).map(([comp, partite]) => `
             <div style="margin-bottom:20px;">
               <h4 style="margin:0 0 8px 0;padding:8px 12px;background:#667eea;color:white;border-radius:6px;font-size:13px;">${comp}</h4>
-              <table style="width:100%;border-collapse:collapse;">
+              <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
                 <thead>
                   <tr style="background:#f0f0f0;">
-                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">G.</th>
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:30px;">G.</th>
                     <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;">Data</th>
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">C/T</th>
                     <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;">Avversario</th>
-                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">GF</th>
-                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:40px;">GS</th>
-                    <th style="padding:6px;text-align:left;border-bottom:2px solid #dee2e6;font-size:10px;display:none;@media(min-width:600px){display:table-cell;}">Luogo</th>
+                    <th style="padding:6px;text-align:center;border-bottom:2px solid #dee2e6;font-size:10px;width:70px;">Risultato</th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${partite.map((p, i) => `
+                  ${partite.map((p, i) => {
+                    const isCasa = p.luogo === 'Casa';
+                    const resultClass = p.golCasa > p.golOspiti ? 'color:#28a745;' : p.golCasa === p.golOspiti ? 'color:#856404;' : 'color:#dc3545;';
+                    const resultIcon = p.golCasa > p.golOspiti ? '✅' : p.golCasa === p.golOspiti ? '🤝' : '❌';
+                    return `
                     <tr style="background:${i % 2 === 0 ? 'white' : '#f8f9fa'};">
                       <td style="padding:6px;text-align:center;font-weight:bold;color:#667eea;font-size:10px;">${p.giornata || '-'}</td>
                       <td style="padding:6px;font-size:10px;">${formatDateShort(p.data)}</td>
+                      <td style="padding:6px;text-align:center;font-size:10px;"><span style="padding:2px 4px;background:${isCasa ? '#e6f3ff' : '#fff3cd'};border-radius:3px;color:${isCasa ? '#004085' : '#856404'};font-size:9px;">${isCasa ? 'C' : 'T'}</span></td>
                       <td style="padding:6px;font-size:10px;">${p.avversario}</td>
-                      <td style="padding:6px;text-align:center;font-weight:bold;color:#28a745;font-size:10px;">${p.golCasa}</td>
-                      <td style="padding:6px;text-align:center;font-weight:bold;color:#dc3545;font-size:10px;">${p.golOspiti}</td>
-                      <td style="padding:6px;font-size:10px;color:#666;display:none;@media(min-width:600px){display:table-cell;}">${p.luogo || '-'}</td>
-                    </tr>`).join('')}
+                      <td style="padding:6px;text-align:center;font-size:10px;"><span style="font-weight:bold;${resultClass}">${p.golCasa} - ${p.golOspiti}</span> <span style="font-size:10px;">${resultIcon}</span></td>
+                    </tr>`;}).join('')}
                 </tbody>
               </table>
             </div>

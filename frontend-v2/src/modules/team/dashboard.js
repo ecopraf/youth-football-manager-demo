@@ -98,21 +98,48 @@ export default async function loadDashboard() {
         @media (max-width: 900px) { .top-cards-grid { grid-template-columns: 1fr !important; } }
       </style>
       
-      <!-- Ultimi Risultati -->
+      <!-- Ultimi Risultati - Raggruppati per competizione -->
       <div class="card" style="margin-bottom:20px;">
         <h3 class="section-title">📋 Ultimi Risultati</h3>
-        ${(stats.risultati || []).slice(0, 5).map(r => `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;" 
-               onclick="window.YFM.openMatchDetail('${r.id}')">
-            <div>
-              <span style="font-size:12px;color:var(--gray);">${formatDateShort(r.dataOra)}</span><br>
-              <strong>vs ${r.avversario}</strong>
+        ${(() => {
+          const risultati = (stats.risultati || []).slice(0, 10);
+          const gruppi = {};
+          risultati.forEach(r => {
+            const comp = r.competizione || 'Altro';
+            if (!gruppi[comp]) gruppi[comp] = [];
+            gruppi[comp].push(r);
+          });
+          return Object.entries(gruppi).map(([comp, partite]) => `
+            <div style="margin-bottom:16px;">
+              <h4 style="margin:0 0 8px 0;padding:6px 10px;background:#f0f4ff;color:#667eea;border-radius:6px;font-size:12px;font-weight:600;">
+                ${comp}
+              </h4>
+              ${partite.map(r => {
+                const isCasa = r.luogo === 'Casa';
+                const risultato = r.golFatti > r.golSubiti ? 'V' : r.golFatti === r.golSubiti ? 'P' : 'S';
+                const resultColor = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
+                const resultIcon = r.golFatti > r.golSubiti ? '✅' : r.golFatti === r.golSubiti ? '🤝' : '❌';
+                return `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-bottom:1px solid #f0f0f0;cursor:pointer;" 
+                       onclick="window.YFM.openMatchDetail('${r.id}')">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:11px;color:#667eea;font-weight:600;min-width:24px;">G.${r.giornata || '-'}</span>
+                      <span style="font-size:12px;color:var(--gray);">${formatDateShort(r.dataOra)}</span>
+                      <span style="font-size:11px;padding:2px 6px;background:${isCasa ? '#e6f3ff' : '#fff3cd'};border-radius:4px;color:${isCasa ? '#004085' : '#856404'};">
+                        ${isCasa ? '🏠 Casa' : '✈️ Trasferta'}
+                      </span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:12px;color:var(--gray);">${isCasa ? '' : 'vs '}${r.avversario}${isCasa ? '' : ''}</span>
+                      <span style="font-size:16px;font-weight:bold;color:${resultColor};">${r.golFatti} - ${r.golSubiti}</span>
+                      <span style="font-size:12px;">${resultIcon}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
-            <div style="font-size:18px;font-weight:bold;color:${r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C'};">
-              ${r.golFatti} - ${r.golSubiti}
-            </div>
-          </div>
-        `).join('')}
+          `).join('');
+        })()}
       </div>
       
       <!-- Staff -->
