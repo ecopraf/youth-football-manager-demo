@@ -107,15 +107,25 @@ export default async function loadDashboard() {
             const risultati = (stats.risultati || []).slice(0, 5);
             if (risultati.length === 0) return '<p style="color:var(--gray);text-align:center;padding:20px;">Nessuna partita disputata</p>';
             
+            // Calcola stats solo per le ultime 5
+            const ultimi5 = risultati.slice(0, 5);
+            const gf5 = ultimi5.reduce((sum, r) => sum + (r.golFatti || 0), 0);
+            const gs5 = ultimi5.reduce((sum, r) => sum + (r.golSubiti || 0), 0);
+            const dr5 = gf5 - gs5;
+            const vittorie5 = ultimi5.filter(r => r.golFatti > r.golSubiti).length;
+            const pareggi5 = ultimi5.filter(r => r.golFatti === r.golSubiti).length;
+            const sconfitte5 = ultimi5.filter(r => r.golFatti < r.golSubiti).length;
+            const punti5 = vittorie5 * 3 + pareggi5;
+            
             // Trend: ultimi 5 risultati
-            const trendHtml = risultati.map(r => {
+            const trendHtml = ultimi5.map(r => {
               const esito = r.golFatti > r.golSubiti ? 'V' : r.golFatti === r.golSubiti ? 'P' : 'S';
               const color = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
               return `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:${color};color:white;font-size:11px;font-weight:bold;border-radius:6px;">${esito}</span>`;
             }).join('<span style="color:#ddd;margin:0 4px;">—</span>');
             
             const gruppi = {};
-            (stats.risultati || []).slice(0, 5).forEach(r => {
+            ultimi5.forEach(r => {
               const comp = r.competizione || 'Altro';
               if (!gruppi[comp]) gruppi[comp] = [];
               gruppi[comp].push(r);
@@ -131,22 +141,18 @@ export default async function loadDashboard() {
                 <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
                   ${trendHtml}
                 </div>
-                <div style="display:flex;justify-content:space-around;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);">
-                  <div style="text-align:center;">
-                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.vittorie}</div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Vittorie</div>
+                <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);">
+                  <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;text-align:center;min-width:60px;">
+                    <div style="font-size:22px;font-weight:bold;color:white;">${gf5}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Gol Fatti</div>
                   </div>
-                  <div style="text-align:center;">
-                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.pareggi}</div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Pareggi</div>
+                  <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;text-align:center;min-width:60px;">
+                    <div style="font-size:22px;font-weight:bold;color:white;">${gs5}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Gol Subiti</div>
                   </div>
-                  <div style="text-align:center;">
-                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.sconfitte}</div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Sconfitte</div>
-                  </div>
-                  <div style="text-align:center;">
-                    <div style="font-size:20px;font-weight:bold;color:white;">${stats.punti}</div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Punti</div>
+                  <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;text-align:center;min-width:60px;">
+                    <div style="font-size:22px;font-weight:bold;color:${dr5 >= 0 ? '#4ade80' : '#f87171'};">${dr5 >= 0 ? '+' : ''}${dr5}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.8);">Diff. Reti</div>
                   </div>
                 </div>
               </div>
