@@ -464,4 +464,155 @@ app.get('/api/partite/:partitaId/report', async (req, res) => {
   }
 });
 
+// ── REPORT STAGIONALE ──
+app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
+  try {
+    const { squadraId } = req.params;
+    
+    // Dati squadra
+    const { data: squadra } = await supabase
+      .from('squadra')
+      .select('*, stagione:stagione_id(nome, workspace_id)')
+      .eq('id', squadraId)
+      .single();
+    if (!squadra) return res.status(404).json({ error: 'Squadra non trovata' });
+
+    // Nome società
+    let societaNome = 'ASD';
+    if (squadra.stagione?.workspace_id) {
+      const { data: workspace } = await supabase
+        .from('workspace').select('nome').eq('id', squadra.stagione.workspace_id).single();
+      societaNome = workspace?.nome || 'ASD';
+    }
+
+    // Tutte le partite della squadra
+    const { data: partite } = await supabase
+      .from('partita')
+      .select('id, data_ora, avversario, luogo, competizione, giornata')
+      .eq('squadra_id', squadraId)
+      .order('data_ora');
+
+    // Calcola statistiche aggregate
+    let vittorie = 0, pareggi = 0, sconfitte = 0;
+    let golFatti = 0, golSubiti = 0;
+    const marcatoriMap = {};
+    const presenzeMap = {};
+
+    for (const p of (partite || [])) {
+      const { data: eventi } = await supabase
+        .from('evento_partita')
+        .select('tipo_evento_codice, calciatore_principale_id')
+        .eq('partita_id', p.id);
+      
+      const golCasa = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length;
+      golFatti += golCasa;
+      
+      // Marcatori
+      (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').forEach(e => {
+        const id = e.calciatore_principale_id;
+        marcatoriMap[id] = (marcatoriMap[id] || 0) + 1;
+      });
+      
+      // Presenze
+      const { data: formazione } = await supabase
+        .from('formazione_partita').select('calciatore_id').eq('partita_id', p.id);
+      (formazione || []).forEach(f => {
+        presenzeMap[f.calciatore_id] = (presenzeMap[f.calciatore_id] || 0) + 1;
+      });
+    }
+
+    // Top marcatori (recupera nomi)
+    const marcatoriIds = Object.entries(marcatoriMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topMarcatori = [];
+    for (const [id, gol] of marcatoriIds) {
+      const { data: calciatore } = await supabase
+        .from('calciatore').select('nome, cognome').eq('id', id).single();
+      if (calciatore) {
+        topMarcatori.push({
+          id,
+          nome: calciatore.nome,
+          cognome: calciatore.cognome,
+          gol
+        });
+      }
+    }
+
+    res.json({
+      societa: societaNome,
+      squadra: { nome: squadra.nome, categoria: squadra.categoria },
+      stagione: squadra.stagione?.nome || '',
+      partiteGiocate: (partite || []).length,
+      vittorie, pareggi, sconfitte,
+      golFatti, golSubiti,
+      partite: (partite || []).map(p => ({
+        id: p.id,
+        data: p.data_ora,
+        avversario: p.avversario,
+        luogo: p.luogo,
+        competizione: p.competizione,
+        giornata: p.giornata
+      })),
+      topMarcatori,
+      topPresenze: Object.entries(presenzeMap).sort((a, b) => b[1] - a[1]).slice(0, 5)
+        .map(([id, presenze]) => ({ id, presenze }))
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── REPORT GIOCATORE ──
+app.get('/api/calciatori/:calciatoreId/report', async (req, res) => {
+  try {
+    const { calciatoreId } = req.params;
+    
+    // Dati giocatore
+    const { data: giocatore } = await supabase
+      .from('calciatore').select('*').eq('id', calciatoreId).single();
+    if (!giocatore) return res.status(404).json({ error: 'Giocatore non trovato' });
+
+    // Tutti gli eventi del giocatore
+    const { data: eventi } = await supabase
+      .from('evento_partita')
+      .select('*, partita:partita_id(data_ora, avversario, competizione)')
+      .eq('calciatore_principale_id', calciatoreId)
+      .order('minuto');
+
+    // Partite giocate
+    const partiteIds = [...new Set((eventi || []).map(e => e.partita_id))];
+    
+    // Stats aggregate
+    const stats = {
+      gol: (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length,
+      assist: (eventi || []).filter(e => e.tipo_evento_codice === 'ASSIST').length,
+      ammonizioni: (eventi || []).filter(e => e.tipo_evento_codice === 'YELLOW').length,
+      espulsioni: (eventi || []).filter(e => e.tipo_evento_codice === 'RED').length,
+      partiteGiocate: partiteIds.length
+    };
+
+    // Storico eventi
+    const storico = (eventi || []).map(e => ({
+      minuto: e.minuto,
+      tipo: e.tipo_evento_codice,
+      partita: e.partita?.avversario || '',
+      data: e.partita?.data_ora,
+      competizione: e.partita?.competizione || ''
+    }));
+
+    res.json({
+      giocatore: {
+        id: giocatore.id,
+        nome: giocatore.nome,
+        cognome: giocatore.cognome,
+        data_nascita: giocatore.data_nascita,
+        nazionalita: giocatore.nazionalita
+      },
+      stats,
+      storico
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = app;
