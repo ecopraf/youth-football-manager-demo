@@ -6,10 +6,22 @@ export const API_BASE = (() => {
   return 'https://youth-football-manager-backend.vercel.app/api';
 })();
 
+// Warmup: ping al backend all'avvio
+let warmed = false;
+export async function warmup() {
+  if (warmed) return;
+  try {
+    await fetch(`${API_BASE}/health`, { timeout: 5000 }).catch(() => {});
+    warmed = true;
+  } catch(e) {}
+}
+// Avvia warmup in background
+warmup();
+
 // Funzione per chiamate API con timeout e gestione errori
 export async function apiFetch(endpoint, options = {}) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(() => controller.abort(), 30000); // 30 sec timeout
   
   // Recupera token se presente
   const token = localStorage.getItem('yfm_token');

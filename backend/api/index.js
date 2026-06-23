@@ -1,16 +1,43 @@
 require("dotenv").config();
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+// Supabase con keep-alive e timeout esteso
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+  auth: { persistSession: false },
+  global: { fetch: (url, options) => {
+    const agent = new http.Agent({ keepAlive: true, timeout: 60000 });
+    return fetch(url, { ...options, agent });
+  }}
+});
 const JWT_SECRET = process.env.JWT_SECRET || 'yfm-secret-key-change-in-production';
 
-app.use(cors()); app.use(express.json({ limit: '5mb' }));
-app.get('/api/health', async (req, res) => res.json({ status: 'ok', version: '3.10' }));
+// CORS ottimizzato
+app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization', 'apikey'] })); 
+app.use(express.json({ limit: '5mb' }));
+
+// Health con warmup
+app.get('/api/health', async (req, res) => {
+  try { await supabase.from('squadra').select('id').limit(1); } catch(e) {}
+  res.json({ status: 'ok', version: '3.11', warm: true });
+});
+
+// Endpoint warmup dedicato per mantenere il backend attivo
+app.get('/api/warmup', async (req, res) => {
+  try { 
+    await supabase.from('squadra').select('id').limit(1); 
+    res.json({ warm: true, time: new Date().toISOString() }); 
+  } catch(e) { 
+    res.status(500).json({ warm: false, error: e.message }); 
+  }
+});
 
 // ── AUTH MIDDLEWARE ──
 const authMiddleware = async (req, res, next) => {
