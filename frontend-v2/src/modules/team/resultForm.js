@@ -152,12 +152,12 @@ function renderForm(mid, match, eventi, giocatori, modal) {
 async function saveEventi(mid, modal, eventi, giocatori) {
   showLoading();
   try {
-    await apiFetch('/partite/' + mid + '/eventi', { method: 'DELETE' }).catch(() => {});
+    await apiFetch('/partite/' + mid + '/evento-item', { method: 'DELETE' }).catch(() => {});
     
     for (const e of eventi) {
       const body = { tipo: e.tipo, minuto: parseInt(e.minuto) };
       if (e.principale_id) body.calciatorePrincipaleId = e.principale_id;
-      await apiFetch('/partite/' + mid + '/eventi', { method: 'POST', body: JSON.stringify(body) });
+      await apiFetch('/partite/' + mid + '/evento-item', { method: 'POST', body: JSON.stringify(body) });
     }
     
     hideLoading();

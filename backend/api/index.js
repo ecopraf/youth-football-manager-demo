@@ -159,14 +159,12 @@ app.delete('/api/partite/:partitaId/eventi', async (req, res) => {
   }
 });
 
-// POST /api/partite/:partitaId/eventi - Inserisci evento
-app.post('/api/partite/:partitaId/eventi', async (req, res) => {
+// POST /api/partite/:partitaId/evento-item - Inserisci evento (FIX: no null fields)
+app.post('/api/partite/:partitaId/evento-item', async (req, res) => {
   try {
     const { tipo, calciatorePrincipaleId, calciatoreSecondarioId, minuto, note } = req.body;
-    if (!tipo) {
-      return res.status(400).json({ error: 'Tipo è obbligatorio' });
-    }
-    // Costruisci oggetto dinamicamente - non includere campi se undefined/null
+    if (!tipo) return res.status(400).json({ error: 'Tipo è obbligatorio' });
+    
     const evento = {
       partita_id: req.params.partitaId,
       tipo_evento_codice: tipo,
@@ -176,11 +174,7 @@ app.post('/api/partite/:partitaId/eventi', async (req, res) => {
     if (calciatoreSecondarioId) evento.calciatore_secondario_id = calciatoreSecondarioId;
     if (note) evento.note = note;
     
-    const { data, error } = await supabase
-      .from('evento_partita')
-      .insert(evento)
-      .select()
-      .single();
+    const { data, error } = await supabase.from('evento_partita').insert(evento).select().single();
     if (error) throw error;
     res.status(201).json(data);
   } catch (err) {
