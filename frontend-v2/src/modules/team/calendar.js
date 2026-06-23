@@ -1,5 +1,5 @@
 import { apiFetch } from '../../services/api';
-import { formatDate, formatDateShort, getAvatarColor } from '../../utils/formatters';
+import { formatDate, formatDateShort } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
 
 let allMatches = [];
@@ -15,36 +15,65 @@ export default async function loadCalendar() {
     window.YFM.allMatches = matches;
 
     const now = new Date();
-    const next = matches.find(m => new Date(m.data_ora) > now);
-    const past = matches.filter(m => m !== next).sort((a, b) => new Date(b.data_ora) - new Date(a.data_ora));
+    
+    // Separa future e passate
+    const futureMatches = matches
+      .filter(m => new Date(m.data_ora) >= now)
+      .sort((a, b) => new Date(a.data_ora) - new Date(b.data_ora));
+    
+    const pastMatches = matches
+      .filter(m => new Date(m.data_ora) < now)
+      .sort((a, b) => new Date(b.data_ora) - new Date(a.data_ora));
 
-    c.innerHTML = `
+    // Prossima partita (la prima delle future)
+    const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null;
+    const otherFutureMatches = futureMatches.slice(1);
+
+    let html = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
         <div><h1 class="page-title">Calendario ${window.YFM.getSquadraName()}</h1></div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-primary" id="btnAdd">+ Nuova</button>
           <button class="btn btn-secondary" id="btnImport" style="font-size:13px;">📥 Importa CSV</button>
         </div>
-      </div>
-      ${next ? `
+      </div>`;
+
+    // PROSSIMA PARTITA in evidenza
+    if (nextMatch) {
+      html += `
         <div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);background:#E8F8F0;">
           <h3 class="section-title">⚽ PROSSIMA PARTITA</h3>
-          ${renderMatchCard(next, stats)}
-        </div>` : ''}
-      <div id="matchList">
-        ${past.map(m => `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`).join('')}
-      </div>
-    `;
+          ${renderMatchCard(nextMatch, stats, true)}
+        </div>`;
+    }
+
+    // ALTRE PARTITE FUTURE
+    if (otherFutureMatches.length > 0) {
+      html += `<h3 class="section-title" style="margin:20px 0 12px 0;">📅 Prossime Partite</h3>`;
+      otherFutureMatches.forEach(m => {
+        html += `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
+      });
+    }
+
+    // PARTITE GIOCATE
+    if (pastMatches.length > 0) {
+      html += `<h3 class="section-title" style="margin:20px 0 12px 0;">🏆 Partite Giocate</h3>`;
+      pastMatches.forEach(m => {
+        html += `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
+      });
+    }
+
+    c.innerHTML = html;
 
     document.getElementById('btnAdd').addEventListener('click', () => openMatchForm());
     document.getElementById('btnImport').addEventListener('click', openImportCSV);
-    attachCardListeners(stats);
+    attachCardListeners();
   } catch (e) {
     c.innerHTML = '<div class="error-box">' + e.message + '</div>';
   }
 }
 
-function attachCardListeners(stats) {
+function attachCardListeners() {
   document.querySelectorAll('.btn-editm').forEach(b => {
     b.addEventListener('click', (e) => { e.stopPropagation(); openMatchForm(b.dataset.mid); });
   });
@@ -53,34 +82,37 @@ function attachCardListeners(stats) {
   });
 }
 
-export function renderMatchCard(m, stats) {
+export function renderMatchCard(m, stats, isNext = false) {
   const r = (stats?.risultati || []).find(x => x.id === m.id);
   const hasResult = !!r;
   const isPast = new Date(m.data_ora) < new Date();
 
-  const L = `
+  let L = `
     <div class="match-date">${formatDate(m.data_ora)}</div>
     <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
     <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>`;
 
   let R = '';
+  
   if (hasResult) {
     const color = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
     R += `<div style="font-size:22px;font-weight:bold;color:${color};cursor:pointer;min-width:50px;text-align:center;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${r.golFatti} - ${r.golSubiti}</div>`;
-  } else if (isPast) {
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
+  } else if (!isPast) {
+    // Partita futura: mostra pulsante per inserire risultato
+    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">📊 Risultato</button>`;
+  } else {
     R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
-  const convLabel = isPast ? 'Vedi Conv.' : 'Convoca';
-  const distLabel = isPast ? 'Vedi Dist.' : 'Distinta';
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',${isPast})">📋 ${convLabel}</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 ${distLabel}</button>`;
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',${isPast})">📋 ${isPast ? 'Conv.' : 'Convoca'}</button>`;
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 ${isPast ? 'Dist.' : 'Distinta'}</button>`;
+  
   if (!isPast) {
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
-  } else {
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">📊 Risultato</button>`;
   }
+  
   R += `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>`;
   R += `<button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
 
@@ -154,12 +186,7 @@ function createModal(title, content, footer, maxW = '600px') {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
   modal.id = 'currentModal';
-  modal.innerHTML = `
-    <div class="modal-content" style="max-width:${maxW};">
-      <div class="modal-header"><h2>${title}</h2><button class="modal-close-btn" id="modalCloseX">×</button></div>
-      <div class="modal-body">${content}</div>
-      ${footer ? '<div class="modal-footer">' + footer + '</div>' : ''}
-    </div>`;
+  modal.innerHTML = '<div class="modal-content" style="max-width:' + maxW + ';"><div class="modal-header"><h2>' + title + '</h2><button class="modal-close-btn" id="modalCloseX">×</button></div><div class="modal-body">' + content + '</div>' + (footer ? '<div class="modal-footer">' + footer + '</div>' : '') + '</div>';
   document.body.appendChild(modal);
   const close = () => { const m = document.getElementById('currentModal'); if (m) m.remove(); };
   document.getElementById('modalCloseX').addEventListener('click', close);
