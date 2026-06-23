@@ -29,7 +29,28 @@ export default async function loadCalendar() {
     const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null;
     const otherFutureMatches = futureMatches.slice(1);
 
-    let html = `
+    // Stili CSS per LIVE lampeggiante
+    html = `<style>
+      @keyframes pulse-live {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8); }
+      }
+      @keyframes blink-text {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+      }
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse-live 1s ease-in-out infinite;
+      }
+      .live-text {
+        animation: blink-text 1s ease-in-out infinite;
+      }
+    </style>`;
+
+    html += `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
         <div><h1 class="page-title">Calendario ${window.YFM.getSquadraName()}</h1></div>
         <div style="display:flex;gap:8px;">
@@ -102,9 +123,13 @@ export function renderMatchCard(m, stats, isNext = false) {
   // ===== PARTE SINISTRA: Risultato/Dettaglio =====
   if (hasResult) {
     const color = r.golFatti > r.golSubiti ? '#27AE60' : r.golFatti === r.golSubiti ? '#F39C12' : '#E74C3C';
-    const liveIcon = !isPast ? '<span style="color:#E74C3C;font-size:10px;">●</span> ' : '';
-    R += `<div style="font-size:22px;font-weight:bold;color:${color};cursor:pointer;min-width:50px;text-align:center;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIcon}${r.golFatti} - ${r.golSubiti}</div>`;
-    if (!isPast) R += `<div style="font-size:10px;color:#E74C3C;text-align:center;">LIVE</div>`;
+    // Pallino e LIVE lampeggianti per partite in corso
+    const liveIndicator = !isPast ? `
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <span class="live-dot" style="background:#E74C3C;"></span>
+        <span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>
+      </div>` : '';
+    R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${r.golFatti} - ${r.golSubiti}</div></div>`;
   } else if (!isPast) {
     // Partita futura senza risultato: mostra pulsante Risultato
     R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">📊 Risultato</button>`;
