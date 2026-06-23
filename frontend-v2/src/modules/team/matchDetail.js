@@ -75,13 +75,30 @@ export async function openMatchDetail(mid) {
     // ========== SUMMARY VIEW ==========
     html += '<div id="summaryView" class="summary-view active">';
     
+    // Helper per formattare nome giocatore (Cognome + Iniziale se omonimia)
+    const formatPlayerName = (fullName) => {
+      if (!fullName) return '-';
+      const parts = fullName.trim().split(' ');
+      if (parts.length === 1) return parts[0];
+      const nome = parts.slice(0, -1).join(' '); // tutto tranne l'ultimo
+      const cognome = parts[parts.length - 1];
+      // Cerca omonimia (stesso cognome)
+      const sameSurname = eventi.filter(e => e.principale && e.principale.endsWith(' ' + cognome));
+      if (sameSurname.length > 1) {
+        const initial = nome.charAt(0).toUpperCase() + '.';
+        return cognome + ' ' + initial;
+      }
+      return cognome;
+    };
+    
     // Mini event list for summary
     const miniEvents = eventi.slice(0, 8).map(e => {
       const config = getEventConfig(e.tipo);
-      return '<span class="summary-event-badge" style="border-left:3px solid ' + config.bgColor + ';"><span>' + config.icon + '</span><span>' + e.principale.split(' ')[0] + '</span><span style="color:#888;">' + e.minuto + '\'</span></span>';
+      const playerName = formatPlayerName(e.principale);
+      return '<span class="summary-event-badge" style="border-left:3px solid ' + config.bgColor + ';"><span>' + config.icon + '</span><span>' + playerName + '</span><span style="color:#888;">' + e.minuto + '\'</span></span>';
     }).join('');
     
-    html += '<div class="summary-card" onclick="showTimeline()">';
+    html += '<div class="summary-card" onclick="window.showTimelineFn()" style="cursor:pointer;">';
     html += '<div class="summary-header">';
     html += '<div class="summary-match">📍 ' + p.avversario + '</div>';
     html += '<div class="summary-score">' + golCasa + ' - ' + golOspiti + ' ' + resultIcon + '</div>';
@@ -97,7 +114,7 @@ export async function openMatchDetail(mid) {
     html += '</div>';
     
     html += '<div class="summary-actions">';
-    html += '<button class="summary-btn summary-btn-primary" onclick="event.stopPropagation();showTimeline()">🕐 Timeline Completa</button>';
+    html += '<button class="summary-btn summary-btn-primary" onclick="window.showTimelineFn()">🕐 Timeline Completa</button>';
     html += '</div>';
     html += '</div>';
     
@@ -223,6 +240,7 @@ export async function openMatchDetail(mid) {
     html += 'function showTimeline(){document.getElementById("summaryView").classList.remove("active");document.getElementById("timelineView").classList.add("active");}';
     html += 'function showSummary(){document.getElementById("timelineView").classList.remove("active");document.getElementById("summaryView").classList.add("active");}';
     html += 'function toggleEventDetail(el){var panel=el.querySelector(".event-detail-panel");var isActive=panel.classList.contains("active");document.querySelectorAll(".event-detail-panel.active").forEach(p=>p.classList.remove("active"));if(!isActive){panel.classList.add("active");el.style.background="#f0f4ff";el.style.borderLeft="3px solid #667eea";}else{el.style.background="";el.style.borderLeft="";}}';
+    html += 'window.showTimelineFn=function(e){if(e)e.stopPropagation();showTimeline();};';
     html += '</script>';
 
     document.getElementById('detailInner').innerHTML = html;
