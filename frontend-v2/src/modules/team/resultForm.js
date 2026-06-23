@@ -85,7 +85,8 @@ function renderForm(mid, match, eventi, giocatori, modal) {
     const isAutogol = e.autogol;
     html += '<div class="evt-item">';
     html += '<span class="evt-badge" style="background:' + cfg.color + '20;color:' + cfg.color + ';border:2px solid ' + cfg.color + ';">' + (isAutogol ? '🟡 ' : '') + cfg.icon + ' ' + cfg.label + '</span>';
-    html += '<div class="evt-info">' + e.minuto + "' - " + (e.principale || (e.autogol ? 'Autogol' : 'Avversario')) + '</div>';
+    const nomeMostrato = e.principale || (e.tipo === 'SUBITO' ? 'Avversario' : (e.autogol ? 'Autogol' : ''));
+    html += '<div class="evt-info">' + e.minuto + "' - " + nomeMostrato + '</div>';
     html += '<button class="evt-del" id="delEvt' + i + '">✕</button></div>';
   });
   if (eventi.length === 0) html += '<div class="empty">Nessun evento registrato</div>';
@@ -152,7 +153,7 @@ function renderForm(mid, match, eventi, giocatori, modal) {
 async function saveEventi(mid, modal, eventi, giocatori) {
   showLoading();
   try {
-    await apiFetch('/partite/' + mid + '/evento-item', { method: 'DELETE' }).catch(() => {});
+    await apiFetch('/partite/' + mid + '/eventi-batch', { method: 'DELETE' }).catch(() => {});
     
     for (const e of eventi) {
       const body = { tipo: e.tipo, minuto: parseInt(e.minuto) };
