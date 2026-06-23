@@ -38,7 +38,7 @@ export async function openResultForm(mid) {
         (rosaRes || []).forEach(g => { rosaMap[g.id] = g; });
         giocatori = convocati.map(c => {
           const g = rosaMap[c.calciatoreId] || {};
-          return { id: c.calciatoreId, nome: g.nome || '', cognome: g.cognome || '' };
+          return { calciatoreId: c.calciatoreId, nome: g.nome || '', cognome: g.cognome || '' };
         });
       }
     } catch(e) {}
@@ -61,32 +61,22 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   const golSubiti = eventi.filter(e => e.tipo === 'GOAL_SUBITO').length;
   
   let html = '<style>';
-  html += '.rf{padding:16px;}';
-  html += '.score{text-align:center;padding:24px;background:linear-gradient(135deg,#667eea20,#764ba220);border-radius:16px;margin-bottom:20px;border:2px solid #667eea40;}';
-  html += '.score-num{font-size:64px;font-weight:bold;}';
-  html += '.score-sub{font-size:12px;color:#888;margin-top:8px;}';
+  html += '.rf{padding:16px;}.score{text-align:center;padding:24px;background:linear-gradient(135deg,#667eea20,#764ba220);border-radius:16px;margin-bottom:20px;border:2px solid #667eea40;}';
+  html += '.score-num{font-size:64px;font-weight:bold;}.score-sub{font-size:12px;color:#888;margin-top:8px;}';
   html += '.evt-item{display:flex;align-items:center;gap:12px;padding:12px;background:white;border-radius:10px;margin-bottom:8px;border:1px solid #eee;}';
   html += '.evt-badge{padding:8px 14px;border-radius:20px;font-size:14px;font-weight:600;min-width:100px;text-align:center;}';
-  html += '.evt-info{flex:1;font-size:13px;}';
-  html += '.evt-del{background:#E74C3C;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;}';
-  html += '.form-group{margin-bottom:12px;}';
-  html += '.form-group label{display:block;font-size:12px;color:#888;margin-bottom:4px;}';
+  html += '.evt-info{flex:1;font-size:13px;}.evt-del{background:#E74C3C;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;}';
+  html += '.form-group{margin-bottom:12px;}.form-group label{display:block;font-size:12px;color:#888;margin-bottom:4px;}';
   html += '.form-group select,.form-group input{padding:10px;border:1px solid #ddd;border-radius:8px;font-size:13px;width:100%;}';
-  html += '.form-row{display:flex;gap:8px;margin-bottom:12px;}';
-  html += '.form-row select,.form-row input{padding:10px;border:1px solid #ddd;border-radius:8px;font-size:13px;}';
-  html += '.form-row input{width:60px;}';
+  html += '.form-row{display:flex;gap:8px;margin-bottom:12px;}.form-row select,.form-row input{padding:10px;border:1px solid #ddd;border-radius:8px;font-size:13px;}.form-row input{width:60px;}';
   html += '.add-btn{background:#667eea;color:white;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;width:100%;margin-top:12px;}';
-  html += '.add-btn:hover{background:#764ba2;}';
-  html += '.empty{text-align:center;padding:40px;color:#888;font-size:14px;}';
-  html += '.check-row{display:flex;align-items:center;gap:8px;margin-top:8px;}';
-  html += '.check-row input{width:auto;}';
+  html += '.add-btn:hover{background:#764ba2;}.empty{text-align:center;padding:40px;color:#888;font-size:14px;}';
+  html += '.check-row{display:flex;align-items:center;gap:8px;margin-top:8px;}.check-row input{width:auto;}';
   html += '</style>';
   
   html += '<div class="rf">';
-  html += '<div class="score">';
-  html += '<div class="score-num"><span style="color:#27AE60;">' + golFatti + '</span> - <span style="color:#E74C3C;">' + golSubiti + '</span></div>';
-  html += '<div class="score-sub">SSD Albalonga - ' + match.avversario + '</div>';
-  html += '</div>';
+  html += '<div class="score"><div class="score-num"><span style="color:#27AE60;">' + golFatti + '</span> - <span style="color:#E74C3C;">' + golSubiti + '</span></div>';
+  html += '<div class="score-sub">SSD Albalonga - ' + match.avversario + '</div></div>';
   
   html += '<div id="evtList">';
   const eventiOrd = [...eventi].sort((a, b) => (parseInt(a.minuto) || 0) - (parseInt(b.minuto) || 0));
@@ -95,9 +85,8 @@ function renderForm(mid, match, eventi, giocatori, modal) {
     const isAutogol = e.autogol;
     html += '<div class="evt-item">';
     html += '<span class="evt-badge" style="background:' + cfg.color + '20;color:' + cfg.color + ';border:2px solid ' + cfg.color + ';">' + (isAutogol ? '🟡 ' : '') + cfg.icon + ' ' + cfg.label + '</span>';
-    html += '<div class="evt-info">' + e.minuto + '\' - ' + (e.principale || (e.autogol ? 'Autogol' : 'Avversario')) + '</div>';
-    html += '<button class="evt-del" id="delEvt' + i + '">✕</button>';
-    html += '</div>';
+    html += '<div class="evt-info">' + e.minuto + "' - " + (e.principale || (e.autogol ? 'Autogol' : 'Avversario')) + '</div>';
+    html += '<button class="evt-del" id="delEvt' + i + '">✕</button></div>';
   });
   if (eventi.length === 0) html += '<div class="empty">Nessun evento registrato</div>';
   html += '</div>';
@@ -105,46 +94,28 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   html += '<div class="form-row">';
   html += '<input type="number" id="evtMin" placeholder="Min" min="1" max="150" style="width:60px;">';
   html += '<select id="evtTipo">';
-  Object.entries(EVENTI).forEach(([k, v]) => {
-    html += '<option value="' + k + '">' + v.icon + ' ' + v.label + '</option>';
-  });
-  html += '</select>';
-  html += '</div>';
+  Object.entries(EVENTI).forEach(([k, v]) => { html += '<option value="' + k + '">' + v.icon + ' ' + v.label + '</option>'; });
+  html += '</select></div>';
   
-  // Giocatore o maglia avversario
   html += '<div id="giocGroup" class="form-group">';
-  html += '<label>Giocatore</label>';
-  html += '<select id="evtGiocatore" size="4">';
-  html += '<option value="">-- Seleziona --</option>';
-  giocatori.forEach(g => {
-    html += '<option value="' + g.id + '">' + g.cognome + ' ' + g.nome + '</option>';
-  });
+  html += '<label>Giocatore</label><select id="evtGiocatore" size="4"><option value="">-- Seleziona --</option>';
+  giocatori.forEach(g => { html += '<option value="' + g.calciatoreId + '">' + g.cognome + ' ' + g.nome + '</option>'; });
   html += '</select>';
-  html += '<div class="check-row" id="autogolRow" style="display:none;">';
-  html += '<input type="checkbox" id="chkAutogol"><label for="chkAutogol">Autogol (il gol è dell\'avversario)</label>';
-  html += '</div>';
-  html += '</div>';
+  html += '<div class="check-row" id="autogolRow" style="display:none;"><input type="checkbox" id="chkAutogol"><label for="chkAutogol">Autogol</label></div></div>';
   
-  html += '<div id="magliaGroup" class="form-group" style="display:none;">';
-  html += '<label>N° Maglia Avversario (opzionale)</label>';
-  html += '<input type="number" id="evtMagliaAvv" placeholder="es. 9" min="1" max="99">';
-  html += '</div>';
+  html += '<div id="magliaGroup" class="form-group" style="display:none;"><label>N° Maglia Avversario</label><input type="number" id="evtMagliaAvv" placeholder="es. 9" min="1" max="99"></div>';
   
-  html += '<button class="add-btn" id="addEvtBtn">+ Aggiungi Evento</button>';
-  html += '</div>';
+  html += '<button class="add-btn" id="addEvtBtn">+ Aggiungi Evento</button></div>';
   
   container.innerHTML = html;
   
-  // Toggle visibilità
   document.getElementById('evtTipo').addEventListener('change', function() {
     const tipo = this.value;
-    const showGioc = CON_GIOCATORE.includes(tipo);
-    document.getElementById('giocGroup').style.display = showGioc ? 'block' : 'none';
+    document.getElementById('giocGroup').style.display = CON_GIOCATORE.includes(tipo) ? 'block' : 'none';
     document.getElementById('magliaGroup').style.display = tipo === 'GOAL_SUBITO' ? 'block' : 'none';
-    document.getElementById('autogolRow').style.display = (tipo === 'GOAL' && showGioc) ? 'flex' : 'none';
+    document.getElementById('autogolRow').style.display = tipo === 'GOAL' ? 'flex' : 'none';
   });
   
-  // Elimina evento
   eventiOrd.forEach((e, i) => {
     document.getElementById('delEvt' + i).addEventListener('click', () => {
       const idx = eventi.indexOf(e);
@@ -153,7 +124,6 @@ function renderForm(mid, match, eventi, giocatori, modal) {
     });
   });
   
-  // Aggiungi evento
   document.getElementById('addEvtBtn').addEventListener('click', () => {
     const min = parseInt(document.getElementById('evtMin').value);
     const tipo = document.getElementById('evtTipo').value;
@@ -168,8 +138,8 @@ function renderForm(mid, match, eventi, giocatori, modal) {
     
     if (tipo === 'GOAL_SUBITO') {
       principale = magliaAvv ? 'Avv. #' + magliaAvv : 'Avversario';
-    } else if (gid && CON_GIOCATORE.includes(tipo)) {
-      const g = giocatori.find(x => x.id === gid);
+    } else if (gid) {
+      const g = giocatori.find(x => x.calciatoreId === gid);
       principale = g ? g.cognome + ' ' + g.nome : '';
       principale_id = gid;
     }
@@ -182,18 +152,12 @@ function renderForm(mid, match, eventi, giocatori, modal) {
 async function saveEventi(mid, modal, eventi, giocatori) {
   showLoading();
   try {
-    // Elimina eventi esistenti
     await apiFetch('/partite/' + mid + '/eventi', { method: 'DELETE' }).catch(() => {});
     
-    // Salva nuovi eventi
     for (const e of eventi) {
       const body = { tipo: e.tipo, minuto: parseInt(e.minuto) };
       if (e.principale_id) body.calciatorePrincipaleId = e.principale_id;
-      // AUTOGOL: passa giocatore ma il tipo è sempre GOAL
-      await apiFetch('/partite/' + mid + '/eventi', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      }).catch(err => console.error('Errore:', err));
+      await apiFetch('/partite/' + mid + '/eventi', { method: 'POST', body: JSON.stringify(body) });
     }
     
     hideLoading();
@@ -214,12 +178,10 @@ function createModal(title, content, footer, maxW) {
   modal.id = 'currentModal';
   modal.innerHTML = '<div class="modal-content" style="max-width:' + (maxW || '600px') + ';"><div class="modal-header"><h2>' + title + '</h2><button class="modal-close-btn" id="modalCloseX">×</button></div><div class="modal-body">' + content + '</div>' + (footer ? '<div class="modal-footer">' + footer + '</div>' : '') + '</div>';
   document.body.appendChild(modal);
-  
   const close = () => { const m = document.getElementById('currentModal'); if (m) m.remove(); };
   document.getElementById('modalCloseX').addEventListener('click', close);
   modal.addEventListener('click', e => { if (e.target === modal) close(); });
   const cancelBtn = document.getElementById('modalCancelBtn');
   if (cancelBtn) cancelBtn.addEventListener('click', close);
-  
-  return { modal, closeModal: close, close };
+  return { closeModal: close, close };
 }
