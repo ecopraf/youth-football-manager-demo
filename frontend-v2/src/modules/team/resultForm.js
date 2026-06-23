@@ -12,8 +12,8 @@ export async function openResultForm(mid) {
   const match = window.YFM.allMatches.find(m => m.id === mid) || {};
   
   // Prima carica formazione
-  const formazioneRes = await apiFetch('/partite/' + mid + '/formazione').catch(() => ({ formazione: [] }));
-  let formazione = formazioneRes.formazione || [];
+  const formazioneRes = await apiFetch('/partite/' + mid + '/formazione').catch(() => []);
+  let formazione = Array.isArray(formazioneRes) ? formazioneRes : (formazioneRes.formazione || []);
   
   // Se formazione vuota, carica convocati
   if (formazione.length === 0) {
