@@ -410,6 +410,7 @@ app.get('/api/guest/:token', async (req, res) => {
 });
 
 app.get('/api/workspaces', async (req, res) => { const { data } = await supabase.from('workspace').select('*'); res.json(data || []); });
+app.get('/api/squadre', async (req, res) => { const { data } = await supabase.from('squadra').select('*').order('nome'); res.json(data || []); });
 app.put('/api/workspaces/:id/logo', async (req, res) => { await supabase.from('workspace').update({ logo_url: req.body.logo_url }).eq('id', req.params.id); res.json({ success: true }); });
 app.get('/api/stagioni/:stagioneId/squadre', async (req, res) => { const { data } = await supabase.from('squadra').select('*').eq('stagione_id', req.params.stagioneId).order('nome'); res.json(data || []); });
 app.post('/api/stagioni/:stagioneId/squadre', async (req, res) => { const b = req.body; const { data } = await supabase.from('squadra').insert({ stagione_id: req.params.stagioneId, nome: b.nome, categoria: b.categoria, allenatore: b.allenatore, dirigente: b.dirigente, dirigente2: b.dirigente2, preparatore_atletico: b.preparatore_atletico, allenatore_portieri: b.allenatore_portieri }).select().single(); res.status(201).json(data); });

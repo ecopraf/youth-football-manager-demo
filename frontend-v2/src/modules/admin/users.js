@@ -112,10 +112,19 @@ async function loadData() {
   try {
     showLoading('Caricamento...');
     
-    const [usersRes, squadreRes] = await Promise.all([
-      apiFetch('/auth/users'),
-      apiFetch('/stagioni/' + window.YFM.stagioneId + '/squadre').catch(() => [])
-    ]);
+    // Prova a ottenere le squadre con fallback
+    let squadreRes = [];
+    try {
+      squadreRes = await apiFetch('/squadre'); // Endpoint generico
+    } catch (e) {
+      try {
+        if (window.YFM.stagioneId) {
+          squadreRes = await apiFetch('/stagioni/' + window.YFM.stagioneId + '/squadre');
+        }
+      } catch (e2) {}
+    }
+    
+    const usersRes = await apiFetch('/auth/users');
     
     users = usersRes.users || [];
     squadre = Array.isArray(squadreRes) ? squadreRes : (squadreRes.data || []);
