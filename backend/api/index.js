@@ -227,16 +227,19 @@ app.get('/api/squadre/:squadraId/statistiche-complete', async (req, res) => {
     const risultati=[];
     for(const p of (partite||[])){
       const{data:eventi}=await supabase.from('evento_partita').select('tipo_evento_codice').eq('partita_id',p.id);
-      // CORRETTO: gol dal DB
       const golFatti=(eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL' || e.tipo_evento_codice==='AUTOGOL').length;
       const golSubiti=(eventi||[]).filter(e=>e.tipo_evento_codice==='SUBITO').length;
       gf+=golFatti; gs+=golSubiti;
-      if(new Date(p.data_ora)<new Date()){
-        if(golFatti>golSubiti){vittorie++;punti+=3}else if(golFatti===golSubiti){pareggi++;punti+=1}else sconfitte++;
+      // Include TUTTE le partite con almeno un evento (passate e future)
+      if(golFatti>0 || golSubiti>0){
         risultati.push({id:p.id,dataOra:p.data_ora,avversario:p.avversario,luogo:p.luogo,competizione:p.competizione,giornata:p.giornata,golFatti,golSubiti});
       }
+      // Calcola statistiche solo per partite passate
+      if(new Date(p.data_ora)<new Date()){
+        if(golFatti>golSubiti){vittorie++;punti+=3}else if(golFatti===golSubiti){pareggi++;punti+=1}else if(golFatti>0 || golSubiti>0){sconfitte++;}
+      }
     }
-    res.json({partiteGiocate:risultati.length,partiteTotali:(partite||[]).length,punti,vittorie,pareggi,sconfitte,golFatti:gf,golSubiti:gs,differenzaReti:gf-gs,risultati:risultati.sort((a,b)=>new Date(b.dataOra)-new Date(a.dataOra))});
+    res.json({partiteGiocate:risultati.filter(r=>new Date(r.dataOra)<new Date()).length,partiteTotali:(partite||[]).length,punti,vittorie,pareggi,sconfitte,golFatti:gf,golSubiti:gs,differenzaReti:gf-gs,risultati:risultati.sort((a,b)=>new Date(b.dataOra)-new Date(a.dataOra))});
   } catch(err) { res.status(500).json({error:err.message}); }
 });
 app.get('/api/squadre/:squadraId/top-players', async (req, res) => { try { const { data: partite } = await supabase.from('partita').select('id').eq('squadra_id', req.params.squadraId); const ids = (partite||[]).map(p => p.id); if(ids.length===0) return res.json({ marcatori:[], assistmen:[], presenze:[] }); const { data: eventi } = await supabase.from('evento_partita').select('tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id, minuto').in('partita_id', ids); const stats = {}; (eventi||[]).forEach(e => { if(!stats[e.calciatore_principale_id]) stats[e.calciatore_principale_id] = { gol:0, assist:0, presenze:0, minuti:0 }; stats[e.calciatore_principale_id].presenze++; if(e.tipo_evento_codice==='GOAL') { stats[e.calciatore_principale_id].gol++; stats[e.calciatore_principale_id].minuti += (e.minuto||0); } if(e.tipo_evento_codice==='GOAL' && e.calciatore_secondario_id) { if(!stats[e.calciatore_secondario_id]) stats[e.calciatore_secondario_id] = { gol:0, assist:0, presenze:0, minuti:0 }; stats[e.calciatore_secondario_id].assist++; } }); const { data: rosa } = await supabase.from('rosa').select('calciatore:calciatore_id(id, nome, cognome)').eq('squadra_id', req.params.squadraId); const nomi = {}; (rosa||[]).forEach(r => { nomi[r.calciatore.id] = r.calciatore.nome + ' ' + r.calciatore.cognome; }); const result = Object.entries(stats).map(([id, s]) => ({ id, nome: nomi[id]||id, ...s })); res.json({ marcatori: result.filter(x=>x.gol>0).sort((a,b) => b.gol-a.gol).slice(0,5), assistmen: result.filter(x=>x.assist>0).sort((a,b) => b.assist-a.assist).slice(0,5), presenze: result.filter(x=>x.presenze>0).sort((a,b) => b.presenze-a.presenze).slice(0,5) }); } catch(err) { res.status(500).json({ error: err.message }); } });
