@@ -97,10 +97,10 @@ export async function openMatchDetail(mid) {
       return cognome;
     };
     
-    html += '<div class="summary-card">';
-    // Header con avversario, score e risultato
+    html += '<div class="summary-card" id="summaryCard">';
+    // Header con squadre, score e risultato
     html += '<div class="summary-header">';
-    html += '<div class="summary-match">' + p.avversario + '</div>';
+    html += '<div class="summary-match">' + window.YFM.getSocietaName() + ' <span style="opacity:0.7">vs</span> ' + p.avversario + '</div>';
     html += '<div class="summary-score">' + golCasa + ' - ' + golOspiti + '</div>';
     html += '<div class="summary-result">' + resultIcon + ' ' + resultLabel + '</div>';
     html += '</div>';
@@ -131,14 +131,14 @@ export async function openMatchDetail(mid) {
     html += '</div>';
     
     // Toggle timeline
-    html += '<div class="summary-timeline-toggle" onclick="window.showTimelineFn()">';
+    html += '<div class="summary-timeline-toggle" id="timelineToggleBtn">';
     html += '<span>Timeline Completa</span>';
     html += '</div>';
     html += '</div>';
     
     // ========== TIMELINE VIEW ==========
     html += '<div id="timelineView" class="timeline-view">';
-    html += '<div class="timeline-back" onclick="showSummary()">← Torna al riepilogo</div>';
+    html += '<div class="timeline-back" id="backToSummaryBtn">← Torna al riepilogo</div>';
     html += '<div class="match-header"><h2>' + window.YFM.getSocietaName() + ' vs ' + p.avversario + '</h2><div class="score">' + golCasa + ' - ' + golOspiti + '</div><div>' + resultIcon + ' ' + resultLabel + '</div><div class="meta">' + formatDate(p.data_ora) + ' · ' + p.competizione + (p.giornata ? ' · G.' + p.giornata : '') + ' · ' + p.luogo + '</div></div>';
     html += '<div class="match-stats"><div class="match-stat"><div class="match-stat-val" style="color:#27AE60;">' + golCasa + '</div><div class="match-stat-label">Gol</div></div><div class="match-stat"><div class="match-stat-val" style="color:#F39C12;">' + ammonizioni + '</div><div class="match-stat-label">Amm.</div></div><div class="match-stat"><div class="match-stat-val" style="color:#E74C3C;">' + espulsioni + '</div><div class="match-stat-label">Esp.</div></div></div>';
     
@@ -254,12 +254,27 @@ export async function openMatchDetail(mid) {
     }
     html += '</div>'; // end timeline-view
     
-    html += '<script>';
-    html += 'function showTimeline(){document.getElementById("summaryView").classList.remove("active");document.getElementById("timelineView").classList.add("active");window.scrollTo(0,0);}';
-    html += 'function showSummary(){document.getElementById("timelineView").classList.remove("active");document.getElementById("summaryView").classList.add("active");}';
-    html += 'function toggleEventDetail(el){var panel=el.querySelector(".event-detail-panel");var isActive=panel.classList.contains("active");document.querySelectorAll(".event-detail-panel.active").forEach(p=>p.classList.remove("active"));if(!isActive){panel.classList.add("active");el.querySelector(".timeline-content").style.borderLeftColor="#667eea";}else{el.querySelector(".timeline-content").style.borderLeftColor="";}}';
-    html += 'window.showTimelineFn=function(e){if(e&&e.stopPropagation)e.stopPropagation();showTimeline();};';
-    html += '</script>';
+
+    document.getElementById('detailInner').innerHTML = html;
+
+    // Attach event listeners after DOM insertion
+    const toggleBtn = document.getElementById('timelineToggleBtn');
+    const backBtn = document.getElementById('backToSummaryBtn');
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        document.getElementById('summaryView').classList.remove('active');
+        document.getElementById('timelineView').classList.add('active');
+        window.scrollTo(0, 0);
+      });
+    }
+
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        document.getElementById('timelineView').classList.remove('active');
+        document.getElementById('summaryView').classList.add('active');
+      });
+    }
 
     document.getElementById('detailInner').innerHTML = html;
   } catch (err) {
