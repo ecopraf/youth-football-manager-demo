@@ -110,6 +110,38 @@
 
 ---
 
+## Roadmap MVP (Luglio-Settembre 2026)
+
+### Target: MVP stabile entro metà Settembre 2026
+
+| Fase | Contenuto | Scadenza |
+|------|-----------|----------|
+| **FASE 1** | Auth/Ruoli (Login, JWT, Admin/Allenatore/Staff) | 15 Luglio |
+| **FASE 2** | Import CSV base (rosa, partite, eventi) | 15 Agosto |
+| **FASE 3** | Import Tuttocampo (web scraping) | 1 Settembre |
+| **FASE 4** | Centro Importazioni (log, duplicati, matching) | 15 Settembre |
+| **FASE 5** | Polish, test, template repository | 15 Settembre |
+
+### Milestone
+- 15 Luglio 2026 → Auth completa
+- 15 Agosto 2026 → Import base
+- 1 Settembre 2026 → Import Tuttocampo
+- 15 Settembre 2026 → **MVP STABILE**
+
+### Checklist MVP (da completare)
+- [ ] Login/Logout funzionante con JWT
+- [ ] Ruoli: Admin, Allenatore, Staff con permessi
+- [ ] Wizard import CSV (rosa, partite, eventi)
+- [ ] Preview anteprima dati prima import
+- [ ] Parser URL Tuttocampo
+- [ ] Web scraping rosa/partite/marcatori
+- [ ] Log storico importazioni
+- [ ] Matching giocatori esistenti
+- [ ] Template repository configurabile
+- [ ] Documentazione admin e utente
+
+---
+
 ## Task Completati ✅
 - ✅ **Timeline Partita** - Vista minuto-per-minuto eventi in matchDetail.js
 - ✅ **Archivia Partita** - Blocco modifiche per partite concluse
@@ -117,11 +149,9 @@
 ## Task Sospesi ⏸️
 - ⏸️ **Valutazioni Giocatore** - Valutazioni tecniche per stagione/partita
 
-## Ultime Modifiche (commit: abad1ab)
+## Ultime Modifiche (commit: ec7e280)
+- Aggiunta regola documentazione dopo feature
 - Fix logica Archivia Partita con UI corretta
-- Solo icona 📦 (senza etichetta "Archiviata")
-- Rimosso pulsante Formazione duplicato
-- Partite future con risultato: pulsante "✏️ Eventi" per continuare modifiche
 
 ## URL Applicazione
 - **Frontend**: https://youth-football-manager.vercel.app

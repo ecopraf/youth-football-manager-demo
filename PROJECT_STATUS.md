@@ -199,7 +199,151 @@ function renderModule(container, data) {
 
 ---
 
-## 8. Setup Locale
+## 8. Roadmap MVP 2026
+
+### 🎯 Obiettivo
+**Versione completa e stabile entro metà Settembre 2026** per inizio campionati.
+
+### 📅 Piano di Sviluppo
+
+#### FASE 1: Luglio - Autenticazione
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 1-2 | Auth backend (login, logout, JWT) | Endpoint funzionanti |
+| 2-3 | Auth frontend (login page, session) | UI login |
+| 3-4 | Ruoli base (Admin, Allenatore, Staff) | Controllo accessi |
+
+#### FASE 2: Luglio-Agosto - Import Dati Base
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 4-5 | Import CSV (rosa, partite) | Wizard base |
+| 5-6 | Parsing CSV avanzato | Gestione formati |
+| 6-7 | Validazione e feedback | Errori chiari |
+
+#### FASE 3: Agosto - Import Tuttocampo
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 7-8 | Reverse engineering URL | Endpoint mapping |
+| 8-9 | Web scraping base (Playwright/Puppeteer) | Parser funzionante |
+| 9 | Test con dati reali | Import verificato |
+
+#### FASE 4: Agosto - Centro Importazioni
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 10 | Storico importazioni | Log completo |
+| 10-11 | Controllo duplicati | Merge intelligente |
+| 11 | Matching giocatori | Riconoscimento esistenti |
+
+#### FASE 5: Settembre - Polish e Test
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 12 | UX polish | UI curata |
+| 12-13 | Bug fix | Stabilità |
+| 13 | Test end-to-end | Zero critical issues |
+| 13-14 | Beta con società pilota | Feedback reale |
+
+#### FASE 6: Settembre - Template e Documentazione
+| Settimana | Attività | Deliverable |
+|----------|----------|-------------|
+| 14 | Template repository | Setup replicabile |
+| 14 | Documentazione admin | Guida installazione |
+| 14 | Documentazione utente | Manuale base |
+
+### ✅ Checklist MVP
+
+#### Core Autenticazione
+- [ ] Login/Logout funzionante
+- [ ] JWT con scadenza
+- [ ] Middleware protezione route
+- [ ] Ruoli: Admin, Allenatore, Staff
+- [ ] Permessi per sezione
+
+#### Core Import Dati
+- [ ] Wizard import CSV (rosa)
+- [ ] Wizard import CSV (partite)
+- [ ] Wizard import CSV (eventi)
+- [ ] Preview anteprima dati
+- [ ] Gestione errori
+
+#### Core Tuttocampo
+- [ ] Parser URL Tuttocampo
+- [ ] Web scraping rosa
+- [ ] Web scraping partite
+- [ ] Web scraping risultati
+- [ ] Web scraping marcatori
+
+#### Centro Importazioni
+- [ ] Log storico importazioni
+- [ ] Rilevamento duplicati
+- [ ] Matching giocatori esistenti
+- [ ] Report finale import
+
+#### Polishing
+- [ ] UI consistente
+- [ ] Feedback utente chiaro
+- [ ] Responsive mobile
+- [ ] Zero bug critici
+- [ ] Performance accettabili
+
+### 🔮 Roadmap Futuro (Post-Settembre 2026)
+
+#### Multi-istanza
+- [ ] Template repository configurabile
+- [ ] Script deploy automatico
+- [ ] Guida setup nuova istanza
+- [ ] Database seeding automatico
+
+#### Funzionalità Avanzate
+- [ ] Sincronizzazione automatica Tuttocampo (scheduler)
+- [ ] Multi-provider (FIGC, Gazzetta)
+- [ ] Dashboard analytics avanzata
+- [ ] App mobile genitori
+
+### 📊 Milestone
+
+| Data | Milestone | Stato |
+|------|-----------|-------|
+| 15 Luglio 2026 | Auth completa | ⏳ |
+| 15 Agosto 2026 | Import base | ⏳ |
+| 1 Settembre 2026 | Import Tuttocampo | ⏳ |
+| 15 Settembre 2026 | MVP STABILE | ⏳ |
+
+---
+
+## 9. Architettura Multi-istanza (Futuro)
+
+### Strategia: Single-tenant replicabile
+
+```
+┌─────────────────────────────────────────┐
+│         Template Repository              │
+│   football-manager-template (GitHub)    │
+└─────────────────────────────────────────┘
+              │ Clone
+              ▼
+┌─────────────────────────────────────────┐
+│         Deployment Script               │
+│   (Crea repo, DB, deploy)              │
+└─────────────────────────────────────────┘
+              │
+    ┌─────────┼─────────┐
+    ▼         ▼         ▼
+┌───────┐ ┌───────┐ ┌───────┐
+│ASD A  │ │ASD B  │ │ASD C  │
+│  Repo │ │  Repo │ │  Repo │
+└───────┘ └───────┘ └───────┘
+```
+
+### Implementazione Futura
+1. Template repository con config variabili
+2. Script di deployment (GitHub Actions)
+3. Provisioning database (Supabase CLI o API)
+4. Deploy automatico (Vercel API)
+5. Admin panel per gestire istanze
+
+---
+
+## 10. Setup Locale
 
 ```bash
 # Backend
