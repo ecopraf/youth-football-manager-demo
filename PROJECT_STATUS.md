@@ -303,10 +303,19 @@ function renderModule(container, data) {
 
 | Data | Milestone | Stato |
 |------|-----------|-------|
+| 23 Giugno 2026 | Auth FASE 1 completata | ✅ **COMPLETATA** |
 | 15 Luglio 2026 | Auth completa | ⏳ |
 | 15 Agosto 2026 | Import base | ⏳ |
 | 1 Settembre 2026 | Import Tuttocampo | ⏳ |
 | 15 Settembre 2026 | MVP STABILE | ⏳ |
+
+### ✅ Checklist Completata
+
+#### Core Autenticazione
+- [x] Login/Logout funzionante con JWT
+- [x] Ruoli: Admin, Allenatore, Staff con permessi
+- [x] Gestione utenti (Admin)
+- [x] Link guest (Atleta/Genitore)
 
 ---
 

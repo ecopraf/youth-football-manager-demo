@@ -145,6 +145,8 @@
 ## Task Completati ✅
 - ✅ **Timeline Partita** - Vista minuto-per-minuto eventi in matchDetail.js
 - ✅ **Archivia Partita** - Blocco modifiche per partite concluse
+- ✅ **LIVE Indicator** - Pallino e scritta LIVE lampeggianti per partite in corso
+- ✅ **Auth FASE 1** - Sistema ruoli, gestione utenti, link guest (commit 9f64064)
 
 ## Task Sospesi ⏸️
 - ⏸️ **Valutazioni Giocatore** - Valutazioni tecniche per stagione/partita
