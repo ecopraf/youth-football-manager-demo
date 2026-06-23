@@ -166,17 +166,19 @@ app.post('/api/partite/:partitaId/eventi', async (req, res) => {
     if (!tipo) {
       return res.status(400).json({ error: 'Tipo è obbligatorio' });
     }
-    // SUBITO può non avere giocatore (gol avversario)
+    // Costruisci oggetto dinamicamente - non includere campi se undefined/null
+    const evento = {
+      partita_id: req.params.partitaId,
+      tipo_evento_codice: tipo,
+      minuto: minuto || null
+    };
+    if (calciatorePrincipaleId) evento.calciatore_principale_id = calciatorePrincipaleId;
+    if (calciatoreSecondarioId) evento.calciatore_secondario_id = calciatoreSecondarioId;
+    if (note) evento.note = note;
+    
     const { data, error } = await supabase
       .from('evento_partita')
-      .insert({
-        partita_id: req.params.partitaId,
-        tipo_evento_codice: tipo,
-        calciatore_principale_id: calciatorePrincipaleId || null,
-        calciatore_secondario_id: calciatoreSecondarioId || null,
-        minuto: minuto || null,
-        note: note || null
-      })
+      .insert(evento)
       .select()
       .single();
     if (error) throw error;
