@@ -35,11 +35,11 @@ export default async function loadUsers() {
     </div>
     
     <!-- Modal Crea/Modifica Utente -->
-    <div id="userModal" class="modal" style="display:none;">
+    <div id="userModal" class="modal-overlay" style="display:none;">
       <div class="modal-content">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div class="modal-header">
           <h2 id="modalTitle">Nuovo Utente</h2>
-          <span class="modal-close" onclick="document.getElementById('userModal').style.display='none'">&times;</span>
+          <button class="modal-close-btn" id="closeModalBtn">&times;</button>
         </div>
         
         <form id="userForm">
@@ -93,7 +93,7 @@ export default async function loadUsers() {
           
           <div style="display:flex;gap:12px;margin-top:20px;">
             <button type="submit" class="btn btn-primary">Salva</button>
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">Annulla</button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Annulla</button>
           </div>
         </form>
       </div>
@@ -103,9 +103,26 @@ export default async function loadUsers() {
   // Carica utenti e squadre
   await loadData();
   
-  // Event listeners
-  document.getElementById('btnAddUser').addEventListener('click', () => openModal());
-  document.getElementById('userForm').addEventListener('submit', handleSubmit);
+  // Event listeners con verifica
+  const btnAddUser = document.getElementById('btnAddUser');
+  const userForm = document.getElementById('userForm');
+  const closeBtn = document.getElementById('closeModalBtn');
+  
+  if (btnAddUser) {
+    btnAddUser.addEventListener('click', () => openModal());
+  }
+  
+  if (userForm) {
+    userForm.addEventListener('submit', handleSubmit);
+  }
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeModal);
+  }
+}
+
+function closeModal() {
+  document.getElementById('userModal').style.display = 'none';
 }
 
 async function loadData() {
@@ -212,19 +229,19 @@ function openModal(userId = null) {
   const modal = document.getElementById('userModal');
   const form = document.getElementById('userForm');
   const title = document.getElementById('modalTitle');
-  const passwordRequired = document.getElementById('passwordRequired');
+  const passwordField = document.getElementById('userPassword');
   const isActiveGroup = document.getElementById('isActiveGroup');
   
   form.reset();
   document.getElementById('userId').value = '';
-  document.getElementById('userPassword').value = '';
+  passwordField.value = '';
+  passwordField.required = false;
   
   if (userId) {
     const user = users.find(u => u.id === userId);
     if (!user) return;
     
     title.textContent = 'Modifica Utente';
-    passwordRequired.textContent = '';
     isActiveGroup.style.display = 'block';
     
     document.getElementById('userNome').value = user.nome || '';
@@ -242,14 +259,25 @@ function openModal(userId = null) {
     }
   } else {
     title.textContent = 'Nuovo Utente';
-    passwordRequired.textContent = '(obbligatoria)';
-    passwordRequired.parentElement.previousElementSibling.querySelector('input').required = true;
     isActiveGroup.style.display = 'none';
-    document.getElementById('userPassword').required = true;
+    passwordField.required = true;
   }
   
-  modal.style.display = 'block';
+  modal.style.display = 'flex';
 }
+
+// Esporta globalmente per onclick
+window.openUserEdit = (id) => openModal(id);
+window.deleteUser = async (id) => {
+  if (confirm('Sei sicuro di voler disattivare questo utente?')) {
+    try {
+      await apiFetch(`/auth/users/${id}`, { method: 'DELETE' });
+      await loadData();
+    } catch (err) {
+      alert('Errore: ' + err.message);
+    }
+  }
+};
 
 async function handleSubmit(e) {
   e.preventDefault();

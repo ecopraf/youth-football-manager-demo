@@ -117,13 +117,22 @@ export default async function loadGuestLinks() {
 
 async function loadData() {
   try {
-    const [tokensRes, squadreRes] = await Promise.all([
-      apiFetch('/auth/guest-links'),
-      apiFetch('/stagioni/' + window.YFM.stagioneId + '/squadre').catch(() => [])
-    ]);
+    // Prova a ottenere le squadre con fallback
+    let squadreRes = [];
+    try {
+      squadreRes = await apiFetch('/squadre'); // Endpoint generico
+    } catch (e) {
+      try {
+        if (window.YFM.stagioneId) {
+          squadreRes = await apiFetch('/stagioni/' + window.YFM.stagioneId + '/squadre');
+        }
+      } catch (e2) {}
+    }
+    
+    const tokensRes = await apiFetch('/auth/guest-links');
     
     tokens = tokensRes.tokens || [];
-    squadre = squadreRes || [];
+    squadre = Array.isArray(squadreRes) ? squadreRes : (squadreRes.data || []);
     
     renderTokens();
     populateSquadreSelect();
