@@ -143,7 +143,7 @@ app.get('/api/squadre/:squadraId/partite', async (req, res) => { const { data } 
 app.post('/api/squadre/:squadraId/partite', async (req, res) => { const p = req.body; const { data } = await supabase.from('partita').insert({ squadra_id: req.params.squadraId, data_ora: p.dataOra, avversario: p.avversario, luogo: p.luogo, competizione: p.competizione, giornata: p.giornata }).select().single(); res.status(201).json(data); });
 app.put('/api/partite/:id', async (req, res) => { const p = req.body; await supabase.from('partita').update({ data_ora: p.dataOra, avversario: p.avversario, luogo: p.luogo, competizione: p.competizione, giornata: p.giornata }).eq('id', req.params.id); res.json({ success: true }); });
 app.delete('/api/partite/:id', async (req, res) => { await supabase.from('evento_partita').delete().eq('partita_id', req.params.id); await supabase.from('formazione_partita').delete().eq('partita_id', req.params.id); await supabase.from('convocazione').delete().eq('partita_id', req.params.id); await supabase.from('partita').delete().eq('id', req.params.id); res.json({ success: true }); });
-app.get('/api/partite/:partitaId/dettaglio', async (req, res) => { try { const { data: partita } = await supabase.from('partita').select('*').eq('id', req.params.partitaId).single(); if(!partita) return res.status(404).json({ error: 'Partita non trovata' }); const { data: eventi } = await supabase.from('evento_partita').select('tipo_evento_codice, minuto, calciatore_principale:calciatore_principale_id(nome, cognome), calciatore_secondario:calciatore_secondario_id(nome, cognome)').eq('partita_id', req.params.partitaId).order('minuto'); const golCasa = (eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL' || e.tipo_evento_codice==='AUTOGOL').length; const golOspiti = (eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL_SUBITO').length; res.json({ partita, golCasa, golOspiti, eventi: (eventi||[]).map(e => ({ tipo: e.tipo_evento_codice, minuto: e.minuto, principale: e.calciatore_principale?.nome + ' ' + e.calciatore_principale?.cognome, secondario: e.calciatore_secondario ? e.calciatore_secondario.nome + ' ' + e.calciatore_secondario.cognome : null })) }); } catch(err) { res.status(500).json({ error: err.message }); } });
+app.get('/api/partite/:partitaId/dettaglio', async (req, res) => { try { const { data: partita } = await supabase.from('partita').select('*').eq('id', req.params.partitaId).single(); if(!partita) return res.status(404).json({ error: 'Partita non trovata' }); const { data: eventi } = await supabase.from('evento_partita').select('tipo_evento_codice, minuto, calciatore_principale:calciatore_principale_id(nome, cognome), calciatore_secondario:calciatore_secondario_id(nome, cognome)').eq('partita_id', req.params.partitaId).order('minuto'); const golCasa = (eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL' || e.tipo_evento_codice==='AUTOGOL').length; const golOspiti = (eventi||[]).filter(e=>e.tipo_evento_codice==='SUBITO').length; res.json({ partita, golCasa, golOspiti, eventi: (eventi||[]).map(e => ({ tipo: e.tipo_evento_codice, minuto: e.minuto, principale: e.calciatore_principale?.nome + ' ' + e.calciatore_principale?.cognome, secondario: e.calciatore_secondario ? e.calciatore_secondario.nome + ' ' + e.calciatore_secondario.cognome : null })) }); } catch(err) { res.status(500).json({ error: err.message }); } });
 
 // DELETE /api/partite/:partitaId/eventi - Elimina tutti gli eventi
 app.delete('/api/partite/:partitaId/eventi', async (req, res) => {
@@ -166,7 +166,7 @@ app.post('/api/partite/:partitaId/eventi', async (req, res) => {
     if (!tipo) {
       return res.status(400).json({ error: 'Tipo è obbligatorio' });
     }
-    // GOAL_SUBITO può non avere giocatore (gol avversario)
+    // SUBITO può non avere giocatore (gol avversario)
     const { data, error } = await supabase
       .from('evento_partita')
       .insert({
@@ -222,7 +222,7 @@ app.get('/api/squadre/:squadraId/statistiche-complete', async (req, res) => {
       const{data:eventi}=await supabase.from('evento_partita').select('tipo_evento_codice').eq('partita_id',p.id);
       // CORRETTO: gol dal DB
       const golFatti=(eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL' || e.tipo_evento_codice==='AUTOGOL').length;
-      const golSubiti=(eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL_SUBITO').length;
+      const golSubiti=(eventi||[]).filter(e=>e.tipo_evento_codice==='SUBITO').length;
       gf+=golFatti; gs+=golSubiti;
       if(new Date(p.data_ora)<new Date()){
         if(golFatti>golSubiti){vittorie++;punti+=3}else if(golFatti===golSubiti){pareggi++;punti+=1}else sconfitte++;
@@ -618,7 +618,7 @@ app.get('/api/squadre/:squadraId/report-stagionale', async (req, res) => {
       
       const golCasa = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL' || e.tipo_evento_codice === 'AUTOGOL').length;
       // CORRETTO: gol dal DB
-      const golOspiti = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL_SUBITO').length;
+      const golOspiti = (eventi || []).filter(e => e.tipo_evento_codice === 'SUBITO').length;
       
       golFatti += golCasa;
       golSubiti += golOspiti;

@@ -3,7 +3,7 @@ import { showLoading, hideLoading } from '../../utils/ui.js';
 
 const EVENTI = {
   'GOAL': { icon: '⚽', label: 'Gol', color: '#27AE60' },
-  'GOAL_SUBITO': { icon: '⚽', label: 'Gol Subito', color: '#E74C3C' },
+  'SUBITO': { icon: '⚽', label: 'Gol Subito', color: '#E74C3C' },
   'YELLOW': { icon: '🟨', label: 'Amm.', color: '#F39C12' },
   'RED': { icon: '🟥', label: 'Esp.', color: '#E74C3C' },
   'ASSIST': { icon: '🅰️', label: 'Assist', color: '#3498DB' },
@@ -58,7 +58,7 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   const container = document.getElementById('rfContent');
   
   const golFatti = eventi.filter(e => e.tipo === 'GOAL').length;
-  const golSubiti = eventi.filter(e => e.tipo === 'GOAL_SUBITO').length;
+  const golSubiti = eventi.filter(e => e.tipo === 'SUBITO').length;
   
   let html = '<style>';
   html += '.rf{padding:16px;}.score{text-align:center;padding:24px;background:linear-gradient(135deg,#667eea20,#764ba220);border-radius:16px;margin-bottom:20px;border:2px solid #667eea40;}';
@@ -112,7 +112,7 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   document.getElementById('evtTipo').addEventListener('change', function() {
     const tipo = this.value;
     document.getElementById('giocGroup').style.display = CON_GIOCATORE.includes(tipo) ? 'block' : 'none';
-    document.getElementById('magliaGroup').style.display = tipo === 'GOAL_SUBITO' ? 'block' : 'none';
+    document.getElementById('magliaGroup').style.display = tipo === 'SUBITO' ? 'block' : 'none';
     document.getElementById('autogolRow').style.display = tipo === 'GOAL' ? 'flex' : 'none';
   });
   
@@ -136,7 +136,7 @@ function renderForm(mid, match, eventi, giocatori, modal) {
     let principale = '';
     let principale_id = null;
     
-    if (tipo === 'GOAL_SUBITO') {
+    if (tipo === 'SUBITO') {
       principale = magliaAvv ? 'Avv. #' + magliaAvv : 'Avversario';
     } else if (gid) {
       const g = giocatori.find(x => x.calciatoreId === gid);
