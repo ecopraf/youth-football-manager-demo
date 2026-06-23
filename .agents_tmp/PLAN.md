@@ -186,38 +186,115 @@ Implementare le feature ad alta prioritГ  della roadmap Core 1.x per completare
 
 ## FASE 5: Timeline Partita [DA FARE]
 
-### Step 5.1 - UI Timeline in Match Detail
-**Goal:** Visualizzazione timeline minuto-per-minuto animata
+### Step 5.1 - UI Timeline Animata nel Match Detail
+**Goal:** Trasformare la tabella eventi in una timeline visiva verticale con animazioni
+
+**Analisi Codice Esistente:**
+- File: `frontend-v2/src/modules/team/matchDetail.js`
+- Attuale: Tabella statica con 4 colonne (Min., Tipo, Giocatore, Dettaglio)
+- Dati evento: `minuto`, `tipo` (GOAL/ASSIST/YELLOW/RED), `principale`, `secondario`
 
 **Method:**
-1. Estendere `frontend-v2/src/modules/team/matchDetail.js`
-2. Creare componente timeline verticale con icone animate
-3. CSS animations per fade-in eventi
+1. **Creare layout timeline verticale** (invece di tabella)
+   - Linea verticale centrale con pallini per ogni evento
+   - Icone colorate sui pallini: ⚽ (gol), 🟨 (amm), 🟥 (esp), 🅰️ (assist)
+   - Contenuto a sinistra/destra alternato per readability
+
+2. **Implementare CSS Animations**
+   ```css
+   .timeline-item { animation: fadeSlideIn 0.4s ease-out; }
+   @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } }
+   ```
+
+3. **Indicatori tempo visivi**
+   - Badge minuto sopra ogni pallino (90', 45', etc.)
+   - Dividers per tempi (1° Tempo / 2° Tempo / Extra Time)
+
+4. **Colorazione per tipo evento**
+   - Gol: Verde (#27AE60)
+   - Assist: Blu (#3498db)
+   - Ammonizione: Giallo (#f39c12)
+   - Espulsione: Rosso (#e74c3c)
+
+**Reference:** `frontend-v2/src/modules/team/matchDetail.js` (righe 25-37)
+
+---
+
+### Step 5.2 - Timeline Espandibile con Dettagli
+**Goal:** Click su evento espande pannello con informazioni aggiuntive
+
+**Analisi Dati Disponibili:**
+- Attualmente: `minuto`, `tipo`, `principale` (nome cognome), `secondario` (assist)
+- Mancante: formazione al minuto (richiede query separata)
+
+**Method:**
+1. **Click handler su pallino evento**
+   ```javascript
+   document.querySelectorAll('.timeline-item').forEach(item => {
+     item.addEventListener('click', () => toggleEventDetail(item));
+   });
+   ```
+
+2. **Pannello dettaglio espanso** (compare sotto l'evento)
+   - Info aggiuntive: minuto esatto, tipo evento descritto
+   - Giocatore coinvolto con avatar/colorazione ruolo
+   - Assist (se presente) con formattazione distinta
+   - Bottone "Vai alla scheda giocatore"
+
+3. **Animazione espansione**
+   - Smooth height transition
+   - Focus visivo sul giocatore (highlight giallo temporaneo)
+
+4. **Accordion behavior** (opzionale)
+   - Solo un evento espanso alla volta
+   - Animazione fluid per open/close
 
 **Reference:** `frontend-v2/src/modules/team/matchDetail.js`
 
 ---
 
-### Step 5.2 - Timeline Expandibile
-**Goal:** Dettagli evento espandibili
+### Step 5.3 - Mini Timeline nel Calendario (Preview)
+**Goal:** Mostrare anteprima eventi principali nella card partita
+
+**Analisi Codice Esistente:**
+- File: `frontend-v2/src/modules/team/calendar.js`
+- Funzione `renderMatchCard()` già mostra risultato clickabile
+- Attuale: "Dettaglio" link per aprire match detail
 
 **Method:**
-1. Click su evento -> espande con dettagli aggiuntivi
-2. Mostrare formazione al momento del minuto
-3. Highlight giocatore coinvolto
+1. **Modificare `renderMatchCard()` in calendar.js**
+   - Aggiungere colonna/icona con mini preview eventi
+   - Icone compatte: ⚽🟨🟥 (max 3-4 eventi mostrati)
 
-**Reference:** `frontend-v2/src/modules/team/matchDetail.js`
+2. **Popup inline on hover (desktop)**
+   - Hover sull'icona eventi mostra tooltip/popup
+   - Lista eventi con minuto e giocatore
+   - Click su evento apre match detail con quello evidenziato
+
+3. **Fallback mobile**
+   - Su mobile mostra solo count: "2 ⚽, 1 🟨"
+   - Click apre match detail completo
+
+4. **Ottimizzazione performance**
+   - Fetch eventi in batch o lazy load
+   - Cache locale per partite già caricate
+
+**Reference:** 
+- `frontend-v2/src/modules/team/calendar.js` (funzione `renderMatchCard`)
+- Backend endpoint esistente: `/partite/:mid/dettaglio` (già restituisce eventi)
 
 ---
 
-### Step 5.3 - Mini Timeline nel Calendario
-**Goal:** Preview eventi nella lista partite
+### Step 5.4 - Visualizzazione Formazione al Momento (Futuro)
+**Goal:** Mostrare chi era in campo al minuto dell'evento
+
+**Note:** Questo richiede implementazione futura di snapshot formazione per minuto.
 
 **Method:**
-1. In `calendar.js`, aggiungere colonna con icone eventi principali
-2. Click -> apre match detail con timeline
+1. Richiede modifica schema per salvare formazioni per minuto
+2. Oppure: logica per ricostruire formazione da eventi sostituzioni
 
-**Reference:** `frontend-v2/src/modules/team/calendar.js`
+**Reference:** Schema Supabase (da valutare con team)
 
 ---
 
@@ -255,12 +332,30 @@ Implementare le feature ad alta prioritГ  della roadmap Core 1.x per completare
 - [ ] Media voti calcolata correttamente
 - [ ] Filtri funzionano (data, partita, categoria)
 
-### Timeline Partita [DA FARE]
-- [ ] Timeline visibile in match detail
-- [ ] Eventi ordinati per minuto crescente
-- [ ] Icone corrette per tipo evento
-- [ ] Click espande dettagli evento
-- [ ] Responsive mobile
+### Timeline Partita [IN PIANIFICAZIONE]
+
+#### Step 5.1 - UI Timeline Animata
+- [ ] Timeline verticale visibile (invece di tabella)
+- [ ] Pallini colorati per ogni tipo evento (⚽🟨🟥🅰️)
+- [ ] Animazione fade-in sugli eventi
+- [ ] Dividers per 1° Tempo / 2° Tempo
+- [ ] Layout responsive (mobile-friendly)
+
+#### Step 5.2 - Timeline Espandibile
+- [ ] Click su evento apre pannello dettaglio
+- [ ] Pannello mostra info complete (giocatore, assist, minuto)
+- [ ] Animazione smooth open/close
+- [ ] Link "Vai alla scheda giocatore" funziona
+- [ ] Accordion (un solo evento espanso alla volta)
+
+#### Step 5.3 - Mini Timeline Calendario
+- [ ] Icone eventi visibili nella card partita
+- [ ] Hover mostra tooltip con lista eventi
+- [ ] Count eventi su mobile ("2 ⚽, 1 🟨")
+- [ ] Click apre match detail con focus corretto
+
+#### Step 5.4 - Formazione al Momento [FUTURO]
+- [ ] (Dipende da implementazione schema)
 
 ---
 

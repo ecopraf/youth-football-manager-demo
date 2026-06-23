@@ -56,25 +56,20 @@ Tabelle principali: `calciatore`, `stagione`, `squadra`, `rosa`, `partita`, `eve
 
 | Modulo | Percorso | Descrizione |
 |--------|----------|-------------|
-| Dashboard | `modules/team/dashboard.js` | Widget riepilogo, top 5 marcatori/assist/presenze |
+| Dashboard | `modules/team/dashboard.js` | Widget riepilogo, trend ultimi 5 (GF/GS/DR), top marcatori/assist/presenze |
 | Rosa | `modules/team/roster.js` | CRUD giocatori, scadenze mediche, filtri |
-| Calendario | `modules/team/calendar.js` | CRUD partite, prossima in evidenza |
+| Calendario | `modules/team/calendar.js` | CRUD partite, prossima in evidenza, note avversario |
 | Convocazioni | `modules/team/convocazioni.js` | Vincoli min/max, archivio, PDF |
-| Distinta | `modules/team/distinta.js` | Layout FIGC, 24 righe, staff |
-| Match Detail | `modules/team/matchDetail.js` | Eventi e statistiche per partita |
+| Distinta | `modules/team/distinta.js` | Layout FIGC, 24 righe, staff, stampa PDF |
+| Match Detail | `modules/team/matchDetail.js` | Eventi e statistiche per partita, header colorato |
 | Note Avversario | `modules/team/noteAvversario.js` | Ereditarietà automatica note |
 | Scheda Giocatore | `modules/team/playerDetail.js` | Profilo, stats, carriera, ultime partite |
 | Formazione | `modules/team/formazione.js` | Scelta titolari/panchina con numeri |
 | Allenamenti | `modules/coach/training.js` | Calendario sedute, presenze, summary, materiale |
 | Stats | `modules/performance/stats.js` | Disciplina (ammonizioni, espulsioni) |
+| Reports | `modules/performance/reports.js` | Report Partita, Stagionale, Giocatore con stampa |
 | Settings | `modules/club/settings.js` | Stagione, categoria, staff |
 | Workspace | `modules/club/workspace.js` | Info società |
-
-### ⚠️ IN SVILUPPO / DA COMPLETARE
-
-| Modulo | Percorso | Stato |
-|--------|----------|-------|
-| Reports | `modules/performance/reports.js` | Placeholder UI "In sviluppo" |
 
 ### 🔴 NON ANCORA IMPLEMENTATI
 
@@ -186,9 +181,8 @@ npm run dev -- --host 0.0.0.0 --port 8080
 ## 8. Roadmap
 
 ### 🔴 Priorità Alta (Core 1.x)
-- [ ] **Reports**: Report partita, stagionale, individuale con export PDF/CSV
-- [ ] **Timeline Partita**: Vista minuto-per-minuto con eventi (gol, assist, cartellini, sostituzioni)
 - [ ] **Valutazioni Giocatore**: Valutazioni tecniche per stagione/partita
+- [ ] **Timeline Partita**: Vista minuto-per-minuto con eventi (gol, assist, cartellini, sostituzioni)
 - [ ] **Auth/Ruoli MVP**: Login base con ruoli (Allenatore, Staff, Admin)
 
 ### 🟡 Priorità Media
@@ -206,11 +200,13 @@ npm run dev -- --host 0.0.0.0 --port 8080
 ## 9. Deploy
 
 ### Frontend (Vercel)
+- **URL**: https://youth-football-manager.vercel.app
 - Root Directory: `frontend-v2`
 - Build: `npm run build`
 - Output: `dist`
 
 ### Backend (Vercel)
+- **URL**: https://youth-football-manager-backend.vercel.app
 - Root Directory: `backend`
 - Build: vuoto
 - Output: vuoto (usa `api/index.js`)
@@ -219,6 +215,10 @@ npm run dev -- --host 0.0.0.0 --port 8080
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_ANON_KEY`
+
+### Database (Supabase)
+- **URL**: https://csxdlxbhcnyfppojwwzy.supabase.co
+- Tabelle principali: calciatore, stagione, squadra, rosa, partita, evento_partita, presenza_partita, presenza_allenamento, configurazione_allenamento, convocazione, formazione_partita, materiale_allenamento
 
 ---
 
