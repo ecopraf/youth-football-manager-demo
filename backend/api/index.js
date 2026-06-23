@@ -195,16 +195,20 @@ app.put('/api/auth/profile', authMiddleware, async (req, res) => {
 
 // GET /api/auth/users - Lista utenti (admin only)
 app.get('/api/auth/users', authMiddleware, async (req, res) => {
+  console.log('DEBUG /auth/users - req.user:', req.user);
   if (!isAdmin(req.user)) {
+    console.log('DEBUG: Non admin, isAdmin returned false');
     return res.status(403).json({ error: 'Accesso negato' });
   }
   try {
-    const { data: users } = await supabase
+    const { data: users, error } = await supabase
       .from('utente')
       .select('id, email, nome, cognome, ruolo, ruoli, squadre_accesso, is_active, is_superadmin, workspace_id, created_at')
       .order('created_at', { ascending: false });
+    console.log('DEBUG: Query result - users:', users, 'error:', error);
     res.json({ users: users || [] });
   } catch (err) {
+    console.log('DEBUG: Exception:', err);
     res.status(500).json({ error: err.message });
   }
 });
