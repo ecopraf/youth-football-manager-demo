@@ -172,6 +172,7 @@ Navigazione: `window.YFM.navigateTo('nomePagina')`
 3. **Usare `window.YFM`** per stato globale e navigazione
 4. **Usare `apiFetch`** per chiamate backend
 5. **Usare `showLoading/hideLoading`** per operazioni asincrone
+6. **Documentazione** → Dopo ogni feature importante, aggiornare SEMPRE AGENTS.md e PROJECT_STATUS.md
 
 ### Struttura di un modulo
 ```javascript

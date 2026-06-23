@@ -54,6 +54,7 @@
 2. **Prima di ogni feature**: Creare PLAN dettagliato e validare con utente
 3. **Endpoint**: Verificare se esistono già prima di crearne di nuovi
 4. **Commit**: Sempre con messaggio descrittivo e push
+5. **Documentazione**: Dopo ogni feature importante, aggiornare SEMPRE AGENTS.md e PROJECT_STATUS.md
 
 ---
 
