@@ -58,10 +58,31 @@ export function renderMatchCard(m, stats) {
   const hasResult = !!r;
   const isPast = new Date(m.data_ora) < new Date();
 
+  // Mini timeline events
+  const miniEvents = r?.eventi || [];
+  
+  const miniTimeline = miniEvents.length > 0 ? `
+    <div class="mini-timeline" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #eee;">
+      ${miniEvents.map(e => {
+        const icons = { 'GOAL': '⚽', 'YELLOW': '🟨', 'RED': '🟥', 'ASSIST': '🅰️' };
+        const colors = { 'GOAL': '#27AE60', 'YELLOW': '#F39C12', 'RED': '#E74C3C', 'ASSIST': '#3498db' };
+        const icon = icons[e.tipo] || '●';
+        const color = colors[e.tipo] || '#999';
+        const nome = e.giocatore ? e.giocatore.split(' ').pop() : ''; // solo cognome
+        return `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:${color}15;border-radius:12px;font-size:11px;border-left:3px solid ${color};">
+          <span>${icon}</span>
+          <span style="font-weight:600;">${e.minuto}'</span>
+          <span style="color:#666;">${nome}</span>
+        </span>`;
+      }).join('')}
+      ${r.eventi.length > 4 ? `<span style="font-size:11px;color:#888;padding:4px 8px;">+${r.eventi.length - 4}</span>` : ''}
+    </div>
+  ` : '';
+
   const L = `
     <div class="match-date">${formatDate(m.data_ora)}</div>
     <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
-    <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>`;
+    <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>${miniTimeline}`;
 
   let R = '';
   if (hasResult) {
