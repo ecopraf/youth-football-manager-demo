@@ -21,19 +21,26 @@ export async function openMatchDetail(mid) {
 
     let html = '<style>';
     // Summary View
-    html += '.summary-card{background:white;border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.08);}';
-    html += '.summary-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.12);border-color:#667eea;}';
-    html += '.summary-header{background:' + resultBg + ';color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}';
-    html += '.summary-match{font-size:14px;font-weight:600;}';
-    html += '.summary-score{font-size:28px;font-weight:bold;}';
-    html += '.summary-meta{background:#f8f9fa;padding:8px 16px;font-size:11px;color:#666;border-bottom:1px solid #eee;}';
-    html += '.summary-events{padding:12px 16px;background:#fafafa;}';
-    html += '.summary-events-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}';
-    html += '.summary-event-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:500;background:white;border:1px solid #eee;}';
-    html += '.summary-actions{display:flex;gap:8px;justify-content:center;padding:10px 0;}';
-    html += '.summary-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:4px;}';
-    html += '.summary-btn-primary{background:#667eea;color:white;}.summary-btn-primary:hover{background:#5a6fd6;}';
-    html += '.summary-btn-secondary{background:white;color:#667eea;border:1px solid #667eea;}.summary-btn-secondary:hover{background:#f0f4ff;}';
+    html += '.summary-card{background:white;border:1px solid #e0e0e0;border-radius:16px;overflow:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.1);}';
+    html += '.summary-header{background:' + resultBg + ';color:white;padding:24px 20px;text-align:center;}';
+    html += '.summary-match{font-size:22px;font-weight:700;margin-bottom:8px;}';
+    html += '.summary-score{font-size:42px;font-weight:800;letter-spacing:2px;}';
+    html += '.summary-result{font-size:18px;margin-top:6px;opacity:0.95;}';
+    html += '.summary-meta{background:linear-gradient(135deg,#f8f9fa,#fff);padding:12px 20px;font-size:12px;color:#555;border-bottom:1px solid #eee;text-align:center;}';
+    html += '.summary-events{padding:16px 20px;background:white;}';
+    html += '.summary-section-title{font-size:11px;font-weight:600;color:#667eea;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}';
+    html += '.summary-section-title::after{content:"";flex:1;height:1px;background:linear-gradient(to right,#667eea,transparent);}';
+    html += '.summary-events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}';
+    html += '.summary-event-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f9fa;border-radius:10px;border-left:4px solid #ccc;transition:all 0.2s;}';
+    html += '.summary-event-item:hover{background:#f0f4ff;transform:translateX(2px);}';
+    html += '.summary-event-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}';
+    html += '.summary-event-info{flex:1;min-width:0;}';
+    html += '.summary-event-player{font-size:13px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}';
+    html += '.summary-event-minute{font-size:11px;color:#888;}';
+    html += '.summary-timeline-toggle{padding:14px 20px;background:linear-gradient(135deg,#667eea,#764ba2);text-align:center;cursor:pointer;transition:all 0.2s;}';
+    html += '.summary-timeline-toggle:hover{background:linear-gradient(135deg,#5a6fd6,#6a4d96);}';
+    html += '.summary-timeline-toggle span{color:white;font-size:13px;font-weight:600;}';
+    html += '.summary-timeline-toggle span::before{content:"🕐 ";}';
     // Timeline View
     html += '.timeline-view{display:none;animation:fadeIn 0.3s ease;}';
     html += '.timeline-view.active{display:block;}';
@@ -80,9 +87,8 @@ export async function openMatchDetail(mid) {
       if (!fullName) return '-';
       const parts = fullName.trim().split(' ');
       if (parts.length === 1) return parts[0];
-      const nome = parts.slice(0, -1).join(' '); // tutto tranne l'ultimo
+      const nome = parts.slice(0, -1).join(' ');
       const cognome = parts[parts.length - 1];
-      // Cerca omonimia (stesso cognome)
       const sameSurname = eventi.filter(e => e.principale && e.principale.endsWith(' ' + cognome));
       if (sameSurname.length > 1) {
         const initial = nome.charAt(0).toUpperCase() + '.';
@@ -91,30 +97,42 @@ export async function openMatchDetail(mid) {
       return cognome;
     };
     
-    // Mini event list for summary
-    const miniEvents = eventi.slice(0, 8).map(e => {
-      const config = getEventConfig(e.tipo);
-      const playerName = formatPlayerName(e.principale);
-      return '<span class="summary-event-badge" style="border-left:3px solid ' + config.bgColor + ';"><span>' + config.icon + '</span><span>' + playerName + '</span><span style="color:#888;">' + e.minuto + '\'</span></span>';
-    }).join('');
-    
-    html += '<div class="summary-card" onclick="window.showTimelineFn()" style="cursor:pointer;">';
+    html += '<div class="summary-card">';
+    // Header con avversario, score e risultato
     html += '<div class="summary-header">';
-    html += '<div class="summary-match">📍 ' + p.avversario + '</div>';
-    html += '<div class="summary-score">' + golCasa + ' - ' + golOspiti + ' ' + resultIcon + '</div>';
+    html += '<div class="summary-match">' + p.avversario + '</div>';
+    html += '<div class="summary-score">' + golCasa + ' - ' + golOspiti + '</div>';
+    html += '<div class="summary-result">' + resultIcon + ' ' + resultLabel + '</div>';
     html += '</div>';
+    
+    // Meta info
     html += '<div class="summary-meta">📅 ' + formatDate(p.data_ora) + ' · ' + p.competizione + (p.giornata ? ' · G.' + p.giornata : '') + ' · ' + p.luogo + '</div>';
+    
+    // Eventi in griglia
     html += '<div class="summary-events">';
     if (eventi.length > 0) {
-      html += '<div class="summary-events-list">' + miniEvents + (eventi.length > 8 ? '<span class="summary-event-badge">+' + (eventi.length - 8) + '</span>' : '') + '</div>';
+      html += '<div class="summary-section-title">📋 Eventi Partita (' + eventi.length + ')</div>';
+      html += '<div class="summary-events-grid">';
+      eventi.forEach(e => {
+        const config = getEventConfig(e.tipo);
+        const playerName = formatPlayerName(e.principale);
+        html += '<div class="summary-event-item" style="border-left-color:' + config.bgColor + ';">';
+        html += '<div class="summary-event-icon" style="background:' + config.bgColor + ';color:white;">' + config.icon + '</div>';
+        html += '<div class="summary-event-info">';
+        html += '<div class="summary-event-player">' + playerName + '</div>';
+        html += '<div class="summary-event-minute">' + e.minuto + '\'</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
     } else {
-      html += '<p style="color:#888;text-align:center;font-size:12px;">Nessun evento registrato</p>';
+      html += '<p style="color:#888;text-align:center;font-size:13px;padding:20px;">Nessun evento registrato</p>';
     }
     html += '</div>';
-    html += '</div>';
     
-    html += '<div class="summary-actions">';
-    html += '<button class="summary-btn summary-btn-primary" onclick="window.showTimelineFn()">🕐 Timeline Completa</button>';
+    // Toggle timeline
+    html += '<div class="summary-timeline-toggle" onclick="window.showTimelineFn()">';
+    html += '<span>Timeline Completa</span>';
     html += '</div>';
     html += '</div>';
     
@@ -237,10 +255,10 @@ export async function openMatchDetail(mid) {
     html += '</div>'; // end timeline-view
     
     html += '<script>';
-    html += 'function showTimeline(){document.getElementById("summaryView").classList.remove("active");document.getElementById("timelineView").classList.add("active");}';
+    html += 'function showTimeline(){document.getElementById("summaryView").classList.remove("active");document.getElementById("timelineView").classList.add("active");window.scrollTo(0,0);}';
     html += 'function showSummary(){document.getElementById("timelineView").classList.remove("active");document.getElementById("summaryView").classList.add("active");}';
-    html += 'function toggleEventDetail(el){var panel=el.querySelector(".event-detail-panel");var isActive=panel.classList.contains("active");document.querySelectorAll(".event-detail-panel.active").forEach(p=>p.classList.remove("active"));if(!isActive){panel.classList.add("active");el.style.background="#f0f4ff";el.style.borderLeft="3px solid #667eea";}else{el.style.background="";el.style.borderLeft="";}}';
-    html += 'window.showTimelineFn=function(e){if(e)e.stopPropagation();showTimeline();};';
+    html += 'function toggleEventDetail(el){var panel=el.querySelector(".event-detail-panel");var isActive=panel.classList.contains("active");document.querySelectorAll(".event-detail-panel.active").forEach(p=>p.classList.remove("active"));if(!isActive){panel.classList.add("active");el.querySelector(".timeline-content").style.borderLeftColor="#667eea";}else{el.querySelector(".timeline-content").style.borderLeftColor="";}}';
+    html += 'window.showTimelineFn=function(e){if(e&&e.stopPropagation)e.stopPropagation();showTimeline();};';
     html += '</script>';
 
     document.getElementById('detailInner').innerHTML = html;
