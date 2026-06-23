@@ -30,7 +30,7 @@ export default async function loadCalendar() {
     const otherFutureMatches = futureMatches.slice(1);
 
     // Stili CSS per LIVE lampeggiante
-    html = `<style>
+    let html = `<style>
       @keyframes pulse-live {
         0%, 100% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.5; transform: scale(0.8); }
