@@ -1,8 +1,9 @@
-import { apiFetch } from '../../services/api';
-import { showLoading, hideLoading } from '../../utils/ui';
+import { apiFetch } from '../../services/api.js';
+import { showLoading, hideLoading } from '../../utils/ui.js';
 
 const EVENTI_CONFIG = {
-  'GOAL': { icon: '⚽', label: 'Gol', color: '#27AE60', bgColor: '#E8F8F0' },
+  'GOAL': { icon: '⚽', label: 'Gol Fatto', color: '#27AE60', bgColor: '#E8F8F0' },
+  'GOAL_SUBITO': { icon: '⚽', label: 'Gol Subito', color: '#E74C3C', bgColor: '#FDEDEC' },
   'YELLOW': { icon: '🟨', label: 'Amm.', color: '#F39C12', bgColor: '#FFF9E6' },
   'RED': { icon: '🟥', label: 'Esp.', color: '#E74C3C', bgColor: '#FDEDEC' },
   'ASSIST': { icon: '🅰️', label: 'Assist', color: '#3498DB', bgColor: '#EBF5FB' }
@@ -10,271 +11,295 @@ const EVENTI_CONFIG = {
 
 export async function openResultForm(mid) {
   const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const isPast = new Date(match.data_ora) < new Date();
   
-  // Prima carica formazione
-  const formazioneRes = await apiFetch('/partite/' + mid + '/formazione').catch(() => []);
-  let formazione = Array.isArray(formazioneRes) ? formazioneRes : (formazioneRes.formazione || []);
+  // Carica formazione
+  let formazione = [];
+  try {
+    const res = await apiFetch('/partite/' + mid + '/formazione');
+    formazione = Array.isArray(res) ? res : (res.formazione || []);
+  } catch(e) {}
   
-  // Se formazione vuota, carica convocati
+  // Se vuota, carica convocati
   if (formazione.length === 0) {
-    const convocazioniRes = await apiFetch('/partite/' + mid + '/convocazioni').catch(() => ({ convocazioni: [] }));
-    const convocati = (convocazioniRes.convocazioni || []).filter(c => c.presente);
-    
-    // Prendi i dettagli dei giocatori dalla rosa
-    if (convocati.length > 0) {
-      const RosaRes = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => []);
-      const rosaMap = {};
-      (RosaRes || []).forEach(g => { rosaMap[g.id] = g; });
-      
-      formazione = convocati.map(c => {
-        const g = rosaMap[c.calciatoreId] || {};
-        return {
-          id: c.calciatoreId,
-          calciatore_id: c.calciatoreId,
-          nome: g.nome || '',
-          cognome: g.cognome || '',
-          posizione: 'Convocato',
-          numeroMaglia: g.numeroMaglia || 99
-        };
-      });
-    }
+    try {
+      const convRes = await apiFetch('/partite/' + mid + '/convocazioni');
+      const convocati = (convRes.convocazioni || []).filter(c => c.presente);
+      if (convocati.length > 0) {
+        const rosaRes = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => []);
+        const rosaMap = {};
+        (rosaRes || []).forEach(g => { rosaMap[g.id] = g; });
+        formazione = convocati.map(c => {
+          const g = rosaMap[c.calciatoreId] || {};
+          return { id: c.calciatoreId, calciatore_id: c.calciatoreId, nome: g.nome || '', cognome: g.cognome || '', posizione: 'Convocato' };
+        });
+      }
+    } catch(e) {}
   }
   
-  // Carica eventi e valutazioni
-  const [eventiRes, valutazioniRes] = await Promise.all([
-    apiFetch('/partite/' + mid + '/dettaglio').catch(() => ({ eventi: [] })),
-    apiFetch('/partite/' + mid + '/valutazioni').catch(() => ({ valutazioni: [] }))
-  ]);
+  // Carica eventi
+  let eventi = [];
+  try {
+    const detRes = await apiFetch('/partite/' + mid + '/dettaglio');
+    eventi = detRes.eventi || [];
+  } catch(e) {}
   
-  // Ordina giocatori alfabeticamente per cognome
+  // Carica valutazioni
+  let valutazioniMap = {};
+  try {
+    const valRes = await apiFetch('/partite/' + mid + '/valutazioni');
+    (valRes.valutazioni || []).forEach(v => { valutazioniMap[v.calciatore_id] = v; });
+  } catch(e) {}
+  
+  // Ordina alfabeticamente
   formazione.sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
   
-  const eventi = eventiRes.eventi || [];
-  const valutazioni = valutazioniRes.valutazioni || [];
+  const content = '<div id="rfInner"></div>';
+  const buttons = isPast 
+    ? '<button class="btn btn-secondary" id="modalCancel">Chiudi</button>'
+    : '<button class="btn btn-secondary" id="modalCancel">Annulla</button><button class="btn btn-primary" id="saveBtn">💾 Salva Tutto</button>';
+  const modal = createModal('Risultato + Eventi', content, buttons, '900px');
   
-  const eventiMap = {};
-  eventi.forEach(e => { if (!eventiMap[e.minuto]) eventiMap[e.minuto] = []; eventiMap[e.minuto].push(e); });
+  renderContent(formazione, eventi, valutazioniMap, isPast);
   
-  const valutazioniMap = {};
-  valutazioni.forEach(v => { valutazioniMap[v.calciatore_id] = v; });
-  
-  const content = '<div id="resultFormInner"></div>';
-  const footer = '<button class="btn btn-secondary" id="modalCancel">Annulla</button><button class="btn btn-primary" id="saveResultBtn">Salva Tutto</button>';
-  const modal = createModal('Risultato + Eventi + Valutazioni', content, footer, '900px');
-  
-  renderForm(formazione, eventiMap, valutazioniMap, mid, modal);
-  
-  document.getElementById('saveResultBtn').addEventListener('click', () => saveResult(mid, modal));
+  if (!isPast) {
+    document.getElementById('saveBtn').addEventListener('click', () => saveAll(mid, modal));
+  }
 }
 
-function renderForm(formazione, eventiMap, valutazioniMap, mid, modal) {
-  const container = document.getElementById('resultFormInner');
-  const sourceLabel = formazione.length > 0 && formazione[0].posizione === 'Convocato' ? '(da convocazioni)' : '(da formazione)';
+function renderContent(formazione, eventi, valutazioniMap, isPast) {
+  const container = document.getElementById('rfInner');
+  
+  // Calcola risultato
+  const golFatti = eventi.filter(e => e.tipo === 'GOAL').length;
+  const golSubiti = eventi.filter(e => e.tipo === 'GOAL_SUBITO').length;
   
   let html = '<style>';
-  html += '.rf-modal{max-height:70vh;overflow-y:auto;padding:4px;}';
-  html += '.rf-section{margin-bottom:24px;padding:20px;background:#f8f9fa;border-radius:12px;}';
-  html += '.rf-section h4{margin:0 0 16px 0;font-size:15px;color:#333;display:flex;align-items:center;gap:8px;}';
-  html += '.source-label{font-size:11px;color:#888;font-weight:normal;margin-left:8px;}';
-  html += '.event-timeline{position:relative;padding-left:24px;}';
-  html += '.event-timeline::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#667eea,#764ba2);border-radius:2px;}';
-  html += '.event-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;position:relative;}';
-  html += '.event-item::before{content:"";position:absolute;left:-20px;top:12px;width:12px;height:12px;border-radius:50%;background:white;border:3px solid #667eea;z-index:1;}';
-  html += '.event-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;min-width:120px;justify-content:center;}';
-  html += '.event-details{flex:1;padding:12px;background:white;border-radius:10px;border:1px solid #eee;}';
-  html += '.event-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}';
-  html += '.event-row input, .event-row select{padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;}';
-  html += '.event-row input:focus, .event-row select:focus{outline:none;border-color:#667eea;}';
-  html += '.player-voto{display:flex;align-items:flex-start;justify-content:space-between;padding:12px;background:white;border-radius:10px;margin-bottom:8px;border:1px solid #eee;}';
-  html += '.player-voto:hover{border-color:#667eea;}';
-  html += '.player-name{font-weight:600;font-size:14px;}';
-  html += '.player-pos{font-size:11px;color:#888;margin-top:2px;}';
-  html += '.voto-select{padding:10px 16px;border:2px solid #667eea;border-radius:10px;background:white;min-width:80px;text-align:center;font-weight:bold;color:#667eea;font-size:16px;cursor:pointer;}';
-  html += '.voto-select:focus{outline:none;border-color:#764ba2;}';
-  html += '.note-area{width:100%;padding:8px 12px;border:1px solid #eee;border-radius:8px;font-size:12px;margin-top:8px;}';
-  html += '.add-btn{background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;padding:12px 20px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;margin-top:12px;width:100%;}';
-  html += '.add-btn:hover{opacity:0.9;}';
-  html += '.del-btn{background:#E74C3C;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;}';
-  html += '.del-btn:hover{background:#c0392b;}';
-  html += '.empty-state{padding:30px;text-align:center;color:#888;font-size:14px;}';
-  html += '.time-divider{margin:16px 0 12px 0;display:flex;align-items:center;gap:12px;font-size:11px;color:#667eea;font-weight:700;text-transform:uppercase;}';
-  html += '.time-divider::after{content:"";flex:1;height:1px;background:#ddd;}';
+  html += '.rf{max-height:70vh;overflow-y:auto;padding:8px;}';
+  html += '.sec{margin-bottom:20px;padding:16px;background:#f8f9fa;border-radius:12px;}';
+  html += '.sec h4{margin:0 0 12px;font-size:14px;color:#333;}';
+  html += '.score{text-align:center;padding:20px;background:white;border-radius:12px;border:2px solid #667eea;margin-bottom:16px;}';
+  html += '.score-num{font-size:56px;font-weight:bold;}';
+  html += '.score-label{font-size:12px;color:#888;}';
+  html += '.timeline{padding-left:20px;position:relative;}';
+  html += '.timeline::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:3px;background:linear-gradient(#667eea,#764ba2);}';
+  html += '.evt{display:flex;align-items:center;gap:10px;margin-bottom:10px;position:relative;}';
+  html += '.evt::before{content:"";position:absolute;left:-18px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:white;border:2px solid #667eea;}';
+  html += '.evt-badge{padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;min-width:110px;text-align:center;}';
+  html += '.evt-det{flex:1;padding:10px;background:white;border-radius:8px;border:1px solid #eee;}';
+  html += '.evt-row{display:flex;gap:8px;margin-bottom:6px;}';
+  html += '.evt-row input,.evt-row select{padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;}';
+  html += '.pv{display:flex;align-items:center;justify-content:space-between;padding:10px;background:white;border-radius:8px;margin-bottom:6px;border:1px solid #eee;}';
+  html += '.pv:hover{border-color:#667eea;}';
+  html += '.pv-nome{font-weight:600;font-size:13px;}';
+  html += '.pv-pos{font-size:10px;color:#888;}';
+  html += '.vs{padding:8px 12px;border:2px solid #667eea;border-radius:8px;background:white;font-weight:bold;color:#667eea;font-size:16px;min-width:70px;text-align:center;}';
+  html += '.na{width:100%;padding:6px 8px;border:1px solid #eee;border-radius:6px;font-size:11px;margin-top:4px;}';
+  html += '.abtn{background:linear-gradient(#667eea,#764ba2);color:white;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:13px;width:100%;}';
+  html += '.dbtn{background:#E74C3C;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;}';
+  html += '.empty{padding:24px;text-align:center;color:#888;font-size:13px;}';
+  html += '.tdiv{margin:12px 0 8px;font-size:10px;color:#667eea;font-weight:700;text-transform:uppercase;}';
+  html += '.tdiv::after{content:"";display:block;height:1px;background:#ddd;margin-top:4px;}';
   html += '</style>';
   
-  html += '<div class="rf-modal">';
+  html += '<div class="rf">';
   
-  // SEZIONE EVENTI con timeline
-  html += '<div class="rf-section">';
-  html += '<h4>⚽ Eventi Partita <span class="source-label">(clicca per modificare/aggiungere)</span></h4>';
+  // RISULTATO
+  html += '<div class="sec">';
+  html += '<h4>📊 Risultato</h4>';
+  html += '<div class="score">';
+  html += '<div class="score-num">';
+  html += '<span style="color:#27AE60;">' + golFatti + '</span>';
+  html += ' - ';
+  html += '<span style="color:#E74C3C;">' + golSubiti + '</span>';
+  html += '</div>';
+  html += '<div class="score-label">SSD Albalonga - Avversario</div>';
+  html += '</div>';
+  html += '</div>';
+  
+  // EVENTI
+  html += '<div class="sec">';
+  html += '<h4>⚽ Eventi</h4>';
   
   if (formazione.length === 0) {
-    html += '<div class="empty-state">Nessun giocatore disponibile.<br>Convoca prima i giocatori dalla sezione Convocazioni.</div>';
+    html += '<div class="empty">Nessun giocatore. Crea prima convocazioni.</div>';
   } else {
-    const primoTempo = [];
-    const secondoTempo = [];
-    const extraTime = [];
-    
-    Object.keys(eventiMap).map(Number).sort((a, b) => a - b).forEach(min => {
-      eventiMap[min].forEach(evt => {
-        if (min <= 45) primoTempo.push({ ...evt, minuto: min });
-        else if (min <= 90) secondoTempo.push({ ...evt, minuto: min });
-        else extraTime.push({ ...evt, minuto: min });
-      });
+    // Raggruppa per tempo
+    const p1 = [], p2 = [], ext = [];
+    eventi.forEach(e => {
+      const m = parseInt(e.minuto) || 0;
+      if (m <= 45) p1.push(e);
+      else if (m <= 90) p2.push(e);
+      else ext.push(e);
     });
     
-    html += '<div class="event-timeline">';
-    
-    if (primoTempo.length > 0) {
-      html += '<div class="time-divider">1° Tempo</div>';
-      primoTempo.forEach(evt => { html += renderEventItem(evt, formazione); });
-    }
-    
-    if (secondoTempo.length > 0) {
-      html += '<div class="time-divider">2° Tempo</div>';
-      secondoTempo.forEach(evt => { html += renderEventItem(evt, formazione); });
-    }
-    
-    if (extraTime.length > 0) {
-      html += '<div class="time-divider">Extratime</div>';
-      extraTime.forEach(evt => { html += renderEventItem(evt, formazione); });
-    }
-    
-    if (primoTempo.length === 0 && secondoTempo.length === 0 && extraTime.length === 0) {
-      html += '<div class="empty-state">Nessun evento registrato.</div>';
-    }
-    
+    html += '<div class="timeline" id="tl">';
+    if (p1.length) { html += '<div class="tdiv">1° Tempo</div>'; p1.forEach(e => html += evtHTML(e, formazione, isPast)); }
+    if (p2.length) { html += '<div class="tdiv">2° Tempo</div>'; p2.forEach(e => html += evtHTML(e, formazione, isPast)); }
+    if (ext.length) { html += '<div class="tdiv">Extratime</div>'; ext.forEach(e => html += evtHTML(e, formazione, isPast)); }
+    if (eventi.length === 0) html += '<div class="empty">Nessun evento</div>';
     html += '</div>';
-    html += '<button type="button" class="add-btn" id="addEventBtn">+ Aggiungi Evento</button>';
+    
+    if (!isPast) {
+      html += '<button class="abtn" id="addEvtBtn">+ Aggiungi Evento</button>';
+    }
   }
   html += '</div>';
   
-  // SEZIONE VALUTAZIONI
-  html += '<div class="rf-section">';
-  html += '<h4>⭐ Valutazioni Giocatori <span class="source-label">' + sourceLabel + '</span></h4>';
-  html += '<p style="font-size:12px;color:#888;margin:0 0 16px 0;">Assegna un voto da 4 a 10 per ogni giocatore</p>';
-  
+  // VALUTAZIONI
+  html += '<div class="sec">';
+  html += '<h4>⭐ Valutazioni</h4>';
   if (formazione.length === 0) {
-    html += '<div class="empty-state">Nessun giocatore disponibile.</div>';
+    html += '<div class="empty">Nessun giocatore</div>';
   } else {
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">';
-    
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;">';
     formazione.forEach(g => {
-      const existing = valutazioniMap[g.id] || {};
-      const posColor = g.posizione === 'Titolare' ? '#27AE60' : g.posizione === 'Panchina' ? '#F39C12' : '#3498DB';
-      
-      html += '<div class="player-voto">';
-      html += '<div>';
-      html += '<div class="player-name">' + (g.cognome || '').toUpperCase() + ' ' + (g.nome || '') + '</div>';
-      html += '<div class="player-pos" style="color:' + posColor + ';">' + (g.posizione || 'Convocato') + '</div>';
-      html += '<input type="text" class="note-area" placeholder="Note allenatore..." value="' + (existing.nota_allenatore || '') + '" data-nota-id="' + g.id + '">';
-      html += '</div>';
-      html += '<select class="voto-select" data-voto-id="' + g.id + '">';
-      html += '<option value="">-</option>';
+      const ex = valutazioniMap[g.id] || {};
+      const pc = g.posizione === 'Titolare' ? '#27AE60' : g.posizione === 'Panchina' ? '#F39C12' : '#3498DB';
+      html += '<div class="pv">';
+      html += '<div><div class="pv-nome">' + (g.cognome || '').toUpperCase() + ' ' + (g.nome || '') + '</div>';
+      html += '<div class="pv-pos" style="color:' + pc + ';">' + (g.posizione || 'Convocato') + '</div>';
+      html += '<input type="text" class="na" placeholder="Note..." value="' + (ex.nota_allenatore || '') + '" data-nid="' + g.id + '"></div>';
+      html += '<select class="vs" data-vid="' + g.id + '"><option value="">-</option>';
       for (let v = 4; v <= 10; v += 0.5) {
-        html += '<option value="' + v + '"' + (existing.voto == v ? ' selected' : '') + '>' + v.toString().replace('.', ',') + '</option>';
+        html += '<option value="' + v + '"' + (ex.voto == v ? ' selected' : '') + '>' + v.toString().replace('.', ',') + '</option>';
       }
-      html += '</select>';
-      html += '</div>';
+      html += '</select></div>';
     });
-    
     html += '</div>';
   }
   html += '</div>';
   
   html += '</div>';
-  
   container.innerHTML = html;
   
-  // Gestisci aggiunta evento
-  const addBtn = document.getElementById('addEventBtn');
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      const timeline = container.querySelector('.event-timeline');
-      const emptyState = timeline.querySelector('.empty-state');
-      if (emptyState) emptyState.remove();
-      
-      const newItem = document.createElement('div');
-      newItem.className = 'event-item';
-      newItem.innerHTML = renderEventRowHTML(formazione);
-      newItem.querySelector('.del-btn').addEventListener('click', () => {
-        newItem.remove();
-      });
-      timeline.appendChild(newItem);
+  // Aggiorna risultato quando cambia tipo evento
+  container.querySelectorAll('.evt-tipo').forEach(sel => {
+    sel.addEventListener('change', updateScore);
+  });
+  container.querySelectorAll('.evt-del').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.target.closest('.evt').remove();
+      updateScore();
     });
+  });
+  
+  // Aggiungi evento
+  const addBtn = document.getElementById('addEvtBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => addEvent(formazione));
   }
 }
 
-function renderEventItem(evt, formazione) {
-  const cfg = EVENTI_CONFIG[evt.tipo] || { icon: '●', label: evt.tipo, color: '#888', bgColor: '#f0f0f0' };
-  const playerId = evt.principale_id || evt.calciatore_principale_id;
-  const playerName = formazione.find(g => g.id === playerId || g.calciatore_id === playerId);
-  
-  let optionsHtml = formazione.map(g => {
-    const pid = g.id || g.calciatore_id;
-    const selected = pid === playerId ? ' selected' : '';
-    return '<option value="' + pid + '"' + selected + '>' + (g.cognome || '').toUpperCase() + ' ' + (g.nome || '') + '</option>';
+function evtHTML(evt, formazione, isPast) {
+  const cfg = EVENTI_CONFIG[evt.tipo] || EVENTI_CONFIG['GOAL'];
+  const pid = evt.principale_id || evt.calciatore_principale_id;
+  const opts = formazione.map(g => {
+    const id = g.id || g.calciatore_id;
+    return '<option value="' + id + '"' + (id === pid ? ' selected' : '') + '>' + (g.cognome || '').toUpperCase() + '</option>';
   }).join('');
   
-  return '<div class="event-item">' +
-    '<span class="event-badge" style="background:' + cfg.bgColor + ';color:' + cfg.color + ';border:2px solid ' + cfg.color + ';">' +
-    cfg.icon + ' ' + cfg.label + ' <strong>' + evt.minuto + '\'</strong></span>' +
-    '<div class="event-details">' +
-    '<div class="event-row">' +
-    '<input type="number" value="' + evt.minuto + '" class="evt-minimo" style="width:60px;" min="1" max="120">' +
+  return '<div class="evt">' +
+    '<span class="evt-badge" style="background:' + cfg.bgColor + ';color:' + cfg.color + ';">' + cfg.icon + ' ' + cfg.label + ' <strong>' + (evt.minuto || '?') + '\'</strong></span>' +
+    '<div class="evt-det">' +
+    '<div class="evt-row">' +
+    '<input type="number" value="' + (evt.minuto || '') + '" class="evt-min" style="width:50px;" min="1" max="150" placeholder="Min">' +
     '<select class="evt-tipo">' +
     Object.entries(EVENTI_CONFIG).map(([k, v]) => '<option value="' + k + '"' + (evt.tipo === k ? ' selected' : '') + '>' + v.icon + ' ' + v.label + '</option>').join('') +
     '</select>' +
     '</div>' +
-    '<select class="evt-giocatore" style="width:100%;">' +
-    '<option value="">Seleziona giocatore...</option>' +
-    optionsHtml +
+    '<select class="evt-g">' +
+    '<option value="">Giocatore...</option>' + opts +
     '</select>' +
     '</div>' +
-    '<button type="button" class="del-btn" onclick="if(confirm(\'Eliminare?\'))this.closest(\'.event-item\').remove()">✕</button>' +
+    (isPast ? '' : '<button class="dbtn evt-del">✕</button>') +
     '</div>';
 }
 
-function renderEventRowHTML(formazione) {
-  let optionsHtml = formazione.map(g => {
-    const pid = g.id || g.calciatore_id;
-    return '<option value="' + pid + '">' + (g.cognome || '').toUpperCase() + ' ' + (g.nome || '') + '</option>';
+function addEvent(formazione) {
+  const tl = document.getElementById('tl');
+  const empty = tl.querySelector('.empty');
+  if (empty) empty.remove();
+  
+  const opts = formazione.map(g => {
+    const id = g.id || g.calciatore_id;
+    return '<option value="' + id + '">' + (g.cognome || '').toUpperCase() + '</option>';
   }).join('');
   
-  return '<div class="event-details" style="flex:1;">' +
-    '<div class="event-row">' +
-    '<input type="number" placeholder="Min" class="evt-minimo" style="width:60px;" min="1" max="120">' +
+  const div = document.createElement('div');
+  div.className = 'evt';
+  div.innerHTML = '<div class="evt-det" style="flex:1;">' +
+    '<div class="evt-row">' +
+    '<input type="number" class="evt-min" style="width:50px;" min="1" max="150" placeholder="Min">' +
     '<select class="evt-tipo">' +
     Object.entries(EVENTI_CONFIG).map(([k, v]) => '<option value="' + k + '">' + v.icon + ' ' + v.label + '</option>').join('') +
-    '</select>' +
-    '</div>' +
-    '<select class="evt-giocatore" style="width:100%;">' +
-    '<option value="">Seleziona giocatore...</option>' +
-    optionsHtml +
-    '</select>' +
-    '</div>' +
-    '<button type="button" class="del-btn">✕</button>';
+    '</select></div>' +
+    '<select class="evt-g"><option value="">Giocatore...</option>' + opts + '</select></div>' +
+    '<button class="dbtn evt-del">✕</button>';
+  
+  div.querySelector('.evt-del').addEventListener('click', () => { div.remove(); updateScore(); });
+  div.querySelector('.evt-tipo').addEventListener('change', updateScore);
+  
+  tl.appendChild(div);
+  updateScore();
 }
 
-async function saveResult(mid, modal) {
+function updateScore() {
+  let f = 0, s = 0;
+  document.querySelectorAll('#tl .evt').forEach(e => {
+    const t = e.querySelector('.evt-tipo')?.value;
+    if (t === 'GOAL') f++;
+    if (t === 'GOAL_SUBITO') s++;
+  });
+  const scoreDiv = document.querySelector('.score-num');
+  if (scoreDiv) scoreDiv.innerHTML = '<span style="color:#27AE60;">' + f + '</span> - <span style="color:#E74C3C;">' + s + '</span>';
+}
+
+async function saveAll(mid, modal) {
   showLoading();
+  const errors = [];
+  
   try {
-    const valutazioni = [];
-    document.querySelectorAll('.voto-select').forEach(sel => {
-      const playerId = sel.dataset.votoId;
-      const voto = sel.value;
-      const nota = document.querySelector('[data-nota-id="' + playerId + '"]').value;
-      if (voto) valutazioni.push({ calciatore_id: playerId, voto: parseFloat(voto), nota_allenatore: nota || null });
+    // 1. Salva eventi (DELETE + INSERT)
+    await apiFetch('/partite/' + mid + '/eventi', { method: 'DELETE' }).catch(() => {});
+    
+    document.querySelectorAll('#tl .evt').forEach(e => {
+      const min = parseInt(e.querySelector('.evt-min')?.value);
+      const tipo = e.querySelector('.evt-tipo')?.value;
+      const gid = e.querySelector('.evt-g')?.value;
+      if (min && tipo && gid) {
+        apiFetch('/partite/' + mid + '/eventi', {
+          method: 'POST',
+          body: JSON.stringify({ tipo, calciatorePrincipaleId: gid, minuto: min })
+        }).catch(err => errors.push('Evento: ' + err.message));
+      }
     });
     
-    await apiFetch('/partite/' + mid + '/valutazioni', { 
-      method: 'POST', 
-      body: JSON.stringify({ valutazioni }) 
-    }).catch(() => ({}));
+    // 2. Salva valutazioni
+    const valutazioni = [];
+    document.querySelectorAll('.vs').forEach(sel => {
+      const pid = sel.dataset.vid;
+      const voto = sel.value;
+      const nota = document.querySelector('[data-nid="' + pid + '"]')?.value;
+      if (voto) valutazioni.push({ calciatore_id: pid, voto: parseFloat(voto), nota_allenatore: nota || null });
+    });
+    
+    if (valutazioni.length > 0) {
+      await apiFetch('/partite/' + mid + '/valutazioni', {
+        method: 'POST',
+        body: JSON.stringify({ valutazioni })
+      }).catch(err => errors.push('Valutazioni: ' + err.message));
+    }
     
     hideLoading();
-    modal.close();
-    alert('Valutazioni salvate!');
-    if (window.YFM?.loadCalendar) window.YFM.loadCalendar();
+    
+    if (errors.length > 0) {
+      alert('⚠️ Alcuni errori:\n' + errors.join('\n'));
+    } else {
+      modal.close();
+      alert('✅ Salvato!');
+      if (window.YFM?.loadCalendar) window.YFM.loadCalendar();
+    }
   } catch (err) {
     hideLoading();
     alert('Errore: ' + err.message);
