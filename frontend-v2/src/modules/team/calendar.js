@@ -88,12 +88,12 @@ export function renderMatchCard(m, stats, isNext = false) {
   const isPast = new Date(m.data_ora) < new Date();
   const isArchiviata = m.archiviata === true || m.archiviata === 'true';
   
-  // Stile per partite archiviate (elegante grigio/marrone)
+  // Stile per partite archiviate (elegante grigio/marrone) - SOLO icona 📦
   const archivedStyle = isArchiviata ? 'opacity:0.75;border-left:4px solid #8B7355 !important;background:#F5F5F0 !important;' : '';
-  const archivedBadge = isArchiviata ? '<span style="background:#8B7355;color:white;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;margin-left:8px;">📦 Archiviata</span>' : '';
+  const archivedIcon = isArchiviata ? '📦 ' : '';
 
   let L = `
-    <div class="match-date">${formatDate(m.data_ora)}${archivedBadge}</div>
+    <div class="match-date">${archivedIcon}${formatDate(m.data_ora)}</div>
     <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
     <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>`;
 
@@ -115,29 +115,34 @@ export function renderMatchCard(m, stats, isNext = false) {
 
   // ===== PULSANTI: Logica corretta =====
   
-  // TUTTI I PULSANTI sono visibili (archiviazione non nasconde nulla nel calendario)
-  // I moduli (formazione, eventi, convocazioni) decideranno se in sola lettura o modificabile
-  
-  // Formazione - sempre visibile
-  if (hasResult) {
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-  }
-  
+  // Partite future: tutti i pulsanti modificabili
   if (!isPast) {
-    // Partite future: tutti i pulsanti modificabili
+    // Formazione - UN SOLO pulsante
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">📋 Convoca</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Distinta</button>`;
     
-    // Pulsante Archivia SOLO per partite passate con risultato
+    // Se ha già un risultato ma non è archiviata: mostra pulsante per modificare eventi
+    if (hasResult && !isArchiviata) {
+      R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
+    }
+    
   } else if (isPast && hasResult && !isArchiviata) {
     // Partita passata con risultato ma non archiviata: mostra pulsante Archivia
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
     R += `<button class="btn btn-secondary btn-small" style="background:#8B7355;color:white;border-color:#8B7355;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
+    
+  } else if (isPast && !hasResult) {
+    // Partita passata senza risultato
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   } else {
-    // Partite passate senza risultato O archiviate
+    // Partite archiviate: solo consultazione
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   }
