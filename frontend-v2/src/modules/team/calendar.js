@@ -78,6 +78,8 @@ export function renderMatchCard(m, stats) {
   if (!isPast) {
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+  } else {
+    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">📊 Risultato</button>`;
   }
   R += `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>`;
   R += `<button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;

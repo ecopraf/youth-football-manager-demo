@@ -59,6 +59,10 @@ window.YFM.openMatchDetail = async (mid) => {
   const m = await import('./modules/team/matchDetail.js')
   m.openMatchDetail(mid)
 }
+window.YFM.openResultForm = async (mid) => {
+  const m = await import('./modules/team/resultForm.js')
+  m.openResultForm(mid)
+}
 
 
 // Scheda giocatore: funzione globale di comodo
