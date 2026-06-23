@@ -4,17 +4,17 @@ import { showLoading, hideLoading } from '../../utils/ui';
 export default async function loadGuest() {
   const c = document.getElementById('pageContent');
   
-  // Estrai token dall'URL
-  const pathParts = window.location.pathname.split('/');
-  const token = pathParts[pathParts.length - 1];
+  // Usa il token passato tramite window.YFM.guestToken
+  const token = window.YFM.guestToken;
   
-  if (!token || token === 'guest') {
+  if (!token) {
     c.innerHTML = `
       <div class="auth-container">
         <div class="auth-card" style="text-align:center;">
           <h1>⚽ Youth Football Manager</h1>
           <p style="color:#666;margin:20px 0;">Link non valido</p>
           <p style="color:#999;font-size:14px;">Il link potrebbe essere scaduto o non essere corretto.</p>
+          <a href="/" class="btn btn-primary" style="margin-top:20px;">Vai alla Home</a>
         </div>
       </div>
     `;
@@ -68,6 +68,7 @@ export default async function loadGuest() {
             <p style="color:#E74C3C;font-weight:bold;">${errore}</p>
           </div>
           <p style="color:#999;font-size:14px;">Contatta l'amministratore se pensi che ci sia un errore.</p>
+          <a href="/" class="btn btn-primary" style="margin-top:20px;">Vai alla Home</a>
         </div>
       </div>
     `;

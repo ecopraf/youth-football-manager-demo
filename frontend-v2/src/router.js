@@ -107,7 +107,7 @@ export function initRouter() {
     }
   };
 
-  window.YFM.navigateTo = async (page) => {
+  window.YFM.navigateTo = async (page, params) => {
     // Pagine pubbliche (senza auth)
     const publicPages = ['login', 'guest'];
     
@@ -138,6 +138,10 @@ export function initRouter() {
     try {
       const module = await window.YFM.pages[page]();
       if (module.default) {
+        // Passa i parametri al modulo se necessario
+        if (params) {
+          window.YFM.pageParams = params;
+        }
         await module.default();
       }
       if (window.YFM && typeof window.YFM.adjustPageTitleForMobile === 'function') {

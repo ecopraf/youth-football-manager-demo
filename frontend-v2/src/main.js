@@ -12,10 +12,12 @@ window.YFM = {
   currentPage: 'dashboard',
   allPlayers: [],
   allMatches: [],
-  workspaceInfo: null
+  workspaceInfo: null,
+  guestToken: null,
+  pageParams: null
 }
 
-// Funzioni helper per squadra (definite subito, non aspettano loadSquadre)
+// Funzioni helper per squadra
 window.YFM.getSquadraName = () => {
   const s = window.YFM.allSquadre.find(x => x.id === window.YFM.squadraId);
   return s ? s.nome : 'Squadra';
@@ -103,18 +105,29 @@ window.YFM.adjustPageTitleForMobile = function() {
 document.addEventListener('DOMContentLoaded', () => {
   setupLayout();
   initRouter();
-  
+
   // Inizializza UI utente
   if (window.YFM.updateUserUI) window.YFM.updateUserUI();
-  
+
   // Setup logout button - con event delegation
   document.addEventListener('click', (e) => {
-    if (e.target.id === 'logoutBtn' || e.target.closest('#logoutBtn')) {
+    if (e.target.id === 'logoutBtn' || e.target.id === 'headerLogoutBtn' || e.target.closest('#logoutBtn') || e.target.closest('#headerLogoutBtn')) {
       e.preventDefault();
       window.YFM.handleLogout();
     }
   });
-  
+
+  // Check per guest link (URL: /guest/{token})
+  const path = window.location.pathname;
+  if (path.startsWith('/guest/')) {
+    const token = path.split('/guest/')[1];
+    if (token) {
+      window.YFM.guestToken = token;
+      window.YFM.navigateTo('guest');
+      return;
+    }
+  }
+
   // Check autenticazione
   if (window.YFM.isAuthenticated && window.YFM.isAuthenticated()) {
     loadWorkspaceInfo();
