@@ -86,9 +86,14 @@ export function renderMatchCard(m, stats, isNext = false) {
   const r = (stats?.risultati || []).find(x => x.id === m.id);
   const hasResult = !!r;
   const isPast = new Date(m.data_ora) < new Date();
+  const isArchiviata = m.archiviata === true || m.archiviata === 'true';
+  
+  // Stile per partite archiviate (elegante grigio/marrone)
+  const archivedStyle = isArchiviata ? 'opacity:0.75;border-left:4px solid #8B7355 !important;background:#F5F5F0 !important;' : '';
+  const archivedBadge = isArchiviata ? '<span style="background:#8B7355;color:white;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;margin-left:8px;">📦 Archiviata</span>' : '';
 
   let L = `
-    <div class="match-date">${formatDate(m.data_ora)}</div>
+    <div class="match-date">${formatDate(m.data_ora)}${archivedBadge}</div>
     <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
     <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>`;
 
@@ -105,25 +110,57 @@ export function renderMatchCard(m, stats, isNext = false) {
     R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',${isPast})">📋 ${isPast ? 'Conv.' : 'Convoca'}</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 ${isPast ? 'Dist.' : 'Distinta'}</button>`;
-  if (hasResult) {
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
+  // Pulsanti - NASCONDI per partite archiviate
+  if (!isArchiviata) {
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',${isPast})">📋 ${isPast ? 'Conv.' : 'Convoca'}</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 ${isPast ? 'Dist.' : 'Distinta'}</button>`;
+    if (hasResult) {
+      R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
+    }
+    
+    if (!isPast) {
+      R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
+      R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+    }
+    
+    // Pulsante Archivia per partite passate con risultato (non ancora archiviate)
+    if (isPast && hasResult) {
+      R += `<button class="btn btn-secondary btn-small" style="background:#8B7355;color:white;border-color:#8B7355;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
+    }
+    
+    R += `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>`;
+    R += `<button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
+  } else {
+    // Partita archiviata - mostra solo pulsante Sblocca
+    R += `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓 Sblocca</button>`;
   }
-  
-  if (!isPast) {
-    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
-  }
-  
-  R += `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>`;
-  R += `<button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
 
-  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
     <div style="flex:1;min-width:220px;">${L}</div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}</div>
   </div>`;
 }
+
+// Funzioni globali per archivia/sblocca
+window.archiveMatch = async function(id) {
+  if (!confirm('Archiviare questa partita? Non sarà più possibile modificare eventi, formazione e convocazioni.')) return;
+  showLoading();
+  try {
+    await apiFetch('/partite/' + id + '/archivia', { method: 'PUT' });
+    loadCalendar();
+  } catch (e) { alert(e.message); }
+  finally { hideLoading(); }
+};
+
+window.unarchiveMatch = async function(id) {
+  if (!confirm('Sbloccare questa partita? Sarà possibile modificare eventi, formazione e convocazioni.')) return;
+  showLoading();
+  try {
+    await apiFetch('/partite/' + id + '/sblocca', { method: 'PUT' });
+    loadCalendar();
+  } catch (e) { alert(e.message); }
+  finally { hideLoading(); }
+};
 
 export function openMatchForm(mid) {
   const m = mid ? allMatches.find(x => x.id === mid) : null;

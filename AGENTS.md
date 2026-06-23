@@ -63,12 +63,22 @@
 - `POST /api/partite/:id/valutazioni` - Salva batch valutazioni
 
 ## Task Da Completare
-- [ ] Pulsante "Archivia Partita" per bloccare modifiche dopo conclusione
+- [x] ✅ **Pulsante "Archivia Partita"** - Blocco modifiche dopo archiviazione
 
-## Ultime Modifiche (commit: 7bae49f)
-- Fix completo eventi/valutazioni
-- Scheda valutazioni separata per partite passate
-- Risultato dinamico che si aggiorna in tempo reale
+## Task Sospesi (on hold)
+- ⏸️ **Valutazioni Giocatore** - Valutazioni tecniche per stagione/partita (sospesa per ora)
+
+## Funzionalità Implementate
+- ✅ **Timeline Partita** - Vista minuto-per-minuto eventi (in matchDetail.js)
+- ✅ **Archivia Partita** - Pulsante per bloccare modifiche a eventi/formazione/convocazioni
+
+## Ultime Modifiche (commit: FEAT - Archivia Partita)
+- Aggiunto campo archiviata alla tabella partita
+- Aggiunti endpoint PUT /api/partite/:id/archivia e /sblocca
+- Calendario: badge e pulsante Archivia/Sblocca
+- Formazione: sola lettura per partite archiviate
+- Eventi: sola lettura per partite archiviate
+- Convocazioni: sola lettura per partite archiviate
 
 ## URL Applicazione
 - Frontend: https://youth-football-manager.vercel.app

@@ -26,7 +26,7 @@ app.use(express.json({ limit: '5mb' }));
 // Health con warmup
 app.get('/api/health', async (req, res) => {
   try { await supabase.from('squadra').select('id').limit(1); } catch(e) {}
-  res.json({ status: 'ok', version: '3.11', warm: true });
+  res.json({ status: 'ok', version: '3.12', warm: true });
 });
 
 // Endpoint warmup dedicato per mantenere il backend attivo
@@ -143,6 +143,32 @@ app.get('/api/squadre/:squadraId/partite', async (req, res) => { const { data } 
 app.post('/api/squadre/:squadraId/partite', async (req, res) => { const p = req.body; const { data } = await supabase.from('partita').insert({ squadra_id: req.params.squadraId, data_ora: p.dataOra, avversario: p.avversario, luogo: p.luogo, competizione: p.competizione, giornata: p.giornata }).select().single(); res.status(201).json(data); });
 app.put('/api/partite/:id', async (req, res) => { const p = req.body; await supabase.from('partita').update({ data_ora: p.dataOra, avversario: p.avversario, luogo: p.luogo, competizione: p.competizione, giornata: p.giornata }).eq('id', req.params.id); res.json({ success: true }); });
 app.delete('/api/partite/:id', async (req, res) => { await supabase.from('evento_partita').delete().eq('partita_id', req.params.id); await supabase.from('formazione_partita').delete().eq('partita_id', req.params.id); await supabase.from('convocazione').delete().eq('partita_id', req.params.id); await supabase.from('partita').delete().eq('id', req.params.id); res.json({ success: true }); });
+
+// PUT /api/partite/:id/archivia - Archivia partita
+app.put('/api/partite/:id/archivia', async (req, res) => {
+  try {
+    const { data: partita } = await supabase.from('partita').select('id, archiviata').eq('id', req.params.id).single();
+    if (!partita) return res.status(404).json({ error: 'Partita non trovata' });
+    await supabase.from('partita').update({ archiviata: true }).eq('id', req.params.id);
+    res.json({ success: true, archiviata: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/partite/:id/sblocca - Sblocca partita archiviata
+app.put('/api/partite/:id/sblocca', async (req, res) => {
+  try {
+    const { data: partita } = await supabase.from('partita').select('id, archiviata').eq('id', req.params.id).single();
+    if (!partita) return res.status(404).json({ error: 'Partita non trovata' });
+    await supabase.from('partita').update({ archiviata: false }).eq('id', req.params.id);
+    res.json({ success: true, archiviata: false });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/partite/:partitaId/dettaglio - Dettaglio con eventi
 app.get('/api/partite/:partitaId/dettaglio', async (req, res) => { try { const { data: partita } = await supabase.from('partita').select('*').eq('id', req.params.partitaId).single(); if(!partita) return res.status(404).json({ error: 'Partita non trovata' }); const { data: eventi } = await supabase.from('evento_partita').select('tipo_evento_codice, minuto, calciatore_principale_id, calciatore_principale:calciatore_principale_id(nome, cognome), calciatore_secondario:calciatore_secondario_id(nome, cognome)').eq('partita_id', req.params.partitaId).order('minuto'); const golCasa = (eventi||[]).filter(e=>e.tipo_evento_codice==='GOAL' || e.tipo_evento_codice==='AUTOGOL').length; const golOspiti = (eventi||[]).filter(e=>e.tipo_evento_codice==='SUBITO').length; res.json({ partita, golCasa, golOspiti, eventi: (eventi||[]).map(e => ({ tipo: e.tipo_evento_codice, minuto: e.minuto, principale_id: e.calciatore_principale_id, principale: e.calciatore_principale ? (e.calciatore_principale.nome || '') + ' ' + (e.calciatore_principale.cognome || '') : null, secondario: e.calciatore_secondario ? (e.calciatore_secondario.nome || '') + ' ' + (e.calciatore_secondario.cognome || '') : null })) }); } catch(err) { res.status(500).json({ error: err.message }); } });
 
 // DELETE /api/partite/:partitaId/eventi - Elimina tutti gli eventi

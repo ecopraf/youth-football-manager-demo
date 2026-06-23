@@ -61,7 +61,7 @@ Tabelle principali: `calciatore`, `stagione`, `squadra`, `rosa`, `partita`, `eve
 | Calendario | `modules/team/calendar.js` | CRUD partite, prossima in evidenza, note avversario |
 | Convocazioni | `modules/team/convocazioni.js` | Vincoli min/max, archivio, PDF |
 | Distinta | `modules/team/distinta.js` | Layout FIGC, 24 righe, staff, stampa PDF |
-| Match Detail | `modules/team/matchDetail.js` | Eventi e statistiche per partita, header colorato |
+| Match Detail | `modules/team/matchDetail.js` | Eventi, timeline e statistiche per partita, header colorato |
 | Note Avversario | `modules/team/noteAvversario.js` | Ereditarietà automatica note |
 | Scheda Giocatore | `modules/team/playerDetail.js` | Profilo, stats, carriera, ultime partite |
 | Formazione | `modules/team/formazione.js` | Scelta titolari/panchina con numeri |
@@ -75,8 +75,9 @@ Tabelle principali: `calciatore`, `stagione`, `squadra`, `rosa`, `partita`, `eve
 
 | Funzionalità | Note |
 |--------------|------|
-| Timeline Partita | Vista minuto-per-minuto eventi |
-| Valutazioni Giocatore | Valutazioni tecniche per stagione/partita |
+| ~~Timeline Partita~~ | ✅ IMPLEMENTATA - Vista minuto-per-minuto in matchDetail.js |
+| ~~Archivia Partita~~ | ✅ IMPLEMENTATA - Blocco modifiche per partite concluse |
+| Valutazioni Giocatore | ⏸️ SOSPESA - Valutazioni tecniche per stagione/partita |
 | Auth/Ruoli | Login, ruoli (Allenatore, Staff, Admin) |
 | Import Tuttocampo | Import dati da fonti esterne |
 | Multi-istanza | Supporto multiple società |

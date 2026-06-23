@@ -7,6 +7,7 @@ const RUOLO_ACR = { 'Portiere': 'POR', 'Difensore': 'DIF', 'Centrocampista': 'CE
 export async function openFormazioneForm(mid) {
   const match = window.YFM.allMatches.find(m => m.id === mid) || {};
   const isPast = new Date(match.data_ora) < new Date();
+  const isArchiviata = match.archiviata === true || match.archiviata === 'true';
   
   const [convocazioni, formazioneEsistente, giocatori] = await Promise.all([
     apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
@@ -25,9 +26,9 @@ export async function openFormazioneForm(mid) {
   const formMap = {};
   (formazioneEsistente || []).forEach(f => { formMap[f.calciatoreId] = f; });
 
-  if (isPast) {
+  if (isArchiviata || isPast) {
     // VISTA SOLA LETTURA per partite archiviate
-    renderFormazioneReadOnly(match, giocatoriConvocati, formMap);
+    renderFormazioneReadOnly(match, giocatoriConvocati, formMap, isArchiviata);
   } else {
     // FORM EDITABILE per partite future
     renderFormazioneEdit(mid, match, giocatoriConvocati, formMap);
@@ -35,7 +36,7 @@ export async function openFormazioneForm(mid) {
 }
 
 // ==================== VISTA SOLA LETTURA (ARCHIVIATE) ====================
-function renderFormazioneReadOnly(match, giocatori, formMap) {
+function renderFormazioneReadOnly(match, giocatori, formMap, isArchiviata) {
   const titolari = [], riserve = [];
   giocatori.forEach(g => {
     const f = formMap[g.id];
@@ -58,9 +59,13 @@ function renderFormazioneReadOnly(match, giocatori, formMap) {
   html += '.fro-name{font-weight:600;font-size:13px;}';
   html += '.fro-role{font-size:11px;color:#888;}';
   html += '.fro-empty{text-align:center;padding:40px;color:#888;font-size:14px;}';
+  html += '.fro-archived{background:#8B7355;color:white;padding:8px 16px;border-radius:10px;margin-bottom:20px;display:inline-block;font-weight:600;}';
   html += '</style>';
 
   html += '<div class="fro">';
+  if (isArchiviata) {
+    html += '<div style="text-align:center;"><span class="fro-archived">📦 Partita Archiviata</span></div>';
+  }
   html += '<div class="fro-header">';
   html += '<h3>👥 Formazione Schierata</h3>';
   html += '<p>' + window.YFM.getSocietaName() + ' vs ' + match.avversario + '</p>';

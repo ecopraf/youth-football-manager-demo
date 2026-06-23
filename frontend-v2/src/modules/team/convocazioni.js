@@ -4,6 +4,7 @@ import { showLoading, hideLoading } from '../../utils/ui';
 
 export async function openConvocation(mid, readOnly) {
   const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const isArchiviata = match.archiviata === true || match.archiviata === 'true';
   const [conv, gioc] = await Promise.all([
     apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
     apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori')
@@ -17,12 +18,13 @@ export async function openConvocation(mid, readOnly) {
     return a.cognome.localeCompare(b.cognome);
   });
 
-  if (readOnly) {
+  // Se partita archiviata O readOnly (passata), mostra sola lettura
+  if (isArchiviata || readOnly) {
     const convocatiList = conv.filter(c => c.presente === true).map(c => ({
       nome: c.nome, cognome: c.cognome,
       ruolo: gioc.find(g => g.id === c.calciatoreId)?.ruolo || ''
     }));
-    showConvocationPreview(match, convocatiList);
+    showConvocationPreview(match, convocatiList, isArchiviata);
     return;
   }
 
@@ -66,7 +68,7 @@ export async function openConvocation(mid, readOnly) {
       }
     });
     if (list.length === 0) { alert('Nessun convocato selezionato.'); return; }
-    showConvocationPreview(match, list);
+    showConvocationPreview(match, list, false);
   });
 
   function upd() {
@@ -103,13 +105,20 @@ export async function openConvocation(mid, readOnly) {
   });
 }
 
-function showConvocationPreview(match, list) {
+function showConvocationPreview(match, list, isArchiviata = false) {
   list.sort((a, b) => a.cognome.localeCompare(b.cognome));
   const dt = new Date(match.data_ora);
   const ritrovo = new Date(dt.getTime() - 75 * 60000);
   const giorni = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
   const catYear = dt.getFullYear() - 14;
-  let html = `
+  let html = '';
+  
+  // Badge archivio se applicabile
+  if (isArchiviata) {
+    html += '<div style="background:#8B7355;color:white;padding:10px 20px;border-radius:12px;margin-bottom:20px;text-align:center;font-weight:600;">📦 Partita Archiviata</div>';
+  }
+  
+  html += `
     <div class="t1">CONVOCAZIONE</div>
     <div class="t2">${window.YFM.getSocietaName()} - ${catYear}</div>
     <div class="t3">${match.giornata ? 'Giornata ' + match.giornata + ' - ' : ''}${match.competizione || ''}</div>

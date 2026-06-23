@@ -15,6 +15,7 @@ const CON_GIOCATORE = ['GOAL', 'YELLOW', 'RED', 'ASSIST', 'IN', 'OUT'];
 
 export async function openResultForm(mid) {
   const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const isArchiviata = match.archiviata === true || match.archiviata === 'true';
   
   let eventi = [];
   try {
@@ -46,12 +47,54 @@ export async function openResultForm(mid) {
   
   giocatori.sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
   
-  const footer = '<button class="btn btn-secondary" id="modalCancelBtn">Annulla</button><button class="btn btn-primary" id="saveBtn">💾 Salva Eventi</button>';
-  const modal = createModal('⚽ Inserisci Risultato', '<div id="rfContent"></div>', footer, '500px');
+  if (isArchiviata) {
+    // VISTA SOLA LETTURA per partite archiviate
+    const footer = '<button class="btn btn-secondary" id="modalCancelBtn">Chiudi</button>';
+    const modal = createModal('⚽ Eventi Partita', '<div id="rfContent"></div>', footer, '500px');
+    renderFormReadOnly(match, eventi, modal);
+    document.getElementById('modalCancelBtn').addEventListener('click', () => modal.close());
+  } else {
+    const footer = '<button class="btn btn-secondary" id="modalCancelBtn">Annulla</button><button class="btn btn-primary" id="saveBtn">💾 Salva Eventi</button>';
+    const modal = createModal('⚽ Inserisci Risultato', '<div id="rfContent"></div>', footer, '500px');
+    renderForm(mid, match, eventi, giocatori, modal);
+    document.getElementById('saveBtn').addEventListener('click', () => saveEventi(mid, modal, eventi, giocatori));
+  }
+}
+
+// VISTA SOLA LETTURA PER PARTITE ARCHIVIATE
+function renderFormReadOnly(match, eventi, modal) {
+  const container = document.getElementById('rfContent');
+  const golFatti = eventi.filter(e => e.tipo === 'GOAL').length;
+  const golSubiti = eventi.filter(e => e.tipo === 'SUBITO').length;
   
-  renderForm(mid, match, eventi, giocatori, modal);
+  let html = '<style>';
+  html += '.rf{padding:16px;}.score{text-align:center;padding:24px;background:linear-gradient(135deg,#667eea20,#764ba220);border-radius:16px;margin-bottom:20px;border:2px solid #667eea40;}';
+  html += '.score-num{font-size:64px;font-weight:bold;}.score-sub{font-size:12px;color:#888;margin-top:8px;}';
+  html += '.evt-item{display:flex;align-items:center;gap:12px;padding:12px;background:white;border-radius:10px;margin-bottom:8px;border:1px solid #eee;}';
+  html += '.evt-badge{padding:8px 14px;border-radius:20px;font-size:14px;font-weight:600;min-width:100px;text-align:center;}';
+  html += '.evt-info{flex:1;font-size:13px;}.empty{text-align:center;padding:40px;color:#888;font-size:14px;}';
+  html += '.archived-badge{background:#8B7355;color:white;padding:10px 20px;border-radius:12px;margin-bottom:20px;display:inline-block;font-weight:600;text-align:center;width:100%;box-sizing:border-box;}';
+  html += '</style>';
   
-  document.getElementById('saveBtn').addEventListener('click', () => saveEventi(mid, modal, eventi, giocatori));
+  html += '<div class="rf">';
+  html += '<div style="text-align:center;"><span class="archived-badge">📦 Partita Archiviata - Solo Lettura</span></div>';
+  html += '<div class="score"><div class="score-num"><span style="color:#27AE60;">' + golFatti + '</span> - <span style="color:#E74C3C;">' + golSubiti + '</span></div>';
+  html += '<div class="score-sub">SSD Albalonga - ' + match.avversario + '</div></div>';
+  
+  const eventiOrd = [...eventi].sort((a, b) => (parseInt(a.minuto) || 0) - (parseInt(b.minuto) || 0));
+  html += '<div id="evtList">';
+  eventiOrd.forEach(e => {
+    const cfg = EVENTI[e.tipo] || EVENTI['GOAL'];
+    const isAutogol = e.autogol;
+    html += '<div class="evt-item">';
+    html += '<span class="evt-badge" style="background:' + cfg.color + '20;color:' + cfg.color + ';border:2px solid ' + cfg.color + ';">' + (isAutogol ? '🟡 ' : '') + cfg.icon + ' ' + cfg.label + '</span>';
+    const nomeMostrato = e.principale || (e.tipo === 'SUBITO' ? 'Avversario' : (e.autogol ? 'Autogol' : ''));
+    html += '<div class="evt-info">' + e.minuto + "' - " + nomeMostrato + '</div></div>';
+  });
+  if (eventi.length === 0) html += '<div class="empty">Nessun evento registrato</div>';
+  html += '</div></div>';
+  
+  container.innerHTML = html;
 }
 
 function renderForm(mid, match, eventi, giocatori, modal) {
