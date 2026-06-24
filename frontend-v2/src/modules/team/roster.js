@@ -37,11 +37,14 @@ export default async function loadRoster() {
 
 function renderRoster(c, players, scadenze) {
   const ruoli = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'];
+  const shortRole = { Portiere: 'POR', Difensore: 'DIF', Centrocampista: 'CEN', Attaccante: 'ATT' };
   const plur = { Portiere: 'Portieri', Difensore: 'Difensori', Centrocampista: 'Centrocampisti', Attaccante: 'Attaccanti' };
   const byRole = {};
   ruoli.forEach(r => byRole[r] = players.filter(p => p.ruolo === r));
 
-  let toolbarHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;"><div><h1 class="page-title">Rosa ' + window.YFM.getSquadraName() + '</h1><p class="page-subtitle">' + players.length + ' calciatori</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  // Count by role for subtitle
+  const roleCount = ruoli.map(r => byRole[r].length + ' ' + shortRole[r]).join(' · ');
+  let toolbarHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;"><div><h1 class="page-title">Rosa ' + window.YFM.getSquadraName() + '</h1><p class="page-subtitle" style="color:#666;font-size:14px;">' + players.length + ' calciatori <span style="color:#999;">(' + roleCount + ')</span></p></div><div style="display:flex;gap:8px;flex-wrap:wrap;">';
   
   if (isAdminMode) {
     toolbarHtml += '<button class="btn btn-secondary" id="btnSelectMode">' + (isSelectionMode ? '✓ Selezione Attiva' : '☐ Seleziona') + '</button>';
@@ -82,41 +85,24 @@ function renderPlayerCards(players) {
   if (players.length === 0) return '<p style="color:var(--gray);grid-column:1/-1;">Nessun calciatore</p>';
   return players.map(p => {
     const isSelected = isSelectionMode && selectedPlayers.has(p.id);
-    let card = '<div class="card player-card" data-pid="' + p.id + '" style="position:relative;padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;' + (isSelected ? 'border:2px solid var(--primary,#667eea);background:rgba(102,126,234,0.1);' : '') + '">';
-    
-    // Indicatore selezione (in modalita selezione)
-    if (isSelectionMode && isAdminMode) {
-      card += '<div style="width:24px;height:24px;border-radius:50%;border:2px solid ' + (isSelected ? 'var(--primary,#667eea)' : '#ddd') + ';background:' + (isSelected ? 'var(--primary,#667eea)' : 'white') + ';display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:bold;flex-shrink:0;">' + (isSelected ? '✓' : '') + '</div>';
-    }
+    let card = '<div class="card player-card" data-pid="' + p.id + '" style="padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;border:2px solid ' + (isSelected ? 'var(--primary,#667eea)' : 'transparent') + ';background:' + (isSelected ? 'rgba(102,126,234,0.1)' : 'white') + ';transition:all 0.2s;">';
     
     // Avatar
-    card += '<div class="player-avatar" style="background:' + getAvatarColor(p.nome || '') + ';flex-shrink:0;">' + (p.nome || '')[0] + (p.cognome || '')[0] + '</div>';
+    card += '<div class="player-avatar" style="background:' + getAvatarColor(p.nome || '') + ';flex-shrink:0;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:white;">' + (p.nome || '')[0] + (p.cognome || '')[0] + '</div>';
     
     // Info giocatore
     card += '<div class="player-info" style="flex:1;min-width:0;">';
-    card += '<div class="player-name" style="font-weight:600;">' + p.nome + ' ' + p.cognome + '</div>';
-    card += '<div class="player-role" style="color:#666;font-size:13px;">' + (p.ruolo || '-') + ' · #' + (p.numero_maglia || '-') + '</div>';
-    card += '<div style="margin-top:4px;"><span class="badge ' + (p.stato === 'Attivo' ? 'badge-green' : 'badge-red') + '" style="font-size:11px;padding:2px 8px;border-radius:10px;">' + (p.stato || 'Attivo') + '</span></div>';
+    card += '<div class="player-name" style="font-weight:600;font-size:15px;">' + p.nome + ' ' + p.cognome + '</div>';
+    card += '<div class="player-role" style="color:#666;font-size:13px;margin-top:2px;">' + (p.ruolo || '-') + ' · #' + (p.numero_maglia || '-') + '</div>';
     card += '</div>';
     
-    // Pulsanti azione (SOLO icone con onclick inline, dentro la card, sempre visibili per Admin)
-    if (isAdminMode) {
-      card += '<div style="display:flex;gap:8px;flex-shrink:0;">';
-      card += '<button onclick="event.stopPropagation();rosterMovePlayer(\'' + p.id + '\')" title="Sposta categoria" style="background:white;border:1px solid #ddd;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">↗️</button>';
-      card += '<button onclick="event.stopPropagation();rosterEditPlayer(\'' + p.id + '\')" title="Modifica" style="background:white;border:1px solid #ddd;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">✏️</button>';
-      card += '<button onclick="event.stopPropagation();rosterDeletePlayer(\'' + p.id + '\')" title="Elimina" style="background:white;border:1px solid #E74C3C;color:#E74C3C;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">🗑️</button>';
-      card += '</div>';
-    }
+    // Badge stato
+    card += '<span class="badge ' + (p.stato === 'Attivo' ? 'badge-green' : 'badge-red') + '" style="font-size:11px;padding:4px 10px;border-radius:12px;">' + (p.stato || 'Attivo') + '</span>';
     
     card += '</div>';
     return card;
   }).join('');
 }
-
-// Funzioni globali per onclick inline (evita problemi di scoping)
-window.rosterMovePlayer = function(pid) { openMoveModal(pid); };
-window.rosterEditPlayer = function(pid) { openPlayerForm(pid); };
-window.rosterDeletePlayer = function(pid) { if (confirm('Eliminare questo giocatore dalla rosa?')) { deletePlayer(pid); } };
 
 function attachCardListeners() {
   // Click sulla card per selezione multipla o apertura scheda

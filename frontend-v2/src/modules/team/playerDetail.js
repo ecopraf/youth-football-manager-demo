@@ -1,5 +1,5 @@
 import { apiFetch } from '../../services/api.js';
-import { formatDateShort } from '../../utils/formatters.js';
+import { formatDateShort, getAvatarColor } from '../../utils/formatters.js';
 import { showLoading, hideLoading } from '../../utils/ui.js';
 
 export async function loadPlayerDetail(container, playerId) {
@@ -41,8 +41,16 @@ export async function loadPlayerDetail(container, playerId) {
       valutazioni = null;
     }
 
+    // Carica lista squadre per sposta
+    let allSquadre = [];
+    try {
+      allSquadre = await apiFetch('/squadre');
+    } catch (e) {
+      allSquadre = [];
+    }
+
     hideLoading();
-    renderPlayerDetail(container, { player, currentSeasonStats, career, lastMatches, valutazioni });
+    renderPlayerDetail(container, { player, currentSeasonStats, career, lastMatches, valutazioni, allSquadre });
   } catch (e) {
     console.error(e);
     hideLoading();
@@ -51,13 +59,14 @@ export async function loadPlayerDetail(container, playerId) {
 }
 
 function renderPlayerDetail(container, data) {
-  const { player, currentSeasonStats, career, lastMatches, valutazioni } = data;
+  const { player, currentSeasonStats, career, lastMatches, valutazioni, allSquadre } = data;
 
   if (!player) {
     container.innerHTML = '<div class="error-box">Giocatore non trovato.</div>';
     return;
   }
 
+  const isAdmin = window.YFM?.isAdmin?.() || false;
   const nome = player.nome || '';
   const cognome = player.cognome || '';
   const initials = (nome[0] || '') + (cognome[0] || '');
@@ -67,6 +76,13 @@ function renderPlayerDetail(container, data) {
   const dataMorte = player.data_nascita ? safeFormatDate(player.data_nascita) : 'n/d';
   const certificato = player.data_visita_medica ? safeFormatDate(player.data_visita_medica) : 'n/d';
   const stato = player.stato || 'attivo';
+  const peso = player.peso || '-';
+  const altezza = player.altezza || '-';
+  const telefono = player.telefono || '-';
+  const tipoDoc = player.tipo_documento || '-';
+  const numDoc = player.numero_documento || '-';
+  const rilasciatoDa = player.rilasciato_da || '-';
+  const matricolaFigc = player.matricola_figc || '-';
 
   const stagioneCorrente = (currentSeasonStats && currentSeasonStats.stagione) || '-';
   const partite = (currentSeasonStats && currentSeasonStats.partite_giocate) || 0;
@@ -158,20 +174,84 @@ function renderPlayerDetail(container, data) {
       </div>
     </div>` : '';
 
+  // Costruisci i pulsanti azione per Admin
+  const adminActions = isAdmin ? `
+    <div class="card" style="margin-bottom:20px;border:2px solid #667eea30;background:linear-gradient(135deg,#667eea08,#764ba208);">
+      <h3 class="section-title" style="color:#667eea;margin-bottom:12px;">⚙️ Azioni Admin</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <button class="btn btn-primary" id="btnEditInline" style="background:#667eea;">
+          ✏️ Modifica Dati
+        </button>
+        <button class="btn btn-secondary" id="btnMovePlayer" style="border-color:#667eea;color:#667eea;">
+          ↗️ Sposta Categoria
+        </button>
+        <button class="btn btn-danger" id="btnDeletePlayer" style="background:#E74C3C;">
+          🗑️ Elimina
+        </button>
+      </div>
+    </div>
+  ` : '';
+
+  // Sezione dati anagrafici
+  const datiAnagrafici = `
+    <div class="card" style="margin-bottom:20px;">
+      <h3 class="section-title">📋 Dati Anagrafici</h3>
+      <div id="playerDataView" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+        <div><span style="font-size:12px;color:#888;">Nome</span><div style="font-size:14px;font-weight:500;">${nome}</div></div>
+        <div><span style="font-size:12px;color:#888;">Cognome</span><div style="font-size:14px;font-weight:500;">${cognome}</div></div>
+        <div><span style="font-size:12px;color:#888;">Data di Nascita</span><div style="font-size:14px;">${dataMorte}</div></div>
+        <div><span style="font-size:12px;color:#888;">Ruolo</span><div style="font-size:14px;">${ruolo}</div></div>
+        <div><span style="font-size:12px;color:#888;">N. Maglia</span><div style="font-size:14px;">#${numero}</div></div>
+        <div><span style="font-size:12px;color:#888;">Piede Preferito</span><div style="font-size:14px;">${piede}</div></div>
+        <div><span style="font-size:12px;color:#888;">Peso (kg)</span><div style="font-size:14px;">${peso}</div></div>
+        <div><span style="font-size:12px;color:#888;">Altezza (cm)</span><div style="font-size:14px;">${altezza}</div></div>
+        <div><span style="font-size:12px;color:#888;">Telefono</span><div style="font-size:14px;">${telefono}</div></div>
+        <div><span style="font-size:12px;color:#888;">Tipo Documento</span><div style="font-size:14px;">${tipoDoc}</div></div>
+        <div><span style="font-size:12px;color:#888;">N. Documento</span><div style="font-size:14px;">${numDoc}</div></div>
+        <div><span style="font-size:12px;color:#888;">Rilasciato Da</span><div style="font-size:14px;">${rilasciatoDa}</div></div>
+        <div><span style="font-size:12px;color:#888;">Matricola FIGC</span><div style="font-size:14px;">${matricolaFigc}</div></div>
+        <div><span style="font-size:12px;color:#888;">Certificato Medico</span><div style="font-size:14px;">${certificato}</div></div>
+        <div><span style="font-size:12px;color:#888;">Stato</span><div style="font-size:14px;"><span class="badge ${stato === 'Attivo' ? 'badge-green' : 'badge-red'}">${stato}</span></div></div>
+      </div>
+      <div id="playerDataEdit" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Nome</label><input id="editNome" value="${nome}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Cognome</label><input id="editCognome" value="${cognome}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Data Nascita</label><input id="editDataNas" type="date" value="${player.data_nascita ? player.data_nascita.split('T')[0] : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Ruolo</label><select id="editRuolo" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"><option value="Portiere" ${ruolo === 'Portiere' ? 'selected' : ''}>Portiere</option><option value="Difensore" ${ruolo === 'Difensore' ? 'selected' : ''}>Difensore</option><option value="Centrocampista" ${ruolo === 'Centrocampista' ? 'selected' : ''}>Centrocampista</option><option value="Attaccante" ${ruolo === 'Attaccante' ? 'selected' : ''}>Attaccante</option></select></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">N. Maglia</label><input id="editNumMaglia" type="number" value="${numero}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Piede Preferito</label><select id="editPiede" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"><option value="Destro" ${piede === 'Destro' ? 'selected' : ''}>Destro</option><option value="Sinistro" ${piede === 'Sinistro' ? 'selected' : ''}>Sinistro</option><option value="Ambidestro" ${piede === 'Ambidestro' ? 'selected' : ''}>Ambidestro</option></select></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Peso (kg)</label><input id="editPeso" type="number" value="${peso !== '-' ? peso : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Altezza (cm)</label><input id="editAltezza" type="number" value="${altezza !== '-' ? altezza : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Telefono</label><input id="editTelefono" value="${telefono !== '-' ? telefono : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Stato</label><select id="editStato" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"><option value="Attivo" ${stato === 'Attivo' ? 'selected' : ''}>Attivo</option><option value="Infortunato" ${stato === 'Infortunato' ? 'selected' : ''}>Infortunato</option></select></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Data Visita Medica</label><input id="editCertificato" type="date" value="${player.data_visita_medica ? player.data_visita_medica.split('T')[0] : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Matricola FIGC</label><input id="editMatricola" value="${matricolaFigc !== '-' ? matricolaFigc : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">Tipo Documento</label><input id="editTipoDoc" value="${tipoDoc !== '-' ? tipoDoc : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group"><label style="font-size:12px;font-weight:600;color:#666;">N. Documento</label><input id="editNumDoc" value="${numDoc !== '-' ? numDoc : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+          <div class="form-group" style="grid-column:1/-1;"><label style="font-size:12px;font-weight:600;color:#666;">Rilasciato Da</label><input id="editRilasciatoDa" value="${rilasciatoDa !== '-' ? rilasciatoDa : ''}" style="padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">
+          <button class="btn btn-secondary" id="btnCancelEdit">Annulla</button>
+          <button class="btn btn-primary" id="btnSaveEdit" style="background:#667eea;">💾 Salva Modifiche</button>
+        </div>
+      </div>
+    </div>
+  `;
+
   container.innerHTML = `
     <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
       <div>
         <button class="btn btn-secondary btn-small" id="btnBackRoster">← Torna alla rosa</button>
       </div>
-      <div>
-        <button class="btn btn-primary btn-small" id="btnEditPlayer">Modifica giocatore</button>
-      </div>
     </div>
     <h1 class="page-title" style="margin-top:12px;">${nome} ${cognome}</h1>
     <p class="page-subtitle">${ruolo} • N° ${numero} • ${dataMorte} • piede ${piede}</p>
-    <div class="grid-2" style="margin-top:20px;margin-bottom:20px;">
+    ${adminActions}
+    ${datiAnagrafici}
+    <div class="grid-2" style="margin-bottom:20px;">
       <div class="card" style="display:flex;align-items:center;gap:16px;">
-        <div class="player-avatar" style="width:64px;height:64px;font-size:24px;">${initials.toUpperCase()}</div>
+        <div class="player-avatar" style="width:64px;height:64px;font-size:24px;background:${getAvatarColor(nome)};">${initials.toUpperCase()}</div>
         <div style="flex:1;">
           <div style="font-size:14px;color:var(--gray);margin-bottom:4px;">Stagione ${stagioneCorrente}</div>
           <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px;">
@@ -182,27 +262,122 @@ function renderPlayerDetail(container, data) {
           </div>
         </div>
       </div>
-      <div class="card">
-        <h3 class="section-title">Stato & Note</h3>
-        <p style="font-size:13px;color:var(--gray);">
-          Stato: <strong>${stato}</strong><br>
-          Certificato medico: <strong>${certificato}</strong>
-        </p>
-      </div>
     </div>
     ${valutazioniSection}
     ${careerSection}
     ${lastMatchesSection}
   `;
 
+  // Event Listeners
   document.getElementById('btnBackRoster')?.addEventListener('click', () => {
     if (window.YFM?.navigateTo) window.YFM.navigateTo('roster');
     else if (window.navigateTo) window.navigateTo('roster');
   });
 
-  document.getElementById('btnEditPlayer')?.addEventListener('click', () => {
-    if (window.YFM?.openPlayerForm) window.YFM.openPlayerForm(player.id);
-    else if (window.openPlayerForm) window.openPlayerForm(player.id);
+  if (isAdmin) {
+    // Modifica inline
+    document.getElementById('btnEditInline')?.addEventListener('click', () => {
+      document.getElementById('playerDataView').style.display = 'none';
+      document.getElementById('playerDataEdit').style.display = 'block';
+    });
+
+    document.getElementById('btnCancelEdit')?.addEventListener('click', () => {
+      document.getElementById('playerDataView').style.display = 'grid';
+      document.getElementById('playerDataEdit').style.display = 'none';
+    });
+
+    document.getElementById('btnSaveEdit')?.addEventListener('click', async () => {
+      const d = {
+        nome: document.getElementById('editNome').value,
+        cognome: document.getElementById('editCognome').value,
+        data_nascita: document.getElementById('editDataNas').value,
+        ruolo: document.getElementById('editRuolo').value,
+        numero_maglia: parseInt(document.getElementById('editNumMaglia').value) || 1,
+        piede_preferito: document.getElementById('editPiede').value,
+        peso: parseFloat(document.getElementById('editPeso').value) || null,
+        altezza: parseInt(document.getElementById('editAltezza').value) || null,
+        telefono: document.getElementById('editTelefono').value,
+        stato: document.getElementById('editStato').value,
+        data_visita_medica: document.getElementById('editCertificato').value,
+        matricola_figc: document.getElementById('editMatricola').value,
+        tipo_documento: document.getElementById('editTipoDoc').value,
+        numero_documento: document.getElementById('editNumDoc').value,
+        rilasciato_da: document.getElementById('editRilasciatoDa').value
+      };
+      showLoading('Salvataggio...');
+      try {
+        await apiFetch('/calciatori/' + player.id, { method: 'PUT', body: JSON.stringify(d) });
+        // Ricarica la scheda
+        loadPlayerDetail(container, player.id);
+      } catch (e) {
+        alert('Errore: ' + e.message);
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // Sposta
+    document.getElementById('btnMovePlayer')?.addEventListener('click', () => {
+      openMoveModalPlayer(player.id, player.nome + ' ' + player.cognome, allSquadre);
+    });
+
+    // Elimina
+    document.getElementById('btnDeletePlayer')?.addEventListener('click', () => {
+      if (confirm('Eliminare questo giocatore dalla rosa?')) {
+        deletePlayer(player.id);
+      }
+    });
+  }
+}
+
+// Funzioni per sposta ed elimina
+async function deletePlayer(playerId) {
+  showLoading();
+  try {
+    await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori/' + playerId, { method: 'DELETE' });
+    if (window.YFM?.navigateTo) window.YFM.navigateTo('roster');
+    else if (window.navigateTo) window.navigateTo('roster');
+  } catch (e) {
+    alert('Errore: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+function openMoveModalPlayer(playerId, playerName, squadre) {
+  const currentSquadraId = window.YFM.squadraId;
+  const otherSquadre = (squadre || []).filter(s => s.id !== currentSquadraId);
+  
+  if (otherSquadre.length === 0) {
+    alert('Non ci sono altre categorie disponibili');
+    return;
+  }
+  
+  const modal = document.createElement('div');
+  modal.style = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;';
+  modal.innerHTML = '<div style="background:white;border-radius:12px;max-width:400px;width:90%;"><div style="padding:16px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;"><h2 style="margin:0;">↗️ Sposta Giocatore</h2><button id="moveModalClose" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button></div><div style="padding:20px;"><p style="margin-bottom:12px;"><strong>' + playerName + '</strong></p><div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:12px;font-weight:600;color:#666;">Sposta nella categoria:</label><select id="targetSquadra" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;width:100%;">' + otherSquadre.map(s => '<option value="' + s.id + '">' + s.nome + '</option>').join('') + '</select></div></div><div style="padding:16px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:12px;"><button id="moveModalCancel" class="btn btn-secondary" style="padding:10px 16px;">Annulla</button><button id="confirmMoveBtn" class="btn btn-primary" style="padding:10px 16px;background:#667eea;color:white;border:none;">Sposta</button></div></div>';
+  document.body.appendChild(modal);
+  
+  document.getElementById('moveModalClose').addEventListener('click', () => modal.remove());
+  document.getElementById('moveModalCancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  
+  document.getElementById('confirmMoveBtn').addEventListener('click', async () => {
+    const targetSquadraId = document.getElementById('targetSquadra').value;
+    showLoading();
+    try {
+      await apiFetch('/calciatori/' + playerId + '/move', {
+        method: 'POST',
+        body: JSON.stringify({ fromSquadraId: currentSquadraId, toSquadraId: targetSquadraId })
+      });
+      modal.remove();
+      if (window.YFM?.navigateTo) window.YFM.navigateTo('roster');
+      else if (window.navigateTo) window.navigateTo('roster');
+    } catch (e) {
+      alert('Errore: ' + e.message);
+    } finally {
+      hideLoading();
+    }
   });
 }
 
