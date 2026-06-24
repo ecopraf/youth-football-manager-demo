@@ -722,6 +722,29 @@ app.delete('/api/allenamenti/materiale/:id', async (req, res) => {
 // ── SCHEDA GIOCATORE ───────────────────────────────────────
 
 // Dettaglio anagrafico giocatore
+// PUT /api/calciatori/:id - Aggiorna dati giocatore
+app.put('/api/calciatori/:id', async (req, res) => {
+  const c = req.body;
+  const updates = {};
+  if (c.nome !== undefined) updates.nome = c.nome;
+  if (c.cognome !== undefined) updates.cognome = c.cognome;
+  if (c.data_nascita !== undefined) updates.data_nascita = c.data_nascita;
+  if (c.piede_preferito !== undefined) updates.piede_preferito = c.piede_preferito;
+  if (c.peso !== undefined) updates.peso = c.peso;
+  if (c.altezza !== undefined) updates.altezza = c.altezza;
+  if (c.telefono !== undefined) updates.telefono = c.telefono;
+  if (c.data_visita_medica !== undefined) updates.data_visita_medica = c.data_visita_medica;
+  if (c.matricola_figc !== undefined) updates.matricola_figc = c.matricola_figc;
+  if (c.tipo_documento !== undefined) updates.tipo_documento = c.tipo_documento;
+  if (c.numero_documento !== undefined) updates.numero_documento = c.numero_documento;
+  if (c.rilasciato_da !== undefined) updates.rilasciato_da = c.rilasciato_da;
+  await supabase.from('calciatore').update(updates).eq('id', req.params.id);
+  if (c.numero_maglia || c.ruolo || c.stato) {
+    await supabase.from('rosa').update({ numero_maglia: c.numero_maglia, ruolo: c.ruolo, stato: c.stato }).eq('calciatore_id', req.params.id);
+  }
+  res.json({ success: true });
+});
+
 app.get('/api/calciatori/:id', async (req, res) => {
   try {
     const { data, error } = await supabase
