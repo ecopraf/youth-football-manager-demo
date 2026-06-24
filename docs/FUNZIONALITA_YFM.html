@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Football Manager - Funzionalità</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Cover */
+        .cover {
+            text-align: center;
+            padding: 80px 20px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 40px;
+        }
+        
+        .cover-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+        
+        .cover h1 {
+            font-size: 32pt;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .cover h2 {
+            font-size: 18pt;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        .cover p {
+            color: #999;
+            margin-top: 30px;
+            font-size: 12pt;
+        }
+        
+        /* Sezioni */
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        .section h2 {
+            font-size: 20pt;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-card h3 {
+            font-size: 14pt;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 11pt;
+        }
+        
+        .emoji {
+            font-size: 24px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .highlight-box h3 {
+            font-size: 14pt;
+            margin-bottom: 10px;
+        }
+        
+        .highlight-box p {
+            opacity: 0.95;
+        }
+        
+        /* Lista funzionalità */
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .feature-item .icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .feature-item .text {
+            font-size: 10pt;
+        }
+        
+        .feature-item .text strong {
+            display: block;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .feature-item .text span {
+            color: #666;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 10pt;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cover -->
+    <div class="cover">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABOYAAATmCAIAAAAKnjl9AABhWmNhQlgAAGFaanVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAYTRqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOjNhMmYwOGJhLWExYTktNDlmNC05OWUxLTIxNzBhODA0OWMxNQAAABf9anVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAJ0Wp1bWIAAAA7anVtZEDLDDK7ikidpwsq1vR/Q2kTYzJwYS5pY29uAAAAABhjMnNo2blYmHzYlMjsHSTyiSXKTwAAABdiZmRiAGltYWdlL3N2Zyt4bWwAAAAJd2JpZGI8c3ZnIHdpZHRoPSI3MTYiIGhlaWdodD0iNzE2IiB2aWV3Qm94PSIwIDAgNzE2IDcxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTUwOC43NDkgMzE3LjM5OUM1MTYuNzc3IDI4Ny4zMTQgNTA4Ljk5MSAyNTMuODg0IDQ4NS4zODkgMjMwLjI4MkM0NjEuNzg4IDIwNi42ODEgNDI4LjM2IDE5OC44OTUgMzk4LjI3MyAyMDYuOTIzQzM3Ni4yMzEgMTg0LjkyOCAzNDMuMzkgMTc0Ljk1NiAzMTEuMTQ4IDE4My41OTZDMjc4LjkwNiAxOTIuMjM0IDI1NS40NSAyMTcuMjkyIDI0Ny4zNiAyNDcuMzYxQzIxNy4yOTEgMjU1LjQ1MSAxOTIuMjMzIDI3OC45MSAxODMuNTk1IDMxMS4xNDlDMTc0Ljk1NyAzNDMuMzkxIDE4NC45MjcgMzc2LjIzMiAyMDYuOTI0IDM5OC4yNzRDMTk4Ljg5NiA0MjguMzU5IDIwNi42ODMgNDYxLjc4OSAyMzAuMjg0IDQ4NS4zOTFDMjUzLjg4NSA1MDguOTkyIDI4Ny4zMTMgNTE2Ljc3OSAzMTcuNDAxIDUwOC43NUMzMzkuNDQyIDUzMC43NDUgMzcyLjI4NiA1NDAuNzE3IDQwNC41MjUgNTMyLjA3OUM0MzYuNzY3IDUyMy40NDEgNDYwLjIyMyA0OTguMzg0IDQ2OC4zMTMgNDY4LjMxNUM0OTguMzgzIDQ2MC4yMjQgNTIzLjQ0IDQzNi43NjYgNTMyLjA3OCA0MDQuNTI2QzU0MC43MTYgMzcyLjI4NSA1MzAuNzQ3IDMzOS40NDMgNTA4Ljc0OSAzMTcuNDAyVjMxNy4zOTlaTTQ3MC44OTkgMjQ0Ljc3NkM0ODYuODkyIDI2MC43NyA0OTMuNDg4IDI4Mi42MDEgNDkwLjY4NyAzMDMuNDEyTDQxNS41NzcgMjYwLjA0NkM0MTIuNDExIDI1OC4yMTggNDA4LjUwOSAyNTguMjE4IDQwNS4zNDUgMjYwLjA0NkwzMTcuNDAxIDMxMC44MlYyNzcuNTI2QzMxNy40MDEgMjc1LjE5MSAzMTguNjUyIDI3My4wMDUgMzIwLjY3NiAyNzEuODM3TDM4Ny42NDQgMjMzLjE3NEM0MTQuMTc4IDIxOC4zNTMgNDQ4LjM0NiAyMjIuMjIzIDQ3MC45MDEgMjQ0Ljc3Nkg0NzAuODk5Wk0zNTcuODM3IDMxMS4xNDRMMzk4LjI3NSAzMzQuNDkxVjM4MS4xODVMMzU3LjgzNyA0MDQuNTMyTDMxNy4zOTggMzgxLjE4NVYzMzQuNDkxTDM1Ny44MzcgMzExLjE0NFpNMjY0Ljc3NiAyNjkuNjkzQzI2NS4yMDcgMjM5LjMwNSAyODUuNjQ0IDIxMS42NDkgMzE2LjQ1MyAyMDMuMzkzQzMzOC4zIDE5Ny41NCAzNjAuNTA1IDIwMi43NDQgMzc3LjEyNyAyMTUuNTczTDMwMi4wMTQgMjU4LjkzN0MyOTguODQ4IDI2MC43NjQgMjk2Ljg5OCAyNjQuMTQ0IDI5Ni44OTggMjY3Ljc5OFYzNjkuMzQ2TDI2OC4wNjUgMzUyLjY5OUMyNjYuMDQzIDM1MS41MzEgMjY0Ljc3NiAzNDkuMzUzIDI2NC43NzYgMzQ3LjAxN1YyNjkuNjkxVjI2OS42OTNaTTIwMy4zOTEgMzE2LjQ1NEMyMDkuMjQ0IDI5NC42MDggMjI0Ljg1NCAyNzcuOTc4IDI0NC4yNzYgMjY5Ljk5OVYzNTYuNzNDMjQ0LjI3NiAzNjAuMzg0IDI0Ni4yMjYgMzYzLjc2MyAyNDkuMzkyIDM2NS41OTFMMzM3LjMzNyA0MTYuMzY1TDMwOC41MDMgNDMzLjAxM0MzMDYuNDgxIDQzNC4xODEgMzAzLjk2MSA0MzQuMTg4IDMwMS45MzkgNDMzLjAyTDIzNC45NzEgMzk0LjM1N0MyMDguODY4IDM3OC43ODkgMTk1LjEzOCAzNDcuMjYxIDIwMy4zOTEgMzE2LjQ1NFpNMjQ0Ljc3NSA0NzAuOUMyMjguNzgxIDQ1NC45MDYgMjIyLjE4NiA0MzMuMDc1IDIyNC45ODYgNDExLjI2NEwzMDAuMDk2IDQ1NS42M0MzMDMuMjYzIDQ1Ny40NTcgMzA3LjE2NCA0NTcuNDU3IDMxMC4zMjggNDU1LjYzTDM5OC4yNzMgNDA0Ljg1NlY0MzguMTQ5QzM5OC4yNzMgNDQwLjQ4NSAzOTcuMDIyIDQ0Mi42NzEgMzk0Ljk5NyA0NDMuODM5TDMyOC4wMjkgNDgyLjUwMkMzMDEuNDk1IDQ5Ny4zMjIgMjY3LjMyNyA0OTMuNDUyIDI0NC43NzIgNDcwLjlIMjQ0Ljc3NVpNNDUwLjg5NyA0NDUuOTgyQzQ1MC40NjYgNDc2LjM3MSA0MzAuMDI5IDUwNC4wMjcgMzk5LjIyMSA1MTIuMjgzQzM3Ny4zNzMgNTE4LjEzNiAzNTUuMTY4IDUxMi45MzIgMzM4LjU0NyA1MDAuMTAyTDQxMy42NTkgNDU2LjczNEM0MTYuODI2IDQ1NC45MTEgNDE4Ljc3NSA0NTEuNTMzMiA0MTguNzc1IDQ0Ny44NzdWMzQ2LjMyOUw0NDcuNjA5IDM2Mi45NzdDNDQ5LjYzMSAzNjQuMTQ1IDQ1MC44OTcgMzY2LjMyMyA0NTAuODk3IDM2OC42NTlWNDQ1Ljk4NVY0NDUuOTgyWlpNNTEyLjI4MiAzOTkuMjIxQzUwNi40MjkgNDIxLjA2OCA0OTAuODE5IDQzNy42OTcgNDcxLjM5NyA0NDUuNjc2VjM1OC45NDZDNDcxLjM5NyAzNTUuMjkyIDQ2OS40NDggMzUxLjkxMiA0NjYuMjgxIDM1MC4wODVMTjc4LjMzNiAyOTkuMzExTDQwNy4xNyAyODIuNjYzQzQwOS4xOTIgMjgxLjQ5NSA0MTEuNzEyIDI4MS40ODcgNDEzLjczNCAyODIuNjU1TDQ4MC43MDIgMzIxLjMxOEM1MDYuODA1IDMzNi44ODcgNTIwLjUzNiAzNjguNDE1IDUxMi4yODIgMzk5LjIyMVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo=" alt="YFM Logo" class="cover-logo">
+        <h1>Youth Football Manager</h1>
+        <h2>Panoramica delle Funzionalità</h2>
+        <p>La piattaforma completa per la gestione delle società sportive dilettanti</p>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="section">
+        <h2>📊 Dashboard di Squadra</h2>
+        
+        <div class="highlight-box">
+            <h3>Il centro nevralgico della tua attività</h3>
+            <p>Una visione immediata e completa dello stato della tua squadra: statistiche in tempo reale, prossime partite, top player e andamento stagionale.</p>
+        </div>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="icon">📈</span>
+                <div class="text">
+                    <strong>Statistiche Complete</strong>
+                    <span>Punti, vittorie, pareggi, gol fatti/subiti, differenza reti</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">⏱</span>
+                <div class="text">
+                    <strong>Prossima Partita</strong>
+                    <span>Avversario, data, orario, luogo con countdown</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">🥇</span>
+                <div class="text">
+                    <strong>Top Player</strong>
+                    <span>Classifica marcatori, assist e presenze con medal game</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">📋</span>
+                <div class="text">
+                    <strong>Ultimi Risultati</strong>
+                    <span>Andamento ultime 5 partite con tendenza</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gestione Rosa -->
+    <div class="section">
+        <h2>👥 Gestione Rosa Giocatori</h2>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">📝</span> Anagrafica Completa</h3>
+            <p>Ogni giocatore ha la sua scheda personale con dati anagrafici, ruolo, recapiti e note private visibili solo allo staff tecnico.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">📊</span> Statistiche Individuali</h3>
+            <p>Gol, assist, presenze, valutazioni medie, rendimento per partita. Tutto tracciato automaticamente nel tempo.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">🏆</span> Storico Prestazioni</h3>
+            <p>Valutazioni inserite dall'allenatore dopo ogni partita, con note e feedback per il miglioramento.</p>
+        </div>
+    </div>
+    
+    <!-- Calendario Partite -->
+    <div class="section" style="page-break-before: always;">
+        <h2>📅 Calendario & Gestione Partite</h2>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="icon">🗓️</span>
+                <div class="text">
+                    <strong>Calendario Intelligente</strong>
+                    <span>Partite passate, future e in programma organizzate automaticamente</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">📍</span>
+                <div class="text">
+                    <strong>Luogo & Orario</strong>
+                    <span>Casa o trasferta, campo di gioco, competizione</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">⚽</span>
+                <div class="text">
+                    <strong>Evento Partita</strong>
+                    <span>Inserimento gol, assist, ammonizioni, espulsioni</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">⭐</span>
+                <div class="text">
+                    <strong>Valutazioni Post-Gara</strong>
+                    <span>Voto e note dell'allenatore per ogni giocatore</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Convocazioni -->
+    <div class="section">
+        <h2>👥 Sistema Convocazioni</h2>
+        
+        <div class="highlight-box">
+            <h3>Gestione efficiente della settimana tipo</h3>
+            <p>Crea le convocazioni per ogni partita, indica disponibilità, assenze e-note. I giocatori ricevono notifica automatica.</p>
+        </div>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="icon">✅</span>
+                <div class="text">
+                    <strong>Stato Convocazione</strong>
+                    <span>Confermato, in dubbio, assente con motivazione</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">💬</span>
+                <div class="text">
+                    <strong>Note Allenatore</strong>
+                    <span>Istruzioni specifiche per il giocatore</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formazione -->
+    <div class="section">
+        <h2>📋 Formazione & Distinta</h2>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">🧙</span> Gestione Schema Tattico</h3>
+            <p>Definisci lo schema di gioco preferito (4-3-3, 4-4-2, 3-5-2, ecc.) e assegna i giocatori alle posizioni in campo.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">🔄</span> Modifica Pre-Partita</h3>
+            <p>Puoi modificare la formazione fino a 30 minuti prima della partita. Le modifiche sono tracciate nello storico.</p>
+        </div>
+    </div>
+    
+    <!-- Allenamenti -->
+    <div class="section" style="page-break-before: always;">
+        <h2>🏋️ Registro Allenamenti</h2>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">📅</span> Pianificazione</h3>
+            <p>Registra gli allenamenti settimanali con data, tipo (tecnico, tattico, atletico), durata e note sulla sessione.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">👥</span> Presenze</h3>
+            <p>Segna i giocatori presenti a ogni allenamento. Utile per monitorare impegno e dedizione del gruppo.</p>
+        </div>
+    </div>
+    
+    <!-- Staff -->
+    <div class="section">
+        <h2>👨‍🏫 Gestione Staff</h2>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="icon">🎯</span>
+                <div class="text">
+                    <strong>Allenatore</strong>
+                    <span>Responsabile tecnico della squadra</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">👔</span>
+                <div class="text">
+                    <strong>Dirigenti</strong>
+                    <span>Supporto organizzativo e logistico</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">💪</span>
+                <div class="text">
+                    <strong>Prep. Atletico</strong>
+                    <span>Gestione preparazione fisica</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">🧤</span>
+                <div class="text">
+                    <strong>All. Portieri</strong>
+                    <span>Specialista per i portieri</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report -->
+    <div class="section">
+        <h2>📊 Report & Analisi</h2>
+        
+        <div class="highlight-box">
+            <h3>Reportistiche per il progresso</h3>
+            <p>Genera report dettagliati su singoli giocatori o sull'intera rosa. Esporta in PDF per存档 o condivisione.</p>
+        </div>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="icon">👤</span>
+                <div class="text">
+                    <strong>Scheda Giocatore</strong>
+                    <span>Riepilogo completo con statistiche e storico</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="icon">📈</span>
+                <div class="text">
+                    <strong>Andamento Stagionale</strong>
+                    <span>Grafico rendimento nel tempo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Accesso -->
+    <div class="section" style="page-break-before: always;">
+        <h2>🔐 Gestione Accessi & Ruoli</h2>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">👑</span> Ruoli Differenziati</h3>
+            <p><strong>Admin:</strong> Accesso completo a tutte le funzionalità<br>
+            <strong>Allenatore:</strong> Può gestire formazioni, convocazioni, valutazioni<br>
+            <strong>Dirigente:</strong> Visualizzazione stats e supporto organizzativo</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">🔗</span> Link Ospite</h3>
+            <p>Genera link temporanei per genitori o osservatori esterni che vogliono seguire le partite senza accedere ai dati completi.</p>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>Youth Football Manager - Semplificare la gestione dello sport dilettantistico</p>
+        <p style="margin-top: 10px;">youthfootballmanager.it</p>
+    </div>
+</body>
+</html>
