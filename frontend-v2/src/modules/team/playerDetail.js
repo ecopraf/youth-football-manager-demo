@@ -65,7 +65,7 @@ function renderPlayerDetail(container, data) {
   const numero = player.numero_maglia != null ? player.numero_maglia : '–';
   const piede = player.piede_preferito || 'n/d';
   const dataMorte = player.data_nascita ? safeFormatDate(player.data_nascita) : 'n/d';
-  const certificato = player.certificato_scadenza ? safeFormatDate(player.certificato_scadenza) : 'n/d';
+  const certificato = player.data_visita_medica ? safeFormatDate(player.data_visita_medica) : 'n/d';
   const stato = player.stato || 'attivo';
 
   const stagioneCorrente = (currentSeasonStats && currentSeasonStats.stagione) || '-';
