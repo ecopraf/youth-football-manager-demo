@@ -31,6 +31,7 @@ export default async function loadRoster() {
 }
 
 function renderRoster(c, players, scadenze) {
+  console.log('renderRoster - isAdminMode:', isAdminMode, 'isSelectionMode:', isSelectionMode);
   const ruoli = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'];
   const plur = { Portiere: 'Portieri', Difensore: 'Difensori', Centrocampista: 'Centrocampisti', Attaccante: 'Attaccanti' };
   const byRole = {};
@@ -95,21 +96,12 @@ function renderPlayerCards(players) {
 }
 
 function attachCardListeners() {
-  document.querySelectorAll('.roster-grid .player-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.player-move-btn') || e.target.closest('.player-edit-btn') || e.target.closest('.player-delete-btn')) return;
-      const pid = card.dataset.pid;
-      if (isSelectionMode && isAdminMode) {
-        e.stopPropagation();
-        togglePlayerSelection(pid, card);
-      } else {
-        window.YFM?.openPlayerDetail?.(pid) || openPlayerForm(pid);
-      }
-    });
-  });
-  
+  // Click sui pulsanti azione
   document.querySelectorAll('.player-edit-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => { e.stopPropagation(); openPlayerForm(btn.dataset.pid); });
+    btn.addEventListener('click', (e) => { 
+      e.stopPropagation(); 
+      openPlayerForm(btn.dataset.pid); 
+    });
   });
   
   document.querySelectorAll('.player-delete-btn').forEach(btn => {
@@ -122,13 +114,39 @@ function attachCardListeners() {
   });
   
   document.querySelectorAll('.player-move-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => { e.stopPropagation(); openMoveModal(btn.dataset.pid); });
+    btn.addEventListener('click', (e) => { 
+      e.stopPropagation(); 
+      openMoveModal(btn.dataset.pid); 
+    });
+  });
+  
+  // Click sulla card (NON sui bottoni)
+  document.querySelectorAll('.roster-grid .player-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Se il click e' su un bottone, ignora
+      if (e.target.closest('.player-move-btn') || e.target.closest('.player-edit-btn') || e.target.closest('.player-delete-btn')) {
+        return;
+      }
+      const pid = card.dataset.pid;
+      // Se modalita' selezione attiva, seleziona/deseleziona
+      if (isSelectionMode && isAdminMode) {
+        e.stopPropagation();
+        togglePlayerSelection(pid, card);
+      } else {
+        // Altrimenti apri scheda giocatore (NON il form)
+        if (window.YFM?.openPlayerDetail) {
+          window.YFM.openPlayerDetail(pid);
+        }
+      }
+    });
   });
 }
 
 function toggleSelectionMode() {
+  console.log('toggleSelectionMode clicked, current isAdminMode:', isAdminMode, 'isSelectionMode:', isSelectionMode);
   isSelectionMode = !isSelectionMode;
   selectedPlayers.clear();
+  console.log('After toggle - isSelectionMode:', isSelectionMode);
   loadRoster();
 }
 
