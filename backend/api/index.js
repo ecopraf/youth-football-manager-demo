@@ -772,10 +772,7 @@ app.get('/api/calciatori/:id', async (req, res) => {
     res.json(data || null);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
 
-    res.status(500).json({ error: err.message });
   }
 });
 
