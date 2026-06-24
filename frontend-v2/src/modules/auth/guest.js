@@ -13,7 +13,8 @@ export default async function loadGuest() {
     c.innerHTML = `
       <div class="auth-container">
         <div class="auth-card" style="text-align:center;">
-          <h1>⚽ Youth Football Manager</h1>
+          <img src="/assets/logo.png" alt="YFM" style="height:80px;border-radius:16px;margin-bottom:12px;">
+          <h1 style="font-size:22px;color:var(--primary);">Youth Football Manager</h1>
           <p style="color:#666;margin:20px 0;">Link non valido</p>
           <p style="color:#999;font-size:14px;">Il link potrebbe essere scaduto o non essere corretto.</p>
           <a href="/" class="btn btn-primary" style="margin-top:20px;">Vai alla Home</a>
@@ -36,7 +37,8 @@ export default async function loadGuest() {
     c.innerHTML = `
       <div class="auth-container">
         <div class="auth-card" style="text-align:center;">
-          <h1>⚽ Youth Football Manager</h1>
+          <img src="/assets/logo.png" alt="YFM" style="height:80px;border-radius:16px;margin-bottom:12px;">
+          <h1 style="font-size:22px;color:var(--primary);">Youth Football Manager</h1>
           <div style="margin:20px 0;">
             <p style="font-size:48px;">${guestData.tipo === 'atleta' ? '🏃' : '👨‍👩‍👧'}</p>
             <p style="font-size:18px;font-weight:bold;text-transform:capitalize;">Accesso come ${guestData.tipo}</p>
@@ -71,7 +73,8 @@ export default async function loadGuest() {
     c.innerHTML = `
       <div class="auth-container">
         <div class="auth-card" style="text-align:center;">
-          <h1>⚽ Youth Football Manager</h1>
+          <img src="/assets/logo.png" alt="YFM" style="height:80px;border-radius:16px;margin-bottom:12px;">
+          <h1 style="font-size:22px;color:var(--primary);">Youth Football Manager</h1>
           <div style="margin:20px 0;">
             <p style="font-size:48px;color:#E74C3C;">❌</p>
             <p style="color:#E74C3C;font-weight:bold;">${errore}</p>

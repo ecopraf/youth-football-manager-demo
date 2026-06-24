@@ -3,6 +3,10 @@
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ### 🎯 IL PROBLEMA
 
 Le società dilettanti gestiscono tutto con:
@@ -13,6 +17,10 @@ Le società dilettanti gestiscono tutto con:
 **Nessuno strumento specifico esiste**
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ### 💡 LA SOLUZIONE
 
@@ -28,6 +36,10 @@ Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ### 🎯 IL TARGET
 
 **6.000+ società dilettanti in Italia**
@@ -37,6 +49,10 @@ Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
 - Dirigenti + Allenatori
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ### 💰 IL MODELLO DI BUSINESS
 
@@ -51,6 +67,10 @@ Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ### 📈 POTENZIALE DI MERCATO
 
 | Scenario | Società | Ricavo Annuale |
@@ -60,6 +80,10 @@ Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
 | Ottimistico | 2.000 | €500.000 |
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ### 🤝 PERCHÉ PARTNER CON NOI?
 
@@ -71,6 +95,10 @@ Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
 ✓ Brand awareness su nuova piattaforma
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ### 🔧 COME FUNZIONA
 
@@ -94,6 +122,10 @@ Partner               Cliente              YFM
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ### 🚀 COSA OFFRIAMO AI PARTNER
 
 1. **Link referral unico** con tracking
@@ -104,14 +136,22 @@ Partner               Cliente              YFM
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ### 📞 CONTATTI
 
 **Raffaele Coppola**
-- 📧 coppola.raffaele@gmail.com
+- 📧 youthfootballmanager@gmail.com
 - 🌐 https://youth-football-manager.vercel.app
 - 📱 Demo disponibile su richiesta
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ### ⏰ PROSSIMI PASSI
 
@@ -122,6 +162,10 @@ Partner               Cliente              YFM
 5. Scaling nazionale
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 **GRAZIE**
 

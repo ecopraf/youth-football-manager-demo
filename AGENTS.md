@@ -5,6 +5,8 @@
 - **Backend**: Node.js/Express, deploy su Vercel
 - **Database**: Supabase (PostgreSQL)
 - **Autenticazione**: JWT custom + Link Guest
+- **Logo**: `/frontend-v2/public/assets/logo.png`
+- **Email**: youthfootballmanager@gmail.com
 
 ## Struttura Progetto
 ```

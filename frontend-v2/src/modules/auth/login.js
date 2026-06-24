@@ -14,7 +14,8 @@ export default async function loadLogin() {
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>⚽ Youth Football Manager</h1>
+          <img src="/assets/logo.png" alt="Youth Football Manager" style="height:80px;margin-bottom:12px;">
+          <h1>Youth Football Manager</h1>
           <p>Accedi al tuo account</p>
         </div>
         
@@ -42,7 +43,8 @@ export default async function loadLogin() {
       <!-- Form Registrazione (nascosto) -->
       <div class="auth-card" id="registerCard" style="display:none;">
         <div class="auth-header">
-          <h1>⚽ Youth Football Manager</h1>
+          <img src="/assets/logo.png" alt="Youth Football Manager" style="height:80px;margin-bottom:12px;">
+          <h1>Youth Football Manager</h1>
           <p>Crea un nuovo account</p>
         </div>
         
@@ -105,11 +107,17 @@ export default async function loadLogin() {
       }
       .auth-header {
         text-align: center;
-        margin-bottom: 32px;
+        margin-bottom: 24px;
+      }
+      .auth-header img {
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       }
       .auth-header h1 {
-        font-size: 24px;
-        margin-bottom: 8px;
+        font-size: 22px;
+        font-weight: 700;
+        margin: 12px 0 8px 0;
+        color: var(--primary);
       }
       .auth-header p {
         color: #666;

@@ -6,6 +6,10 @@
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## 🎯 Il Nostro Prodotto
 
 ### Youth Football Manager
@@ -33,6 +37,10 @@ Piattaforma SaaS per la gestione integrata di squadre di calcio dilettantistico:
 - Mercato frammentato con fogli Excel e WhatsApp
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ## 💼 Il Modello di Partnership Proposto
 
@@ -93,6 +101,10 @@ Piattaforma SaaS per la gestione integrata di squadre di calcio dilettantistico:
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## 🔗 Meccanismo Tecnico: Referral System
 
 ### Come Funziona
@@ -143,6 +155,10 @@ https://youth-football-manager.vercel.app/register?ref={PARTNER_CODE}
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## 📄 Strategia di Outreach
 
 ### Contatti da Fare
@@ -186,6 +202,10 @@ Cordiali saluti,
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## 📊 Proiezioni di Ricavo
 
 ### Scenario Conservativo (Anno 1)
@@ -208,6 +228,10 @@ Cordiali saluti,
 | **Totale** | **30** | **€1.500/mese** |
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 ## 📋 Prossimi Passi
 
@@ -232,6 +256,10 @@ Cordiali saluti,
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## 📎 Allegati
 
 1. Presentazione prodotto (da creare)
@@ -240,13 +268,21 @@ Cordiali saluti,
 
 ---
 
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
+
 ## Contatti
 
 **Raffaele Coppola**
-- Email: coppola.raffaele@gmail.com
+- Email: youthfootballmanager@gmail.com
 - Sito: https://youth-football-manager.vercel.app
 
 ---
+
+## Contatto
+- **Email**: youthfootballmanager@gmail.com
+- **Logo**: /assets/logo.png
 
 *Documento preparato per discussione e personalizzazione.*
 *Ultimo aggiornamento: Giugno 2026*
