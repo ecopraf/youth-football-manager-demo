@@ -55,9 +55,9 @@ Le società sportive dilettanti visitano il tuo portale per:
 
 | Per le Società | Prezzo |
 |----------------|--------|
-| Base | €0/anno (gratuito) |
-| Standard | €199/anno |
-| Portali | €199/anno |
+| Coach | €99/anno |
+| Club | €249/anno |
+| AI Plus | Coming Soon |
 
 | Per Te | Commissione |
 |--------|-------------|
