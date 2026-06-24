@@ -129,7 +129,7 @@ function openPlayerForm(pid) {
       <div class="form-group"><label>Rilasciato</label><input id="pfRD" value="${p ? p.rilasciatoDa || '' : ''}"></div>
     </div>`;
   
-  const footer = '<button class="btn btn-secondary modal-close-btn">Annulla</button><button class="btn btn-primary" id="saveBtn">Salva</button>';
+  const footer = '<button class="btn btn-secondary" id="btnCancelForm">Annulla</button><button class="btn btn-primary" id="saveBtn">Salva</button>';
   
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
@@ -146,6 +146,7 @@ function openPlayerForm(pid) {
   document.getElementById('modalCloseX').addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   modal.querySelector('.modal-close-btn').addEventListener('click', closeModal);
+  document.getElementById('btnCancelForm').addEventListener('click', closeModal);
   
   if (p) document.getElementById('pfR').value = p.ruolo;
   
