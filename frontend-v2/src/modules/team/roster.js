@@ -11,7 +11,14 @@ let isAdminMode = false;
 
 export default async function loadRoster() {
   const c = document.getElementById('pageContent');
+  const wasAdmin = isAdminMode;
   isAdminMode = window.YFM.isAdmin && window.YFM.isAdmin();
+  
+  // Se isAdminMode cambia, resetta la selezione
+  if (wasAdmin !== isAdminMode) {
+    selectedPlayers.clear();
+    isSelectionMode = false;
+  }
   
   try {
     const [players, scadenze, allSquadre] = await Promise.all([
@@ -22,8 +29,6 @@ export default async function loadRoster() {
     allPlayers = players;
     window.YFM.allPlayers = players;
     window.YFM.allSquadreForMove = allSquadre;
-    selectedPlayers.clear();
-    isSelectionMode = false;
     renderRoster(c, players, scadenze);
   } catch (e) {
     c.innerHTML = '<div class="error-box">' + e.message + '</div>';
@@ -31,7 +36,6 @@ export default async function loadRoster() {
 }
 
 function renderRoster(c, players, scadenze) {
-  console.log('renderRoster - isAdminMode:', isAdminMode, 'isSelectionMode:', isSelectionMode);
   const ruoli = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'];
   const plur = { Portiere: 'Portieri', Difensore: 'Difensori', Centrocampista: 'Centrocampisti', Attaccante: 'Attaccanti' };
   const byRole = {};
@@ -77,63 +81,59 @@ function renderRoster(c, players, scadenze) {
 function renderPlayerCards(players) {
   if (players.length === 0) return '<p style="color:var(--gray);grid-column:1/-1;">Nessun calciatore</p>';
   return players.map(p => {
-    let card = '<div class="card player-card ' + (isSelectionMode && selectedPlayers.has(p.id) ? 'selected' : '') + '" data-pid="' + p.id + '" style="position:relative;">';
+    const isSelected = isSelectionMode && selectedPlayers.has(p.id);
+    let card = '<div class="card player-card" data-pid="' + p.id + '" style="position:relative;padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;' + (isSelected ? 'border:2px solid var(--primary,#667eea);background:rgba(102,126,234,0.1);' : '') + '">';
+    
+    // Indicatore selezione (in modalita selezione)
     if (isSelectionMode && isAdminMode) {
-      card += '<div class="selection-indicator" style="position:absolute;top:8px;left:8px;width:24px;height:24px;background:var(--primary,#667eea);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;">' + (selectedPlayers.has(p.id) ? '✓' : '') + '</div>';
+      card += '<div style="width:24px;height:24px;border-radius:50%;border:2px solid ' + (isSelected ? 'var(--primary,#667eea)' : '#ddd') + ';background:' + (isSelected ? 'var(--primary,#667eea)' : 'white') + ';display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:bold;flex-shrink:0;">' + (isSelected ? '✓' : '') + '</div>';
     }
+    
+    // Avatar
+    card += '<div class="player-avatar" style="background:' + getAvatarColor(p.nome || '') + ';flex-shrink:0;">' + (p.nome || '')[0] + (p.cognome || '')[0] + '</div>';
+    
+    // Info giocatore
+    card += '<div class="player-info" style="flex:1;min-width:0;">';
+    card += '<div class="player-name" style="font-weight:600;">' + p.nome + ' ' + p.cognome + '</div>';
+    card += '<div class="player-role" style="color:#666;font-size:13px;">' + (p.ruolo || '-') + ' · #' + (p.numero_maglia || '-') + '</div>';
+    card += '<div style="margin-top:4px;"><span class="badge ' + (p.stato === 'Attivo' ? 'badge-green' : 'badge-red') + '" style="font-size:11px;padding:2px 8px;border-radius:10px;">' + (p.stato || 'Attivo') + '</span></div>';
+    card += '</div>';
+    
+    // Pulsanti azione (SOLO icone con onclick inline, dentro la card, sempre visibili per Admin)
     if (isAdminMode) {
-      card += '<div class="card-actions" style="position:absolute;top:8px;right:8px;display:flex;gap:4px;opacity:0.8;">';
-      card += '<button class="player-move-btn" data-pid="' + p.id + '" title="Sposta categoria" style="background:white;border:1px solid #ddd;border-radius:4px;padding:4px 6px;cursor:pointer;">↗️</button>';
-      card += '<button class="player-edit-btn" data-pid="' + p.id + '" title="Modifica" style="background:white;border:1px solid #ddd;border-radius:4px;padding:4px 6px;cursor:pointer;">✏️</button>';
-      card += '<button class="player-delete-btn" data-pid="' + p.id + '" title="Elimina" style="background:white;border:1px solid #ddd;border-radius:4px;padding:4px 6px;cursor:pointer;color:#E74C3C;">🗑️</button>';
+      card += '<div style="display:flex;gap:8px;flex-shrink:0;">';
+      card += '<button onclick="event.stopPropagation();rosterMovePlayer(\'' + p.id + '\')" title="Sposta categoria" style="background:white;border:1px solid #ddd;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">↗️</button>';
+      card += '<button onclick="event.stopPropagation();rosterEditPlayer(\'' + p.id + '\')" title="Modifica" style="background:white;border:1px solid #ddd;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">✏️</button>';
+      card += '<button onclick="event.stopPropagation();rosterDeletePlayer(\'' + p.id + '\')" title="Elimina" style="background:white;border:1px solid #E74C3C;color:#E74C3C;border-radius:6px;padding:8px;cursor:pointer;font-size:16px;">🗑️</button>';
       card += '</div>';
     }
-    card += '<div class="player-avatar" style="background:' + getAvatarColor(p.nome || '') + '">' + (p.nome || '')[0] + (p.cognome || '')[0] + '</div>';
-    card += '<div class="player-info"><div class="player-name">' + p.nome + ' ' + p.cognome + '</div><div class="player-role">' + (p.ruolo || '-') + ' · #' + (p.numero_maglia || '-') + '</div>';
-    card += '<div style="margin-top:6px;"><span class="badge ' + (p.stato === 'Attivo' ? 'badge-green' : 'badge-red') + '">' + (p.stato || 'Attivo') + '</span></div></div></div>';
+    
+    card += '</div>';
     return card;
   }).join('');
 }
 
+// Funzioni globali per onclick inline (evita problemi di scoping)
+window.rosterMovePlayer = function(pid) { openMoveModal(pid); };
+window.rosterEditPlayer = function(pid) { openPlayerForm(pid); };
+window.rosterDeletePlayer = function(pid) { if (confirm('Eliminare questo giocatore dalla rosa?')) { deletePlayer(pid); } };
+
 function attachCardListeners() {
-  // Click sui pulsanti azione
-  document.querySelectorAll('.player-edit-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => { 
-      e.stopPropagation(); 
-      openPlayerForm(btn.dataset.pid); 
-    });
-  });
-  
-  document.querySelectorAll('.player-delete-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (confirm('Eliminare questo giocatore dalla rosa?')) {
-        deletePlayer(btn.dataset.pid);
-      }
-    });
-  });
-  
-  document.querySelectorAll('.player-move-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => { 
-      e.stopPropagation(); 
-      openMoveModal(btn.dataset.pid); 
-    });
-  });
-  
-  // Click sulla card (NON sui bottoni)
+  // Click sulla card per selezione multipla o apertura scheda
   document.querySelectorAll('.roster-grid .player-card').forEach(card => {
     card.addEventListener('click', (e) => {
-      // Se il click e' su un bottone, ignora
-      if (e.target.closest('.player-move-btn') || e.target.closest('.player-edit-btn') || e.target.closest('.player-delete-btn')) {
-        return;
-      }
+      // Ignora se il click e' su un bottone (gia gestito da onclick inline)
+      if (e.target.tagName === 'BUTTON') return;
+      
       const pid = card.dataset.pid;
+      
       // Se modalita' selezione attiva, seleziona/deseleziona
       if (isSelectionMode && isAdminMode) {
         e.stopPropagation();
         togglePlayerSelection(pid, card);
       } else {
-        // Altrimenti apri scheda giocatore (NON il form)
+        // Altrimenti apri scheda giocatore
+        e.stopPropagation();
         if (window.YFM?.openPlayerDetail) {
           window.YFM.openPlayerDetail(pid);
         }
@@ -143,10 +143,8 @@ function attachCardListeners() {
 }
 
 function toggleSelectionMode() {
-  console.log('toggleSelectionMode clicked, current isAdminMode:', isAdminMode, 'isSelectionMode:', isSelectionMode);
   isSelectionMode = !isSelectionMode;
   selectedPlayers.clear();
-  console.log('After toggle - isSelectionMode:', isSelectionMode);
   loadRoster();
 }
 
