@@ -53,22 +53,22 @@ export default async function loadDashboard() {
               ${prossimaPartita.competizione ? ' · 🏆 ' + prossimaPartita.competizione : ''}
             </div>
           </div>
+          ${(window.YFM.isAdmin() || window.YFM.hasRole('allenatore')) ? `
           <div style="display:flex;gap:8px;">
             <button class="btn" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;" 
                     onclick="window.YFM.openConvocation('${prossimaPartita.id}')" title="Convocazioni">
               👥 Convocazioni
             </button>
-            <button class="btn" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;" 
-                    onclick="window.YFM.openMatchDetail('${prossimaPartita.id}')" title="Dettagli Partita">
-              ℹ️ Dettagli
-            </button>
           </div>
+          ` : ''}
         </div>
       </div>
       ` : `
       <div class="card" style="padding:16px;margin-bottom:24px;text-align:center;border:2px dashed #ddd;">
         <p style="color:var(--gray);margin:0;">📅 Nessuna partita in programma</p>
+        ${(window.YFM.isAdmin() || window.YFM.hasRole('allenatore')) ? `
         <button class="btn btn-primary" style="margin-top:12px;" onclick="window.YFM.navigateTo('calendar')">+ Nuova Partita</button>
+        ` : ''}
       </div>
       `}
       

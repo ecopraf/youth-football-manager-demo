@@ -147,6 +147,10 @@ export function initRouter() {
       if (window.YFM && typeof window.YFM.adjustPageTitleForMobile === 'function') {
         window.YFM.adjustPageTitleForMobile();
       }
+      // Aggiorna UI dopo caricamento pagina
+      if (window.YFM.updateUserUI) {
+        window.YFM.updateUserUI();
+      }
     } catch (error) {
       container.innerHTML = `<div class="error-box">Errore nel caricamento di ${page}: ${error.message}</div>`;
     }

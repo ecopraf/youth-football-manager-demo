@@ -106,17 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLayout();
   initRouter();
 
-  // Inizializza UI utente
-  if (window.YFM.updateUserUI) window.YFM.updateUserUI();
-
-  // Setup logout button - con event delegation
-  document.addEventListener('click', (e) => {
-    if (e.target.id === 'logoutBtn' || e.target.id === 'headerLogoutBtn' || e.target.closest('#logoutBtn') || e.target.closest('#headerLogoutBtn')) {
-      e.preventDefault();
-      window.YFM.handleLogout();
-    }
-  });
-
   // Check per guest link (URL: /guest/{token})
   const path = window.location.pathname;
   if (path.startsWith('/guest/')) {
@@ -130,8 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Check autenticazione
   if (window.YFM.isAuthenticated && window.YFM.isAuthenticated()) {
-    loadWorkspaceInfo();
-    loadSquadre().then(() => {
+    // Carica workspace e squadre in parallelo
+    Promise.all([
+      loadWorkspaceInfo(),
+      loadSquadre()
+    ]).then(() => {
+      window.YFM.navigateTo('dashboard');
+    }).catch(() => {
+      // Se fallisce, naviga comunque
       window.YFM.navigateTo('dashboard');
     });
   } else {

@@ -1,5 +1,4 @@
 export function setupLayout() {
-  // Recupera info utente da localStorage
   const userStr = localStorage.getItem('yfm_user');
   const user = userStr ? JSON.parse(userStr) : null;
   const guestStr = localStorage.getItem('yfm_guest');
@@ -11,10 +10,9 @@ export function setupLayout() {
   const userName = currentUser?.nome || (isGuest ? (guest.tipo === 'atleta' ? 'Atleta' : 'Genitore') : '');
   const userRole = currentUser?.ruolo || (isGuest ? guest.tipo : '');
   const userRoleLabel = userRole === 'admin' ? 'Amministratore' : userRole === 'staff' ? 'Staff' : userRole === 'allenatore' ? 'Allenatore' : userRole === 'atleta' ? 'Atleta' : userRole === 'genitore' ? 'Genitore' : userRole;
-
-  // Helper per verificare se mostrare sezione in base al ruolo
+  
   const showForRole = (roles) => {
-    if (isGuest) return false; // Guest non vede sidebar normale
+    if (isGuest) return false;
     if (!currentUser) return false;
     if (currentUser.is_superadmin === true) return true;
     if (typeof roles === 'string') roles = [roles];
@@ -37,43 +35,38 @@ export function setupLayout() {
         <nav class="sidebar-nav">
           <a href="#" class="active" data-page="dashboard">📊 Dashboard</a>
           
-          <!-- Sezione Club -->
           ${showForRole(['admin']) ? `
           <div class="sidebar-section-title">🏢 Club</div>
           <a href="#" data-page="settings">⚙️ Impostazioni</a>
           ` : ''}
           
-          <!-- Sezione Team -->
           <div class="sidebar-section-title">👥 Team</div>
           <a href="#" data-page="roster">👥 Rosa</a>
           <a href="#" data-page="calendar">📅 Calendario</a>
           
-          <!-- Sezione Coach -->
           <div class="sidebar-section-title">🎯 Coach</div>
           <a href="#" data-page="training">🏃 Allenamenti</a>
           ${showForRole(['admin', 'allenatore', 'staff']) ? `
           <a href="#" data-page="convocazioni" style="display:none;">👥 Convocazioni</a>
           ` : ''}
           
-          <!-- Sezione Performance -->
           <div class="sidebar-section-title">📈 Performance</div>
           <a href="#" data-page="stats">📊 Statistiche</a>
           <a href="#" data-page="reports">📄 Report</a>
           
-          <!-- Sezione Admin (solo admin) -->
           ${showForRole(['admin']) ? `
           <div class="sidebar-section-title">🔐 Amministrazione</div>
           <a href="#" data-page="users">👥 Utenti</a>
           <a href="#" data-page="guestLinks">🔗 Link Guest</a>
           ` : ''}
         </nav>
-        <div class="sidebar-user">
-          <div class="sidebar-user-avatar">${userInitial}</div>
+        
+        <div class="sidebar-user" id="sidebarUser" style="cursor:pointer;display:${(currentUser || guest) ? 'flex' : 'none'};" title="Clicca per logout">
+          <div class="sidebar-user-avatar" id="sidebarUserAvatar">${userInitial}</div>
           <div>
             <div class="sidebar-user-name" id="userName">${userName}</div>
             <div class="sidebar-user-role" id="userRole">${userRoleLabel}</div>
           </div>
-          <button id="logoutBtn" class="btn btn-secondary btn-small" style="margin-left:auto;display:${(currentUser || guest) ? 'inline-block' : 'none'};">Logout</button>
         </div>
       </aside>
       <div class="main">
@@ -83,8 +76,7 @@ export function setupLayout() {
           <span id="headerSocName" style="font-weight:600;color:var(--blue);font-size:15px;margin-left:8px;margin-right:auto;"></span>
           <div class="header-right">
             <select class="header-select" id="squadraSelect"><option>Caricamento...</option></select>
-            <button id="headerLogoutBtn" onclick="window.YFM.handleLogout()" style="background:#E74C3C;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;margin-left:12px;font-weight:500;display:${(currentUser || guest) ? 'inline-block' : 'none'};">🚪 Logout</button>
-            <div class="player-avatar" style="width:36px;height:36px;font-size:14px;">${userInitial}</div>
+            <div class="player-avatar" id="headerUserAvatar" style="width:36px;height:36px;font-size:14px;cursor:pointer;" title="Logout ${userName}">${userInitial}</div>
           </div>
         </header>
         <div class="content" id="pageContent">
@@ -96,45 +88,54 @@ export function setupLayout() {
 
   const sidebar = document.getElementById('sidebar');
   const menuBtn = document.getElementById('menuBtn');
-
-  // Navigazione dal menu laterale
+  const sidebarUser = document.getElementById('sidebarUser');
+  const headerUserAvatar = document.getElementById('headerUserAvatar');
+  
+  // Click su avatar/nome utente per logout
+  if (sidebarUser) {
+    sidebarUser.addEventListener('click', () => {
+      if (confirm('Vuoi effettuare il logout?')) {
+        window.YFM.handleLogout();
+      }
+    });
+  }
+  
+  if (headerUserAvatar) {
+    headerUserAvatar.addEventListener('click', () => {
+      if (confirm('Vuoi effettuare il logout?')) {
+        window.YFM.handleLogout();
+      }
+    });
+  }
+  
+  // Navigazione
   document.querySelectorAll('.sidebar-nav a').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       if (window.YFM && typeof window.YFM.navigateTo === 'function') {
         window.YFM.navigateTo(link.dataset.page);
       }
-      // Su mobile chiudi la sidebar dopo il click
       if (window.innerWidth <= 768 && sidebar) {
         sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
       }
     });
   });
-
-  // Toggle sidebar su mobile tramite hamburger
+  
+  // Toggle sidebar mobile
   if (menuBtn && sidebar) {
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const isOpen = sidebar.classList.toggle('open');
-      if (isOpen) {
-        document.body.classList.add('sidebar-open');
-      } else {
-        document.body.classList.remove('sidebar-open');
-      }
+      document.body.classList.toggle('sidebar-open', isOpen);
     });
   }
-
-  // Chiudi sidebar cliccando fuori (solo mobile)
+  
+  // Chiudi sidebar su click fuori
   document.addEventListener('click', (e) => {
     if (!sidebar || window.innerWidth > 768) return;
     if (!sidebar.classList.contains('open')) return;
-
-    const target = e.target;
-    if (sidebar.contains(target) || (menuBtn && menuBtn.contains(target))) {
-      return;
-    }
-
+    if (sidebar.contains(e.target) || (menuBtn && menuBtn.contains(e.target))) return;
     sidebar.classList.remove('open');
     document.body.classList.remove('sidebar-open');
   });
