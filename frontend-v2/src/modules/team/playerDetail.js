@@ -11,7 +11,7 @@ export async function loadPlayerDetail(container, playerId) {
   showLoading('Caricamento scheda giocatore...');
 
   try {
-    const player = await apiFetch('/calciatori/' + playerId);
+    const player = await apiFetch('/calciatori/' + playerId + '?squadraId=' + window.YFM.squadraId);
 
     let currentSeasonStats = null;
     try {
