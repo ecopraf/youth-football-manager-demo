@@ -27,11 +27,50 @@ export default async function loadDashboard() {
       { v:(stats.differenzaReti >= 0 ? '+' : '') + stats.differenzaReti, l:'DR', c:stats.differenzaReti >= 0 ? '#27AE60' : '#E74C3C' }
     ];
     
-    const medalColors = [
-      'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)',
-      'linear-gradient(180deg, #E8E8E8 0%, #A0A0A0 100%)',
-      'linear-gradient(180deg, #CD7F32 0%, #8B4513 100%)'
-    ];
+    // Funzione per creare player box con effetto 3D
+    const createPlayerBox = (giocatore, tipo, index) => {
+      const medalEmojis = ['🥇', '🥈', '🥉'];
+      const medal = medalEmojis[index] || (index + 1);
+      const value = tipo === 'gol' ? `${giocatore.gol} Gol` : tipo === 'assist' ? `${giocatore.assist} Assist` : `${giocatore.presenze} Pres.`;
+      const bgColor = index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : '#CD7F32';
+      
+      return \`
+        <div style="
+          flex:1;
+          background: linear-gradient(180deg, \${bgColor} 0%, \${index === 0 ? '#FFA500' : index === 1 ? '#A0A0A0' : '#8B4513'} 100%);
+          padding: 16px 8px;
+          border-radius: 16px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 3px 6px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.4);
+          transform: translateY(0);
+          position: relative;
+          overflow: hidden;
+        "
+        onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('\${giocatore.id}', '\${giocatore.nome}');"
+        onmouseover="this.style.transform='translateY(-8px) scale(1.05)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.35), 0 10px 15px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.4)';"
+        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.25), 0 3px 6px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.4)';"
+        title="Clicca per vedere la scheda di \${giocatore.nome}"
+        >
+          <div style="font-size:32px;margin-bottom:8px;filter:drop-shadow(0 3px 4px rgba(0,0,0,0.4));">\${medal}</div>
+          <div style="font-size:13px;font-weight:bold;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);margin-bottom:6px;">\${giocatore.nome}</div>
+          <div style="font-size:16px;font-weight:bold;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);">\${value}</div>
+        </div>
+      \`;
+    };
+    
+    const createEmptyBox = () => \`
+      <div style="
+        flex:1;
+        background: #e8e8e8;
+        padding: 16px 8px;
+        border-radius: 16px;
+        text-align: center;
+        color: #aaa;
+        box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+      ">-</div>
+    \`;
     
     c.innerHTML = \`
       <style>
@@ -43,8 +82,9 @@ export default async function loadDashboard() {
         .top-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
         @media (max-width: 900px) { .top-grid { grid-template-columns: 1fr !important; } }
         .top-section { background:linear-gradient(180deg, #fff 0%, #f5f5f5 100%); padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
-        .player-card { padding:14px 8px; border-radius:16px; text-align:center; cursor:pointer; transition: all 0.3s ease; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-        .player-card:hover { transform: translateY(-8px) scale(1.03); box-shadow:0 15px 30px rgba(0,0,0,0.2); }
+        .top-section-title { font-size:15px;font-weight:600;color:#333;margin:0 0 14px 0;display:flex;align-items:center;gap:8px; }
+        .players-row { display:flex; gap:10px; }
+        @media (max-width: 600px) { .players-row { flex-direction:column; } }
         .bottom-grid { display:grid; gap:20px; grid-template-columns:1fr; }
         @media (min-width: 900px) { .bottom-grid { grid-template-columns: 1.5fr 1fr !important; } }
         .result-card { background:white; padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
@@ -99,45 +139,24 @@ export default async function loadDashboard() {
       
       <div class="top-grid">
         <div class="top-section">
-          <h3 style="margin:0 0 14px 0;font-size:14px;color:#333;">⚽ Top 3 Marcatori</h3>
-          <div style="display:flex;gap:8px;">
-            \${(top.marcatori || []).slice(0, 3).map((x, i) => \`
-              <div class="player-card" style="flex:1;background:\${medalColors[i]};"
-                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('\${x.id}', '\${x.nome}');">
-                <div style="font-size:26px;margin-bottom:6px;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3));">\${['🥇','🥈','🥉'][i]}</div>
-                <div style="font-size:12px;font-weight:bold;color:#222;margin-bottom:4px;">\${x.nome}</div>
-                <div style="font-size:15px;font-weight:bold;color:#fff;">\${x.gol} Gol</div>
-              </div>
-            \`).join('')}
-            \${(top.marcatori || []).length < 3 ? Array(3 - (top.marcatori || []).length).fill('<div style="flex:1;background:#e0e0e0;padding:14px 8px;border-radius:16px;text-align:center;color:#999;">-</div>').join('') : ''}
+          <h3 class="top-section-title">⚽ Top 3 Marcatori</h3>
+          <div class="players-row">
+            \${(top.marcatori || []).slice(0, 3).map((g, i) => createPlayerBox(g, 'gol', i)).join('')}
+            \${(top.marcatori || []).length < 3 ? Array(3 - (top.marcatori || []).length).fill(createEmptyBox()).join('') : ''}
           </div>
         </div>
         <div class="top-section">
-          <h3 style="margin:0 0 14px 0;font-size:14px;color:#333;">🅰️ Top 3 Assist</h3>
-          <div style="display:flex;gap:8px;">
-            \${(top.assistmen || []).slice(0, 3).map((x, i) => \`
-              <div class="player-card" style="flex:1;background:\${medalColors[i]};"
-                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('\${x.id}', '\${x.nome}');">
-                <div style="font-size:26px;margin-bottom:6px;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3));">\${['🥇','🥈','🥉'][i]}</div>
-                <div style="font-size:12px;font-weight:bold;color:#222;margin-bottom:4px;">\${x.nome}</div>
-                <div style="font-size:15px;font-weight:bold;color:#fff;">\${x.assist} Assist</div>
-              </div>
-            \`).join('')}
-            \${(top.assistmen || []).length < 3 ? Array(3 - (top.assistmen || []).length).fill('<div style="flex:1;background:#e0e0e0;padding:14px 8px;border-radius:16px;text-align:center;color:#999;">-</div>').join('') : ''}
+          <h3 class="top-section-title">🅰️ Top 3 Assist</h3>
+          <div class="players-row">
+            \${(top.assistmen || []).slice(0, 3).map((g, i) => createPlayerBox(g, 'assist', i)).join('')}
+            \${(top.assistmen || []).length < 3 ? Array(3 - (top.assistmen || []).length).fill(createEmptyBox()).join('') : ''}
           </div>
         </div>
         <div class="top-section">
-          <h3 style="margin:0 0 14px 0;font-size:14px;color:#333;">🏃 Top 3 Presenze</h3>
-          <div style="display:flex;gap:8px;">
-            \${(top.presenze || []).slice(0, 3).map((x, i) => \`
-              <div class="player-card" style="flex:1;background:\${medalColors[i]};"
-                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('\${x.id}', '\${x.nome}');">
-                <div style="font-size:26px;margin-bottom:6px;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3));">\${['🥇','🥈','🥉'][i]}</div>
-                <div style="font-size:12px;font-weight:bold;color:#222;margin-bottom:4px;">\${x.nome}</div>
-                <div style="font-size:15px;font-weight:bold;color:#fff;">\${x.presenze} Pres.</div>
-              </div>
-            \`).join('')}
-            \${(top.presenze || []).length < 3 ? Array(3 - (top.presenze || []).length).fill('<div style="flex:1;background:#e0e0e0;padding:14px 8px;border-radius:16px;text-align:center;color:#999;">-</div>').join('') : ''}
+          <h3 class="top-section-title">🏃 Top 3 Presenze</h3>
+          <div class="players-row">
+            \${(top.presenze || []).slice(0, 3).map((g, i) => createPlayerBox(g, 'presenze', i)).join('')}
+            \${(top.presenze || []).length < 3 ? Array(3 - (top.presenze || []).length).fill(createEmptyBox()).join('') : ''}
           </div>
         </div>
       </div>
