@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS partner (
     nome TEXT NOT NULL,
     email TEXT NOT NULL,
     codice TEXT UNIQUE NOT NULL,
-    commissione DECIMAL(5,2) DEFAULT 20.00,
+    commissione_prima DECIMAL(5,2) DEFAULT 20.00,  -- % sulla prima registrazione
+    commissione_rinnovo DECIMAL(5,2) DEFAULT 10.00, -- % sui rinnovi
     attivo BOOLEAN DEFAULT true,
     logo_url TEXT,
     website TEXT,
@@ -42,10 +43,10 @@ CREATE TABLE IF NOT EXISTS referral (
     partner_id UUID REFERENCES partner(id),
     workspace_id UUID REFERENCES workspace(id),
     utente_id UUID REFERENCES utente(id),
-    tipo TEXT DEFAULT 'registrazione',
-    prezzo_pieno DECIMAL(10,2) DEFAULT 250.00,
-    commissione_partner DECIMAL(10,2) DEFAULT 50.00,
-    stato TEXT DEFAULT 'pending',
+    tipo TEXT DEFAULT 'registrazione', -- 'registrazione' o 'rinnovo'
+    prezzo_pieno DECIMAL(10,2) DEFAULT 199.00,
+    commissione_partner DECIMAL(10,2), -- calcolata in base al tipo
+    stato TEXT DEFAULT 'pending', -- 'pending', 'pagato', 'annullato'
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     paid_at TIMESTAMP WITH TIME ZONE,
     notes TEXT

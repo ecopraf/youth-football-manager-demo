@@ -1,172 +1,91 @@
-# YOUTH FOOTBALL MANAGER
-## Il gestionale SaaS per società dilettanti
+# 🎯 Partnership Strategica
+## Youth Football Manager x [Partner]
+
+---
+
+## Il Problema
+
+Le società sportive dilettanti visitano il tuo portale per:
+- 📅 Calendari e risultati
+- 📊 Classifiche
+- 📋 Statistiche
+
+**Ma gestiscono tutto con:**
+- ❌ Fogli Excel
+- ❌ WhatsApp
+- ❌ Carta e penna
+
+---
+
+## La Nostra Soluzione
+
+**Youth Football Manager** digitalizza il lavoro di:
+- 👨‍💼 Dirigenti
+- ⚽ Allenatori
+- 📂 Segreterie
+
+**Il tuo portale** diventa il ponte verso questo strumento.
+
+---
+
+## Partnership a 3 Livelli
+
+### 📌 LIVELLO 1 – Referral
+- Landing page dedicata
+- Codice referral unico
+- **20%** commissione (€39,80 su €199)
+- Dashboard guadagni
+- **€0 di investimento**
+
+### 🔧 LIVELLO 2 – Integrazione
+- Import risultati e calendari
+- Link diretti tra piattaforme
+- Widget embeddable
+
+### 🤝 LIVELLO 3 – Co-Marketing
+- Webinar congiunti
+- Articoli e newsletter
+- Eventi FIGC/LND
+
+---
+
+## Modello Economico
+
+| Per le Società | Prezzo |
+|----------------|--------|
+| Annuale | €199/anno |
+| Mensile | €19,90/mese |
+
+| Per Te | Commissione |
+|--------|-------------|
+| Prima registrazione | 20% |
+| Rinnovi | 10% |
+
+---
+
+## Proiezioni
+
+| Scenario | Società/mese | Commissione Annua |
+|----------|--------------|-------------------|
+| Conservativo | 3 | €1.433 |
+| Realistico | 10 | €4.776 |
+| Ottimistico | 25 | €11.940 |
+
+---
+
+## Prossimi Passi
+
+1. **Call** – 30 min di presentazione
+2. **Setup** – Landing + codice referral
+3. **Lancio** – Promuoviamo insieme
 
 ---
 
 ## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
 
-### 🎯 IL PROBLEMA
-
-Le società dilettanti gestiscono tutto con:
-- 📱 WhatsApp
-- 📊 Fogli Excel
-- 📝 Carta e penna
-
-**Nessuno strumento specifico esiste**
+📧 youthfootballmanager@gmail.com
+🌐 youth-football-manager.vercel.app
 
 ---
 
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 💡 LA SOLUZIONE
-
-Youth Football Manager = Gestionale completo per vivai e squadre dilettanti
-
-✅ Anagrafica giocatori
-✅ Calendario partite
-✅ Convocazioni automatiche
-✅ Formazioni e distinte
-✅ Statistiche e classifiche
-✅ Valutazioni prestazioni
-✅ Multi-categoria
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 🎯 IL TARGET
-
-**6.000+ società dilettanti in Italia**
-- ASD / SSD
-- FIGC / LND / CSI / UISP
-- Under 10 → Under 19
-- Dirigenti + Allenatori
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 💰 IL MODELLO DI BUSINESS
-
-**SaaS Annuale**
-- €250/anno per società
-- Sconto triennale
-
-**Partnership Affiliate**
-- Portali sportivi (Gazzetta Regionale, Tuttocampo)
-- Guadagno: **20%** su ogni referral
-- Zero costo per il partner
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 📈 POTENZIALE DI MERCATO
-
-| Scenario | Società | Ricavo Annuale |
-|----------|---------|---------------|
-| Conservativo | 100 | €25.000 |
-| Realistico | 500 | €125.000 |
-| Ottimistico | 2.000 | €500.000 |
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 🤝 PERCHÉ PARTNER CON NOI?
-
-**Per Gazzetta Regionale / Tuttocampo:**
-
-✓ Revenue passivo su ogni società registrata
-✓ Nessun investimento o manutenzione
-✓ Servizio concreto per i lettori
-✓ Brand awareness su nuova piattaforma
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 🔧 COME FUNZIONA
-
-```
-Partner               Cliente              YFM
-   │                     │                  │
-   │  Link referral      │                  │
-   │  ───────────────►  │                  │
-   │                     │                  │
-   │                     │  Registrazione   │
-   │                     │  ─────────────► │
-   │                     │                  │
-   │                     │  Pagamento €250 │
-   │                     │  ─────────────► │
-   │                     │                  │
-   │  Commissione €50    │                  │
-   │  ◄────────────────  │                  │
-   │                     │                  │
-   └─────────────────────┴──────────────────┘
-```
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 🚀 COSA OFFRIAMO AI PARTNER
-
-1. **Link referral unico** con tracking
-2. **Banner personalizzati** per il loro sito
-3. **Dashboard statistiche** referral
-4. **Logo "Partner Ufficiale"** su YFM
-5. **Esclusiva regionale** disponibile
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### 📞 CONTATTI
-
-**Raffaele Coppola**
-- 📧 youthfootballmanager@gmail.com
-- 🌐 https://youth-football-manager.vercel.app
-- 📱 Demo disponibile su richiesta
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-### ⏰ PROSSIMI PASSI
-
-1. ✓ Demo del prodotto
-2. Definizione termini partnership
-3. Implementazione referral system
-4. Lancio pilota con 2-3 partner
-5. Scaling nazionale
-
----
-
-## Contatto
-- **Email**: youthfootballmanager@gmail.com
-- **Logo**: /assets/logo.png
-
-**GRAZIE**
-
-*Youth Football Manager - Il futuro della gestione dilettante*
+*Giugno 2026*

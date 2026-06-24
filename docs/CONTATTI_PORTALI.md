@@ -20,45 +20,57 @@
 ## Email Tipo per Outreach
 
 ### A Gazzetta Regionale
-**Oggetto:** Proposta Partnership Digitale - Youth Football Manager
+**Oggetto:** Partnership digitale per le società sportive – Youth Football Manager
 
 ```
 Gentile Direzione,
 
-scrivo per proporvi una partnership digitale per le società 
-sportive che seguono i vostri contenuti.
+scrivo per proporvi una partnership strategica per le società 
+sportive che consultano il vostro portale.
 
-Youth Football Manager è una piattaforma SaaS per la gestione 
-di squadre dilettantistiche. Proponiamo un sistema di 
-affiliazione dove:
+Ogni giorno centinaia di ASD visitano il vostro sito per 
+calendari, risultati e classifiche. Molte di queste gestiscono 
+ancora tutto con fogli Excel e WhatsApp.
 
-✓ Guadagnate il 20% su ogni società che si registra tramite voi
-✓ Zero investimento, zero manutenzione
-✓ Servizio concreto per i vostri lettori
+Youth Football Manager è il gestionale SaaS che digitalizza il 
+lavoro di dirigenti, allenatori e segreterie.
 
-Posso inviare una presentazione completa?
+La proposta prevede una partnership a 3 livelli:
+
+✓ Referral commerciale – Guadagno del 20% su ogni registrazione
+✓ Integrazione tecnica – Widget e link tra piattaforme
+✓ Co-marketing – Webinar, articoli, eventi congiunti
+
+Zero investimento da parte vostra, ricavo solo su risultati reali.
+
+Posso inviare la presentazione completa e concordare una call?
 
 Resto a disposizione,
 Raffaele Coppola
 ```
 
 ### A Tuttocampo
-**Oggetto:** Proposta Partnership - Youth Football Manager
+**Oggetto:** Partnership – Youth Football Manager per le ASD/SSD
 
 ```
 Gentile Tuttomedia,
 
-conosco il vostro progetto "Tutti in Campo" per le ASD/SSD 
-e mi piacerebbe proporvi una sinergia.
+conosco il vostro progetto "Tutti in Campo" e mi piacerebbe 
+proporvi una sinergia concreta.
 
-Youth Football Manager offre un gestionale completo per 
-società dilettanti. Proponiamo un sistema di affiliazione:
+Youth Football Manager è un gestionale SaaS per società dilettanti 
+che digitalizza il lavoro quotidiano di dirigenti e allenatori.
 
-✓ Guadagno passivo su ogni referral
-✓ Nessun costo per voi
-✓ Valore aggiunto per le società che seguite
+Proponiamo una partnership a 3 livelli:
 
-Possiamo parlarne?
+✓ Referral: 20% su ogni registrazione referral
+✓ Integrazione: widget e import dati
+✓ Co-marketing: webinar e contenuti condivisi
+
+Come Tuttocampo, potete offrire alle società uno strumento 
+professionale generando al tempo stesso una nuova fonte di ricavi.
+
+Possiamo parlarne in una call?
 
 Cordiali saluti,
 Raffaele Coppola
