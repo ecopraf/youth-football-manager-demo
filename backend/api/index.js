@@ -1494,7 +1494,7 @@ app.get('/api/partners/:codice/verify', async (req, res) => {
 });
 
 // GET /api/admin/referrals - Referral log (admin only)
-app.get('/api/admin/referrals', authenticateToken, async (req, res) => {
+app.get('/api/admin/referrals', authMiddleware, async (req, res) => {
   try {
     if (!req.user.is_superadmin) return res.status(403).json({ error: 'Accesso negato' });
     const { data, error } = await supabase
@@ -1510,7 +1510,7 @@ app.get('/api/admin/referrals', authenticateToken, async (req, res) => {
 });
 
 // GET /api/admin/partner-stats - Statistiche per partner (admin only)
-app.get('/api/admin/partner-stats', authenticateToken, async (req, res) => {
+app.get('/api/admin/partner-stats', authMiddleware, async (req, res) => {
   try {
     if (!req.user.is_superadmin) return res.status(403).json({ error: 'Accesso negato' });
     const { data, error } = await supabase
@@ -1525,7 +1525,7 @@ app.get('/api/admin/partner-stats', authenticateToken, async (req, res) => {
 });
 
 // POST /api/admin/partners - Crea partner (admin only)
-app.post('/api/admin/partners', authenticateToken, async (req, res) => {
+app.post('/api/admin/partners', authMiddleware, async (req, res) => {
   try {
     if (!req.user.is_superadmin) return res.status(403).json({ error: 'Accesso negato' });
     const { nome, email, codice, commissione, website } = req.body;
