@@ -85,6 +85,8 @@ export default async function loadDashboard() {
         @media (max-width: 900px) { .dashboard-widgets { grid-template-columns: repeat(4, 1fr) !important; } }
         @media (max-width: 600px) { .dashboard-widgets { grid-template-columns: repeat(4, 1fr) !important; } }
         @media (max-width: 400px) { .dashboard-widgets { grid-template-columns: repeat(2, 1fr) !important; } }
+        .top-player-card:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .top-player-row:hover { background: #e8e8e8 !important; }
       </style>
       
       <!-- Top 3 responsive cards -->
@@ -94,7 +96,9 @@ export default async function loadDashboard() {
           <h3 class="section-title" style="margin:0 0 12px 0;" title="Top 3 Marcatori">⚽ Top 3 Marcatori</h3>
           <div class="top-cards-row" style="display:flex;gap:8px;">
             ${(top.marcatori || []).slice(0, 3).map((x, i) => `
-              <div style="flex:1;background:${['#fff9e6','#f0f0f0','#f0f8ff'][i]};padding:10px 6px;border-radius:8px;text-align:center;">
+              <div style="flex:1;background:${['#fff9e6','#f0f0f0','#f0f8ff'][i]};class="top-player-card" style="padding:10px 6px;border-radius:8px;text-align:center;cursor:pointer;transition:transform 0.2s;" 
+                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('${x.id}', '${x.nome}');" 
+                   title="Clicca per vedere la scheda di ${x.nome}">
                 <div style="font-size:20px;margin-bottom:4px;">${['🥇','🥈','🥉'][i]}</div>
                 <div style="font-size:12px;font-weight:bold;">${x.nome}</div>
                 <div style="font-size:14px;font-weight:bold;color:#27AE60;">${x.gol} Gol</div>
@@ -108,7 +112,9 @@ export default async function loadDashboard() {
           <h3 class="section-title" style="margin:0 0 12px 0;" title="Top 3 Assist">🅰️ Top 3 Assist</h3>
           <div class="top-cards-row" style="display:flex;gap:8px;">
             ${(top.assistmen || []).slice(0, 3).map((x, i) => `
-              <div style="flex:1;background:${['#e6fff0','#f0f0f0','#f0f8ff'][i]};padding:10px 6px;border-radius:8px;text-align:center;">
+              <div style="flex:1;background:${['#e6fff0','#f0f0f0','#f0f8ff'][i]};class="top-player-card" style="padding:10px 6px;border-radius:8px;text-align:center;cursor:pointer;transition:transform 0.2s;" 
+                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('${x.id}', '${x.nome}');" 
+                   title="Clicca per vedere la scheda di ${x.nome}">
                 <div style="font-size:20px;margin-bottom:4px;">${['🥇','🥈','🥉'][i]}</div>
                 <div style="font-size:12px;font-weight:bold;">${x.nome}</div>
                 <div style="font-size:14px;font-weight:bold;color:#667eea;">${x.assist} Assist</div>
@@ -122,7 +128,9 @@ export default async function loadDashboard() {
           <h3 class="section-title" style="margin:0 0 12px 0;" title="Top 3 Presenze">🏃 Top 3 Presenze</h3>
           <div class="top-cards-row" style="display:flex;gap:8px;">
             ${(top.presenze || []).slice(0, 3).map((x, i) => `
-              <div style="flex:1;background:${['#e6f3ff','#f0f0f0','#fff9e6'][i]};padding:10px 6px;border-radius:8px;text-align:center;">
+              <div style="flex:1;background:${['#e6f3ff','#f0f0f0','#fff9e6'][i]};class="top-player-card" style="padding:10px 6px;border-radius:8px;text-align:center;cursor:pointer;transition:transform 0.2s;" 
+                   onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('${x.id}', '${x.nome}');" 
+                   title="Clicca per vedere la scheda di ${x.nome}">
                 <div style="font-size:20px;margin-bottom:4px;">${['🥇','🥈','🥉'][i]}</div>
                 <div style="font-size:12px;font-weight:bold;">${x.nome}</div>
                 <div style="font-size:14px;font-weight:bold;color:#667eea;">${x.presenze} Pres.</div>
@@ -139,7 +147,9 @@ export default async function loadDashboard() {
         <h3 class="section-title" style="margin:0 0 12px 0;" title="Migliori per Media Voto">⭐ Migliori per Media Voto</h3>
         <div style="display:flex;flex-direction:column;gap:8px;">
           ${topValutazioni.topGiocatori.slice(0, 5).map((g, i) => `
-            <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:${i === 0 ? '#fff9e6' : '#f8f9fa'};border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:${i === 0 ? '#fff9e6' : '#f8f9fa'};class="top-player-row" style="cursor:pointer;transition:transform 0.2s;" 
+                 onclick="if(typeof loadPlayerDetail==='function') loadPlayerDetail('${g.calciatore_id}', '${g.nome}');" 
+                 title="Clicca per vedere la scheda di ${g.nome}">
               <span style="font-size:18px;">${['🥇','🥈','🥉','4','5'][i]}</span>
               <span style="flex:1;font-weight:600;">${g.nome}</span>
               <span style="font-size:12px;color:#888;">${g.partiteValutate} partite</span>
