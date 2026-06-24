@@ -177,6 +177,166 @@
 
 ---
 
+## Stili Grafici (Design System)
+
+### Variabili CSS Base
+```css
+:root {
+  --primary: #667eea;
+  --primary-dark: #5a67d8;
+  --success: #27AE60;
+  --warning: #F39C12;
+  --danger: #E74C3C;
+  --text: #333333;
+  --gray: #888888;
+  --light: #f8f9fa;
+  --border: #e0e0e0;
+}
+```
+
+### Bordi e Radius
+| Elemento | Border Radius |
+|----------|---------------|
+| Card semplici | `12px` |
+| Card con sfondo gradiente | `16px` |
+| Bottoni | `10px` |
+| Badge/Chip | `20px` (pill) o `8px` |
+| Input | `8px` |
+| Player Card (top 3) | `16px` |
+| Match item | `10px` |
+
+### Ombre (Box Shadow)
+| Uso | Valore |
+|-----|--------|
+| Card base | `0 2px 10px rgba(0,0,0,0.08)` |
+| Card evidenziata | `0 4px 20px rgba(0,0,0,0.08)` |
+| Card hover / effetto 3D | `0 15px 30px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1)` |
+| Pulsanti gradiente | `0 8px 25px rgba(102,126,234,0.4)` |
+
+### Effetti Interattivi
+
+**Hover su card giocatore (effetto lift 3D):**
+```css
+.player-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.player-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
+}
+```
+
+**Hover su match item:**
+```css
+.match-item {
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+.match-item:hover {
+  background: #f0f0f0;
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+```
+
+**Pulsanti:**
+```css
+button {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+button:hover {
+  transform: translateY(-2px);
+}
+button:active {
+  transform: translateY(0);
+}
+```
+
+### Gradenti
+| Tipo | Valore |
+|------|--------|
+| Sfondo principale | `linear-gradient(135deg, #667eea 0%, #764ba2 100%)` |
+| Oro (1° classificato) | `linear-gradient(180deg, #FFD700 0%, #FFA500 100%)` |
+| Argento (2° classificato) | `linear-gradient(180deg, #E8E8E8 0%, #A0A0A0 100%)` |
+| Bronzo (3° classificato) | `linear-gradient(180deg, #CD7F32 0%, #8B4513 100%)` |
+
+### Spacing
+| Tipo | Valore |
+|------|--------|
+| Padding card interna | `16px` |
+| Gap tra card | `16px` o `20px` |
+| Margin section | `24px` |
+| Gap tra elementi inline | `8px` o `12px` |
+
+### Icone/Emoji con Effetti
+```css
+/* Per medaglie con rilievo */
+filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+
+/* Per trend indicators */
+box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+```
+
+### Responsive Breakpoints
+```css
+@media (max-width: 900px) { /* Tablet */ }
+@media (max-width: 600px) { /* Mobile grande */ }
+@media (max-width: 400px) { /* Mobile piccolo */ }
+```
+
+### Colori Risultati
+| Risultato | Colore |
+|-----------|--------|
+| Vittoria | `#27AE60` |
+| Pareggio | `#F39C12` |
+| Sconfitta | `#E74C3C` |
+| Testo secondario | `#888888` |
+
+### Template Card Standard
+```html
+<div style="
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+">
+  <!-- Contenuto -->
+</div>
+```
+
+### Template Player Card (Top 3)
+```html
+<div class="player-card" style="
+  background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+  padding: 14px 8px;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+">
+  <div style="font-size: 26px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));">🥇</div>
+  <div style="font-size: 12px; font-weight: bold; color: #222;">Nome</div>
+  <div style="font-size: 15px; font-weight: bold; color: #fff;">X Gol</div>
+</div>
+```
+
+### Template Prossima Partita (Evidenziata)
+```html
+<div style="
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+">
+  <!-- Contenuto -->
+</div>
+```
+
+---
+
 ## Roadmap MVP
 
 ### Target: MVP stabile entro metà Settembre 2026
@@ -198,18 +358,20 @@
 - ✅ Auth FASE 1 - Sistema ruoli, gestione utenti, link guest
 - ✅ Dashboard Aggiornata - Prossima partita in evidenza, trend, top players
 - ✅ Accessibilità - Tooltip su tutte le icone senza testo
+- ✅ Dashboard 3D - Grafica moderna con effetto hover e card cliccabili
+- ✅ Design System - Stili consolidati in AGENTS.md
 
 ## Task Sospesi ⏸️
 - ⏸️ Valutazioni Giocatore - Valutazioni tecniche per stagione/partita
 - ⏸️ Filtro Categorie - Staff vede solo squadre assegnate
 
-## Ultime Modifiche (commit: 4b7c9e6)
-- Dashboard: rimossa pulsante "+ Nuova Partita", aggiunta prossima partita in evidenza
-- Dashboard: aggiunto endpoint /partite-future per prossime partite
-- Utenti: fix reload invece di loadData dopo creazione
-- Utenti: fix query order by id invece di created_at (colonna non esiste)
-- Guest Links: fix copia link con event listener
-- Accessibilità: aggiunto title tooltip su tutte le icone emoji
+## Ultime Modifiche (commit: b18283a)
+- Dashboard: ricreata con grafica 3D moderna
+- Card Top 3: effetto hover lift, gradienti oro/argento/bronzo
+- Giocatori cliccabili: aprono scheda giocatore
+- Style system: consolidato in AGENTS.md
+- DB cleanup: rimossi riferimenti orfani giocatore test
+- Backend: fix sintassi, environment variables Vercel
 
 ## URL Applicazione
 - **Frontend**: https://youth-football-manager.vercel.app
