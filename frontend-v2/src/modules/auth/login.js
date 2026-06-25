@@ -238,46 +238,25 @@ export default async function loadLogin() {
     document.querySelector('.auth-card').style.display = 'block';
   });
 
-  // Avvia demo
-  document.getElementById('startDemoBtn').addEventListener('click', async () => {
-    showLoading('Avvio demo...');
-    
-    try {
-      const res = await apiFetch('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ 
-          email: 'demo_yfm', 
-          password: 'demo_yfm' 
-        })
-      });
-      
-      // Salva token e user info
-      localStorage.setItem('yfm_token', res.token);
-      localStorage.setItem('yfm_user', JSON.stringify(res.user));
-      localStorage.setItem('yfm_demo_session', 'active');
-      
-      window.YFM.setUser(res.user);
-      
-      // Pulisci URL da parametri
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-      
-      // Carica dati necessari per la dashboard
-      const { loadWorkspaceInfo, loadSquadre } = await import('../../main.js');
-      await Promise.all([loadWorkspaceInfo(), loadSquadre()]);
-      
-      // Inizializza demo manager
-      if (window.demoManager) {
-        window.demoManager.init();
-      }
-      
-      hideLoading();
+  // Avvia demo - senza login, modalita guidata
+  document.getElementById('startDemoBtn').addEventListener('click', () => {
+    // Pulisci URL da parametri
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    // Imposta flag demo senza token reale
+    localStorage.setItem('yfm_demo_session', 'active');
+    localStorage.setItem('yfm_demo_user', JSON.stringify({
+      id: 'demo',
+      nome: 'Demo',
+      cognome: 'Utente',
+      ruolo: 'allenatore',
+      email: 'demo@yfm.it'
+    }));
+
+    // Naviga alla dashboard - il demoManager si attivera automaticamente
+    if (window.YFM) {
       window.YFM.navigateTo('dashboard');
-    } catch (err) {
-      hideLoading();
-      const errorDiv = document.getElementById('loginError');
-      errorDiv.textContent = 'Errore avvio demo: ' + err.message;
-      errorDiv.style.display = 'block';
     }
   });
 
