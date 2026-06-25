@@ -450,7 +450,7 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - `/docs/PROPOSTA_PARTNERSHIP_WITH_LOGO.html` - Proposta PDF-ready (con logo)
 - `/docs/PITCH_DECK.md` - Presentazione sintetica
 - `/docs/CONTATTI_PORTALI.md` - Email tipo e contatti
-- `/landing.html` - Landing page pubblica
+- `/landing/index.html` - Landing page pubblica
 - `/SQL/referral_system.sql` - Schema DB per referral
 
 ### Repo Landing Page
@@ -507,7 +507,7 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 ## Landing Page
 
 ### File e Posizione
-- **File principale**: `/landing.html` (root del repo)
+- **File principale**: `/landing/index.html` (root del repo)
 - Logo embedded base64
 - Responsive (desktop/tablet/mobile)
 - Stesso stile dei documenti PDF
@@ -528,7 +528,7 @@ https://youth-football-manager.vercel.app/login?demo_email=demo_yfm@yfm.it&demo_
 ### Gestione Landing Page
 1. **Modifiche**: Il file è HTML statico, modificare direttamente e pushare
 2. **Deploy**: Vercel aggiorna automaticamente su push
-3. **Test locale**: Aprire `landing.html` nel browser
+3. **Test locale**: Aprire `landing/index.html` nel browser
 
 ---
 
@@ -635,7 +635,7 @@ Quando si crea un documento HTML destinato alla stampa PDF, **SEMPRE**:
 ### Documenti Esistenti
 | File | Descrizione |
 |------|-------------|
-| `/landing.html` | Landing page professionale (HTML statico) |
+| `/landing/index.html` | Landing page professionale (HTML statico) |
 | `/docs/PROPOSTA_PARTNERSHIP_WITH_LOGO.html` | Proposta partnership (logo embedded, 3 livelli) |
 | `/docs/PROPOSTA_PARTNERSHIP.md` | Proposta partnership (Markdown) |
 | `/docs/PITCH_DECK.md` | Presentazione sintetica |
@@ -664,7 +664,7 @@ html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 - feat: landing v4 con logo embedded, pricing Coach/Club/AI Plus
 
 ## URL Applicazione
-- **Landing Page**: https://youth-football-manager.vercel.app (index) → landing.html
+- **Landing Page**: https://youth-football-manager.vercel.app (index) 
 - **App**: https://youth-football-manager.vercel.app/login
 - **Backend**: https://youth-football-manager-backend.vercel.app
 - **Repo**: https://github.com/ecopraf/youth-football-manager
