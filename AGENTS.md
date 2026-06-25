@@ -624,12 +624,13 @@ with open('docs/logo.png', 'rb') as f:
 html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 ```
 
-## Ultime Modifiche (commit: latest)
-- Landing page v3: demo auto-login, pricing 3-tier, icona multi-device
-- Login: supporto parametri URL demo_email, demo_password, auto_login
-- Pricing aggiornato: Base (free), Standard (€199), Portali (€199)
-- Documenti: PROPOSTA_PARTNERSHIP, PITCH_DECK, FUNZIONALITA allineati al pricing
-- AGENTS.md: aggiunta sezione Landing Page e regole Task Tracker
+## Ultime Modifiche (commit: 061aa33)
+- docs: aggiorna regole AGENTS - modifiche DB/API, comandi dettagliati
+- docs: aggiorna AGENTS.md - Partnership Strategy completa
+- fix: page-break prima di Proiezioni su PDF
+- fix: scenari proiezioni 15-30-45 società per profilo Club
+- docs: commissioni e proiezioni allineate ai profili pricing
+- feat: landing v4 con logo embedded, pricing Coach/Club/AI Plus
 
 ## URL Applicazione
 - **Landing Page**: https://youth-football-manager.vercel.app (index) → landing.html
@@ -637,3 +638,75 @@ html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 - **Backend**: https://youth-football-manager-backend.vercel.app
 - **Repo**: https://github.com/ecopraf/youth-football-manager
 - **Demo**: https://youth-football-manager.vercel.app/login?demo_email=demo_yfm&demo_password=demo_yfm&auto_login=1
+
+---
+
+## Stato Attuale Repository (Giugno 2025)
+
+### Struttura Frontend Modules
+| Directory | File | Righe | Descrizione |
+|-----------|------|-------|-------------|
+| team/ | dashboard.js | 190 | Dashboard con prossima partita, trend, top players |
+| team/ | roster.js | 322 | Rosa giocatori, CRUD, filtri |
+| team/ | calendar.js | 283 | Calendario partite con archiviazione |
+| team/ | convocazioni.js | 161 | Gestione convocazioni |
+| team/ | distinta.js | 277 | Distinta FIGC PDF |
+| team/ | formazione.js | 230 | Gestione formazione |
+| team/ | resultForm.js | 231 | Inserimento eventi/risultato |
+| team/ | matchDetail.js | 183 | Dettaglio partita con timeline |
+| team/ | playerDetail.js | 391 | Scheda giocatore completa |
+| team/ | valutazioni.js | 170 | Valutazioni partite |
+| team/ | noteAvversario.js | 81 | Note avversario |
+| team/ | squadre.js | 40 | Gestione squadre |
+| admin/ | users.js | ~280 | Gestione utenti |
+| admin/ | guestLinks.js | ~240 | Gestione link guest |
+| auth/ | login.js | 267 | Login con supporto demo URL |
+| auth/ | guest.js | ~100 | Attivazione guest |
+| coach/ | training.js | 347 | Allenamenti e presenze |
+| performance/ | reports.js | 788 | Report partita/stagionale |
+| performance/ | stats.js | 59 | Statistiche disciplina |
+| club/ | settings.js | 98 | Impostazioni |
+| club/ | workspace.js | 20 | Info società |
+
+### Backend API (backend/api/index.js - 1543 righe)
+- Health: `/api/health`, `/api/warmup`
+- Auth: login, register, users CRUD, guest links
+- Squadre: CRUD, statistiche-complete, top-players, valutazioni-top
+- Partite: dettaglio, formazione, convocazioni, eventi, valutazioni
+- Calciatori: lista, sposta, storico valutazioni
+- Partner: lista, verifica codice, referral log, stats (admin)
+
+### Sistema Partnership/Referral
+- Tabella `partner` per gestione partner commerciali
+- Tabella `referral_log` per tracciare registrazioni referral
+- Endpoint admin per gestione partner e statistiche
+
+### Task Completati ✅
+- ✅ Timeline Partita - vista minuto-per-minuto in matchDetail.js
+- ✅ Archivia Partita - blocco modifiche per partite concluse
+- ✅ LIVE Indicator - pallino e scritta LIVE lampeggianti
+- ✅ Auth FASE 1 - sistema ruoli, gestione utenti, link guest
+- ✅ Dashboard Aggiornata - prossima partita in evidenza, trend
+- ✅ Accessibilità - tooltip su tutte le icone
+- ✅ Dashboard 3D - grafica moderna con effetto hover
+- ✅ Design System - stili consolidati in AGENTS.md
+- ✅ Landing Page v4 - logo embedded, pricing Coach/Club/AI Plus
+- ✅ Demo Auto-login - parametri URL demo_email, demo_password
+- ✅ Pricing Aggiornato - Coach (€99), Club (€249), AI Plus (Coming Soon)
+- ✅ Commissioni Partnership - dettaglio per profilo Coach/Club
+- ✅ Proiezioni Ricavi - scenari 15-30-45 con page-break PDF
+- ✅ Sistema Referral - tabelle partner, referral_log, endpoint admin
+- ✅ Player Detail - scheda giocatore completa con storico
+
+### Task Sospesi ⏸️
+- ⏸️ Valutazioni Giocatore - valutazioni tecniche per stagione/partita
+- ⏸️ Filtro Categorie - staff vede solo squadre assegnate
+
+### Roadmap MVP
+| Fase | Contenuto | Stato |
+|------|-----------|-------|
+| **FASE 1** | Auth/Ruoli (Login, JWT, Admin/Allenatore/Staff) | ✅ COMPLETATO |
+| **FASE 2** | Import CSV base (rosa, partite, eventi) | TODO |
+| **FASE 3** | Import Tuttocampo (web scraping) | TODO |
+| **FASE 4** | Centro Importazioni (log, duplicati, matching) | TODO |
+| **FASE 5** | Polish, test, template repository | TODO |
