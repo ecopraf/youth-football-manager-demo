@@ -138,25 +138,39 @@ class DemoManager {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const data = JSON.parse(saved);
-        this.missions = data.missions || [...DEMO_MISSIONS];
+        // Verifica che le missioni siano consistenti
+        if (data.missions && Array.isArray(data.missions) && data.missions.length === DEMO_MISSIONS.length) {
+          this.missions = data.missions;
+        } else {
+          console.log('[DEMO] Missioni non consistenti, reset a default');
+          this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
+        }
         this.welcomeShown = data.welcomeShown || false;
       } else {
-        this.missions = [...DEMO_MISSIONS];
+        this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
       }
       this.updateCompletedCount();
     } catch (e) {
       console.log('Demo: errore caricamento progressi', e);
-      this.missions = [...DEMO_MISSIONS];
+      this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
     }
   }
 
   saveProgress() {
     try {
+      // Verifica consistenza prima di salvare
+      if (this.missions.length !== DEMO_MISSIONS.length) {
+        console.log('[DEMO] Warning: numero missioni non corretto,修复');
+        this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
+      }
+      
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         missions: this.missions,
         welcomeShown: this.welcomeShown,
         savedAt: new Date().toISOString()
       }));
+      
+      console.log('[DEMO] Progress saved, missions:', this.missions.map(m => m.id + ':' + m.completed));
     } catch (e) {
       console.log('Demo: errore salvataggio progressi', e);
     }
@@ -388,19 +402,34 @@ class DemoManager {
     const panel = document.getElementById('demo-mission-panel');
     if (!panel) return;
     
-    this.missions.forEach(m => {
+    // Verifica che le missioni nel DOM siano corrette
+    const panelMissions = panel.querySelectorAll('.demo-mission-item');
+    if (panelMissions.length !== this.missions.length) {
+      console.log('[DEMO] Panel missions count mismatch, recreating panel');
+      panel.remove();
+      this.showMissionPanel();
+      return;
+    }
+    
+    this.missions.forEach((m, index) => {
       const item = panel.querySelector(`[data-mission="${m.id}"]`);
       if (item) {
         if (m.completed) {
           item.classList.add('completed');
           item.querySelector('.demo-mission-icon').textContent = '✅';
+        } else {
+          item.classList.remove('completed');
+          item.querySelector('.demo-mission-icon').textContent = m.icon;
         }
       }
     });
     
     const progress = Math.round((this.completedCount / this.missions.length) * 100);
-    panel.querySelector('.demo-progress-fill').style.width = `${progress}%`;
-    panel.querySelector('.demo-progress-text').textContent = `${this.completedCount} di ${this.missions.length} missioni completate`;
+    const progressFill = panel.querySelector('.demo-progress-fill');
+    const progressText = panel.querySelector('.demo-progress-text');
+    
+    if (progressFill) progressFill.style.width = `${progress}%`;
+    if (progressText) progressText.textContent = `${this.completedCount} di ${this.missions.length} missioni completate`;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -641,6 +670,15 @@ class DemoManager {
   // ═══════════════════════════════════════════════════════════════
 
   showRegistrationForm() {
+    // Chiudi banner celebrazione se presente
+    document.getElementById('demo-celebration')?.remove();
+    
+    // Chiudi panel missioni se presente
+    document.getElementById('demo-mission-panel')?.remove();
+    
+    // Chiudi popup benvenuto se presente
+    document.getElementById('demo-welcome-overlay')?.remove();
+    
     const overlay = document.createElement('div');
     overlay.id = 'demo-registration-overlay';
     overlay.style.cssText = `
@@ -809,18 +847,29 @@ class DemoManager {
   }
 
   resetDemo() {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(SESSION_KEY);
-    this.missions = [...DEMO_MISSIONS];
+    console.log('[DEMO] resetDemo() called');
+    
+    // Rimuovi TUTTI i dati demo dal localStorage
+    Object.keys(localStorage).forEach(key => {
+      if (key.includes('demo') || key.includes('yfm_demo') || key.includes('mission')) {
+        console.log('[DEMO] Removing:', key);
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Reset stato interno
+    this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS)); // Deep copy
     this.completedCount = 0;
     this.welcomeShown = false;
+    this.isDemo = true;
+    
+    console.log('[DEMO] After reset, missions:', this.missions.map(m => m.id + ':' + m.completed));
     
     // Remove all demo UI
-    document.getElementById('demo-badge')?.remove();
-    document.getElementById('demo-mission-panel')?.remove();
-    document.getElementById('demo-welcome-overlay')?.remove();
-    document.getElementById('demo-celebration')?.remove();
-    document.getElementById('demo-registration-overlay')?.remove();
+    ['demo-badge', 'demo-mission-panel', 'demo-welcome-overlay', 'demo-celebration', 
+     'demo-registration-overlay', 'demo-marketing-tooltip'].forEach(id => {
+      document.getElementById(id)?.remove();
+    });
     
     // Reset session storage for tooltips
     Object.keys(sessionStorage).forEach(key => {
@@ -829,11 +878,15 @@ class DemoManager {
       }
     });
     
-    // Navigate to dashboard and show welcome again
+    // Salva stato resettato
+    this.saveProgress();
+    
+    // Naviga a dashboard
     this.navigateTo('dashboard');
     
     // Recrea badge e mostra popup di benvenuto
     setTimeout(() => {
+      console.log('[DEMO] After timeout, missions:', this.missions.map(m => m.id + ':' + m.completed));
       this.updateBadge();
       this.showMissionPanel();
       this.showWelcomePopup();
