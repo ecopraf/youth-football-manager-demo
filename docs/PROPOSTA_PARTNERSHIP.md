@@ -95,12 +95,10 @@ Investimento: Coordinamento e contenuti condivisi
 
 ### Commissioni per Te
 
-| Tipo | Commissione | Esempio |
-|------|-------------|---------|
-| **Prima registrazione** | 20% | €29.80 su €149 |
-| **Rinnovi annuali** | 10% | €14.90 su €149 |
-
-**Nota**: Il prezzo medio considera Coach (€99) e Club (€249). Le commissioni variano in base al piano scelto dalla società.
+| Piano | Prima Registrazione (20%) | Rinnovi Annuali (10%) |
+|-------|--------------------------|----------------------|
+| **Coach** | €19.80 | €9.90 |
+| **Club** | €49.80 | €24.90 |
 
 ### Perché questo modello funziona per te
 
