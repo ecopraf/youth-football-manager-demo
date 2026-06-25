@@ -655,13 +655,13 @@ with open('docs/logo.png', 'rb') as f:
 html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 ```
 
-## Ultime Modifiche (commit: 061aa33)
-- docs: aggiorna regole AGENTS - modifiche DB/API, comandi dettagliati
-- docs: aggiorna AGENTS.md - Partnership Strategy completa
-- fix: page-break prima di Proiezioni su PDF
-- fix: scenari proiezioni 15-30-45 società per profilo Club
-- docs: commissioni e proiezioni allineate ai profili pricing
-- feat: landing v4 con logo embedded, pricing Coach/Club/AI Plus
+## Ultime Modifiche (commit: 351dafb)
+- fix: chiusura banner, reset demo, validazione missioni
+- feat: badge demo bianco/verde 3D, missioni complete, completamento demo
+- fix: missioni ridotte a 3 pagine funzionanti (Dashboard, Rosa, Calendario)
+- feat: pulsante 'Richiedi Informazioni' sempre visibile nel panel missioni
+- fix: logout, auto-login, reset demo, tooltip Rosa
+- fix: demo flow completo, logout reset, nascondi credenziali
 
 ## URL Applicazione
 - **Landing Page**: https://youth-football-manager.vercel.app (index) 
@@ -753,37 +753,52 @@ Demo guidata con **missioni** e **progress tracking** per massimizzare il coinvo
 
 ### Flusso
 ```
-Landing Page → "Prova la Demo" → Login Auto → Popup Benvenuto 
-→ Missioni Panel → Navigazione Guidata → Tooltip Marketing 
-→ Completion Celebration → CTA Registrazione
+Landing Page → "Prova la Demo" → Auto-Login → Popup Benvenuto 
+→ Badge Demo 🌱 → Panel Missioni → Navigazione 
+→ Tooltip Marketing → Completion → CTA Registrazione
 ```
 
 ### Credenziali Demo
-- **Email**: `demo_yfm@yfm.it`
+- **Email**: `demo_yfm` o `demo_yfm@yfm.it`
 - **Password**: `demo_yfm`
-- **URL**: https://youth-football-manager.vercel.app/login?demo_email=demo_yfm@yfm.it&demo_password=demo_yfm&auto_login=1
+- **URL Auto-Login**: https://youth-football-manager.vercel.app/?demo_email=demo_yfm&demo_password=demo_yfm&auto_login=1
 
 ### File Chiave
-- `frontend-v2/src/modules/demo/demo.js` - Manager demo completo
-- `SQL/demo-data.sql` - Dati ASD Green Academy (da eseguire in Supabase)
+- `frontend-v2/src/modules/demo/demo.js` - Manager demo completo (~900 righe)
+- `frontend-v2/src/main.js` - Auto-login demo e init demoManager
 
-### Missioni Disponibili
-| # | Missione | Pagina |
-|---|----------|--------|
+### Missioni Disponibili (6 pagine)
+| # | Missione | Pagina Router |
+|---|----------|---------------|
 | 1 | Dashboard | dashboard |
-| 2 | Calendario | calendar |
-| 3 | Rosa | roster |
-| 4 | Convocazioni | convocations |
-| 5 | Formazione | formation |
-| 6 | Scheda Giocatore | player_detail |
-| 7 | Statistiche | stats |
+| 2 | Rosa | roster |
+| 3 | Calendario | calendar |
+| 4 | Allenamenti | training |
+| 5 | Statistiche | stats |
+| 6 | Report | reports |
 
 ### Componenti UI Demo
-- **Badge Progress**: `🌱 Demo XX%` nell'angolo in alto a destra
-- **Panel Missioni**: Click sul badge per vedere tutte le missioni
-- **Popup Benvenuto**: First-time con opzione tour o esplorazione libera
-- **Tooltip Marketing**: Slide-up contestuale per ogni pagina
-- **Celebrazione**: Popup quando tutte le missioni sono completate
+- **Badge Progress**: `🌱 Demo XX%` - sfondo bianco, bordo verde, effetto 3D hover
+- **Panel Missioni**: Click badge per vedere missioni e pulsante "Richiedi Informazioni"
+- **Popup Benvenuto**: First-time con opzioni Tour/Esplora liberamente
+- **Banner Marketing**: Slide-up contestuale per ogni pagina visitata
+- **Celebrazione**: Popup quando tutte le 6 missioni sono completate
+- **Form Registrazione**: Sempre accessibile dal panel o dal completamento
+
+### Costanti Demo (in demo.js)
+```javascript
+const STORAGE_KEY = 'yfm_demo_progress';
+const SESSION_KEY = 'yfm_demo_session';
+```
+
+### Flusso Auto-Login (main.js)
+1. Check parametri URL: `demo_email`, `demo_password`, `auto_login=1`
+2. Se presenti → `performDemoLogin()` → fetch API → salva token + sessione
+3. Carica workspace/squadre → `demoManager.init()` → naviga a dashboard
+
+### Flusso Reset Demo
+1. Logout → `handleLogout()` in main.js → pulisce localStorage demo
+2. Oppure "Riprova la demo" → `resetDemo()` → pulisce + ricrea UI
 
 ### Setup Database Demo
 Eseguire `SQL/demo-data.sql` nel SQL Editor di Supabase per creare:
