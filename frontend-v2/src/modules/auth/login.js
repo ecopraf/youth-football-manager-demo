@@ -5,12 +5,6 @@ export default async function loadLogin() {
   // Leggi parametri dalla URL
   const urlParams = new URLSearchParams(window.location.search);
   const refCode = urlParams.get('ref');
-  const demoEmail = urlParams.get('demo_email');
-  const demoPassword = urlParams.get('demo_password');
-  const autoLogin = urlParams.get('auto_login');
-  
-  // Logga i parametri per debug
-  console.log('Demo params:', { demoEmail, demoPassword, autoLogin });
   
   // Salva referral code dall URL se presente
   if (refCode) {
@@ -39,12 +33,12 @@ export default async function loadLogin() {
         <form id="loginForm" class="auth-form">
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder=" tua@email.com" value="${demoEmail || ''}" ${demoEmail ? 'required' : ''}>
+            <input type="email" id="email" placeholder=" tua@email.com" required>
           </div>
           
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder=" La tua password" value="${demoPassword || ''}" ${demoPassword ? 'required' : ''}>
+            <input type="password" id="password" placeholder=" La tua password" required>
           </div>
           
           <div id="loginError" class="error-message" style="display:none;"></div>
@@ -213,13 +207,6 @@ export default async function loadLogin() {
     document.querySelector('.auth-card').style.display = 'block';
   });
 
-  // Auto-login se parametri demo presenti
-  if (autoLogin && demoEmail && demoPassword) {
-    setTimeout(() => {
-      document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-    }, 100);
-  }
-
   // Login form
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -241,15 +228,9 @@ export default async function loadLogin() {
       localStorage.setItem('yfm_token', res.token);
       localStorage.setItem('yfm_user', JSON.stringify(res.user));
       
-      // Se è login demo, marca la sessione e avvia demo manager
+      // Se è login demo, marca la sessione
       if (isDemo) {
         localStorage.setItem('yfm_demo_session', 'active');
-        // Avvia demo manager dopo un breve delay per permettere caricamento
-        setTimeout(() => {
-          if (window.demoManager && typeof window.demoManager.init === 'function') {
-            window.demoManager.init();
-          }
-        }, 300);
       }
       
       hideLoading();
