@@ -369,10 +369,11 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 ## Sistema Partnership
 
 ### Modello Commerciale
-| Tipo | Prezzo |
-|------|--------|
-| Annuale | €199/anno |
-| Mensile | €19,90/mese |
+| Piano | Prezzo | Note |
+|-------|--------|------|
+| **Coach** | €99/anno | ~€9/mese, 1 squadra, tutte le funzionalità |
+| **Club** | €249/anno | ~€25/mese, squadre illimitate, permessi avanzati |
+| **AI Plus** | Coming Soon | Assistente AI, analisi, automazioni |
 
 ### Partnership a 3 Livelli
 1. **Referral Commerciale** - Landing page + codice referral + 20% commissione
@@ -380,16 +381,29 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 3. **Co-Marketing** - Webinar, articoli, eventi FIGC/LND
 
 ### Commissioni Partner
-| Tipo | Commissione | Esempio |
-|------|-------------|---------|
-| Prima registrazione | 20% | €39,80 su €199 |
-| Rinnovi annuali | 10% | €19,90 su €199 |
+| Piano | Prima Registrazione (20%) | Rinnovi Annuali (10%) |
+|-------|--------------------------|----------------------|
+| **Coach** (€99/anno) | €19,80 | €9,90 |
+| **Club** (€249/anno) | €49,80 | €24,90 |
+
+### Proiezioni Ricavi (Profilo Club - €249/anno)
+| Scenario | Società/Anno | Ricavo | Commissione |
+|----------|--------------|--------|-------------|
+| Conservativo | 15 | €3.735 | €747 |
+| Realistico | 30 | €7.470 | €1.494 |
+| Ottimistico | 45 | €11.205 | €2.241 |
 
 ### Documentazione Partnership
-- `/docs/PROPOSTA_PARTNERSHIP.md` - Proposta completa
+- `/docs/PROPOSTA_PARTNERSHIP.md` - Proposta completa (Markdown)
+- `/docs/PROPOSTA_PARTNERSHIP_WITH_LOGO.html` - Proposta PDF-ready (con logo)
 - `/docs/PITCH_DECK.md` - Presentazione sintetica
 - `/docs/CONTATTI_PORTALI.md` - Email tipo e contatti
+- `/landing.html` - Landing page pubblica
 - `/SQL/referral_system.sql` - Schema DB per referral
+
+### Repo Landing Page
+- **Repo**: `https://github.com/ecopraf/yfm-landing`
+- **Vercel**: `https://yfm-landing.vercel.app`
 
 ---
 
@@ -402,14 +416,37 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - ✅ Accessibilità - Tooltip su tutte le icone senza testo
 - ✅ Dashboard 3D - Grafica moderna con effetto hover e card cliccabili
 - ✅ Design System - Stili consolidati in AGENTS.md
-- ✅ Landing Page v3 - Demo auto-login, pricing 3-tier, icona multi-device
+- ✅ Landing Page v4 - Logo embedded completo, pricing Coach/Club/AI Plus, link email _blank
 - ✅ Demo Auto-login - Parametri URL demo_email, demo_password, auto_login
-- ✅ Pricing Aggiornato - Base (free), Standard (€199), Portali (€199)
+- ✅ Pricing Aggiornato - Coach (€99), Club (€249), AI Plus (Coming Soon)
+- ✅ Commissioni Partnership - Dettaglio per profilo Coach/Club
+- ✅ Proiezioni Ricavi - Scenari 15-30-45 con page-break PDF
 
 ## Task Sospesi ⏸️
 - ⏸️ Valutazioni Giocatore - Valutazioni tecniche per stagione/partita
 - ⏸️ Filtro Categorie - Staff vede solo squadre assegnate
-- ⏸️ Credenziali Demo - Creare utente demo_yfm in Supabase
+
+## Prossime Azioni - Partnership Strategy
+
+### Immediate (Go-Live)
+- [ ] Creare credenziali demo in Supabase (demo_yfm / demo_yfm)
+- [ ] Testare flow completo: landing → demo login
+- [ ] Personalizzare proposta con logo partner prima di invio
+
+### Breve Termine
+- [ ] Setup sistema pagamenti/commissioni (Stripe, PayPal, bonifico?)
+- [ ] Creare codici referral unici per ogni partner
+- [ ] Definire processo onboarding partner
+
+### Medio Termine
+- [ ] Acquisto dominio personalizzato (es. youthfootballmanager.it)
+- [ ] Setup email professionale (info@...)
+- [ ] Dashboard partner con statistiche referral
+
+### Opportunità
+- [ ] Integrazione con portali sportivi (Tuttocampo, OA Sport, etc.)
+- [ ] Webinar FIGC/LND per presentazione
+- [ ] Case study con prime società pilota
 
 ---
 
