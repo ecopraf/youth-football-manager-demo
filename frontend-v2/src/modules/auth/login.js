@@ -43,9 +43,7 @@ export default async function loadLogin() {
           
           <div id="loginError" class="error-message" style="display:none;"></div>
           
-          <div class="auth-buttons-row">
-            <button type="submit" class="btn btn-primary">🔐 Accedi</button>
-          </div>
+          <button type="submit" class="btn btn-primary">🔐 Accedi</button>
           <button type="button" id="startDemoBtn" class="btn btn-demo">🎮 Avvia Demo</button>
         </form>
         
@@ -176,28 +174,46 @@ export default async function loadLogin() {
         font-size: 16px;
         margin-top: 8px;
       }
-      .auth-buttons-row .btn-primary {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
-      }
-      .btn-demo {
+      .btn-primary, .btn-demo {
         width: 100%;
-        padding: 12px;
-        margin-top: 12px;
-        background: transparent;
-        color: #667eea;
-        border: 2px solid #667eea;
-        border-radius: 10px;
-        font-size: 14px;
+        max-width: 280px;
+        margin: 8px auto;
+        display: block;
+        text-align: center;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
       }
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+      }
+      .btn-primary:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+      }
+      .btn-primary:active {
+        transform: translateY(-1px) scale(1);
+      }
+      .btn-demo {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+        box-shadow: none;
+      }
       .btn-demo:hover {
         background: #667eea;
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+      }
+      .btn-demo:active {
+        transform: translateY(-1px) scale(1);
       }
       .auth-footer {
         text-align: center;
