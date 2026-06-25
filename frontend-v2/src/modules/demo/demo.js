@@ -323,10 +323,20 @@ class DemoManager {
       ${this.completedCount === this.missions.length ? `
         <div class="demo-completion-banner">
           <h4>🎉 Hai completato la demo!</h4>
-          <p>Vuoi provare YFM con la tua società?</p>
-          <button class="demo-cta-btn" onclick="window.YFM.navigateTo('settings')">
-            Inizia la prova gratuita →
+          <p>Prova YFM con la tua società</p>
+          <button class="demo-cta-btn" onclick="window.demoManager.showRegistrationForm()" style="margin-bottom:8px;">
+            📝 Registrati Adesso →
           </button>
+          <button onclick="window.demoManager.resetDemo()" style="
+            width:100%;
+            padding:10px;
+            background:#f0f0f0;
+            color:#666;
+            border:1px solid #ddd;
+            border-radius:8px;
+            font-size:13px;
+            cursor:pointer;
+          ">🔄 Riprova la demo</button>
         </div>
       ` : ''}
     `;
@@ -609,6 +619,178 @@ class DemoManager {
     }, 2000);
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // FORM REGISTRAZIONE
+  // ═══════════════════════════════════════════════════════════════
+
+  showRegistrationForm() {
+    const overlay = document.createElement('div');
+    overlay.id = 'demo-registration-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 20000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    `;
+
+    overlay.innerHTML = `
+      <div style="
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      ">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+          <h2 style="margin:0;font-size:22px;color:#333;">📝 Richiesta Informazioni</h2>
+          <button onclick="window.demoManager.closeRegistrationForm()" style="
+            background:none;border:none;font-size:24px;cursor:pointer;color:#888;padding:4px;line-height:1;
+          ">×</button>
+        </div>
+        
+        <form id="demo-registration-form" onsubmit="window.demoManager.submitRegistration(event)">
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Nome Società *
+            </label>
+            <input type="text" name="societa" required placeholder="Es. ASD Calcio Gioventù"
+              style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+          </div>
+          
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Nome e Cognome Contatto *
+            </label>
+            <input type="text" name="nome" required placeholder="Es. Marco Rossi"
+              style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+          </div>
+          
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Email *
+            </label>
+            <input type="email" name="email" required placeholder="Es. marco.rossi@email.it"
+              style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+          </div>
+          
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Telefono
+            </label>
+            <input type="tel" name="telefono" placeholder="Es. 333 1234567"
+              style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+          </div>
+          
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Categorie di Interesse *
+            </label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Primi Calci"> Primi Calci
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Pulcini"> Pulcini
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Esordienti"> Esordienti
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Allievi"> Allievi
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Juniores"> Juniores
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" name="categorie" value="Femminile"> Femminile
+              </label>
+            </div>
+          </div>
+          
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#333;font-size:14px;">
+              Note / Messaggio
+            </label>
+            <textarea name="note" rows="3" placeholder="Eventuali informazioni aggiuntive..."
+              style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
+          
+          <button type="submit" style="
+            width:100%;
+            padding:14px;
+            background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            transition:transform 0.2s;
+          ">📧 Invia Richiesta</button>
+          
+          <p style="text-align:center;margin-top:16px;font-size:12px;color:#888;">
+            Le tue informazioni saranno inviate a youthfootballmanager@gmail.com
+          </p>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) this.closeRegistrationForm();
+    });
+  }
+
+  closeRegistrationForm() {
+    document.getElementById('demo-registration-overlay')?.remove();
+  }
+
+  submitRegistration(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    const dati = {
+      societa: formData.get('societa'),
+      nome: formData.get('nome'),
+      email: formData.get('email'),
+      telefono: formData.get('telefono') || '-',
+      categorie: formData.getAll('categorie').join(', ') || '-',
+      note: formData.get('note') || '-'
+    };
+
+    // Crea corpo email
+    const subject = encodeURIComponent('Richiesta Informazioni YFM - ' + dati.societa);
+    const body = encodeURIComponent(
+      `RICHIESTA INFORMAZIONI YFM\n` +
+      `========================\n\n` +
+      `Società: ${dati.societa}\n` +
+      `Nome: ${dati.nome}\n` +
+      `Email: ${dati.email}\n` +
+      `Telefono: ${dati.telefono}\n` +
+      `Categorie: ${dati.categorie}\n\n` +
+      `Note:\n${dati.note}`
+    );
+
+    // Apri email client
+    window.location.href = `mailto:youthfootballmanager@gmail.com?subject=${subject}&body=${body}`;
+    
+    this.closeRegistrationForm();
+    
+    // Mostra conferma
+    alert('✅ Richiesta inviata! Ti contatteremo presto.');
+  }
+
   resetDemo() {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(SESSION_KEY);
@@ -621,6 +803,7 @@ class DemoManager {
     document.getElementById('demo-mission-panel')?.remove();
     document.getElementById('demo-welcome-overlay')?.remove();
     document.getElementById('demo-celebration')?.remove();
+    document.getElementById('demo-registration-overlay')?.remove();
     
     // Reset session storage for tooltips
     Object.keys(sessionStorage).forEach(key => {
@@ -629,8 +812,15 @@ class DemoManager {
       }
     });
     
-    // Navigate to dashboard
+    // Navigate to dashboard and show welcome again
     this.navigateTo('dashboard');
+    
+    // Recrea badge e mostra popup di benvenuto
+    setTimeout(() => {
+      this.createBadge();
+      this.showMissionPanel();
+      this.showWelcomePopup();
+    }, 500);
   }
 
   // ═══════════════════════════════════════════════════════════════

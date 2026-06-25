@@ -9,6 +9,8 @@ export function initRouter() {
     calendar: () => import('./modules/team/calendar.js'),
     matchDetail: () => import('./modules/team/matchDetail.js'),
     convocazioni: () => import('./modules/team/convocazioni.js'),
+    formazione: () => import('./modules/team/formazione.js'),
+    playerDetail: () => import('./modules/team/playerDetail.js'),
     training: () => import('./modules/coach/training.js'),
     stats: () => import('./modules/performance/stats.js'),
     reports: () => import('./modules/performance/reports.js'),
@@ -79,7 +81,12 @@ export function initRouter() {
     localStorage.removeItem('yfm_guest');
     localStorage.removeItem('yfm_demo_session');
     localStorage.removeItem('yfm_demo_progress');
-    window.location.reload();
+    // Resetta anche la demo se attiva
+    if (window.demoManager && typeof window.demoManager.resetDemo === 'function') {
+      window.demoManager.resetDemo();
+    }
+    // Redirect alla landing page
+    window.location.href = '/';
   };
 
   window.YFM.updateUserUI = function() {
