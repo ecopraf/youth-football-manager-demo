@@ -8,6 +8,37 @@
 - **Logo**: `/frontend-v2/public/assets/logo.png`
 - **Email**: youthfootballmanager@gmail.com
 
+## Credenziali Supabase (Environment Variables)
+
+### Variabili Backend (Vercel)
+```
+SUPABASE_URL=https://csxdlxbhcnyfppojwwzy.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTc1MTMxMywiZXhwIjoyMDk3MzI3MzEzfQ.HZXGk1Xfz0EvSqewAoSCcgZ6gIQYLOP-54mE3YVHgBo
+JWT_SECRET=aEj1OXdTHxSHD8iObjFov1jJ06RoyM1Ormf8KBb0uPI=
+```
+
+### API Keys Pubbliche
+- **ANON KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTEzMTMsImV4cCI6MjA5NzMyNzMxM30.KTL6Z_Mwo_QzNidWt95YLqc7ZvdbfxyQdzxCT5uNRIw`
+- **SERVICE ROLE KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTc1MTMxMywiZXhwIjoyMDk3MzI3MzEzfQ.HZXGk1Xfz0EvSqewAoSCcgZ6gIQYLOP-54mE3YVHgBo`
+
+### Schema Tabelle Principali (verificato 2025-06-25)
+
+**workspace**: id, nome, logo_url, data_creazione
+
+**stagione**: id, workspace_id, nome, data_inizio, data_fine, is_attiva
+
+**squadra**: id, stagione_id, nome, categoria, allenatore, dirigente, ...
+
+**calciatore**: id, workspace_id, nome, cognome, data_nascita, luogo_nascita, tipo_documento, numero_documento, rilasciato_da, telefono, matricola_figc, ...
+
+**rosa**: id, squadra_id, calciatore_id, numero_maglia, ruolo, stato
+
+**partita**: id, squadra_id, data_ora, avversario, luogo, competizione, giornata, note, note_avversario, archiviata
+
+**evento_partita**: id, partita_id, tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id, minuto, note
+
+**utente**: id, workspace_id, email, password_hash, nome, cognome, ruolo, is_active, is_superadmin
+
 ## Struttura Progetto
 ```
 /frontend-v2/src/
