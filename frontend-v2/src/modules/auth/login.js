@@ -44,9 +44,9 @@ export default async function loadLogin() {
           <div id="loginError" class="error-message" style="display:none;"></div>
           
           <div class="auth-buttons-row">
-            <button type="submit" class="btn btn-primary">🔐 Login</button>
-            <button type="button" id="startDemoBtn" class="btn btn-secondary">🎮 Demo</button>
+            <button type="submit" class="btn btn-primary">🔐 Accedi</button>
           </div>
+          <button type="button" id="startDemoBtn" class="btn btn-demo">🎮 Avvia Demo</button>
         </form>
         
         <div class="auth-footer">
@@ -176,30 +176,28 @@ export default async function loadLogin() {
         font-size: 16px;
         margin-top: 8px;
       }
-      .auth-buttons-row {
-        display: flex;
-        gap: 12px;
-        margin-top: 16px;
-      }
-      .auth-buttons-row .btn {
-        flex: 1;
-        padding: 14px;
-        font-size: 15px;
-        font-weight: 600;
-      }
       .auth-buttons-row .btn-primary {
         background: linear-gradient(135deg, #667eea, #764ba2);
         box-shadow: 0 4px 15px rgba(102,126,234,0.4);
       }
-      .auth-buttons-row .btn-secondary {
-        background: linear-gradient(135deg, #27AE60, #2ECC71);
-        color: white;
-        border: none;
-        box-shadow: 0 4px 15px rgba(39,174,96,0.4);
+      .btn-demo {
+        width: 100%;
+        padding: 12px;
+        margin-top: 12px;
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
       }
-      .auth-buttons-row .btn-secondary:hover {
+      .btn-demo:hover {
+        background: #667eea;
+        color: white;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(39,174,96,0.5);
+        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
       }
       .auth-footer {
         text-align: center;
