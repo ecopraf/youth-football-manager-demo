@@ -256,6 +256,8 @@ export default async function loadLogin() {
 
   // Avvia demo - senza login, modalita guidata
   document.getElementById('startDemoBtn').addEventListener('click', () => {
+    console.log('[DEMO] Click su Avvia Demo');
+    
     // Pulisci URL da parametri
     const cleanUrl = window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
@@ -270,18 +272,27 @@ export default async function loadLogin() {
       email: 'demo@yfm.it'
     }));
 
-    // Naviga alla dashboard - il demoManager si attivera automaticamente
+    console.log('[DEMO] Sessione demo impostata, localStorage:', {
+      demo_session: localStorage.getItem('yfm_demo_session'),
+      demo_user: localStorage.getItem('yfm_demo_user')
+    });
+
+    // Naviga alla dashboard
+    console.log('[DEMO] window.YFM disponibile:', !!window.YFM);
+    console.log('[DEMO] window.YFM.navigateTo disponibile:', !!(window.YFM && window.YFM.navigateTo));
+    
     if (window.YFM && window.YFM.navigateTo) {
+      console.log('[DEMO] Chiamo navigateTo("dashboard")');
       window.YFM.navigateTo('dashboard');
     } else {
-      // Fallback: aspetta che YFM sia pronto
+      console.log('[DEMO] YFM non pronto, attendo...');
       const checkYFM = setInterval(() => {
         if (window.YFM && window.YFM.navigateTo) {
           clearInterval(checkYFM);
+          console.log('[DEMO] YFM pronto, chiamo navigateTo("dashboard")');
           window.YFM.navigateTo('dashboard');
         }
       }, 100);
-      // Timeout dopo 3 secondi
       setTimeout(() => clearInterval(checkYFM), 3000);
     }
   });

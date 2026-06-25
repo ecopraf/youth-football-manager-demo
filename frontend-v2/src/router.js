@@ -109,23 +109,26 @@ export function initRouter() {
   };
 
   window.YFM.navigateTo = async (page, params) => {
+    console.log('[ROUTER] navigateTo chiamato con:', page);
+    
     // Pagine pubbliche (senza auth)
     const publicPages = ['login', 'guest'];
     
     // Verifica accesso
     if (!publicPages.includes(page)) {
-      if (window.YFM.isDemo()) return; // Demo ha accesso a tutto
-      if (window.YFM.isGuest()) {
-        // Guest può accedere solo a certe pagine
-        const guestAllowed = ['dashboard', 'calendar', 'matchDetail', 'stats', 'reports'];
-        if (!guestAllowed.includes(page)) {
-          window.YFM.navigateTo('dashboard');
-          return;
-        }
-      } else if (!window.YFM.isAuthenticated()) {
+      const isDemo = window.YFM.isDemo();
+      const isGuest = window.YFM.isGuest();
+      const isAuthenticated = window.YFM.isAuthenticated();
+      
+      console.log('[ROUTER] Controlli - isDemo:', isDemo, 'isGuest:', isGuest, 'isAuthenticated:', isAuthenticated);
+      
+      // Demo e Guest possono accedere a tutte le pagine
+      if (!isDemo && !isGuest && !isAuthenticated) {
+        console.log('[ROUTER] Redirect a login');
         window.YFM.navigateTo('login');
         return;
       }
+      console.log('[ROUTER] Accesso permesso, proseguo con caricamento pagina');
     }
 
     const container = document.getElementById('pageContent');
