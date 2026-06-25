@@ -31,30 +31,6 @@ export const DEMO_MISSIONS = [
     icon: '📅',
     page: 'calendar',
     completed: false
-  },
-  {
-    id: 'training',
-    title: 'Allenamenti',
-    description: 'Organizza sedute e monitora presenze',
-    icon: '🏃',
-    page: 'training',
-    completed: false
-  },
-  {
-    id: 'stats',
-    title: 'Statistiche',
-    description: 'Classifiche marcatori, assist e disciplina',
-    icon: '📈',
-    page: 'stats',
-    completed: false
-  },
-  {
-    id: 'reports',
-    title: 'Report',
-    description: 'Genera report partita e stagionali PDF',
-    icon: '📄',
-    page: 'reports',
-    completed: false
   }
 ];
 
