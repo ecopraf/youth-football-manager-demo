@@ -208,6 +208,7 @@ export default async function loadLogin() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const errorDiv = document.getElementById('loginError');
+    const isDemo = email === 'demo_yfm';
     
     showLoading('Accesso in corso...');
     errorDiv.style.display = 'none';
@@ -222,8 +223,18 @@ export default async function loadLogin() {
       localStorage.setItem('yfm_token', res.token);
       localStorage.setItem('yfm_user', JSON.stringify(res.user));
       
+      // Se è login demo, marca la sessione
+      if (isDemo) {
+        localStorage.setItem('yfm_demo_session', 'active');
+      }
+      
       hideLoading();
       window.YFM.setUser(res.user);
+      
+      // Pulisci URL da parametri demo
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      
       window.YFM.navigateTo('dashboard');
     } catch (err) {
       hideLoading();

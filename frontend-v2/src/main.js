@@ -4,6 +4,7 @@ import { initRouter } from './router'
 import { loadWorkspaceInfo } from './modules/club/workspace'
 import { loadSquadre } from './modules/team/squadre'
 import { loadPlayerDetail } from './modules/team/playerDetail.js'
+import demoManager from './modules/demo/demo'
 
 // Inizializza oggetto globale
 window.YFM = {
@@ -105,6 +106,9 @@ window.YFM.adjustPageTitleForMobile = function() {
 document.addEventListener('DOMContentLoaded', () => {
   setupLayout();
   initRouter();
+  
+  // Inizializza Demo Manager se è una sessione demo
+  demoManager.init();
 
   // Check per guest link (URL: /guest/{token})
   const path = window.location.pathname;

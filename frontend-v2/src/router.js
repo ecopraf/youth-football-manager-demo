@@ -76,6 +76,8 @@ export function initRouter() {
     localStorage.removeItem('yfm_token');
     localStorage.removeItem('yfm_user');
     localStorage.removeItem('yfm_guest');
+    localStorage.removeItem('yfm_demo_session');
+    localStorage.removeItem('yfm_demo_progress');
     window.location.reload();
   };
 
@@ -150,6 +152,10 @@ export function initRouter() {
       // Aggiorna UI dopo caricamento pagina
       if (window.YFM.updateUserUI) {
         window.YFM.updateUserUI();
+      }
+      // Track demo mission se attivo
+      if (window.demoManager && window.demoManager.isDemo) {
+        window.demoManager.trackPageVisit(page);
       }
     } catch (error) {
       container.innerHTML = `<div class="error-box">Errore nel caricamento di ${page}: ${error.message}</div>`;
