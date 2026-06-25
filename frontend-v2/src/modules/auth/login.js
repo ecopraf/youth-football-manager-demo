@@ -31,7 +31,7 @@ export default async function loadLogin() {
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <img src="/assets/logo.png" alt="Youth Football Manager" style="height:80px;margin-bottom:12px;">
+          <img src="/assets/app-icon.png" alt="Youth Football Manager" class="app-icon-login">
           <h1>Youth Football Manager</h1>
           <p>Accedi al tuo account</p>
         </div>
@@ -60,7 +60,7 @@ export default async function loadLogin() {
       <!-- Form Registrazione (nascosto) -->
       <div class="auth-card" id="registerCard" style="display:none;">
         <div class="auth-header">
-          <img src="/assets/logo.png" alt="Youth Football Manager" style="height:80px;margin-bottom:12px;">
+          <img src="/assets/app-icon.png" alt="Youth Football Manager" class="app-icon-login">
           <h1>Youth Football Manager</h1>
           <p>Crea un nuovo account</p>
         </div>
@@ -129,6 +129,13 @@ export default async function loadLogin() {
       .auth-header img {
         border-radius: 16px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      .app-icon-login {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
       }
       .auth-header h1 {
         font-size: 22px;
@@ -201,6 +208,13 @@ export default async function loadLogin() {
     document.getElementById('registerCard').style.display = 'none';
     document.querySelector('.auth-card').style.display = 'block';
   });
+
+  // Auto-login se parametri demo presenti
+  if (autoLogin && demoEmail && demoPassword) {
+    setTimeout(() => {
+      document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+    }, 100);
+  }
 
   // Login form
   document.getElementById('loginForm').addEventListener('submit', async (e) => {

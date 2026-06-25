@@ -8,6 +8,7 @@ export function initRouter() {
     roster: () => import('./modules/team/roster.js'),
     calendar: () => import('./modules/team/calendar.js'),
     matchDetail: () => import('./modules/team/matchDetail.js'),
+    convocazioni: () => import('./modules/team/convocazioni.js'),
     training: () => import('./modules/coach/training.js'),
     stats: () => import('./modules/performance/stats.js'),
     reports: () => import('./modules/performance/reports.js'),
