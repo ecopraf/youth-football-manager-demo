@@ -31,6 +31,30 @@ export const DEMO_MISSIONS = [
     icon: '📅',
     page: 'calendar',
     completed: false
+  },
+  {
+    id: 'training',
+    title: 'Allenamenti',
+    description: 'Organizza sedute e monitora presenze',
+    icon: '🏃',
+    page: 'training',
+    completed: false
+  },
+  {
+    id: 'stats',
+    title: 'Statistiche',
+    description: 'Classifiche marcatori, assist e disciplina',
+    icon: '📈',
+    page: 'stats',
+    completed: false
+  },
+  {
+    id: 'reports',
+    title: 'Report',
+    description: 'Genera report partita e stagionali PDF',
+    icon: '📄',
+    page: 'reports',
+    completed: false
   }
 ];
 
@@ -202,22 +226,32 @@ class DemoManager {
     if (!badge && this.isDemo) {
       badge = document.createElement('div');
       badge.id = 'demo-badge';
-      badge.innerHTML = '🌱 Modalità Demo';
+      badge.innerHTML = '🌱 Demo';
       badge.style.cssText = `
         position: fixed;
         top: 70px;
         right: 20px;
-        background: linear-gradient(135deg, #27AE60, #2ECC71);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
+        background: white;
+        color: #27AE60;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 700;
         z-index: 9999;
-        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
         cursor: pointer;
         transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 2px 4px rgba(39,174,96,0.2), inset 0 1px 2px rgba(255,255,255,0.8);
+        border: 2px solid #27AE60;
+        text-shadow: 0 1px 1px rgba(39,174,96,0.2);
       `;
+      badge.onmouseover = function() {
+        this.style.transform = 'translateY(-3px) scale(1.05)';
+        this.style.boxShadow = '0 8px 25px rgba(39,174,96,0.4), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 2px rgba(255,255,255,0.8)';
+      };
+      badge.onmouseout = function() {
+        this.style.transform = 'translateY(0) scale(1)';
+        this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15), 0 2px 4px rgba(39,174,96,0.2), inset 0 1px 2px rgba(255,255,255,0.8)';
+      };
       badge.onclick = () => this.toggleMissionPanel();
       document.body.appendChild(badge);
     }
@@ -227,7 +261,10 @@ class DemoManager {
       badge.innerHTML = `🌱 Demo ${progress}%`;
       
       if (progress === 100) {
-        badge.style.background = 'linear-gradient(135deg, #F39C12, #E67E22)';
+        badge.style.background = 'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)';
+        badge.style.color = 'white';
+        badge.style.borderColor = '#FF8C00';
+        badge.style.boxShadow = '0 4px 15px rgba(255,165,0,0.4), 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 2px rgba(255,255,255,0.4)';
         badge.innerHTML = '🎉 Demo Completa!';
       }
     }
@@ -564,11 +601,11 @@ class DemoManager {
         <h3>Hai completato la demo!</h3>
         <p>Sei pronto per provare YFM con la tua società?</p>
         <div class="celebration-actions">
-          <button class="celebration-btn-primary" onclick="window.YFM.navigateTo('settings')">
-            Inizia la prova gratuita
+          <button class="celebration-btn-primary" onclick="window.demoManager.showRegistrationForm()">
+            ✉️ Invia Richiesta
           </button>
           <button class="celebration-btn-secondary" onclick="window.demoManager.resetDemo()">
-            Riprova la demo
+            🔄 Riprova la demo
           </button>
         </div>
       </div>
