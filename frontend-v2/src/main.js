@@ -132,12 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Check per parametri demo nella URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const demoEmail = urlParams.get('demo_email');
-  const demoPassword = urlParams.get('demo_password');
-  const autoLogin = urlParams.get('auto_login');
-
   // Check autenticazione
   if (window.YFM.isAuthenticated && window.YFM.isAuthenticated()) {
     // Carica workspace e squadre in parallelo
@@ -145,43 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
       loadWorkspaceInfo(),
       loadSquadre()
     ]).then(() => {
-      // Inizializza Demo Manager se è una sessione demo
-      demoManager.init();
       window.YFM.navigateTo('dashboard');
     }).catch(() => {
-      demoManager.init();
       window.YFM.navigateTo('dashboard');
-    });
-  } else if (autoLogin && demoEmail && demoPassword) {
-    // Auto-login demo
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: demoEmail, password: demoPassword })
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.token) {
-        localStorage.setItem('yfm_token', res.token);
-        localStorage.setItem('yfm_user', JSON.stringify(res.user));
-        localStorage.setItem('yfm_demo_session', 'active');
-        
-        // Pulisci URL da parametri
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
-        
-        // Inizializza demo e vai alla dashboard
-        Promise.all([
-          loadWorkspaceInfo(),
-          loadSquadre()
-        ]).then(() => {
-          demoManager.init();
-          window.YFM.navigateTo('dashboard');
-        });
-      }
-    })
-    .catch(() => {
-      window.YFM.navigateTo('login');
     });
   } else {
     window.YFM.navigateTo('login');

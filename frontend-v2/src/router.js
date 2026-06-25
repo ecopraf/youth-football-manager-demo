@@ -76,29 +76,6 @@ export function initRouter() {
     window.YFM.updateUserUI();
   };
 
-  window.YFM.logout = function() {
-    // Rimuovi tutti i dati di sessione
-    localStorage.removeItem('yfm_token');
-    localStorage.removeItem('yfm_user');
-    localStorage.removeItem('yfm_guest');
-    localStorage.removeItem('yfm_demo_session');
-    localStorage.removeItem('yfm_demo_progress');
-    // Rimuovi anche i dati demo completi (progressi missioni)
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('yfm_demo') || key.startsWith('demo_')) {
-        localStorage.removeItem(key);
-      }
-    });
-    
-    // Rimuovi UI demo
-    if (window.demoManager && typeof window.demoManager.resetDemo === 'function') {
-      window.demoManager.resetDemo();
-    }
-    
-    // Redirect alla landing page SENZA parametri auto-login
-    window.location.href = '/landing.html';
-  };
-
   window.YFM.updateUserUI = function() {
     const user = window.YFM.getUser();
     const guest = window.YFM.getGuestData();

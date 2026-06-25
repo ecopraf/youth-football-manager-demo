@@ -233,13 +233,28 @@ export default async function loadLogin() {
         localStorage.setItem('yfm_demo_session', 'active');
       }
       
-      hideLoading();
       window.YFM.setUser(res.user);
       
       // Pulisci URL da parametri demo
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
       
+      // Carica dati necessari per la dashboard
+      const { loadWorkspaceInfo } = await import('../../modules/club/workspace');
+      const { loadSquadre } = await import('../../modules/team/squadre');
+      
+      try {
+        await Promise.all([loadWorkspaceInfo(), loadSquadre()]);
+      } catch (e) {
+        console.warn('Errore caricamento dati:', e);
+      }
+      
+      // Inizializza demo se è sessione demo
+      if (isDemo && window.demoManager) {
+        window.demoManager.init();
+      }
+      
+      hideLoading();
       window.YFM.navigateTo('dashboard');
     } catch (err) {
       hideLoading();
