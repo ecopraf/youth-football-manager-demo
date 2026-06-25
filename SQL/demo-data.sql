@@ -122,3 +122,23 @@ VALUES (
 -- 1. Esegui nel SQL Editor di Supabase
 -- 2. Login: demo_yfm@yfm.it / demo_yfm
 -- ============================================
+
+-- 9. MATERIALE ALLENAMENTI DEMO
+INSERT INTO materiale_allenamento (id, squadra_id, titolo, descrizione, tipo, url, giorno_settimana, data_caricamento)
+VALUES
+  ('00000000-0000-0006-0000-000000000001', '00000000-0000-0000-0000-000000000010', 'Esercizi Passaggio', 'Raccolta di 10 esercizi per migliorare il passaggio', 'pdf', 'https://example.com/passaggio.pdf', 1, NOW() - INTERVAL '7 days'),
+  ('00000000-0000-0006-0000-000000000002', '00000000-0000-0000-0000-000000000010', 'Schemi Tattici 4-3-3', 'Video e schemi per il modulo 4-3-3', 'video', 'https://example.com/433.mp4', 3, NOW() - INTERVAL '5 days'),
+  ('00000000-0000-0006-0000-000000000003', '00000000-0000-0000-0000-000000000010', 'Riscaldamento Pre-Partita', 'Routine di riscaldamento da 15 minuti', 'pdf', 'https://example.com/riscaldamento.pdf', 6, NOW() - INTERVAL '3 days'),
+  ('00000000-0000-0006-0000-000000000004', '00000000-0000-0000-0000-000000000010', 'Tattica Calci d\'Angolo', '15 schemi per calci d\'angolo', 'pdf', 'https://example.com/corners.pdf', 2, NOW() - INTERVAL '1 days')
+ON CONFLICT (id) DO NOTHING;
+
+-- 10. CONFIGURAZIONE ALLENAMENTI
+INSERT INTO config_allenamento (id, squadra_id, giorno_settimana, ora_inizio, ora_fine, luogo, note)
+VALUES
+  ('00000000-0000-0007-0000-000000000001', '00000000-0000-0000-0000-000000000010', 1, '17:00', '19:00', 'Campo A - Centro Sportivo Verde', 'Allenamento tecnico'),
+  ('00000000-0000-0007-0000-000000000002', '00000000-0000-0000-0000-000000000010', 3, '17:00', '19:00', 'Campo A - Centro Sportivo Verde', 'Tattica'),
+  ('00000000-0000-0007-0000-000000000003', '00000000-0000-0000-0000-000000000010', 5, '17:00', '19:00', 'Palestra', 'Preparazione atletica'),
+  ('00000000-0000-0007-0000-000000000004', '00000000-0000-0000-0000-000000000010', 6, '10:00', '12:00', 'Campo B', 'Gara amichevole')
+ON CONFLICT (id) DO NOTHING;
+
+SELECT 'Demo data completa caricata!' as status;

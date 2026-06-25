@@ -8,7 +8,7 @@ import demoManager from './modules/demo/demo'
 
 // Inizializza oggetto globale
 window.YFM = {
-  squadraId: '33333333-3333-3333-3333-333333333333',
+  squadraId: '00000000-0000-0000-0000-000000000010', // Primavera demo
   allSquadre: [],
   currentPage: 'dashboard',
   allPlayers: [],
