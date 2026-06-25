@@ -11,57 +11,49 @@ export const DEMO_MISSIONS = [
   {
     id: 'dashboard',
     title: 'Dashboard',
-    description: 'Apri la Dashboard per vedere il riepilogo della società',
+    description: 'Panoramica società, prossima partita e statistiche',
     icon: '📊',
     page: 'dashboard',
     completed: false
   },
   {
-    id: 'calendar',
-    title: 'Calendario',
-    description: 'Consulta il Calendario con tutte le partite',
-    icon: '📅',
-    page: 'calendar',
-    completed: false
-  },
-  {
     id: 'roster',
     title: 'Rosa',
-    description: 'Esplora la Rosa giocatori della Primavera',
+    description: 'Gestisci giocatori, ruoli e numeri di maglia',
     icon: '👥',
     page: 'roster',
     completed: false
   },
   {
-    id: 'convocations',
-    title: 'Convocazioni',
-    description: 'Prova a convocare un giocatore per la prossima partita',
-    icon: '📋',
-    page: 'convocations',
+    id: 'calendar',
+    title: 'Calendario',
+    description: 'Tutte le partite, archiviazione e dettagli',
+    icon: '📅',
+    page: 'calendar',
     completed: false
   },
   {
-    id: 'formations',
-    title: 'Formazione',
-    description: 'Configura la formazione per la prossima partita',
-    icon: '⚽',
-    page: 'formation',
-    completed: false
-  },
-  {
-    id: 'player_detail',
-    title: 'Scheda Giocatore',
-    description: 'Apri la scheda di un giocatore per vedere le statistiche',
-    icon: '🏆',
-    page: 'playerDetail',
+    id: 'training',
+    title: 'Allenamenti',
+    description: 'Organizza sedute e monitora presenze',
+    icon: '🏃',
+    page: 'training',
     completed: false
   },
   {
     id: 'stats',
     title: 'Statistiche',
-    description: 'Consulta le statistiche di disciplina e performance',
+    description: 'Classifiche marcatori, assist e disciplina',
     icon: '📈',
     page: 'stats',
+    completed: false
+  },
+  {
+    id: 'reports',
+    title: 'Report',
+    description: 'Genera report partita e stagionali PDF',
+    icon: '📄',
+    page: 'reports',
     completed: false
   }
 ];
@@ -73,43 +65,27 @@ export const DEMO_MISSIONS = [
 export const DEMO_TOOLTIPS = {
   dashboard: {
     title: '💡 Dashboard Intelligente',
-    content: 'Un colpo d\'occhio su tutto: prossima partita, trend risultati, top marcatori e statistiche. Sempre aggiornata.'
-  },
-  calendar: {
-    title: '💡 Calendario Completo',
-    content: 'Tutte le partite in un\'unica vista. Prossime e passate organizzate automaticamente. Archiviazione con un click.'
+    content: 'Panoramica completa: prossima partita, trend risultati, top marcatori, top assist e statistiche società.'
   },
   roster: {
     title: '💡 Rosa Digitale',
-    content: 'Tutti i giocatori con ruoli, numeri di maglia, scadenze mediche. Filtra, cerca, aggiungi in pochi secondi.'
+    content: 'Gestisci tutti i giocatori con ruoli, numeri di maglia e scadenze. Filtra, cerca e aggiungi in pochi click.'
   },
-  convocazioni: {
-    title: '💡 Convocazioni Smart',
-    content: 'Convoca i giocatori con un click. La distinta FIGC si genera automaticamente. Niente più fogli Excel!'
-  },
-  formation: {
-    title: '💡 Formazione Intuitive',
-    content: 'Drag & drop per comporre la formazione. Scegli modulo, titolari e panchina. Salva e confronta.'
-  },
-  match_detail: {
-    title: '💡 Dettaglio Partita',
-    content: 'Timeline eventi minuto per minuto. Gol, assist, sostituzioni. Tutto sincronizzato con la formazione.'
-  },
-  player_detail: {
-    title: '💡 Scheda Giocatore',
-    content: 'Storico completo: presenze, gol, assist, valutazioni. Report dettagliati per ogni atleta.'
-  },
-  stats: {
-    title: '💡 Statistiche Avanzate',
-    content: 'Classifiche marcatori, assist, presenze. Statistiche di disciplina. Report stagionali PDF.'
-  },
-  reports: {
-    title: '💡 Report Professionali',
-    content: 'Genera report partita, stagionali, individuali in PDF. Professionali e pronti da stampare.'
+  calendar: {
+    title: '💡 Calendario Completo',
+    content: 'Tutte le partite in un\'unica vista. Prossime e passate organizzate per data. Archiviazione con un click.'
   },
   training: {
     title: '💡 Allenamenti Organizzati',
-    content: 'Organizza le sedute, monitora le presenze, condividi esercizi con lo staff.'
+    content: 'Organizza le sedute di allenamento, monitora le presenze e condividi esercizi con lo staff.'
+  },
+  stats: {
+    title: '💡 Statistiche Avanzate',
+    content: 'Classifiche marcatori, assist e presenze.Statistiche di disciplina. Filtra per stagione e categoria.'
+  },
+  reports: {
+    title: '💡 Report Professionali',
+    content: 'Genera report partita, stagionali e individuali in PDF. Professionali e pronti da stampare.'
   }
 };
 
@@ -137,8 +113,11 @@ class DemoManager {
     const params = new URLSearchParams(window.location.search);
     this.isDemo = params.has('demo') || localStorage.getItem(SESSION_KEY) === 'active';
     
+    console.log('[DEMO] init() called, isDemo:', this.isDemo, 'welcomeShown:', this.welcomeShown);
+    
     if (this.isDemo) {
       this.loadProgress();
+      console.log('[DEMO] after loadProgress, missions:', this.completedCount, '/', this.missions.length);
       this.setupWelcomePopup();
       this.updateBadge();
       this.injectTooltipStyles();
@@ -396,9 +375,14 @@ class DemoManager {
   // ═══════════════════════════════════════════════════════════════
 
   setupWelcomePopup() {
-    if (this.welcomeShown) return;
+    console.log('[DEMO] setupWelcomePopup called, welcomeShown:', this.welcomeShown);
+    if (this.welcomeShown) {
+      console.log('[DEMO] skipping popup, already shown');
+      return;
+    }
     
     setTimeout(() => {
+      console.log('[DEMO] showing popup now');
       this.showWelcomePopup();
     }, 1000);
   }
