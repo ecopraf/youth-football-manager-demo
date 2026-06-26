@@ -1,6 +1,12 @@
 import { apiFetch } from '../../services/api';
 
 export async function loadSquadre(stagioneId) {
+  // In demo mode, skip API call - use hardcoded DEMO_SQUADRE from main.js
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  if (isDemo) {
+    return; // Squadre sono già impostate in initDemoSession()
+  }
+  
   try {
     let allSquadre;
     
