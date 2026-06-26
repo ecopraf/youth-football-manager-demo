@@ -43,13 +43,6 @@ export const MINI_MISSIONS_CONFIG = {
         title: 'Esplora il calendario',
         description: 'Visualizza le partite in programma',
         trigger: 'page_view'
-      },
-      {
-        id: 'manage_match',
-        title: 'Gestisci una partita',
-        description: 'Clicca sui bottoni per gestire la partita',
-        trigger: 'click',
-        target: '.match-actions button, .match-item button'
       }
     ]
   },
