@@ -200,6 +200,115 @@ export const DEMO_TOOLTIPS = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// CONFIGURAZIONE TOOLTIP MIRATI (HOVER SUGLI ELEMENTI)
+// ═══════════════════════════════════════════════════════════════
+
+export const DEMO_HIGHLIGHTS = {
+  dashboard: [
+    {
+      selector: '[data-page="dashboard"]',
+      title: '📊 Dashboard',
+      description: 'Panoramica completa della tua società con statistiche in tempo reale.'
+    },
+    {
+      selector: '.match-card, .next-match',
+      title: '⚽ Prossima Partita',
+      description: 'Clicca per vedere dettagli, formazione e convocazioni.'
+    },
+    {
+      selector: '.player-card, .top-player',
+      title: '🏆 Top Players',
+      description: 'Classifica marcatori, assist e presenze della stagione.'
+    }
+  ],
+  
+  roster: [
+    {
+      selector: '.roster-filters, .search-input',
+      title: '🔍 Ricerca Rapida',
+      description: 'Filtra i giocatori per ruolo o cerca per nome.'
+    },
+    {
+      selector: '.player-card',
+      title: '👤 Scheda Giocatore',
+      description: 'Clicca su un giocatore per vedere storico e statistiche dettagliate.'
+    },
+    {
+      selector: '.btn-add-player, button:has-text("Aggiungi")',
+      title: '➕ Nuovo Giocatore',
+      description: 'Aggiungi nuovi atleti alla rosa della tua squadra.'
+    }
+  ],
+  
+  calendar: [
+    {
+      selector: '.match-item, .match-card',
+      title: '📅 Calendario Partite',
+      description: 'Tutte le partite organizzate per data. Passate e future.'
+    },
+    {
+      selector: '.btn-new-match, button:has-text("Nuova")',
+      title: '⚽ Nuova Partita',
+      description: 'Crea una nuova partita nel calendario della stagione.'
+    },
+    {
+      selector: '.btn-import-csv, button:has-text("Importa")',
+      title: '📥 Importa CSV',
+      description: 'Importa partite da file CSV generato da Tuttocampo.'
+    }
+  ],
+  
+  training: [
+    {
+      selector: '.training-date-selector, select[data-training]',
+      title: '📆 Seleziona Data',
+      description: 'Scegli la data per visualizzare o creare una seduta.'
+    },
+    {
+      selector: '.training-card',
+      title: '🏋️ Dettaglio Allenamento',
+      description: 'Visualizza esercizi, materiali e presenze giocatori.'
+    },
+    {
+      selector: '.btn-config-training, button:has-text("Configura")',
+      title: '⚙️ Configura',
+      description: 'Personalizza le impostazioni degli allenamenti.'
+    }
+  ],
+  
+  stats: [
+    {
+      selector: '.stats-table, .ranking-table',
+      title: '📈 Classifiche',
+      description: 'Marcatori, assist e statistiche complete della stagione.'
+    },
+    {
+      selector: '.discipline-stats',
+      title: '🟨🟥 Disciplina',
+      description: 'Ammonizioni, espulsioni e squalifiche dei giocatori.'
+    }
+  ],
+  
+  reports: [
+    {
+      selector: 'button:has-text("Report Partita")',
+      title: '📋 Report Partita',
+      description: 'Genera un report dettagliato con formazione, eventi e statistiche.'
+    },
+    {
+      selector: 'button:has-text("Report Stagionale")',
+      title: '📊 Report Stagionale',
+      description: 'Panoramica completa della stagione con top players e statistiche.'
+    },
+    {
+      selector: 'button:has-text("Genera Report")',
+      title: '📄 Genera PDF',
+      description: 'Crea il report in formato PDF professionale.'
+    }
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════
 // STATO DEMO
 // ═══════════════════════════════════════════════════════════════
 
@@ -751,6 +860,93 @@ class DemoManager {
     setTimeout(() => {
       if (tip.parentElement) tip.remove();
     }, 8000);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TOOLTIP MIRATI AGLI ELEMENTI (HOVER)
+  // ═══════════════════════════════════════════════════════════════
+
+  setupPageHighlights(page) {
+    if (!this.isDemo) return;
+    
+    // Configurazione tooltip per pagina
+    const highlights = DEMO_HIGHLIGHTS[page];
+    if (!highlights) return;
+    
+    highlights.forEach(h => {
+      this.addElementTooltip(h.selector, h.title, h.description);
+    });
+  }
+
+  addElementTooltip(selector, title, description) {
+    const elements = document.querySelectorAll(selector);
+    if (!elements.length) return;
+    
+    elements.forEach(el => {
+      if (el._demoTooltipBound) return;
+      el._demoTooltipBound = true;
+      
+      el.addEventListener('mouseenter', () => {
+        this.showElementTooltip(el, title, description);
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        this.hideElementTooltip();
+      });
+    });
+  }
+
+  showElementTooltip(targetEl, title, description) {
+    this.hideElementTooltip();
+    
+    const rect = targetEl.getBoundingClientRect();
+    
+    const tip = document.createElement('div');
+    tip.id = 'demo-element-tooltip';
+    tip.innerHTML = `
+      <div class="demo-et-title">${title}</div>
+      <div class="demo-et-desc">${description}</div>
+    `;
+    
+    tip.style.cssText = `
+      position: fixed;
+      top: ${rect.top - 10}px;
+      left: ${rect.left + rect.width / 2}px;
+      transform: translateX(-50%) translateY(-100%);
+      background: linear-gradient(135deg, #27AE60, #2ECC71);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      max-width: 280px;
+      box-shadow: 0 6px 20px rgba(39,174,96,0.35);
+      z-index: 10001;
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13px;
+      text-align: center;
+      pointer-events: none;
+      animation: fadeInUp 0.2s ease;
+    `;
+    
+    const arrow = document.createElement('div');
+    arrow.style.cssText = `
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #2ECC71;
+    `;
+    tip.appendChild(arrow);
+    
+    document.body.appendChild(tip);
+  }
+
+  hideElementTooltip() {
+    const existing = document.getElementById('demo-element-tooltip');
+    if (existing) existing.remove();
   }
 
   showNotification(message) {

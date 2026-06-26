@@ -137,8 +137,16 @@ export function initRouter() {
     window.YFM.currentPage = page;
 
     // Aggiorna mini missioni per la nuova pagina (demo mode)
-    if (window.YFM.isDemo && window.YFM.isDemo() && window.miniMissionManager) {
-      setTimeout(() => window.miniMissionManager.init(page), 800);
+    // DISABILITATO: mini missions panel rimosso, solo badge globale
+    // if (window.YFM.isDemo && window.YFM.isDemo() && window.miniMissionManager) {
+    //   setTimeout(() => window.miniMissionManager.init(page), 800);
+    // }
+    
+    // Mostra tooltip marketing per ogni pagina (demo mode)
+    if (window.YFM.isDemo && window.YFM.isDemo() && window.demoManager) {
+      setTimeout(() => window.demoManager.showTooltipForPage(page), 1000);
+      // Attiva tooltip sugli elementi chiave
+      setTimeout(() => window.demoManager.setupPageHighlights(page), 1500);
     }
     
     document.querySelectorAll('.sidebar-nav a').forEach(link => {
