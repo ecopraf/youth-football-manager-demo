@@ -6,63 +6,110 @@ import { loadSquadre } from './modules/team/squadre'
 import { loadPlayerDetail } from './modules/team/playerDetail.js'
 import demoManager from './modules/demo/demo'
 
+// ═══════════════════════════════════════════════════════════════
+// DATI DEMO IN MEMORIA (no API, no backend)
+// ═══════════════════════════════════════════════════════════════
+const DEMO_WORKSPACE = {
+  id: '00000000-0000-0000-0000-000000000001',
+  nome: 'ASD Green Academy',
+  indirizzo: 'Via del Verde 1, Roma',
+  telefono: '333 1234567',
+  email: 'info@greenacademy.it'
+};
+
+const DEMO_SQUADRE = [
+  { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy', categoria: 'Primavera', allenatore: 'Marco Bianchi', dirigente: 'Luca Verdi' },
+  { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Allievi B', allenatore: 'Roberto Rossi', dirigente: 'Paolo Gialli' }
+];
+
+const DEMO_CALCIATORI = [
+  { id: 'c001', nome: 'Alessandro', cognome: 'Rossi', data_nascita: '2010-03-15', numero_maglia: 1, ruolo: 'P' },
+  { id: 'c002', nome: 'Luca', cognome: 'Bianchi', data_nascita: '2010-01-20', numero_maglia: 2, ruolo: 'D' },
+  { id: 'c003', nome: 'Matteo', cognome: 'Verdi', data_nascita: '2010-05-10', numero_maglia: 3, ruolo: 'D' },
+  { id: 'c004', nome: 'Francesco', cognome: 'Gialli', data_nascita: '2010-02-28', numero_maglia: 4, ruolo: 'D' },
+  { id: 'c005', nome: 'Andrea', cognome: 'Neri', data_nascita: '2010-07-14', numero_maglia: 5, ruolo: 'C' },
+  { id: 'c006', nome: 'Davide', cognome: 'Blu', data_nascita: '2010-04-05', numero_maglia: 6, ruolo: 'C' },
+  { id: 'c007', nome: 'Simone', cognome: 'Arancioni', data_nascita: '2010-06-22', numero_maglia: 7, ruolo: 'A' },
+  { id: 'c008', nome: 'Federico', cognome: 'Rosa', data_nascita: '2010-08-30', numero_maglia: 8, ruolo: 'C' },
+  { id: 'c009', nome: 'Tommaso', cognome: 'Viola', data_nascita: '2010-09-12', numero_maglia: 9, ruolo: 'A' },
+  { id: 'c010', nome: 'Nicolò', cognome: 'Grigi', data_nascita: '2010-11-03', numero_maglia: 10, ruolo: 'C' },
+  { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', data_nascita: '2010-12-18', numero_maglia: 11, ruolo: 'A' },
+  { id: 'c012', nome: 'Riccardo', cognome: 'Celesti', data_nascita: '2010-03-25', numero_maglia: 12, ruolo: 'P' },
+  { id: 'c013', nome: 'Filippo', cognome: 'Oro', data_nascita: '2010-01-08', numero_maglia: 13, ruolo: 'D' },
+  { id: 'c014', nome: 'Edoardo', cognome: 'Argento', data_nascita: '2010-05-30', numero_maglia: 14, ruolo: 'C' },
+  { id: 'c015', nome: 'Gabriele', cognome: 'Bronzo', data_nascita: '2010-07-11', numero_maglia: 15, ruolo: 'D' },
+  { id: 'c016', nome: 'Lorenzo', cognome: 'Rame', data_nascita: '2010-02-14', numero_maglia: 16, ruolo: 'P' },
+  { id: 'c017', nome: 'Niccolò', cognome: 'Piombo', data_nascita: '2010-10-07', numero_maglia: 17, ruolo: 'A' },
+  { id: 'c018', nome: 'Samuele', cognome: 'Zinco', data_nascita: '2010-04-28', numero_maglia: 18, ruolo: 'C' },
+  { id: 'c019', nome: 'Antonio', cognome: 'Stagno', data_nascita: '2010-06-16', numero_maglia: 19, ruolo: 'D' },
+  { id: 'c020', nome: 'Marco', cognome: 'Marea', data_nascita: '2010-08-03', numero_maglia: 20, ruolo: 'A' }
+];
+
+// Inizializzazione sessione demo con dati in memoria
+function initDemoSession() {
+  console.log('[MAIN] Init demo - ASD Green Academy');
+  
+  // Imposta dati demo (sovrascrive qualsiasi workspace caricato)
+  window.YFM.workspaceInfo = DEMO_WORKSPACE;
+  window.YFM.allSquadre = DEMO_SQUADRE;
+  window.YFM.squadraId = DEMO_SQUADRE[0].id; // Primavera
+  window.YFM.allPlayers = DEMO_CALCIATORI;
+  
+  // Aggiorna UI
+  const wsName = document.getElementById('workspaceName');
+  if (wsName) wsName.textContent = DEMO_WORKSPACE.nome;
+  
+  // Inizializza demo manager
+  demoManager.init();
+  
+  // Naviga alla dashboard
+  window.YFM.navigateTo('dashboard');
+}
+
 // Inizializza oggetto globale
 window.YFM = {
-  squadraId: '00000000-0000-0000-0000-000000000010', // Primavera demo
+  squadraId: null,
   allSquadre: [],
   currentPage: 'dashboard',
   allPlayers: [],
   allMatches: [],
   workspaceInfo: null,
   guestToken: null,
-  pageParams: null
-}
+  pageParams: null,
+  apiBase: '' // Viene impostato dal backend
+};
 
 // Funzioni helper per squadra
 window.YFM.getSquadraName = () => {
   const s = window.YFM.allSquadre.find(x => x.id === window.YFM.squadraId);
-  return s ? s.nome : 'Squadra';
+  return s ? s.nome + (s.categoria ? ' ' + s.categoria : '') : 'Squadra';
 };
 window.YFM.getSquadra = () => {
   return window.YFM.allSquadre.find(x => x.id === window.YFM.squadraId) || {};
 };
 window.YFM.getSocietaName = () => {
-  return window.YFM.workspaceInfo ? window.YFM.workspaceInfo.nome : 'ASD Albalonga';
+  return window.YFM.workspaceInfo ? window.YFM.workspaceInfo.nome : 'ASD';
 };
 
 // Funzioni globali per logout
 window.YFM.handleLogout = function() {
-  console.log('[LOGOUT] Starting logout...');
-  
-  // Rimuovi tutti i dati di sessione
+  console.log('[LOGOUT] Starting...');
   localStorage.removeItem('yfm_token');
   localStorage.removeItem('yfm_user');
   localStorage.removeItem('yfm_guest');
   localStorage.removeItem('yfm_demo_session');
   localStorage.removeItem('yfm_demo_progress');
-  
-  // Rimuovi TUTTI i dati demo (chiavi che iniziano con yfm_demo o demo_)
   Object.keys(localStorage).forEach(key => {
     if (key.startsWith('yfm_demo') || key.startsWith('demo_')) {
-      console.log('[LOGOUT] Removing:', key);
       localStorage.removeItem(key);
     }
   });
-  
-  // Rimuovi UI demo
   if (window.demoManager) {
-    window.demoManager.missions = [...window.demoManager.constructor.prototype.missions || []];
-    window.demoManager.isDemo = false;
-    window.demoManager.welcomeShown = false;
-    
-    // Rimuovi elementi UI
-    ['demo-badge', 'demo-mission-panel', 'demo-welcome-overlay', 'demo-celebration', 
+    ['demo-badge', 'demo-mission-panel', 'demo-welcome-overlay', 'demo-celebration',
      'demo-registration-overlay', 'demo-marketing-tooltip'].forEach(id => {
       document.getElementById(id)?.remove();
     });
   }
-  
-  console.log('[LOGOUT] Redirecting to landing...');
   window.location.href = '/landing.html';
 };
 
@@ -101,38 +148,15 @@ window.YFM.openResultForm = async (mid) => {
 }
 window.YFM.openPlayerDetail = function(playerId) {
   var c = document.getElementById('pageContent');
-  if (!c) {
-    console.error('pageContent non trovato');
-    return;
-  }
+  if (!c) { console.error('pageContent non trovato'); return; }
   loadPlayerDetail(c, playerId);
 };
 
-// Adatta il titolo pagina per mobile
-window.YFM.adjustPageTitleForMobile = function() {
-  try {
-    const titleEl = document.querySelector('.page-title');
-    if (!titleEl) return;
-    const getSquadraName = window.YFM && typeof window.YFM.getSquadraName === 'function'
-      ? window.YFM.getSquadraName : null;
-    if (!getSquadraName) return;
-    const squadraName = getSquadraName();
-    if (!squadraName) return;
-    const rawText = titleEl.textContent.trim();
-    if (!rawText.endsWith(squadraName)) return;
-    if (titleEl.dataset.splitForMobile === '1') return;
-    const mainPart = rawText.slice(0, rawText.length - squadraName.length).trim();
-    titleEl.innerHTML = mainPart + ' ' +
-      '<span class="desktop-only-squadra">' + squadraName + '</span>' +
-      '<span class="mobile-only-line">' + squadraName + '</span>';
-    titleEl.dataset.splitForMobile = '1';
-  } catch (e) {
-    console.warn('adjustPageTitleForMobile error', e);
-  }
-};
 document.addEventListener('DOMContentLoaded', () => {
   setupLayout();
   initRouter();
+
+  // Check per guest link (URL: /guest/{token})
   const path = window.location.pathname;
   if (path.startsWith('/guest/')) {
     const token = path.split('/guest/')[1];
@@ -142,13 +166,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
   }
+
+  // Se già autenticato o demo
   const isAuth = window.YFM.isAuthenticated && window.YFM.isAuthenticated();
   const isDemo = window.YFM.isDemo && window.YFM.isDemo();
+
   if (isAuth || isDemo) {
-    console.log('[MAIN] Autenticato:', isAuth, 'Demo:', isDemo);
+    console.log('[MAIN] Auth:', isAuth, 'Demo:', isDemo);
+    
     if (isDemo) {
+      // Demo: usa dati in memoria (no API)
       initDemoSession();
     } else {
+      // Utenti normali: carica dal backend
       Promise.all([loadWorkspaceInfo(), loadSquadre()]).then(() => {
         window.YFM.navigateTo('dashboard');
       }).catch(() => {
@@ -159,23 +189,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.YFM.navigateTo('login');
   }
 });
-async function initDemoSession() {
-  try {
-    const apiBase = window.YFM?.apiBase || '';
-    const response = await fetch(`${apiBase}/api/demo/init`);
-    if (!response.ok) throw new Error('Demo init failed');
-    const data = await response.json();
-    window.YFM.workspaceInfo = data.workspace;
-    window.YFM.allSquadre = data.squadre;
-    window.YFM.squadraId = data.primaSquadra?.id || data.squadre?.[0]?.id;
-    const wsName = document.getElementById('workspaceName');
-    if (wsName) wsName.textContent = data.workspace?.nome || 'ASD Green Academy';
-    demoManager.init();
-    window.YFM.navigateTo('dashboard');
-    console.log('[MAIN] Demo session inizializzata con:', data.workspace?.nome, '- Squadra:', data.primaSquadra?.nome);
-  } catch (err) {
-    console.error('[MAIN] Errore init demo:', err);
-    loadWorkspaceInfo();
-    loadSquadre();
-  }
-}
