@@ -17,13 +17,6 @@ export const MINI_MISSIONS_CONFIG = {
         title: 'Esplora la Dashboard',
         description: 'Scopri la panoramica della tua società',
         trigger: 'page_view'
-      },
-      {
-        id: 'view_match_results',
-        title: 'Guarda i risultati',
-        description: 'Clicca su una partita per vedere i dettagli',
-        trigger: 'click',
-        target: '.match-item, .next-match-card, .match-highlight, [data-match-id], .match-card'
       }
     ]
   },
@@ -33,18 +26,10 @@ export const MINI_MISSIONS_CONFIG = {
     icon: '👥',
     steps: [
       {
-        id: 'filter_role',
-        title: 'Filtra per ruolo',
-        description: 'Applica un filtro per ruolo',
-        trigger: 'change',
-        target: 'select:nth-of-type(2)'  // Secondo select = filtro ruolo
-      },
-      {
-        id: 'view_player_card',
-        title: 'Apri scheda giocatore',
-        description: 'Clicca su un giocatore per vedere i dettagli',
-        trigger: 'click',
-        target: '.player-card, .giocatore-item, [data-player-id], .roster-player, [class*="giocatore"]'
+        id: 'explore_roster',
+        title: 'Esplora la rosa',
+        description: 'Visualizza i giocatori della tua squadra',
+        trigger: 'page_view'
       }
     ]
   },
@@ -60,32 +45,11 @@ export const MINI_MISSIONS_CONFIG = {
         trigger: 'page_view'
       },
       {
-        id: 'create_convocation',
-        title: 'Crea convocazioni',
-        description: 'Prepara la lista dei giocatori convocati',
+        id: 'manage_match',
+        title: 'Gestisci una partita',
+        description: 'Clicca sui bottoni per gestire la partita',
         trigger: 'click',
-        target: 'button[class*="convoca"], button[class*="Convoca"], .btn-convoca'
-      },
-      {
-        id: 'set_formation',
-        title: 'Scegli la formazione',
-        description: 'Assegna i ruoli in campo ai giocatori',
-        trigger: 'click',
-        target: 'button[class*="formazione"], button[class*="Formazione"], button[class*="Formation"], .btn-formazione'
-      },
-      {
-        id: 'view_distinta',
-        title: 'Visiona la distinta',
-        description: 'Genera la distinta ufficiale FIGC',
-        trigger: 'click',
-        target: 'button[class*="distinta"], button[class*="Distinta"], .btn-distinta'
-      },
-      {
-        id: 'insert_result',
-        title: 'Inserisci il risultato',
-        description: 'Registra gol, assist e altri eventi',
-        trigger: 'click',
-        target: 'button[class*="eventi"], button[class*="Eventi"], button[class*="risultato"], button[class*="Risultato"]'
+        target: '.match-actions button, .match-item button'
       }
     ]
   },
@@ -99,20 +63,6 @@ export const MINI_MISSIONS_CONFIG = {
         title: 'Esplora gli allenamenti',
         description: 'Scopri le sedute programmate',
         trigger: 'page_view'
-      },
-      {
-        id: 'view_session',
-        title: 'Visualizza una seduta',
-        description: 'Clicca su una seduta per vedere i dettagli',
-        trigger: 'click',
-        target: '.session-item, .training-item, [data-session-id], .seduta-item, .allenamento-item'
-      },
-      {
-        id: 'mark_attendance',
-        title: 'Segna le presenze',
-        description: 'Registra i giocatori presenti',
-        trigger: 'click',
-        target: 'button[class*="presenze"], button[class*="presenze"], .btn-presenze'
       }
     ]
   },
