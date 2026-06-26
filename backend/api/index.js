@@ -26,7 +26,7 @@ app.use(express.json({ limit: '5mb' }));
 // Health con warmup
 app.get('/api/health', async (req, res) => {
   try { await supabase.from('squadra').select('id').limit(1); } catch(e) {}
-  res.json({ status: 'ok', version: '3.13', warm: true });
+  res.json({ status: 'ok', version: '3.14', warm: true });
 });
 
 // Endpoint warmup dedicato per mantenere il backend attivo
