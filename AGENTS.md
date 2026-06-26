@@ -771,25 +771,19 @@ with open('docs/logo.png', 'rb') as f:
 html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 ```
 
-## Ultime Modifiche (commit: ca57ab8)
-- Tooltip mirati su hover elementi per ogni pagina
-- Mini-missions panel laterale DISABILITATO
-- Badge globale "🍱 Demo X%" sempre visibile in alto a destra
-- Commit: ca57ab8 - tooltip mirati su hover elementi
+## Ultime Modifiche (commit: db98bf0)
+- Corretti selettori CSS invalidi `:has-text()` → ID/attributi validi
+- Mini-missions panel laterale DISABILITATO definitivamente
+- Badge globale "🍱 Demo X%" sempre visibile
+- Commit: db98bf0 - fix selettori :has-text() invalidi
 
 ## Sistema Tooltip Demo
 ```javascript
-// Configurazione tooltip per pagina (DEMO_HIGHLIGHTS)
+// Selettori CSS validi usati
 {
-  dashboard: [
-    { selector: '.match-card', title: '⚽ Prossima Partita', description: '...' },
-    { selector: '.player-card', title: '🏆 Top Players', description: '...' }
-  ],
-  roster: [
-    { selector: '.search-input', title: '🔍 Ricerca', description: '...' },
-    { selector: 'button:has-text("Aggiungi")', title: '➕ Nuovo Giocatore', description: '...' }
-  ],
-  // ... altre pagine
+  roster: [ '#btnAdd', '.search-input', '.player-card' ],
+  calendar: [ '.match-item', '#btnAdd', '#btnImport' ],
+  reports: [ '[data-tab="match"]', '[data-tab="seasonal"]', '#btnGenerateReport' ]
 }
 ```
 
