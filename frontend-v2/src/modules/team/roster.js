@@ -85,7 +85,7 @@ function renderPlayerCards(players) {
   if (players.length === 0) return '<p style="color:var(--gray);grid-column:1/-1;">Nessun calciatore</p>';
   return players.map(p => {
     const isSelected = isSelectionMode && selectedPlayers.has(p.id);
-    let card = '<div class="card player-card" data-pid="' + p.id + '" style="padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;border:2px solid ' + (isSelected ? 'var(--primary,#667eea)' : 'transparent') + ';background:' + (isSelected ? 'rgba(102,126,234,0.1)' : 'white') + ';transition:all 0.2s;">';
+    let card = '<div class="card player-card" data-pid="' + p.id + '" onclick="window.YFM && window.YFM.openPlayerDetail && window.YFM.openPlayerDetail(\'' + p.id + '\')" style="padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;border:2px solid ' + (isSelected ? 'var(--primary,#667eea)' : 'transparent') + ';background:' + (isSelected ? 'rgba(102,126,234,0.1)' : 'white') + ';transition:all 0.2s;">';
     
     // Avatar
     card += '<div class="player-avatar" style="background:' + getAvatarColor(p.nome || '') + ';flex-shrink:0;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:white;">' + (p.nome || '')[0] + (p.cognome || '')[0] + '</div>';
@@ -105,24 +105,14 @@ function renderPlayerCards(players) {
 }
 
 function attachCardListeners() {
-  // Click sulla card per selezione multipla o apertura scheda
+  // Click apertura scheda ora gestito da onclick inline nella card HTML
+  // Qui solo logica selezione multipla admin
   document.querySelectorAll('.roster-grid .player-card').forEach(card => {
     card.addEventListener('click', (e) => {
-      // Ignora se il click e' su un bottone (gia gestito da onclick inline)
       if (e.target.tagName === 'BUTTON') return;
-      
-      const pid = card.dataset.pid;
-      
-      // Se modalita' selezione attiva, seleziona/deseleziona
       if (isSelectionMode && isAdminMode) {
         e.stopPropagation();
-        togglePlayerSelection(pid, card);
-      } else {
-        // Altrimenti apri scheda giocatore
-        e.stopPropagation();
-        if (window.YFM?.openPlayerDetail) {
-          window.YFM.openPlayerDetail(pid);
-        }
+        togglePlayerSelection(card.dataset.pid, card);
       }
     });
   });
