@@ -88,21 +88,21 @@ export const MINI_MISSIONS_CONFIG = {
         title: 'Genera report partita',
         description: 'Crea il report dettagliato di una partita',
         trigger: 'click',
-        target: 'button:has-text("Genera Report"), button:has-text("Genera"), .btn-genera-report'
+        target: '#btnGenerateReport, .btn-genera-report'
       },
       {
         id: 'generate_season_report',
         title: 'Genera report stagione',
         description: 'Crea il report stagionale',
         trigger: 'click',
-        target: 'button:has-text("Report Stagionale"), button:has-text("Genera Report Stagionale")'
+        target: '[data-tab="seasonal"]'
       },
       {
         id: 'download_pdf',
         title: 'Scarica il PDF',
         description: 'Scarica il report in formato PDF',
         trigger: 'click',
-        target: 'button:has-text("Stampa"), button:has-text("PDF"), .btn-stampa'
+        target: '#btnPrintReport, .btn-stampa'
       }
     ]
   }
@@ -234,7 +234,7 @@ export const DEMO_HIGHLIGHTS = {
       description: 'Clicca su un giocatore per vedere storico e statistiche dettagliate.'
     },
     {
-      selector: '.btn-add-player, button:has-text("Aggiungi")',
+      selector: '.btn-add-player, #btnAdd',
       title: '➕ Nuovo Giocatore',
       description: 'Aggiungi nuovi atleti alla rosa della tua squadra.'
     }
@@ -247,12 +247,12 @@ export const DEMO_HIGHLIGHTS = {
       description: 'Tutte le partite organizzate per data. Passate e future.'
     },
     {
-      selector: '.btn-new-match, button:has-text("Nuova")',
+      selector: '.btn-new-match, #btnAdd',
       title: '⚽ Nuova Partita',
       description: 'Crea una nuova partita nel calendario della stagione.'
     },
     {
-      selector: '.btn-import-csv, button:has-text("Importa")',
+      selector: '.btn-import-csv, #btnImport',
       title: '📥 Importa CSV',
       description: 'Importa partite da file CSV generato da Tuttocampo.'
     }
@@ -270,7 +270,7 @@ export const DEMO_HIGHLIGHTS = {
       description: 'Visualizza esercizi, materiali e presenze giocatori.'
     },
     {
-      selector: '.btn-config-training, button:has-text("Configura")',
+      selector: '.btn-config-training, #btnConfig',
       title: '⚙️ Configura',
       description: 'Personalizza le impostazioni degli allenamenti.'
     }
@@ -291,17 +291,17 @@ export const DEMO_HIGHLIGHTS = {
   
   reports: [
     {
-      selector: 'button:has-text("Report Partita")',
+      selector: '[data-tab="match"]',
       title: '📋 Report Partita',
       description: 'Genera un report dettagliato con formazione, eventi e statistiche.'
     },
     {
-      selector: 'button:has-text("Report Stagionale")',
+      selector: '[data-tab="seasonal"]',
       title: '📊 Report Stagionale',
       description: 'Panoramica completa della stagione con top players e statistiche.'
     },
     {
-      selector: 'button:has-text("Genera Report")',
+      selector: '#btnGenerateReport',
       title: '📄 Genera PDF',
       description: 'Crea il report in formato PDF professionale.'
     }
@@ -1687,40 +1687,10 @@ class MiniMissionManager {
 
   // Render UI mini missioni
   renderMiniMissions() {
-    let container = document.getElementById('mini-missions-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'mini-missions-container';
-      document.body.appendChild(container);
-    }
-    
-    const config = MINI_MISSIONS_CONFIG[this.currentPage];
-    const completedCount = this.completedSteps.size;
-    const totalSteps = this.steps.length;
-    const progress = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
-    
-    container.innerHTML = `
-      <div id="mini-missions-panel" class="mini-missions-panel ${this.isCollapsed() ? 'collapsed' : ''}">
-        <div class="mini-missions-header" onclick="window.miniMissionManager.togglePanel()">
-          <div class="mini-missions-title">
-            <span class="mini-missions-icon">${config.icon}</span>
-            <span class="mini-missions-label">${config.title}</span>
-          </div>
-          <div class="mini-missions-progress">
-            <span>${completedCount}/${totalSteps}</span>
-            <span class="mini-missions-toggle">${this.isCollapsed() ? '▼' : '▲'}</span>
-          </div>
-        </div>
-        <div class="mini-missions-progress-bar">
-          <div class="mini-missions-progress-fill" style="width: ${progress}%"></div>
-        </div>
-        <div class="mini-missions-steps">
-          ${this.steps.map((step, i) => this.renderStep(step, i)).join('')}
-        </div>
-      </div>
-    `;
-    
-    this.injectMiniMissionsStyles();
+    // DISABILITATO: Mini missions panel rimosso
+    // Badge globale + tooltip su hover attivi
+    const container = document.getElementById('mini-missions-container');
+    if (container) container.remove();
   }
 
   renderStep(step, index) {
