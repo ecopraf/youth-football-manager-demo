@@ -771,20 +771,28 @@ with open('docs/logo.png', 'rb') as f:
 html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 ```
 
-## Ultime Modifiche (commit: db98bf0)
-- Corretti selettori CSS invalidi `:has-text()` → ID/attributi validi
-- Mini-missions panel laterale DISABILITATO definitivamente
-- Badge globale "🍱 Demo X%" sempre visibile
-- Commit: db98bf0 - fix selettori :has-text() invalidi
+## Ultime Modifiche (commit: NUOVO)
+- Selettori DEMO_HIGHLIGHTS corretti con classi REALI del DOM
+- Tooltip sidebar aggiunti a TUTTE le voci menu (title attribute)
+- Tooltip marketing all'ingresso verificati e funzionanti
+- Dashboard tooltip marketing verificato
 
 ## Sistema Tooltip Demo
 ```javascript
-// Selettori CSS validi usati
-{
-  roster: [ '#btnAdd', '.search-input', '.player-card' ],
+// Selettori CSS corretti (classi reali del DOM)
+DEMO_HIGHLIGHTS = {
+  dashboard: [ '.match-item', '.top-section, .players-row', '.dash-card' ],
+  roster: [ 'input', '.player-card', '#btnAdd' ],
   calendar: [ '.match-item', '#btnAdd', '#btnImport' ],
+  training: [ 'select', '.card', '#btnAdd' ],
+  stats: [ '.card', '.card.widget' ],
   reports: [ '[data-tab="match"]', '[data-tab="seasonal"]', '#btnGenerateReport' ]
 }
+
+// Sidebar: title attribute su ogni link menu
+<a data-page="dashboard" title="📊 Panoramica: statistiche...">
+<a data-page="roster" title="👥 Lista giocatori...">
+...
 ```
 
 ## Badge Progresso

@@ -206,27 +206,27 @@ export const DEMO_TOOLTIPS = {
 export const DEMO_HIGHLIGHTS = {
   dashboard: [
     {
-      selector: '[data-page="dashboard"]',
-      title: '📊 Dashboard',
-      description: 'Panoramica completa della tua società con statistiche in tempo reale.'
-    },
-    {
-      selector: '.match-card, .next-match',
+      selector: '.match-item',
       title: '⚽ Prossima Partita',
       description: 'Clicca per vedere dettagli, formazione e convocazioni.'
     },
     {
-      selector: '.player-card, .top-player',
+      selector: '.top-section, .players-row',
       title: '🏆 Top Players',
       description: 'Classifica marcatori, assist e presenze della stagione.'
+    },
+    {
+      selector: '.dash-card',
+      title: '📊 Widget Statistiche',
+      description: 'Punti, Gol Fatti, Gol Subiti e altre statistiche della tua squadra.'
     }
   ],
   
   roster: [
     {
-      selector: '.roster-filters, .search-input',
+      selector: 'input',
       title: '🔍 Ricerca Rapida',
-      description: 'Filtra i giocatori per ruolo o cerca per nome.'
+      description: 'Filtra i giocatori per nome o cerca per cognome.'
     },
     {
       selector: '.player-card',
@@ -234,7 +234,7 @@ export const DEMO_HIGHLIGHTS = {
       description: 'Clicca su un giocatore per vedere storico e statistiche dettagliate.'
     },
     {
-      selector: '.btn-add-player, #btnAdd',
+      selector: '#btnAdd',
       title: '➕ Nuovo Giocatore',
       description: 'Aggiungi nuovi atleti alla rosa della tua squadra.'
     }
@@ -242,17 +242,17 @@ export const DEMO_HIGHLIGHTS = {
   
   calendar: [
     {
-      selector: '.match-item, .match-card',
+      selector: '.match-item',
       title: '📅 Calendario Partite',
       description: 'Tutte le partite organizzate per data. Passate e future.'
     },
     {
-      selector: '.btn-new-match, #btnAdd',
+      selector: '#btnAdd',
       title: '⚽ Nuova Partita',
       description: 'Crea una nuova partita nel calendario della stagione.'
     },
     {
-      selector: '.btn-import-csv, #btnImport',
+      selector: '#btnImport',
       title: '📥 Importa CSV',
       description: 'Importa partite da file CSV generato da Tuttocampo.'
     }
@@ -260,17 +260,17 @@ export const DEMO_HIGHLIGHTS = {
   
   training: [
     {
-      selector: '.training-date-selector, select[data-training]',
+      selector: 'select',
       title: '📆 Seleziona Data',
       description: 'Scegli la data per visualizzare o creare una seduta.'
     },
     {
-      selector: '.training-card',
+      selector: '.card',
       title: '🏋️ Dettaglio Allenamento',
       description: 'Visualizza esercizi, materiali e presenze giocatori.'
     },
     {
-      selector: '.btn-config-training, #btnConfig',
+      selector: '#btnAdd',
       title: '⚙️ Configura',
       description: 'Personalizza le impostazioni degli allenamenti.'
     }
@@ -278,12 +278,12 @@ export const DEMO_HIGHLIGHTS = {
   
   stats: [
     {
-      selector: '.stats-table, .ranking-table',
+      selector: '.card',
       title: '📈 Classifiche',
       description: 'Marcatori, assist e statistiche complete della stagione.'
     },
     {
-      selector: '.discipline-stats',
+      selector: '.card.widget',
       title: '🟨🟥 Disciplina',
       description: 'Ammonizioni, espulsioni e squalifiche dei giocatori.'
     }
