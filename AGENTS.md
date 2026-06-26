@@ -771,27 +771,31 @@ with open('docs/logo.png', 'rb') as f:
 html = html.replace('src="logo.png"', f'src="data:image/png;base64,{logo_b64}"')
 ```
 
-## Ultime Modifiche (commit: 9e93100)
-- Mini Missioni: sistema semplificato con solo trigger page_view
-- Demo Completa: badge celebrativo "🎉 Demo Completa!" al 100% navigando 6 pagine
-- Pagine: Dashboard, Rosa, Calendario, Allenamenti, Statistiche, Report
+## Ultime Modifiche (commit: ca57ab8)
+- Tooltip mirati su hover elementi per ogni pagina
+- Mini-missions panel laterale DISABILITATO
+- Badge globale "🍱 Demo X%" sempre visibile in alto a destra
+- Commit: ca57ab8 - tooltip mirati su hover elementi
 
-## Sistema Mini Missioni
+## Sistema Tooltip Demo
 ```javascript
-// Ogni pagina ha 1 step con trigger page_view (auto-complete su visita)
-MINI_MISSIONS_CONFIG = {
-  dashboard: { steps: [{ trigger: 'page_view' }] },
-  roster: { steps: [{ trigger: 'page_view' }] },
-  calendar: { steps: [{ trigger: 'page_view' }] },
-  training: { steps: [{ trigger: 'page_view' }] },
-  stats: { steps: [{ trigger: 'page_view' }] },
-  reports: { steps: [{ trigger: 'page_view' }] }
+// Configurazione tooltip per pagina (DEMO_HIGHLIGHTS)
+{
+  dashboard: [
+    { selector: '.match-card', title: '⚽ Prossima Partita', description: '...' },
+    { selector: '.player-card', title: '🏆 Top Players', description: '...' }
+  ],
+  roster: [
+    { selector: '.search-input', title: '🔍 Ricerca', description: '...' },
+    { selector: 'button:has-text("Aggiungi")', title: '➕ Nuovo Giocatore', description: '...' }
+  ],
+  // ... altre pagine
 }
 ```
 
 ## Badge Progresso
-- Badge mini missioni: mostra "🍱 Demo X%" con X = (step completati / step totali) * 100
-- Badge Demo Completa: "🎉 Demo Completa!" quando tutti gli step sono completati
+- Badge "🍱 Demo X%" in alto a destra
+- Badge celebrativo "🎉 Demo Completa!" al 100% navigando le 6 pagine
 
 ## URL Applicazione
 | Ambiente | URL |
