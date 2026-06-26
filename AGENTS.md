@@ -524,7 +524,7 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - ✅ Proiezioni Ricavi - Scenari 15-30-45 con page-break PDF
 
 ## Task Sospesi ⏸️
-- ⏸️ Valutazioni Giocatore - Valutazioni tecniche per stagione/partita
+- ✅ Valutazioni Giocatore (base) - Valutazioni tecniche per stagione/partita
 - ⏸️ Filtro Categorie - Staff vede solo squadre assegnate
 
 ## Prossime Azioni - Partnership Strategy
@@ -794,10 +794,11 @@ curl -X POST "https://api.vercel.com/v13/deployments" \
 - ✅ Demo Button Fix - avvia senza login API (localStorage)
 - ✅ Bottoni Login Allineati - stessa dimensione, effetti 3D hover
 - ✅ Demo Flow Fix - reload pagina per init corretto demoManager
+- ✅ Demo Workspace Green Academy - endpoint /api/demo/init, loadSquadre dinamico
 - ✅ Backend Bug Fix - rimosso codice referral mal posizionato
 
 ### Task Sospesi ⏸️
-- ⏸️ Valutazioni Giocatore - valutazioni tecniche per stagione/partita
+- ✅ Valutazioni Giocatore (base) - valutazioni tecniche per stagione/partita
 - ⏸️ Filtro Categorie - staff vede solo squadre assegnate
 
 ### Roadmap MVP
@@ -822,7 +823,8 @@ Demo guidata con **missioni** e **progress tracking** per massimizzare il coinvo
 Landing Page → "Prova la Demo" → /login
 → Click "🎮 Demo" → Imposta sessione in localStorage
 → window.location.href = '/' → Ricarica pagina principale
-→ main.js: isDemo() = true → Carica dati + demoManager.init()
+→ main.js: isDemo() = true → initDemoSession()
+→ /api/demo/init → carica dati Green Academy
 → Popup Benvenuto → Badge Demo 🌱
 → Panel Missioni → Navigazione pagine
 → Tooltip Marketing → Completion → CTA Registrazione
@@ -833,8 +835,10 @@ Landing Page → "Prova la Demo" → /login
 |------|----------------|
 | `frontend-v2/src/modules/auth/login.js` | Click Demo → imposta sessione → ricarica / |
 | `frontend-v2/src/router.js` | `window.YFM.isDemo()` per accesso pagine |
-| `frontend-v2/src/main.js` | `isDemo()` check → `demoManager.init()` → navigate dashboard |
+| `frontend-v2/src/main.js` | `isDemo()` → `initDemoSession()` → `/api/demo/init` |
 | `frontend-v2/src/modules/demo/demo.js` | UI demo, missioni, progress tracking |
+| `frontend-v2/src/modules/team/squadre.js` | `loadSquadre()` con ricerca stagione attiva |
+| `backend/api/index.js` | `/api/demo/init`, `/api/workspaces/:id/stagioni` |
 
 ### Costanti Demo (localStorage)
 ```javascript
@@ -849,6 +853,15 @@ window.YFM.isDemo()          // true se yfm_demo_session === 'active'
 window.YFM.isGuest()         // true se guest link attivo
 window.YFM.isAuthenticated() // true se JWT token valido
 ```
+
+### Endpoint Demo API
+- **GET /api/demo/init** - Inizializza sessione demo
+  - Risposta: `{workspace, stagione, squadre, primaSquadra}`
+  - Trova automaticamente Green Academy (id: `00000000-0000-0000-0000-000000000001`)
+  - Stagione attiva: `2025/26` (id: `00000000-0000-0000-0000-000000000002`)
+  - Squadre: Green Academy Primavera e Allievi B
+
+- **GET /api/workspaces/:id/stagioni** - Lista stagioni di un workspace
 
 ### Missioni Disponibili (6 pagine)
 | # | Missione | Pagina Router |
@@ -868,14 +881,12 @@ window.YFM.isAuthenticated() // true se JWT token valido
 - **Celebrazione**: Popup quando tutte le 6 missioni sono completate
 - **Form Registrazione**: Sempre accessibile dal panel o dal completamento
 
-### Setup Database Demo
-Eseguire `SQL/demo-data.sql` nel SQL Editor di Supabase per creare:
-- Workspace: ASD Green Academy
-- 6 squadre (Primavera, Allievi B, Giovanissimi B, Esordienti, Pulcini, Primi Calci)
-- 20 giocatori nella Primavera
-- 5 partite (3 passate, 2 future)
-- Eventi, valutazioni, convocazioni, note avversario
-- Account demo con ruolo allenatore
+### Workspace Demo (Database)
+| ID | Nome | Stagione Attiva |
+|----|------|-----------------|
+| `00000000-0000-0000-0000-000000000001` | ASD Green Academy | 2025/26 |
+| `00000000-0000-0000-0000-000000000010` | Green Academy Primavera | - |
+| `00000000-0000-0000-0000-000000000011` | Green Academy Allievi B | - |
 
 ### Prossime Evoluzioni Demo
 - ⏸️ Clone sessione isolato per ogni visitatore
