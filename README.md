@@ -105,16 +105,88 @@ git checkout main
 
 ## 🛠️ Comandi Build & Deploy
 
-### Frontend Build (produzione)
+### Build Frontend
 ```bash
 cd frontend-v2
 npm run build
+# Output: Build ID: v3.14.<git-hash>
 # Output in frontend-v2/dist/
 ```
 
 ### Preview build locale
 ```bash
 npm run preview
+```
+
+### Deploy su Vercel
+Il deploy è **automatico**: ogni push su `main` triggera un rebuild su Vercel.
+- Frontend: ~1-2 minuti
+- Backend: ~1-2 minuti
+
+### Verificare Versioni
+
+**Backend**:
+```bash
+curl https://youth-football-manager-backend.vercel.app/api/health
+# Risposta: {"status":"ok","version":"3.14",...}
+```
+
+**Frontend**: 
+- Apri l'app → Login footer o Sidebar footer → `build: v3.14.<hash>`
+- Build ID = Versione SW + Git commit hash
+
+---
+
+## 🔢 Sistema Build ID
+
+Il build ID identifica univocamente ogni release: `v3.14.<git-hash>`
+
+**Formato**: `v<major>.<minor>.<commit-hash>`
+
+| Dove | Build ID |
+|------|----------|
+| Locale | `v3.14.62f56e8` (dal terminale dopo `npm run build`) |
+| Produzione | `v3.14.62f56e8` (stesso commit, stessa UI) |
+
+### Workflow Git con Build ID
+
+```bash
+# 1. Fai le tue modifiche al codice
+
+# 2. Verifica cosa cambierà
+git status
+
+# 3. Build locale (genera il build ID)
+cd frontend-v2
+npm run build
+# Nota il Build ID: v3.14.XXXXXXX
+
+# 4. Torna alla root e committa
+cd ..
+git add .
+git commit -m "feat: descrizione - build v3.14.XXXXXXX"
+
+# 5. Push - triggera deploy automatico
+git push origin main
+
+# 6. Verifica dopo ~2 minuti
+# - Backend: curl https://youth-football-manager-backend.vercel.app/api/health
+# - Frontend: Login → footer `build: v3.14.XXXXXXX`
+```
+
+### Risoluzione Problemi Pull
+
+Se hai errori con `build-info.js` durante il pull:
+
+```bash
+# Rimuovi file generato localmente
+rm frontend-v2/src/build-info.js frontend-v2/build-info.js 2>/dev/null
+
+# Poi pull
+git pull origin main
+
+# Ricompila
+cd frontend-v2 && npm run build
 ```
 
 ---
