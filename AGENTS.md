@@ -150,11 +150,11 @@ landing/
 3. **Verificare struttura DB**: Prima di ogni modifica, controllare schema esistente con API o via SQL
 
 ### Modifiche al Progetto
-1. **Ambiente di lavoro predefinito**: Locale - solo quando la versione è stabile e testata si fa deploy su Vercel (dopo conferma esplicita dell'utente)
+1. **⚠️ AMBIENTE DI LAVORO**: Locale/Mac dell'utente - NON fare push che triggera deploy automatici su Vercel senza validazione esplicita
 2. **Prima di ogni feature**: Creare PLAN dettagliato e validare con utente
 3. **Endpoint**: Verificare se esistono già prima di crearne di nuovi
-4. **Commit**: Sempre con messaggio descrittivo e push
-5. **Deploy**: Solo su richiesta esplicita dell'utente o dopo conferma che la versione è stabile
+4. **Commit**: Solo dopo conferma esplicita dell'utente che le modifiche sono state testate e validate
+5. **Deploy**: Solo su richiesta esplicita dell'utente - aspettare conferma che funziona in locale prima di pushare
 
 ### Comandi ed Esecuzioni
 1. **Se eseguibili in automatico**: Eseguirli direttamente e mostrare output
@@ -172,6 +172,33 @@ landing/
 ---
 
 ## Sistema Auth (Auth FASE 1) ✅ COMPLETATO
+
+### Sistema Multi-Workspace (Isolamento Categorie)
+Ogni workspace (società) ha le proprie categorie/squadre isolate. Gli utenti vedono SOLO le squadre del loro workspace.
+
+**Regole:**
+- Ogni utente ha un `workspace_id` che identifica la sua società
+- Gli admin/superadmin vedono tutti i workspace
+- Gli altri utenti vedono solo il proprio workspace
+
+**Endpoint Workspace:**
+- `GET /api/workspaces` - Tutti i workspace (pubblico)
+- `GET /api/auth/workspaces` - Workspace accessibili all'utente loggato (filtrato per `workspace_id`)
+
+**Caricamento Squadre:**
+1. Demo mode → usa `DEMO_SQUADRE` hardcoded in `main.js`
+2. Utente loggato → usa `/auth/workspaces` + `/workspaces/:id/stagioni` + `/stagioni/:id/squadre`
+
+**Squadre Demo (Green Academy):**
+```javascript
+const DEMO_SQUADRE = [
+  { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy', categoria: 'Primavera' },
+  { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Allievi B' }
+];
+```
+
+**Squadre ASD Albalonga (DB):**
+- Under 14 Regionale, Under 15 Regionale, Under 16 Regionale, Under 17 Elite, Juniores
 
 ### Ruoli Utente
 - **admin**: Accesso completo, gestisce utenti e link guest
@@ -523,13 +550,14 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - ✅ Commissioni Partnership - Dettaglio per profilo Coach/Club
 - ✅ Proiezioni Ricavi - Scenari 15-30-45 con page-break PDF
 - ✅ Sistema Mini Missioni - Step sequenziali per pagina (Dashboard, Calendario, Rosa, etc.)
+- ✅ Sistema Multi-Workspace - Isolamento categorie per società, endpoint /auth/workspaces
 
 ## Bug Noti ⚠️
 - Nessuno (demo funziona completamente)
 
 ## Task Sospesi ⏸️
 - ✅ Valutazioni Giocatore (base) - Valutazioni tecniche per stagione/partita
-- ⏸️ Filtro Categorie - Staff vede solo squadre assegnate
+- ✅ Filtro Categorie - Ogni workspace vede solo le proprie squadre
 
 ## Prossime Azioni - Partnership Strategy
 
