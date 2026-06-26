@@ -135,6 +135,11 @@ export function initRouter() {
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Caricamento...</div>';
     
     window.YFM.currentPage = page;
+
+    // Aggiorna mini missioni per la nuova pagina (demo mode)
+    if (window.YFM.isDemo && window.YFM.isDemo() && window.miniMissionManager) {
+      setTimeout(() => window.miniMissionManager.init(page), 800);
+    }
     
     document.querySelectorAll('.sidebar-nav a').forEach(link => {
       link.classList.toggle('active', link.dataset.page === page);
