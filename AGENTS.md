@@ -518,7 +518,7 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - ✅ Dashboard 3D - Grafica moderna con effetto hover e card cliccabili
 - ✅ Design System - Stili consolidati in AGENTS.md
 - ✅ Landing Page v4 - Logo embedded completo, pricing Coach/Club/AI Plus, link email _blank
-- ✅ Demo Auto-login - Parametri URL demo_email, demo_password, auto_login
+- ✅ Demo Interattiva - Pulsante "Avvia Demo" nella pagina login, sessione demo senza account
 - ✅ Pricing Aggiornato - Coach (€99), Club (€249), AI Plus (Coming Soon)
 - ✅ Commissioni Partnership - Dettaglio per profilo Coach/Club
 - ✅ Proiezioni Ricavi - Scenari 15-30-45 con page-break PDF
@@ -566,18 +566,11 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - Responsive (desktop/tablet/mobile)
 - Stesso stile dei documenti PDF
 
-### Link Demo Auto-login
-La landing page contiene link che permettono accesso demo automatico:
-```
-https://youth-football-manager.vercel.app/login?demo_email=demo_yfm@yfm.it&demo_password=demo_yfm&auto_login=1
-```
-
-**Parametri URL:**
-| Parametro | Descrizione | Esempio |
-|-----------|-------------|---------|
-| `demo_email` | Email account demo | `demo_yfm@yfm.it` |
-| `demo_password` | Password account demo | `demo_yfm` |
-| `auto_login` | Auto-submit form | `1` |
+### Sistema Demo Interattivo
+La demo funziona tramite pulsante "Avvia Demo" nella pagina di login:
+- **URL**: https://youth-football-manager.vercel.app
+- **Flusso**: Landing → "Prova la Demo" → Login → "Avvia Demo"
+- Non richiede account, usa dati simulati in memoria
 
 ### Gestione Landing Page
 1. **Modifiche**: Il file è HTML statico, modificare direttamente e pushare
@@ -789,7 +782,7 @@ curl -X POST "https://api.vercel.com/v13/deployments" \
 - ✅ Dashboard 3D - grafica moderna con effetto hover
 - ✅ Design System - stili consolidati in AGENTS.md
 - ✅ Landing Page v4 - logo embedded, pricing Coach/Club/AI Plus
-- ✅ Demo Auto-login - parametri URL demo_email, demo_password
+- ✅ Demo Interattiva - Pulsante "Avvia Demo" in login page (no URL params)
 - ✅ Pricing Aggiornato - Coach (€99), Club (€249), AI Plus (Coming Soon)
 - ✅ Commissioni Partnership - dettaglio per profilo Coach/Club
 - ✅ Proiezioni Ricavi - scenari 15-30-45 con page-break PDF
