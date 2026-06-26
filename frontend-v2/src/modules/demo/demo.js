@@ -878,43 +878,43 @@ class DemoManager {
   }
 
   resetDemo() {
-    console.log('[DEMO] resetDemo() called');
+    console.log("[DEMO] resetDemo() called");
     
     // Rimuovi TUTTI i dati demo dal localStorage
     Object.keys(localStorage).forEach(key => {
-      if (key.includes('demo') || key.includes('yfm_demo') || key.includes('mission')) {
-        console.log('[DEMO] Removing:', key);
+      if (key.includes("demo") || key.includes("yfm_demo") || key.includes("mission")) {
+        console.log("[DEMO] Removing:", key);
         localStorage.removeItem(key);
       }
     });
     
-    // Reset stato interno
-    this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS)); // Deep copy
-    this.completedCount = 0;
-    this.welcomeShown = false;
-    this.isDemo = true;
-    
-    console.log('[DEMO] After reset, missions:', this.missions.map(m => m.id + ':' + m.completed));
-    
     // Remove all demo UI
-    ['demo-badge', 'demo-mission-panel', 'demo-welcome-overlay', 'demo-celebration', 
-     'demo-registration-overlay', 'demo-marketing-tooltip'].forEach(id => {
+    ["demo-badge", "demo-mission-panel", "demo-welcome-overlay", "demo-celebration",
+     "demo-registration-overlay", "demo-marketing-tooltip"].forEach(id => {
       document.getElementById(id)?.remove();
     });
     
     // Reset session storage for tooltips
     Object.keys(sessionStorage).forEach(key => {
-      if (key.startsWith('yfm_tooltip_shown_')) {
+      if (key.startsWith("yfm_tooltip_shown_")) {
         sessionStorage.removeItem(key);
       }
     });
     
-    // Salva stato resettato
-    this.saveProgress();
+    // Imposta nuova sessione demo e ricarica la pagina (come click "Avvia Demo")
+    console.log("[DEMO] Reimpostando sessione demo e ricaricando...");
+    localStorage.setItem("yfm_demo_session", "active");
+    localStorage.setItem("yfm_demo_user", JSON.stringify({
+      id: "00000000-0000-0000-0000-000000000099",
+      nome: "Demo",
+      cognome: "Allenatore",
+      ruolo: "allenatore",
+      email: "demo_yfm@yfm.it"
+    }));
     
-    // Naviga a dashboard
-    this.navigateTo('dashboard');
-    
+    // Ricarica la pagina principale (main.js ri-inizializzerà tutto)
+    window.location.href = "/";
+  }
     // Recrea badge e mostra popup di benvenuto
     setTimeout(() => {
       console.log('[DEMO] After timeout, missions:', this.missions.map(m => m.id + ':' + m.completed));
