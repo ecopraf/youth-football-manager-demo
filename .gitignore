@@ -1,2 +1,5 @@
 .vercel
 .env*
+frontend-v2/src/build-info.js
+frontend-v2/build-info.js
+frontend-v2/.build-counter
