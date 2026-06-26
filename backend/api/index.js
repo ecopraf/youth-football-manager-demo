@@ -479,7 +479,33 @@ app.get('/api/guest/:token', async (req, res) => {
   }
 });
 
-app.get('/api/workspaces', async (req, res) => { const { data } = await supabase.from('workspace').select('*'); res.json(data || []); });
+app.get('/api/workspaces', async (req, res) => { 
+  // Torna tutti i workspace (per admin/superadmin)
+  const { data } = await supabase.from('workspace').select('*'); 
+  res.json(data || []); 
+});
+
+// Endpoint che ritorna i workspace accessibili all'utente loggato
+app.get('/api/auth/workspaces', authMiddleware, async (req, res) => {
+  try {
+    // Superadmin vede tutti i workspace
+    if (req.user.is_superadmin || req.user.ruolo === 'admin') {
+      const { data } = await supabase.from('workspace').select('*').order('nome');
+      return res.json(data || []);
+    }
+    
+    // Altrimenti ritorna solo il workspace dell'utente
+    if (req.user.workspace_id) {
+      const { data } = await supabase.from('workspace').select('*').eq('id', req.user.workspace_id);
+      return res.json(data || []);
+    }
+    
+    // Se non ha workspace_id, ritorna vuoto
+    res.json([]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Endpoint demo: inizializza dati demo
 

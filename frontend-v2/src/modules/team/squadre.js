@@ -14,15 +14,19 @@ export async function loadSquadre(stagioneId) {
       // Se passato stagioneId, usa quello
       allSquadre = await apiFetch(`/stagioni/${stagioneId}/squadre`);
     } else {
-      // Altrimenti cerca la stagione attiva dal workspace
-      const workspaces = await apiFetch('/workspaces');
-      const demoWorkspace = workspaces.find(w => w.nome === 'ASD Green Academy') || workspaces[0];
-      if (demoWorkspace) {
-        window.YFM.workspaceInfo = demoWorkspace;
+      // Usa /auth/workspaces se loggato, altrimenti /workspaces
+      const isAuthenticated = localStorage.getItem('yfm_token');
+      const workspacesEndpoint = isAuthenticated ? '/auth/workspaces' : '/workspaces';
+      const workspaces = await apiFetch(workspacesEndpoint);
+      
+      // Per ora prendi il primo workspace disponibile
+      const currentWorkspace = workspaces[0];
+      if (currentWorkspace) {
+        window.YFM.workspaceInfo = currentWorkspace;
       }
       
       // Cerca stagioni del workspace e prendi quella attiva
-      const stagioni = await apiFetch(`/workspaces/${demoWorkspace?.id}/stagioni`);
+      const stagioni = await apiFetch(`/workspaces/${currentWorkspace?.id}/stagioni`);
       const stagioneAttiva = stagioni.find(s => s.is_attiva) || stagioni[0];
       
       if (stagioneAttiva) {
