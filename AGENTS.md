@@ -522,6 +522,10 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 - ✅ Pricing Aggiornato - Coach (€99), Club (€249), AI Plus (Coming Soon)
 - ✅ Commissioni Partnership - Dettaglio per profilo Coach/Club
 - ✅ Proiezioni Ricavi - Scenari 15-30-45 con page-break PDF
+- ✅ Fix Scheda Giocatore - Aggiunto onclick alle card in roster.js (deployato)
+
+## Bug Noti ⚠️
+- ⚠️ Scheda Giocatore - In demo la scheda non si apre: `loadPlayerDetail` cerca dati dal DB reale (da implementare supporto demo)
 
 ## Task Sospesi ⏸️
 - ✅ Valutazioni Giocatore (base) - Valutazioni tecniche per stagione/partita
@@ -530,9 +534,10 @@ onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=
 ## Prossime Azioni - Partnership Strategy
 
 ### Immediate (Go-Live)
-- [ ] Creare credenziali demo in Supabase (demo_yfm / demo_yfm)
-- [ ] Testare flow completo: landing → demo login
-- [ ] Personalizzare proposta con logo partner prima di invio
+- [x] Creare credenziali demo in Supabase (demo_yfm / demo_yfm)
+- [x] Testare flow completo: landing → demo login
+- [ ] Implementare scheda giocatore in modalità demo
+- [ ] Aggiungere eventi/partite archiviate dati simulati
 
 ### Breve Termine
 - [ ] Setup sistema pagamenti/commissioni (Stripe, PayPal, bonifico?)
