@@ -130,12 +130,9 @@ window.YFM.adjustPageTitleForMobile = function() {
     console.warn('adjustPageTitleForMobile error', e);
   }
 };
-
 document.addEventListener('DOMContentLoaded', () => {
   setupLayout();
   initRouter();
-  
-  // Check per guest link (URL: /guest/{token})
   const path = window.location.pathname;
   if (path.startsWith('/guest/')) {
     const token = path.split('/guest/')[1];
@@ -145,28 +142,40 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
   }
-
-  // Se già autenticato o demo
   const isAuth = window.YFM.isAuthenticated && window.YFM.isAuthenticated();
   const isDemo = window.YFM.isDemo && window.YFM.isDemo();
-  
   if (isAuth || isDemo) {
     console.log('[MAIN] Autenticato:', isAuth, 'Demo:', isDemo);
-    // Carica workspace e squadre in parallelo
-    Promise.all([
-      loadWorkspaceInfo(),
-      loadSquadre()
-    ]).then(() => {
-      // Inizializza demo se è una sessione demo
-      if (isDemo) {
-        console.log('[MAIN] Init demo');
-        demoManager.init();
-      }
-      window.YFM.navigateTo('dashboard');
-    }).catch(() => {
-      window.YFM.navigateTo('dashboard');
-    });
+    if (isDemo) {
+      initDemoSession();
+    } else {
+      Promise.all([loadWorkspaceInfo(), loadSquadre()]).then(() => {
+        window.YFM.navigateTo('dashboard');
+      }).catch(() => {
+        window.YFM.navigateTo('dashboard');
+      });
+    }
   } else {
     window.YFM.navigateTo('login');
   }
 });
+async function initDemoSession() {
+  try {
+    const apiBase = window.YFM?.apiBase || '';
+    const response = await fetch(`${apiBase}/api/demo/init`);
+    if (!response.ok) throw new Error('Demo init failed');
+    const data = await response.json();
+    window.YFM.workspaceInfo = data.workspace;
+    window.YFM.allSquadre = data.squadre;
+    window.YFM.squadraId = data.primaSquadra?.id || data.squadre?.[0]?.id;
+    const wsName = document.getElementById('workspaceName');
+    if (wsName) wsName.textContent = data.workspace?.nome || 'ASD Green Academy';
+    demoManager.init();
+    window.YFM.navigateTo('dashboard');
+    console.log('[MAIN] Demo session inizializzata con:', data.workspace?.nome, '- Squadra:', data.primaSquadra?.nome);
+  } catch (err) {
+    console.error('[MAIN] Errore init demo:', err);
+    loadWorkspaceInfo();
+    loadSquadre();
+  }
+}

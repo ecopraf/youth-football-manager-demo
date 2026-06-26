@@ -480,6 +480,58 @@ app.get('/api/guest/:token', async (req, res) => {
 });
 
 app.get('/api/workspaces', async (req, res) => { const { data } = await supabase.from('workspace').select('*'); res.json(data || []); });
+
+// Endpoint demo: inizializza dati demo
+
+// Endpoint per ottenere le stagioni di un workspace
+app.get('/api/workspaces/:id/stagioni', async (req, res) => {
+  const { data } = await supabase.from('stagione').select('*').eq('workspace_id', req.params.id).order('anno_inizio', { ascending: false });
+  res.json(data || []);
+});
+app.get('/api/demo/init', async (req, res) => {
+  try {
+    // Trova il workspace demo (Green Academy)
+    const { data: workspaces } = await supabase
+      .from('workspace')
+      .select('*')
+      .eq('id', '00000000-0000-0000-0000-000000000001');
+    
+    const workspace = workspaces?.[0];
+    if (!workspace) {
+      return res.status(404).json({ error: 'Workspace demo non trovato' });
+    }
+    
+    // Trova la stagione attiva per questo workspace
+    const { data: stagioni } = await supabase
+      .from('stagione')
+      .select('*')
+      .eq('workspace_id', workspace.id)
+      .eq('is_attiva', true)
+      .limit(1);
+    
+    const stagione = stagioni?.[0];
+    if (!stagione) {
+      return res.status(404).json({ error: 'Stagione attiva non trovata' });
+    }
+    
+    // Trova le squadre per questa stagione
+    const { data: squadre } = await supabase
+      .from('squadra')
+      .select('*')
+      .eq('stagione_id', stagione.id)
+      .order('nome');
+    
+    res.json({
+      workspace,
+      stagione,
+      squadre: squadre || [],
+      primaSquadra: squadre?.[0] || null
+    });
+  } catch (err) {
+    console.error('Errore /api/demo/init:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 app.get('/api/squadre', async (req, res) => { const { data } = await supabase.from('squadra').select('*').order('nome'); res.json(data || []); });
 app.put('/api/workspaces/:id/logo', async (req, res) => { await supabase.from('workspace').update({ logo_url: req.body.logo_url }).eq('id', req.params.id); res.json({ success: true }); });
 app.get('/api/stagioni/:stagioneId/squadre', async (req, res) => { const { data } = await supabase.from('squadra').select('*').eq('stagione_id', req.params.stagioneId).order('nome'); res.json(data || []); });

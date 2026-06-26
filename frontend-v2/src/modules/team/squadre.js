@@ -1,8 +1,31 @@
 import { apiFetch } from '../../services/api';
 
-export async function loadSquadre() {
+export async function loadSquadre(stagioneId) {
   try {
-    const allSquadre = await apiFetch('/stagioni/22222222-2222-2222-2222-222222222222/squadre');
+    let allSquadre;
+    
+    if (stagioneId) {
+      // Se passato stagioneId, usa quello
+      allSquadre = await apiFetch(`/stagioni/${stagioneId}/squadre`);
+    } else {
+      // Altrimenti cerca la stagione attiva dal workspace
+      const workspaces = await apiFetch('/workspaces');
+      const demoWorkspace = workspaces.find(w => w.nome === 'ASD Green Academy') || workspaces[0];
+      if (demoWorkspace) {
+        window.YFM.workspaceInfo = demoWorkspace;
+      }
+      
+      // Cerca stagioni del workspace e prendi quella attiva
+      const stagioni = await apiFetch(`/workspaces/${demoWorkspace?.id}/stagioni`);
+      const stagioneAttiva = stagioni.find(s => s.is_attiva) || stagioni[0];
+      
+      if (stagioneAttiva) {
+        allSquadre = await apiFetch(`/stagioni/${stagioneAttiva.id}/squadre`);
+      } else {
+        allSquadre = [];
+      }
+    }
+    
     window.YFM.allSquadre = allSquadre;
     const sel = document.getElementById('squadraSelect');
     if (sel) {
@@ -20,7 +43,7 @@ export async function loadSquadre() {
       window.YFM.squadraId = allSquadre[0].id;
     }
   } catch (err) {
-    console.error(err);
+    console.error('loadSquadre error:', err);
   }
 }
 
