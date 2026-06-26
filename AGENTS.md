@@ -577,21 +577,30 @@ Ogni pagina ha step sequenziali che guidano l'utente attraverso le funzionalità
 
 | Pagina | Step |
 |--------|------|
-| **Dashboard** | Esplora → Prossima partita → Statistiche → Risultati recenti |
-| **Calendario** | Esplora → Apri partita → Convoca → Formazione → Distinta → Eventi → Archivia |
-| **Rosa** | Esplora → Filtra ruolo → Cerca giocatore → Apri scheda |
-| **Allenamenti** | Esplora → Crea seduta → Aggiungi esercizi → Presenze |
-| **Statistiche** | Esplora → Classifica marcatori → Classifica assist → Disciplina |
-| **Report** | Esplora → Genera report → Scarica PDF |
+| **Dashboard** | Esplora (scroll) → Guarda risultati (click partita) |
+| **Rosa** | Filtra per ruolo (select) → Apri scheda giocatore (click) |
+| **Calendario** | Esplora (interaction) → Convoca → Formazione → Distinta → Eventi |
+| **Allenamenti** | Esplora (interaction) → Visualizza seduta → Segna presenze |
+| **Statistiche** | Esplora (auto-complete) |
+| **Report** | Esplora → Genera partita → Genera stagione → Scarica PDF |
+
+**Trigger supportati:**
+- `scroll`: si completa con scrolling della pagina
+- `interaction`: si completa con primo click nella pagina
+- `auto_complete`: si completa automaticamente all'arrivo nella pagina
+- `click`: si completa su click di elemento specifico
+- `select`: si completa su change di select
+- `input`: si completa su input in campo
 
 **Caratteristiche:**
-- Trigger automatici: `auto_on_view`, `click`, `select`, `input`
+- Stato persistente per pagina (non si resetta tornando indietro)
 - Panel laterale con progress bar (collapsible)
 - Toast "completata!" su ogni step
-- Reset completo su "Ricarica Demo"
+- Reset per pagina su "Ricarica Demo"
 - Badge "Demo X%" nell'header
+- Dati training precaricati in sessionStorage
 
-**File**: `frontend-v2/src/modules/demo/demo.js` (classe `MiniMissionManager`)
+**File**: `frontend-v2/src/modules/demo/demo.js`
 
 ### Gestione Landing Page
 1. **Modifiche**: Il file è HTML statico, modificare direttamente e pushare
