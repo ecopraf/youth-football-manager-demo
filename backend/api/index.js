@@ -567,6 +567,26 @@ app.put('/api/workspaces/:id/logo', async (req, res) => { await supabase.from('w
 app.get('/api/stagioni/:stagioneId/squadre', async (req, res) => { const { data } = await supabase.from('squadra').select('*').eq('stagione_id', req.params.stagioneId).order('nome'); res.json(data || []); });
 app.post('/api/stagioni/:stagioneId/squadre', async (req, res) => { const b = req.body; const { data } = await supabase.from('squadra').insert({ stagione_id: req.params.stagioneId, nome: b.nome, categoria: b.categoria, allenatore: b.allenatore, dirigente: b.dirigente, dirigente2: b.dirigente2, preparatore_atletico: b.preparatore_atletico, allenatore_portieri: b.allenatore_portieri }).select().single(); res.status(201).json(data); });
 app.put('/api/squadre/:id', async (req, res) => { const b = req.body; await supabase.from('squadra').update({ nome: b.nome, categoria: b.categoria, allenatore: b.allenatore, dirigente: b.dirigente, dirigente2: b.dirigente2, preparatore_atletico: b.preparatore_atletico, allenatore_portieri: b.allenatore_portieri }).eq('id', req.params.id); res.json({ success: true }); });
+// POST /api/squadre/:id/sposta-partite - Sposta partite verso un'altra squadra
+app.post('/api/squadre/:id/sposta-partite', async (req, res) => {
+  try {
+    const { toSquadraId } = req.body;
+    if (!toSquadraId) return res.status(400).json({ error: 'toSquadraId obbligatorio' });
+    
+    const { data: partite, error } = await supabase
+      .from('partita')
+      .update({ squadra_id: toSquadraId })
+      .eq('squadra_id', req.params.id)
+      .select('id');
+    
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ success: true, spostate: partite?.length || 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/squadre/:id
 app.delete('/api/squadre/:id', async (req, res) => { const sid = req.params.id; const { data: partite } = await supabase.from('partita').select('id').eq('squadra_id', sid); for (const p of (partite||[])) { await supabase.from('formazione_partita').delete().eq('partita_id', p.id); await supabase.from('convocazione').delete().eq('partita_id', p.id); await supabase.from('evento_partita').delete().eq('partita_id', p.id); } await supabase.from('partita').delete().eq('squadra_id', sid); await supabase.from('presenza_allenamento').delete().eq('squadra_id', sid); await supabase.from('configurazione_allenamento').delete().eq('squadra_id', sid); await supabase.from('rosa').delete().eq('squadra_id', sid); await supabase.from('squadra').delete().eq('id', sid); res.json({ success: true }); });
 app.get('/api/squadre/:squadraId/calciatori', async (req, res) => { const q = supabase.from('rosa').select('calciatore:calciatore_id(*), numero_maglia, ruolo, stato').eq('squadra_id', req.params.squadraId); const { data } = await q; res.json((data||[]).map(r => ({ id: r.calciatore.id, nome: r.calciatore.nome, cognome: r.calciatore.cognome, dataNascita: r.calciatore.data_nascita, telefono: r.calciatore.telefono, dataVisitaMedica: r.calciatore.data_visita_medica, matricolaFigc: r.calciatore.matricola_figc, tipoDocumento: r.calciatore.tipo_documento, numeroDocumento: r.calciatore.numero_documento, rilasciatoDa: r.calciatore.rilasciato_da, numeroMaglia: r.numero_maglia, ruolo: r.ruolo, stato: r.stato }))); });
 app.post('/api/squadre/:squadraId/calciatori', async (req, res) => { const c = req.body; const { data: cal } = await supabase.from('calciatore').insert({ workspace_id: '11111111-1111-1111-1111-111111111111', nome: c.nome, cognome: c.cognome, data_nascita: c.dataNascita, telefono: c.telefono, data_visita_medica: c.dataVisitaMedica, matricola_figc: c.matricolaFigc, tipo_documento: c.tipoDocumento, numero_documento: c.numeroDocumento, rilasciato_da: c.rilasciatoDa }).select().single(); await supabase.from('rosa').insert({ squadra_id: req.params.squadraId, calciatore_id: cal.id, numero_maglia: c.numeroMaglia, ruolo: c.ruolo, stato: 'Attivo' }); res.status(201).json(cal); });
