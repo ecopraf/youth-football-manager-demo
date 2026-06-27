@@ -29,17 +29,17 @@
 
 INSERT INTO category (id, nome, tipo_campionato, anno_da, anno_a, descrizione) VALUES
     -- Under 14
-    ('f0000001-0000-0000-0000-000000000001', 'Under 14', 'Provinciale', 2012, 2012, 'Ragazzi nati nel 2012'),
-    ('f0000002-0000-0000-0000-000000000002', 'Under 14', 'Regionale', 2012, 2012, 'Ragazzi nati nel 2012'),
-    ('f0000003-0000-0000-0000-000000000003', 'Under 14', 'Elite', 2012, 2012, 'Ragazzi nati nel 2012'),
+    ('d0000001-0000-0000-0000-000000000001', 'Under 14', 'Provinciale', 2012, 2012, 'Ragazzi nati nel 2012'),
+    ('d0000002-0000-0000-0000-000000000002', 'Under 14', 'Regionale', 2012, 2012, 'Ragazzi nati nel 2012'),
+    ('d0000003-0000-0000-0000-000000000003', 'Under 14', 'Elite', 2012, 2012, 'Ragazzi nati nel 2012'),
     -- Under 15
-    ('f0000004-0000-0000-0000-000000000004', 'Under 15', 'Provinciale', 2011, 2011, 'Ragazzi nati nel 2011'),
-    ('f0000005-0000-0000-0000-000000000005', 'Under 15', 'Regionale', 2011, 2011, 'Ragazzi nati nel 2011'),
-    ('f0000006-0000-0000-0000-000000000006', 'Under 15', 'Elite', 2011, 2011, 'Ragazzi nati nel 2011'),
+    ('d0000004-0000-0000-0000-000000000004', 'Under 15', 'Provinciale', 2011, 2011, 'Ragazzi nati nel 2011'),
+    ('d0000005-0000-0000-0000-000000000005', 'Under 15', 'Regionale', 2011, 2011, 'Ragazzi nati nel 2011'),
+    ('d0000006-0000-0000-0000-000000000006', 'Under 15', 'Elite', 2011, 2011, 'Ragazzi nati nel 2011'),
     -- Under 16
-    ('f0000007-0000-0000-0000-000000000007', 'Under 16', 'Provinciale', 2010, 2010, 'Ragazzi nati nel 2010'),
-    ('f0000008-0000-0000-0000-000000000008', 'Under 16', 'Regionale', 2010, 2010, 'Ragazzi nati nel 2010'),
-    ('f0000009-0000-0000-0000-000000000009', 'Under 16', 'Elite', 2010, 2010, 'Ragazzi nati nel 2010'),
+    ('d0000007-0000-0000-0000-000000000007', 'Under 16', 'Provinciale', 2010, 2010, 'Ragazzi nati nel 2010'),
+    ('d0000008-0000-0000-0000-000000000008', 'Under 16', 'Regionale', 2010, 2010, 'Ragazzi nati nel 2010'),
+    ('d0000009-0000-0000-0000-000000000009', 'Under 16', 'Elite', 2010, 2010, 'Ragazzi nati nel 2010'),
     -- Under 17
     ('f0000010-0000-0000-0000-000000000010', 'Under 17', 'Provinciale', 2009, 2009, 'Ragazzi nati nel 2009'),
     ('f0000011-0000-0000-0000-000000000011', 'Under 17', 'Regionale', 2009, 2009, 'Ragazzi nati nel 2009'),
@@ -108,19 +108,19 @@ INSERT INTO staff (id, nome, cognome, ruolo, telefono, email) VALUES
 
 -- ACP Annex - U16 Elite
 INSERT INTO team (id, season_id, category_id, nome, colori_casa, colori_trasferta, venue_id, allenatore_id, dirigente_id, iscritta_competizione) VALUES
-    ('b0000001-0000-0000-0000-000000000001', 'a0000003-0000-0000-0000-000000000003', 'f0000009-0000-0000-0000-000000000009', 'ACP Annex', 'Blu', 'Bianco', 'd0000002-0000-0000-0000-000000000002', 'e0000007-0000-0000-0000-000000000007', 'e0000008-0000-0000-0000-000000000008', 'e1000001-0000-0000-0000-000000000001');
+    ('b0000001-0000-0000-0000-000000000001', 'a0000003-0000-0000-0000-000000000003', 'd0000009-0000-0000-0000-000000000009', 'ACP Annex', 'Blu', 'Bianco', 'd0000002-0000-0000-0000-000000000002', 'e0000007-0000-0000-0000-000000000007', 'e0000008-0000-0000-0000-000000000008', 'e1000001-0000-0000-0000-000000000001');
 
 -- DF Academy - U15 Regionale
 INSERT INTO team (id, season_id, category_id, nome, colori_casa, colori_trasferta, venue_id, allenatore_id, dirigente_id, iscritta_competizione) VALUES
-    ('b0000002-0000-0000-0000-000000000002', 'a0000004-0000-0000-0000-000000000004', 'f0000005-0000-0000-0000-000000000005', 'DF Academy', 'Rosso', 'Bianco', 'd0000003-0000-0000-0000-000000000003', 'e0000005-0000-0000-0000-000000000005', 'e0000006-0000-0000-0000-000000000006', 'e1000001-0000-0000-0000-000000000001');
+    ('b0000002-0000-0000-0000-000000000002', 'a0000004-0000-0000-0000-000000000004', 'd0000005-0000-0000-0000-000000000005', 'DF Academy', 'Rosso', 'Bianco', 'd0000003-0000-0000-0000-000000000003', 'e0000005-0000-0000-0000-000000000005', 'e0000006-0000-0000-0000-000000000006', 'e1000001-0000-0000-0000-000000000001');
 
 -- SSD New Team - U15 Provinciale (22 giocatori)
 INSERT INTO team (id, season_id, category_id, nome, colori_casa, colori_trasferta, venue_id, allenatore_id, dirigente_id, iscritta_competizione) VALUES
-    ('b0000003-0000-0000-0000-000000000003', 'a0000002-0000-0000-0000-000000000002', 'f0000004-0000-0000-0000-000000000004', 'SSD New Team', 'Verde', 'Bianco', 'd0000001-0000-0000-0000-000000000001', 'e0000001-0000-0000-0000-000000000001', 'e0000002-0000-0000-0000-000000000002', 'e1000001-0000-0000-0000-000000000001');
+    ('b0000003-0000-0000-0000-000000000003', 'a0000002-0000-0000-0000-000000000002', 'd0000004-0000-0000-0000-000000000004', 'SSD New Team', 'Verde', 'Bianco', 'd0000001-0000-0000-0000-000000000001', 'e0000001-0000-0000-0000-000000000001', 'e0000002-0000-0000-0000-000000000002', 'e1000001-0000-0000-0000-000000000001');
 
 -- SSD New Team - U16 Elite (20 giocatori)
 INSERT INTO team (id, season_id, category_id, nome, colori_casa, colori_trasferta, venue_id, allenatore_id, dirigente_id, iscritta_competizione) VALUES
-    ('b0000004-0000-0000-0000-000000000004', 'a0000002-0000-0000-0000-000000000002', 'f0000009-0000-0000-0000-000000000009', 'SSD New Team', 'Verde', 'Bianco', 'd0000001-0000-0000-0000-000000000001', 'e0000001-0000-0000-0000-000000000001', 'e0000002-0000-0000-0000-000000000002', 'e1000001-0000-0000-0000-000000000001');
+    ('b0000004-0000-0000-0000-000000000004', 'a0000002-0000-0000-0000-000000000002', 'd0000009-0000-0000-0000-000000000009', 'SSD New Team', 'Verde', 'Bianco', 'd0000001-0000-0000-0000-000000000001', 'e0000001-0000-0000-0000-000000000001', 'e0000002-0000-0000-0000-000000000002', 'e1000001-0000-0000-0000-000000000001');
 
 -- SSD New Team - U17 Regionale (18 giocatori)
 INSERT INTO team (id, season_id, category_id, nome, colori_casa, colori_trasferta, venue_id, allenatore_id, dirigente_id, iscritta_competizione) VALUES
@@ -164,7 +164,7 @@ INSERT INTO team_staff (team_id, staff_id, ruolo_squadra) VALUES
 -- ============================================================
 
 INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
-    ('01000001-0000-0000-000000000001', 'Lorenzo', 'Rossi', '2011-03-15', '3331111111', 'M'),
+    ('01000001-0000-0000-0000-000000000001', 'Lorenzo', 'Rossi', '2011-03-15', '3331111111', 'M'),
     ('01000002-0000-0000-000000000002', 'Alessandro', 'Bianchi', '2011-07-22', '3332222222', 'M'),
     ('01000003-0000-0000-000000000003', 'Matteo', 'Verdi', '2011-01-10', '3333333333', 'M'),
     ('01000004-0000-0000-000000000004', 'Francesco', 'Russo', '2011-09-05', '3334444444', 'M'),
@@ -192,7 +192,7 @@ INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
 -- ============================================================
 
 INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
-    ('02000001-0000-0000-000000000001', 'Alessio', 'Colombo', '2010-02-15', '3341111111', 'M'),
+    ('02000001-0000-0000-0000-000000000001', 'Alessio', 'Colombo', '2010-02-15', '3341111111', 'M'),
     ('02000002-0000-0000-000000000002', 'Mattia', 'Ferrero', '2010-05-22', '3342222222', 'M'),
     ('02000003-0000-0000-000000000003', 'Lorenzo', 'De Luca', '2010-08-10', '3343333333', 'M'),
     ('02000004-0000-0000-000000000004', 'Gabriele', 'Rizzo', '2010-01-05', '3344444444', 'M'),
@@ -218,7 +218,7 @@ INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
 -- ============================================================
 
 INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
-    ('03000001-0000-0000-000000000001', 'Tommaso', 'Monti', '2009-03-15', '3351111111', 'M'),
+    ('03000001-0000-0000-0000-000000000001', 'Tommaso', 'Monti', '2009-03-15', '3351111111', 'M'),
     ('03000002-0000-0000-000000000002', 'Alessandro', 'De Angelis', '2009-06-22', '3352222222', 'M'),
     ('03000003-0000-0000-000000000003', 'Luca', 'Pellegrini', '2009-02-10', '3353333333', 'M'),
     ('03000004-0000-0000-000000000004', 'Marco', 'Vitali', '2009-09-05', '3354444444', 'M'),
@@ -242,7 +242,7 @@ INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
 -- ============================================================
 
 INSERT INTO team_player (team_id, player_id, numero_maglia, ruolo_preferito, is_primary, stato) VALUES
-    ('b0000003-0000-0000-0000-000000000003', '01000001-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
+    ('b0000003-0000-0000-0000-000000000003', '01000001-0000-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
     ('b0000003-0000-0000-0000-000000000003', '01000002-0000-0000-000000000002', 2, 'Difensore', true, 'Attivo'),
     ('b0000003-0000-0000-0000-000000000003', '01000003-0000-0000-000000000003', 3, 'Difensore', true, 'Attivo'),
     ('b0000003-0000-0000-0000-000000000003', '01000004-0000-0000-000000000004', 4, 'Difensore', true, 'Attivo'),
@@ -270,7 +270,7 @@ INSERT INTO team_player (team_id, player_id, numero_maglia, ruolo_preferito, is_
 -- ============================================================
 
 INSERT INTO team_player (team_id, player_id, numero_maglia, ruolo_preferito, is_primary, stato) VALUES
-    ('b0000004-0000-0000-0000-000000000004', '02000001-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
+    ('b0000004-0000-0000-0000-000000000004', '02000001-0000-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
     ('b0000004-0000-0000-0000-000000000004', '02000002-0000-0000-000000000002', 2, 'Difensore', true, 'Attivo'),
     ('b0000004-0000-0000-0000-000000000004', '02000003-0000-0000-000000000003', 3, 'Difensore', true, 'Attivo'),
     ('b0000004-0000-0000-0000-000000000004', '02000004-0000-0000-000000000004', 4, 'Difensore', true, 'Attivo'),
@@ -296,7 +296,7 @@ INSERT INTO team_player (team_id, player_id, numero_maglia, ruolo_preferito, is_
 -- ============================================================
 
 INSERT INTO team_player (team_id, player_id, numero_maglia, ruolo_preferito, is_primary, stato) VALUES
-    ('b0000005-0000-0000-0000-000000000005', '03000001-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
+    ('b0000005-0000-0000-0000-000000000005', '03000001-0000-0000-0000-000000000001', 1, 'Portiere', true, 'Attivo'),
     ('b0000005-0000-0000-0000-000000000005', '03000002-0000-0000-000000000002', 2, 'Difensore', true, 'Attivo'),
     ('b0000005-0000-0000-0000-000000000005', '03000003-0000-0000-000000000003', 3, 'Difensore', true, 'Attivo'),
     ('b0000005-0000-0000-0000-000000000005', '03000004-0000-0000-000000000004', 4, 'Difensore', true, 'Attivo'),
