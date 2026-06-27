@@ -6,11 +6,70 @@ Questo file contiene istruzioni specifiche per gli agenti AI che lavorano sul pr
 
 ## Contesto Progetto
 
-**Build ID Attuale**: `v3.14.<git-hash>` (formato: versione + commit hash)
+**Versione Attuale**: v3.14
+**Build ID**: `v3.14.<git-hash>` (formato: versione + commit hash)
 **Backend**: Node.js/Express con Supabase
 **Frontend**: Vite + JavaScript ES Modules
 **Database**: Supabase (PostgreSQL)
 **Deploy**: Vercel (automatico su push a main)
+**Logo**: `/frontend-v2/public/assets/logo.png`
+**Email**: youthfootballmanager@gmail.com
+
+---
+
+## Sistema Build Info
+
+Build ID basato su **versione SW + git commit hash**, univoco e confrontabile tra locale e produzione.
+
+| Dove | Build ID |
+|------|----------|
+| Login footer | `build: v3.14.XXXXXXX` |
+| Sidebar footer | `build: v3.14.XXXXXXX` |
+| Variabile JS | `window.YFM_BUILD_ID` |
+
+**File**: `frontend-v2/src/build-info.js` (rigenerato automaticamente da `vite.config.js`) - **NON modificare manualmente**
+
+---
+
+## Credenziali e Configurazione
+
+### Supabase (Backend Vercel)
+```
+SUPABASE_URL=https://csxdlxbhcnyfppojwwzy.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<stored in Vercel env>
+JWT_SECRET=<stored in Vercel env>
+```
+
+### API Keys Pubbliche
+- **ANON KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTEzMTMsImV4cCI6MjA5NzMyNzMxM30.KTL6Z_Mwo_QzNidWt95YLqc7ZvdbfxyQdzxCT5uNRIw`
+
+---
+
+## Schema Database (Tabelle Principali)
+
+| Tabella | Campi Chiave | Descrizione |
+|---------|--------------|-------------|
+| `workspace` | id, nome, logo_url, referral_code | Società/club |
+| `stagione` | id, workspace_id, nome, data_inizio, data_fine, is_attiva | Stagione sportiva |
+| `squadra` | id, stagione_id, nome, categoria, allenatore | Squadra |
+| `calciatore` | id, workspace_id, nome, cognome, data_nascita, ... | Giocatore |
+| `rosa` | id, squadra_id, calciatore_id, numero_maglia, ruolo | Associazione |
+| `partita` | id, squadra_id, data_ora, avversario, luogo, archiviata | Partita |
+| `evento_partita` | id, partita_id, tipo_evento_codice, calciatore_principale_id, minuto | Eventi |
+| `convocazione` | id, partita_id, calciatore_id | Convocazioni |
+| `formazione_partita` | id, partita_id, calciatore_id, ruolo, numero_maglia | Formazione |
+| `valutazione_partita` | id, partita_id, calciatore_id, voto, note | Valutazioni |
+| `utente` | id, workspace_id, email, password_hash, nome, ruolo, is_superadmin | Utente |
+| `guest_token` | id, token, tipo, scadenza, utente_id | Token guest |
+
+### Tipo Eventi Partita (tipo_evento_codice)
+- `GOAL` - Gol segnato
+- `SUBITO` - Gol subito (portiere)
+- `ASSIST` - Assist
+- `YELLOW` - Cartellino giallo
+- `RED` - Cartellino rosso
+- `IN` - Entrato in campo
+- `OUT` - Uscito dal campo
 
 ---
 
