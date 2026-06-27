@@ -3,17 +3,21 @@ import { showLoading, hideLoading } from '../../utils/ui';
 import { BUILD_INFO } from '../../build-info';
 
 export default async function loadLogin() {
-  // Leggi parametri dalla URL
+  // Pulisci URL da eventuali parametri vecchi/invalidi
   const urlParams = new URLSearchParams(window.location.search);
   const refCode = urlParams.get('ref');
+  const hasDemoParams = urlParams.has('demo_email') || urlParams.has('auto_login');
   
   // Salva referral code dall URL se presente
   if (refCode) {
     localStorage.setItem('referralCode', refCode);
-    // Rimuovi il parametro ref dall URL per pulizia
-    const cleanUrl = window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
   }
+  
+  // Pulisci URL da parametri demo vecchi (non più usati)
+  if (hasDemoParams || window.location.search.includes('demo_')) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+  
   const c = document.getElementById('pageContent');
   
   // Se già loggato, reindirizza
