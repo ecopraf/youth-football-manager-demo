@@ -521,7 +521,7 @@ UPDATE match SET stato = 'Terminata', gol_casa = 2, gol_ospite = 1 WHERE id IN (
 );
 
 -- Eventi per SSD New Team U15 (partita 1)
-INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
+-- INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
 SELECT
     (SELECT id FROM match WHERE team_id = 'b0000003-0000-0000-0000-000000000003' ORDER BY data_ora LIMIT 1),
     tipo_evento, minuto, tp.id
@@ -536,7 +536,7 @@ FROM (VALUES
 CROSS JOIN (SELECT id FROM team_player WHERE team_id = 'b0000003-0000-0000-0000-000000000003' ORDER BY random() LIMIT 6) tp;
 
 -- Eventi per SSD New Team U16 (partita 1)
-INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
+-- INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
 SELECT
     (SELECT id FROM match WHERE team_id = 'b0000004-0000-0000-0000-000000000004' ORDER BY data_ora LIMIT 1),
     tipo_evento, minuto, tp.id
@@ -551,7 +551,7 @@ FROM (VALUES
 CROSS JOIN (SELECT id FROM team_player WHERE team_id = 'b0000004-0000-0000-0000-000000000004' ORDER BY random() LIMIT 6) tp;
 
 -- Eventi per DF Academy U15 (partita 1)
-INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
+-- INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
 SELECT
     (SELECT id FROM match WHERE team_id = 'b0000002-0000-0000-0000-000000000002' ORDER BY data_ora LIMIT 1),
     tipo_evento, minuto, tp.id
