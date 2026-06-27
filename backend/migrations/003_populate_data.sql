@@ -521,25 +521,25 @@ UPDATE match SET stato = 'Terminata', gol_casa = 2, gol_ospite = 1 WHERE id IN (
 );
 
 -- Eventi per SSD New Team U15 (partita 1)
-INSERT INTO match_event (match_id, tipo_evento, minuto, player_id, player_id_secondario)
-SELECT 
+INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
+SELECT
     (SELECT id FROM match WHERE team_id = 'b0000003-0000-0000-0000-000000000003' ORDER BY data_ora LIMIT 1),
-    tipo_evento, minuto, player_id, player_id_secondario
+    tipo_evento, minuto, tp.id
 FROM (VALUES
-    ('Gol', 15, NULL),
-    ('Gol', 32, NULL),
-    ('Assist', 32, NULL),
-    ('Ammonizione', 45, NULL),
-    ('Gol', 67, NULL),
-    ('Espulsione', 78, NULL)
-) AS e(tipo_evento, minuto, player_id)
-CROSS JOIN (SELECT id as player_id FROM team_player WHERE team_id = 'b0000003-0000-0000-0000-000000000003' ORDER BY random() LIMIT 6) tp;
+    ('Gol', 15),
+    ('Gol', 32),
+    ('Assist', 32),
+    ('Ammonizione', 45),
+    ('Gol', 67),
+    ('Espulsione', 78)
+) AS e(tipo_evento, minuto)
+CROSS JOIN (SELECT id FROM team_player WHERE team_id = 'b0000003-0000-0000-0000-000000000003' ORDER BY random() LIMIT 6) tp;
 
 -- Eventi per SSD New Team U16 (partita 1)
 INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
-SELECT 
+SELECT
     (SELECT id FROM match WHERE team_id = 'b0000004-0000-0000-0000-000000000004' ORDER BY data_ora LIMIT 1),
-    tipo_evento, minuto, player_id
+    tipo_evento, minuto, tp.id
 FROM (VALUES
     ('Gol', 10),
     ('Gol', 25),
@@ -547,22 +547,22 @@ FROM (VALUES
     ('Gol', 55),
     ('Assist', 55),
     ('Gol', 80)
-) AS e(tipo_evento, minuto, player_id)
-CROSS JOIN (SELECT id as player_id FROM team_player WHERE team_id = 'b0000004-0000-0000-0000-000000000004' ORDER BY random() LIMIT 6) tp;
+) AS e(tipo_evento, minuto)
+CROSS JOIN (SELECT id FROM team_player WHERE team_id = 'b0000004-0000-0000-0000-000000000004' ORDER BY random() LIMIT 6) tp;
 
 -- Eventi per DF Academy U15 (partita 1)
 INSERT INTO match_event (match_id, tipo_evento, minuto, player_id)
-SELECT 
+SELECT
     (SELECT id FROM match WHERE team_id = 'b0000002-0000-0000-0000-000000000002' ORDER BY data_ora LIMIT 1),
-    tipo_evento, minuto, player_id
+    tipo_evento, minuto, tp.id
 FROM (VALUES
     ('Gol', 22),
     ('Assist', 22),
     ('Gol', 48),
     ('Ammonizione', 60),
     ('Gol', 75)
-) AS e(tipo_evento, minuto, player_id)
-CROSS JOIN (SELECT id as player_id FROM team_player WHERE team_id = 'b0000002-0000-0000-0000-000000000002' ORDER BY random() LIMIT 5) tp;
+) AS e(tipo_evento, minuto)
+CROSS JOIN (SELECT id FROM team_player WHERE team_id = 'b0000002-0000-0000-0000-000000000002' ORDER BY random() LIMIT 5) tp;
 
 -- ============================================================
 -- 22. FORMAZIONI (match_formation) - Per partite concluse
