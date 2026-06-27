@@ -301,7 +301,7 @@ app.put('/api/auth/users/:id', authMiddleware, async (req, res) => {
     return res.status(403).json({ error: 'Accesso negato' });
   }
   try {
-    const { nome, cognome, ruolo, squadre_accesso, is_active, password } = req.body;
+    const { nome, cognome, ruolo, squadre_accesso, is_active, password, workspace_id, referralCode } = req.body;
     const updateData = {};
     if (nome !== undefined) updateData.nome = nome;
     if (cognome !== undefined) updateData.cognome = cognome;
@@ -311,13 +311,17 @@ app.put('/api/auth/users/:id', authMiddleware, async (req, res) => {
     }
     if (squadre_accesso !== undefined) updateData.squadre_accesso = squadre_accesso;
     if (is_active !== undefined) updateData.is_active = is_active;
+    if (workspace_id !== undefined) updateData.workspace_id = workspace_id;
     if (password) updateData.password_hash = await bcrypt.hash(password, 10);
+    
+    // Recupera utente prima dell'update per il referral
+    const { data: user } = await supabase.from('utente').select('*').eq('id', req.params.id).single();
     
     const { error } = await supabase.from('utente').update(updateData).eq('id', req.params.id);
     if (error) return res.status(500).json({ error: error.message });
 
     // Tracciamento referral se presente
-    if (referralCode && user.workspace_id) {
+    if (referralCode && user?.workspace_id) {
       try {
         await supabase.from('workspace')
           .update({ referral_code: referralCode })
