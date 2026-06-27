@@ -7,7 +7,7 @@ const playerController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('calciatore')
+        .from('player')
         .select('*')
         .eq('id', id)
         .single();
@@ -30,7 +30,7 @@ const playerController = {
       const { nome, cognome, data_nascita, telefono, email, data_visita_medica, matricola_figc, tipo_documento, numero_documento, rilasciato_da, peso, altezza, piede_preferito } = req.body;
       
       const { data, error } = await supabase
-        .from('calciatore')
+        .from('player')
         .update({ 
           nome, 
           cognome, 
@@ -68,19 +68,19 @@ const playerController = {
       
       // Ottieni tutte le squadre del giocatore
       const { data: rose } = await supabase
-        .from('rosa')
-        .select('squadra_id, ruolo')
-        .eq('calciatore_id', id);
+        .from('team_player')
+        .select('team_id, ruolo')
+        .eq('player_id', id);
       
       if (!rose || rose.length === 0) {
         return res.json({ gol: 0, assist: 0, presenze: 0, partite: 0 });
       }
       
-      const sqIds = rose.map(r => r.squadra_id);
+      const sqIds = rose.map(r => r.team_id);
       const { data: partite } = await supabase
-        .from('partita')
+        .from('match')
         .select('id')
-        .in('squadra_id', sqIds)
+        .in('team_id', sqIds)
         .eq('stato', 'Terminata');
       
       if (!partite || partite.length === 0) {
@@ -90,16 +90,16 @@ const playerController = {
       const partitaIds = partite.map(p => p.id);
       
       const { data: eventi } = await supabase
-        .from('evento_partita')
+        .from('match_event')
         .select('tipo_evento_codice')
-        .eq('calciatore_principale_id', id)
-        .in('partita_id', partitaIds);
+        .eq('player_id', id)
+        .in('match_id', partitaIds);
       
       const { data: convocazioni } = await supabase
-        .from('convocazione')
+        .from('convocation')
         .select('presente')
-        .eq('calciatore_id', id)
-        .in('partita_id', partitaIds);
+        .eq('player_id', id)
+        .in('match_id', partitaIds);
       
       const gol = (eventi || []).filter(e => e.tipo_evento_codice === 'GOAL').length;
       const assist = (eventi || []).filter(e => e.tipo_evento_codice === 'ASSIST').length;
@@ -123,18 +123,18 @@ const playerController = {
       const { id } = req.params;
       
       const { data: rosa } = await supabase
-        .from('rosa')
-        .select('squadra_id, numero_maglia, ruolo, stato')
-        .eq('calciatore_id', id);
+        .from('team_player')
+        .select('team_id, numero_maglia, ruolo, stato')
+        .eq('player_id', id);
       
       if (!rosa || rosa.length === 0) {
         return res.json({ historico: [] });
       }
       
-      const sqIds = rosa.map(r => r.squadra_id);
+      const sqIds = rosa.map(r => r.team_id);
       const { data: squadre } = await supabase
-        .from('squadra')
-        .select('id, nome, categoria, stagione:stagione_id(nome)')
+        .from('team')
+        .select('id, nome, categoria, season:season_id(nome)')
         .in('id', sqIds);
       
       const sqMap = {};
@@ -143,9 +143,9 @@ const playerController = {
       });
       
       const historico = rosa.map(r => ({
-        squadra: sqMap[r.squadra_id]?.nome || '?',
-        categoria: sqMap[r.squadra_id]?.categoria || '?',
-        stagione: sqMap[r.squadra_id]?.stagione?.nome || '?',
+        squadra: sqMap[r.team_id]?.nome || '?',
+        categoria: sqMap[r.team_id]?.categoria || '?',
+        stagione: sqMap[r.team_id]?.stagione?.nome || '?',
         numero_maglia: r.numero_maglia,
         ruolo: r.ruolo,
         stato: r.stato
@@ -165,20 +165,20 @@ const playerController = {
       const limit = parseInt(req.query.limit) || 5;
       
       const { data: rosa } = await supabase
-        .from('rosa')
-        .select('squadra_id')
-        .eq('calciatore_id', id);
+        .from('team_player')
+        .select('team_id')
+        .eq('player_id', id);
       
       if (!rosa || rosa.length === 0) {
         return res.json({ partite: [] });
       }
       
-      const sqIds = rosa.map(r => r.squadra_id);
+      const sqIds = rosa.map(r => r.team_id);
       
       const { data: partite } = await supabase
-        .from('partita')
-        .select('*, squadra:squadra_id(nome)')
-        .in('squadra_id', sqIds)
+        .from('match')
+        .select('*, team:team_id(nome)')
+        .in('team_id', sqIds)
         .eq('stato', 'Terminata')
         .order('data_ora', { ascending: false })
         .limit(limit);
@@ -186,17 +186,17 @@ const playerController = {
       // Per ogni partita, verifica se il giocatore ha giocato
       const partiteConStats = await Promise.all((partite || []).map(async (p) => {
         const { data: evento } = await supabase
-          .from('evento_partita')
+          .from('match_event')
           .select('tipo_evento_codice')
-          .eq('partita_id', p.id)
-          .eq('calciatore_principale_id', id)
+          .eq('match_id', p.id)
+          .eq('player_id', id)
           .limit(1);
         
         const { data: convocazione } = await supabase
-          .from('convocazione')
+          .from('convocation')
           .select('presente')
-          .eq('partita_id', p.id)
-          .eq('calciatore_id', id)
+          .eq('match_id', p.id)
+          .eq('player_id', id)
           .single();
         
         return {

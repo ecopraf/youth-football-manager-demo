@@ -1,6 +1,8 @@
 -- ============================================================
--- YOUTH FOOTBALL MANAGER - POPOLAMENTO DATI
+-- YOUTH FOOTBALL MANAGER - POPOLAMENTO DATI (v2.0)
 -- Versione: 2.0 - 2026-06-27
+--
+-- CONVENZIONE: Nomi tabelle in INGLESE, campi in ITALIANO
 --
 -- ATTENZIONE: Questo script INSERISCE i dati!
 --
@@ -68,11 +70,11 @@ INSERT INTO competition (id, nome, tipo, regione, descrizione) VALUES
 -- 3. STAGIONI 2025/26
 -- ============================================================
 
-INSERT INTO stagione (id, workspace_id, nome, anno_inizio, anno_fine, attiva, data_inizio, data_fine, is_default) VALUES
-    ('s0000001-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '2025/26', 2025, 2026, true, '2025-09-01', '2026-06-30', true),
-    ('s0000002-0000-0000-0000-000000000002', '22222222-2222-2222-2222-222222222222', '2025/26', 2025, 2026, true, '2025-09-01', '2026-06-30', true),
-    ('s0000003-0000-0000-0000-000000000003', '752eab50-73c1-495b-9e0e-8b851e9c9a99', '2025/26', 2025, 2026, true, '2025-09-01', '2026-06-30', true),
-    ('s0000004-0000-0000-0000-000000000004', 'ab1186e5-a884-4355-b684-28e32b8157c2', '2025/26', 2025, 2026, true, '2025-09-01', '2026-06-30', true);
+INSERT INTO season (id, workspace_id, nome, data_inizio, data_fine, attiva, is_default) VALUES
+    ('s0000001-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '2025/26', '2025-09-01', '2026-06-30', true, true),
+    ('s0000002-0000-0000-0000-000000000002', '22222222-2222-2222-2222-222222222222', '2025/26', '2025-09-01', '2026-06-30', true, true),
+    ('s0000003-0000-0000-0000-000000000003', '752eab50-73c1-495b-9e0e-8b851e9c9a99', '2025/26', '2025-09-01', '2026-06-30', true, true),
+    ('s0000004-0000-0000-0000-000000000004', 'ab1186e5-a884-4355-b684-28e32b8157c2', '2025/26', '2025-09-01', '2026-06-30', true, true);
 
 -- ============================================================
 -- 4. FACILITY (impianti sportivi)
@@ -161,7 +163,7 @@ INSERT INTO team_staff (team_id, staff_id, ruolo_squadra) VALUES
 -- 8. PLAYERS SSD New Team U15 (22 giocatori - nati 2011)
 -- ============================================================
 
-INSERT INTO calciatore (id, nome, cognome, data_nascita, telefono, sesso) VALUES
+INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
     ('pU15-0001-0000-0000-000000000001', 'Lorenzo', 'Rossi', '2011-03-15', '3331111111', 'M'),
     ('pU15-0002-0000-0000-000000000002', 'Alessandro', 'Bianchi', '2011-07-22', '3332222222', 'M'),
     ('pU15-0003-0000-0000-000000000003', 'Matteo', 'Verdi', '2011-01-10', '3333333333', 'M'),
@@ -189,7 +191,7 @@ INSERT INTO calciatore (id, nome, cognome, data_nascita, telefono, sesso) VALUES
 -- 9. PLAYERS SSD New Team U16 (20 giocatori - nati 2010)
 -- ============================================================
 
-INSERT INTO calciatore (id, nome, cognome, data_nascita, telefono, sesso) VALUES
+INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
     ('pU16-0001-0000-0000-000000000001', 'Alessio', 'Colombo', '2010-02-15', '3341111111', 'M'),
     ('pU16-0002-0000-0000-000000000002', 'Mattia', 'Ferrero', '2010-05-22', '3342222222', 'M'),
     ('pU16-0003-0000-0000-000000000003', 'Lorenzo', 'De Luca', '2010-08-10', '3343333333', 'M'),
@@ -215,7 +217,7 @@ INSERT INTO calciatore (id, nome, cognome, data_nascita, telefono, sesso) VALUES
 -- 10. PLAYERS SSD New Team U17 (18 giocatori - nati 2009)
 -- ============================================================
 
-INSERT INTO calciatore (id, nome, cognome, data_nascita, telefono, sesso) VALUES
+INSERT INTO player (id, nome, cognome, data_nascita, telefono, sesso) VALUES
     ('pU17-0001-0000-0000-000000000001', 'Tommaso', 'Monti', '2009-03-15', '3351111111', 'M'),
     ('pU17-0002-0000-0000-000000000002', 'Alessandro', 'De Angelis', '2009-06-22', '3352222222', 'M'),
     ('pU17-0003-0000-0000-000000000003', 'Luca', 'Pellegrini', '2009-02-10', '3353333333', 'M'),
@@ -384,11 +386,11 @@ SELECT 'Popolamento completato!' AS status;
 
 SELECT 'Categorie:' AS info, COUNT(*) AS count FROM category;
 SELECT 'Competizioni:' AS info, COUNT(*) AS count FROM competition;
-SELECT 'Stagioni:' AS info, COUNT(*) AS count FROM stagione;
+SELECT 'Stagioni:' AS info, COUNT(*) AS count FROM season;
 SELECT 'Facility:' AS info, COUNT(*) AS count FROM facility;
 SELECT 'Staff:' AS info, COUNT(*) AS count FROM staff;
 SELECT 'Team:' AS info, COUNT(*) AS count FROM team;
 SELECT 'Team Staff:' AS info, COUNT(*) AS count FROM team_staff;
-SELECT 'Players:' AS info, COUNT(*) AS count FROM calciatore;
+SELECT 'Players:' AS info, COUNT(*) AS count FROM player;
 SELECT 'Team Players:' AS info, COUNT(*) AS count FROM team_player;
 SELECT 'Partite:' AS info, COUNT(*) AS count FROM match;

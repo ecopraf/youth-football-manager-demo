@@ -48,7 +48,35 @@ Macro-aree funzionali:
 - `frontend-v2/src/components/layout/Sidebar.js` → layout + sidebar + header
 
 ### Database (Supabase)
-Tabelle principali: `utente`, `guest_token`, `calciatori`, `rosa`, `squadra`, `stagione`, `workspace`, `partita` (con campo `archiviata`), `convocazione`, `formazione_partita`, `evento_partita`, `valutazione_partita`, `presenza_allenamento`, `configurazione_allenamento`.
+
+#### Convenzione Naming (v2.0 - Giugno 2026)
+- **Tabelle**: 🇬🇧 Inglese (es. `player`, `team`, `match`)
+- **Colonne**: 🇮🇹 Italiano (es. `nome`, `cognome`, `data_nascita`)
+
+#### Tabelle Principali
+| Tabella (EN) | Descrizione | Ex Tabella (IT) |
+|--------------|-------------|-----------------|
+| `users` | Utenti sistema | utente |
+| `player` | Anagrafica calciatori | calciatore |
+| `team` | Squadre per stagione | squadra |
+| `season` | Stagioni sportive | stagione |
+| `team_player` | Assegnazione giocatori-squadra | rosa |
+| `match` | Partite | partita |
+| `match_event` | Eventi partita | evento_partita |
+| `convocation` | Convocazioni | convocazione |
+| `match_formation` | Formazioni tattiche | formazione_partita |
+| `training` | Allenamenti | allenamento |
+| `training_attendance` | Presenze allenamenti | presenza_allenamento |
+| `category` | Categorie (Under 14, etc.) | - |
+| `competition` | Campionati/Competizioni | - |
+| `facility` | Impianti sportivi | - |
+| `staff` | Anagrafica personale | - |
+| `team_staff` | Assegnazione staff a squadra | - |
+| `match_statistics` | Statistiche partita | - |
+| `document` | Documenti polimorfici | - |
+| `workspace` | Società/Organizzazioni | - |
+
+> ⚠️ Nota: alcune tabelle legacy (`utente`, `stagione`, `calciatore`, `squadra`) sono ancora presenti nel DB per retrocompatibilità ma verranno rimosse nelle prossime migrazioni.
 
 ---
 
@@ -144,8 +172,8 @@ Tabelle principali: `utente`, `guest_token`, `calciatori`, `rosa`, `squadra`, `s
 ## 5. Logica Archiviazione Partite
 
 ### Campo Database
-- Tabella: `partita`
-- Campo: `archiviata` (boolean, default false)
+- Tabella: `match`
+- Campo: `archiviata` (boolean, default false) - nota: nel nuovo schema è `archiviata` (femminile) in italiano
 
 ### Endpoint API
 - `PUT /api/partite/:id/archivia` - Archivia partita

@@ -7,7 +7,7 @@ const seasonController = {
       const workspaceId = req.query.workspace_id;
       
       let query = supabase
-        .from('stagione')
+        .from('season')
         .select('*')
         .order('anno_inizio', { ascending: false });
       
@@ -34,7 +34,7 @@ const seasonController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('stagione')
+        .from('season')
         .select('*, workspace:workspace_id(id, nome)')
         .eq('id', id)
         .single();
@@ -60,7 +60,7 @@ const seasonController = {
       }
       
       const { data, error } = await supabase
-        .from('stagione')
+        .from('season')
         .insert({
           workspace_id,
           nome,
@@ -91,7 +91,7 @@ const seasonController = {
       const { nome, anno_inizio, anno_fine, data_inizio, data_fine, attiva } = req.body;
       
       const { data, error } = await supabase
-        .from('stagione')
+        .from('season')
         .update({ nome, anno_inizio, anno_fine, data_inizio, data_fine, attiva })
         .eq('id', id)
         .select()
@@ -115,16 +115,16 @@ const seasonController = {
       
       // Verifica che non ci siano squadre
       const { data: teams } = await supabase
-        .from('squadra')
+        .from('team')
         .select('id')
-        .eq('stagione_id', id);
+        .eq('season_id', id);
       
       if (teams && teams.length > 0) {
         return res.status(400).json({ error: 'Elimina prima le squadre associate' });
       }
       
       const { error } = await supabase
-        .from('stagione')
+        .from('season')
         .delete()
         .eq('id', id);
       
@@ -145,9 +145,9 @@ const seasonController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('squadra')
+        .from('team')
         .select('*')
-        .eq('stagione_id', id)
+        .eq('season_id', id)
         .order('nome');
       
       if (error) {
@@ -172,9 +172,9 @@ const seasonController = {
       }
       
       const { data, error } = await supabase
-        .from('squadra')
+        .from('team')
         .insert({
-          stagione_id: id,
+          season_id: id,
           nome,
           categoria,
           allenatore,

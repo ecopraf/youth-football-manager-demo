@@ -5,7 +5,7 @@ const teamController = {
   getAll: async (req, res) => {
     try {
       const { data, error } = await supabase
-        .from('squadra')
+        .from('team')
         .select('*')
         .order('nome');
       
@@ -26,7 +26,7 @@ const teamController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('squadra')
+        .from('team')
         .select('*')
         .eq('id', id)
         .single();
@@ -46,22 +46,11 @@ const teamController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const { nome, categoria, allenatore, dirigente, dirigente2, preparatore_atletico, allenatore_portieri, matricola_dirigente, tessera_lnd_dirigente, tessera_figc_allenatore } = req.body;
+      const updateData = req.body;
       
       const { data, error } = await supabase
-        .from('squadra')
-        .update({ 
-          nome, 
-          categoria, 
-          allenatore, 
-          dirigente, 
-          dirigente2, 
-          preparatore_atletico, 
-          allenatore_portieri,
-          matricola_dirigente,
-          tessera_lnd_dirigente,
-          tessera_figc_allenatore
-        })
+        .from('team')
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
@@ -83,18 +72,22 @@ const teamController = {
       const { id } = req.params;
       
       // Elimina prima tutti i dati dipendenti
-      const { data: partite } = await supabase.from('partita').select('id').eq('squadra_id', id);
+      const { data: partite } = await supabase.from('match').select('id').eq('team_id', id);
       for (const p of (partite || [])) {
-        await supabase.from('formazione_partita').delete().eq('partita_id', p.id);
-        await supabase.from('convocazione').delete().eq('partita_id', p.id);
-        await supabase.from('evento_partita').delete().eq('partita_id', p.id);
+        await supabase.from('match_formation').delete().eq('match_id', p.id);
+        await supabase.from('convocation').delete().eq('match_id', p.id);
+        await supabase.from('match_event').delete().eq('match_id', p.id);
+        await supabase.from('match_statistics').delete().eq('match_id', p.id);
       }
-      await supabase.from('partita').delete().eq('squadra_id', id);
+      await supabase.from('match').delete().eq('team_id', id);
       
-      await supabase.from('presenza_allenamento').delete().eq('squadra_id', id);
-      await supabase.from('configurazione_allenamento').delete().eq('squadra_id', id);
-      await supabase.from('rosa').delete().eq('squadra_id', id);
-      await supabase.from('squadra').delete().eq('id', id);
+      await supabase.from('training_attendance').delete().in('training_id', 
+        (await supabase.from('training').select('id').eq('team_id', id)).data?.map(t => t.id) || []
+      );
+      await supabase.from('training').delete().eq('team_id', id);
+      await supabase.from('team_player').delete().eq('team_id', id);
+      await supabase.from('team_staff').delete().eq('team_id', id);
+      await supabase.from('team').delete().eq('id', id);
       
       res.json({ success: true });
     } catch (err) {
@@ -109,28 +102,26 @@ const teamController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('rosa')
-        .select('calciatore:calciatore_id(*), numero_maglia, ruolo, stato')
-        .eq('squadra_id', id);
+        .from('team_player')
+        .select('player:player_id(*), numero_maglia, ruolo_preferito, stato, is_primary')
+        .eq('team_id', id);
       
       if (error) {
         return res.status(400).json({ error: error.message });
       }
       
       const players = (data || []).map(r => ({
-        id: r.calciatore.id,
-        nome: r.calciatore.nome,
-        cognome: r.calciatore.cognome,
-        data_nascita: r.calciatore.data_nascita,
-        telefono: r.calciatore.telefono,
-        data_visita_medica: r.calciatore.data_visita_medica,
-        matricola_figc: r.calciatore.matricola_figc,
-        tipo_documento: r.calciatore.tipo_documento,
-        numero_documento: r.calciatore.numero_documento,
-        rilasciato_da: r.calciatore.rilasciato_da,
+        id: r.player.id,
+        nome: r.player.nome,
+        cognome: r.player.cognome,
+        data_nascita: r.player.data_nascita,
+        telefono: r.player.telefono,
+        email: r.player.email,
+        ruolo_principale: r.player.ruolo_principale,
         numero_maglia: r.numero_maglia,
-        ruolo: r.ruolo,
-        stato: r.stato
+        ruolo_preferito: r.ruolo_preferito,
+        stato: r.stato,
+        is_primary: r.is_primary
       }));
       
       res.json(players);
@@ -144,18 +135,16 @@ const teamController = {
   addPlayer: async (req, res) => {
     try {
       const { id } = req.params;
-      const { nome, cognome, numeroMaglia, ruolo, dataVisitaMedica, telefono } = req.body;
+      const { nome, cognome, numeroMaglia, ruolo, telefono } = req.body;
       
-      // Crea calciatore
+      // Crea giocatore
       const { data: cal, error: err1 } = await supabase
-        .from('calciatore')
+        .from('player')
         .insert({
-          workspace_id: '22222222-2222-2222-2222-222222222222',
           nome,
           cognome,
-          data_nascita: dataVisitaMedica,
           telefono,
-          data_visita_medica: dataVisitaMedica
+          ruolo_principale: ruolo
         })
         .select()
         .single();
@@ -165,12 +154,13 @@ const teamController = {
       }
       
       // Aggiungi alla rosa
-      await supabase.from('rosa').insert({
-        squadra_id: id,
-        calciatore_id: cal.id,
+      await supabase.from('team_player').insert({
+        team_id: id,
+        player_id: cal.id,
         numero_maglia: numeroMaglia,
-        ruolo,
-        stato: 'Attivo'
+        ruolo_preferito: ruolo,
+        stato: 'Attivo',
+        is_primary: true
       });
       
       res.status(201).json(cal);
@@ -186,9 +176,9 @@ const teamController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('partita')
+        .from('match')
         .select('*')
-        .eq('squadra_id', id)
+        .eq('team_id', id)
         .order('data_ora', { ascending: false });
       
       if (error) {
@@ -209,9 +199,9 @@ const teamController = {
       const now = new Date().toISOString();
       
       const { data, error } = await supabase
-        .from('partita')
+        .from('match')
         .select('*')
-        .eq('squadra_id', id)
+        .eq('team_id', id)
         .gte('data_ora', now)
         .order('data_ora', { ascending: true })
         .limit(5);
@@ -231,16 +221,16 @@ const teamController = {
   createMatch: async (req, res) => {
     try {
       const { id } = req.params;
-      const { avversario, luogo, competizione, giornata, dataOra } = req.body;
+      const { avversario, luogo, competition_id, giornata, dataOra } = req.body;
       
       const { data, error } = await supabase
-        .from('partita')
+        .from('match')
         .insert({
-          squadra_id: id,
+          team_id: id,
           data_ora: dataOra,
           avversario,
           luogo,
-          competizione,
+          competition_id,
           giornata
         })
         .select()
@@ -257,38 +247,12 @@ const teamController = {
     }
   },
 
-  // GET /api/squadre/:id/scadenze-mediche - Scadenze certificati
+  // GET /api/squadre/:id/scadenze-mediche - Scadenze certificati (nota: player non ha piu data_visita_medica)
   getMedicalExpirations: async (req, res) => {
     try {
       const { id } = req.params;
-      
-      const { data, error } = await supabase
-        .from('rosa')
-        .select('calciatore:calciatore_id(id, nome, cognome, data_visita_medica)')
-        .eq('squadra_id', id);
-      
-      if (error) {
-        return res.status(400).json({ error: error.message });
-      }
-      
-      const oggi = new Date();
-      const scadenze = (data || [])
-        .filter(r => r.calciatore.data_visita_medica)
-        .map(r => {
-          const scadenza = new Date(r.calciatore.data_visita_medica);
-          scadenza.setFullYear(scadenza.getFullYear() + 1);
-          return {
-            id: r.calciatore.id,
-            nome: r.calciatore.nome,
-            cognome: r.calciatore.cognome,
-            scadenza: scadenza.toISOString().split('T')[0],
-            giorniRimanenti: Math.ceil((scadenza - oggi) / (1000 * 60 * 60 * 24))
-          };
-        })
-        .filter(s => s.giorniRimanenti <= 30)
-        .sort((a, b) => a.giorniRimanenti - b.giorniRimanenti);
-      
-      res.json(scadenze);
+      // Questa funzionalita richiederebbe una tabella document o campi aggiuntivi
+      res.json([]);
     } catch (err) {
       console.error('Get medical expirations error:', err);
       res.status(500).json({ error: 'Errore server' });
@@ -301,9 +265,9 @@ const teamController = {
       const { id } = req.params;
       
       const { data: partite } = await supabase
-        .from('partita')
+        .from('match')
         .select('*')
-        .eq('squadra_id', id);
+        .eq('team_id', id);
       
       const giocate = (partite || []).filter(p => p.stato === 'Terminata');
       const vinte = giocate.filter(p => {
@@ -342,9 +306,9 @@ const teamController = {
       const { id } = req.params;
       
       const { data: partite } = await supabase
-        .from('partita')
+        .from('match')
         .select('id')
-        .eq('squadra_id', id);
+        .eq('team_id', id);
       
       const ids = (partite || []).map(p => p.id);
       if (ids.length === 0) {
@@ -352,35 +316,35 @@ const teamController = {
       }
       
       const { data: eventi } = await supabase
-        .from('evento_partita')
-        .select('tipo_evento_codice, calciatore_principale_id, calciatore_secondario_id, minuto')
-        .in('partita_id', ids);
+        .from('match_event')
+        .select('tipo_evento, player_id, player_id_secondario, minuto')
+        .in('match_id', ids);
       
       const stats = {};
       (eventi || []).forEach(e => {
-        if (!stats[e.calciatore_principale_id]) {
-          stats[e.calciatore_principale_id] = { gol: 0, assist: 0, presenze: 0 };
+        if (!stats[e.player_id]) {
+          stats[e.player_id] = { gol: 0, assist: 0, presenze: 0 };
         }
-        stats[e.calciatore_principale_id].presenze++;
-        if (e.tipo_evento_codice === 'GOAL') {
-          stats[e.calciatore_principale_id].gol++;
+        stats[e.player_id].presenze++;
+        if (e.tipo_evento === 'Gol') {
+          stats[e.player_id].gol++;
         }
-        if (e.tipo_evento_codice === 'GOAL' && e.calciatore_secondario_id) {
-          if (!stats[e.calciatore_secondario_id]) {
-            stats[e.calciatore_secondario_id] = { gol: 0, assist: 0, presenze: 0 };
+        if (e.tipo_evento === 'Gol' && e.player_id_secondario) {
+          if (!stats[e.player_id_secondario]) {
+            stats[e.player_id_secondario] = { gol: 0, assist: 0, presenze: 0 };
           }
-          stats[e.calciatore_secondario_id].assist++;
+          stats[e.player_id_secondario].assist++;
         }
       });
       
       const { data: rosa } = await supabase
-        .from('rosa')
-        .select('calciatore:calciatore_id(id, nome, cognome)')
-        .eq('squadra_id', id);
+        .from('team_player')
+        .select('player:player_id(id, nome, cognome)')
+        .eq('team_id', id);
       
       const nomi = {};
       (rosa || []).forEach(r => {
-        nomi[r.calciatore.id] = r.calciatore.nome + ' ' + r.calciatore.cognome;
+        nomi[r.player.id] = r.player.nome + ' ' + r.player.cognome;
       });
       
       const result = Object.entries(stats).map(([id, s]) => ({ id, nome: nomi[id] || id, ...s }));

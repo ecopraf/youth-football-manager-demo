@@ -106,7 +106,7 @@ const workspaceController = {
       
       // Non permettere eliminazione se ci sono stagioni
       const { data: seasons } = await supabase
-        .from('stagione')
+        .from('season')
         .select('id')
         .eq('workspace_id', id);
       
@@ -158,7 +158,7 @@ const workspaceController = {
       const { id } = req.params;
       
       const { data, error } = await supabase
-        .from('stagione')
+        .from('season')
         .select('*')
         .eq('workspace_id', id)
         .order('anno_inizio', { ascending: false });
@@ -185,7 +185,7 @@ const workspaceController = {
       }
       
       const { data, error } = await supabase
-        .from('stagione')
+        .from('season')
         .insert({
           workspace_id: id,
           nome,
@@ -220,7 +220,7 @@ const workspaceController = {
       
       // Ottieni workspace dell'utente
       const { data: user } = await supabase
-        .from('utente')
+        .from('users')
         .select('workspace_id')
         .eq('id', userId)
         .single();

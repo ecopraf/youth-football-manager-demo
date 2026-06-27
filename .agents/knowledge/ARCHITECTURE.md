@@ -38,8 +38,11 @@
 
 ### Database
 - **Provider**: Supabase (PostgreSQL)
-- **Auth Tables**: `utente`, `guest_token`
-- **Business Tables**: `calciatori`, `squadra`, `stagione`, `partita`, etc.
+- **Convenzione naming**: Tabelle in EN, Colonne in IT
+- **Auth Tables**: `users`, `guest_token`
+- **Business Tables**: `player`, `team`, `season`, `match`, etc.
+
+> ⚠️ Schema aggiornato a v2.0 (Giugno 2026): tabelle in inglese, colonne in italiano
 
 ## Struttura Repository
 
@@ -127,44 +130,81 @@ youth-football-manager/
 | POST | `/partite/:id/eventi-batch` | Batch eventi |
 | DELETE | `/partite/:id/eventi-batch` | Elimina eventi |
 
-## Schema Database
+## Schema Database (v2.0)
+
+### Convenzione Naming
+- **Tabelle**: 🇬🇧 Inglese (es. `player`, `team`, `match`)
+- **Colonne**: 🇮🇹 Italiano (es. `nome`, `cognome`, `data_nascita`)
 
 ### Tabelle Principali
 
 ```sql
 -- Workspace (Multi-tenant)
-workspace (id, nome, logo_url, data_creazione)
+workspace (id, nome, logo_url, created_at)
 
--- Stagione
-stagione (id, workspace_id, nome, data_inizio, data_fine, is_attiva)
+-- Users (ex utente)
+users (id, email, password_hash, nome, cognome, ruolo, workspace_id, ...)
 
--- Squadra
-squadra (id, stagione_id, nome, categoria, allenatore, dirigente, ...)
+-- Season (ex stagione)
+season (id, workspace_id, nome, data_inizio, data_fine, attiva, is_default, created_at)
 
--- Giocatore
-calciatori (id, nome, cognome, data_nascita, ruolo, numero_maglia, ...)
+-- Player (ex calciatori)
+player (id, nome, cognome, data_nascita, sesso, telefono, email, 
+        ruolo_principale, piede_preferito, altezza, peso, ...)
 
--- Rosa (associazione giocatore-squadra)
-rosa (id, squadra_id, calciatore_id, ...)
+-- Category (categorie Under 14, U15, etc.)
+category (id, workspace_id, nome, tipo_campionato, anno_da, anno_a, genere, ...)
 
--- Partita
-partita (id, squadra_id, avversario, data, luogo, risultato_casa, 
-         risultato_ospite, archiviata, ...)
+-- Competition (campionati)
+competition (id, nome, tipo, federazione, regione, logo_url, ...)
 
--- Eventi Partita
-evento_partita (id, partita_id, calciatore_id, tipo, minuto, ...)
+-- Facility (impianti sportivi)
+facility (id, nome, indirizzo, citta, capienza, superficie, tipo, ...)
 
--- Convocazione
-convocazione (id, partita_id, calciatore_id, confermata, ...)
+-- Team (ex squadra)
+team (id, season_id, category_id, nome, colori_casa, colori_trasferta, 
+      venue_id, allenatore_id, dirigente_id, preparatore_id, portieri_id, ...)
 
--- Formazione
-formazione_partita (id, partita_id, calciatore_id, ruolo_in_partita, ...)
+-- Staff (personale)
+staff (id, nome, cognome, data_nascita, ruolo, qualifiche, documento, ...)
 
--- Valutazioni
-valutazione_partita (id, partita_id, calciatore_id, voto, ...)
+-- Team Staff (assegnazione staff a squadra)
+team_staff (id, team_id, staff_id, ruolo_squadra, data_assegnazione, ...)
 
--- Utenti e Auth
-utente (id, email, password_hash, nome, cognome, ruolo, workspace_id, ...)
+-- Team Player (ex rosa - associazione giocatore-squadra)
+team_player (id, team_id, player_id, is_primary, numero_maglia, 
+            ruolo_preferito, stato, data_assegnazione, ...)
+
+-- Match (ex partita)
+match (id, team_id, competition_id, venue_id, data_ora, avversario, luogo,
+       giornata, gol_casa, gol_ospite, stato, archiviata, ...)
+
+-- Match Event (ex evento_partita)
+match_event (id, match_id, tipo_evento, minuto, player_id, player_id_secondario, ...)
+
+-- Match Formation (ex formazione_partita)
+match_formation (id, match_id, team_player_id, posizione, numero_maglia,
+                is_captain, is_vice_captain, is_starter, ...)
+
+-- Convocation (ex convocazione)
+convocation (id, match_id, team_player_id, convocato_da, convocato_il,
+            confermato, presente, ...)
+
+-- Training (ex allenamento)
+training (id, team_id, venue_id, data_ora, durata_minuti, tipo, ...)
+
+-- Training Attendance (ex presenza_allenamento)
+training_attendance (id, training_id, team_player_id, presente, motivi_assenza, ...)
+
+-- Match Statistics
+match_statistics (id, match_id, team_player_id, minuti_giocati, gol, assist,
+                  tiri, passaggi, falli, ammonizioni, espulsioni, ...)
+
+-- Document (polimorfico)
+document (id, tipo, entita_tipo, entita_id, file_url, nome_file, 
+          mime_type, dimensione, data_upload, scadenza, ...)
+
+-- Guest Token
 guest_token (id, token, tipo, utente_id, scadenza, ...)
 ```
 

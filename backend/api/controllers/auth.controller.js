@@ -16,7 +16,7 @@ const authController = {
       }
       
       const { data: users, error } = await supabase
-        .from('utente')
+        .from('users')
         .select('*')
         .eq('email', email.toLowerCase())
         .eq('is_active', true)
@@ -69,7 +69,7 @@ const authController = {
       }
       
       const { data: existing } = await supabase
-        .from('utente')
+        .from('users')
         .select('id')
         .eq('email', email.toLowerCase())
         .single();
@@ -81,7 +81,7 @@ const authController = {
       const password_hash = await bcrypt.hash(password, 10);
       
       const { data: newUser, error } = await supabase
-        .from('utente')
+        .from('users')
         .insert({
           email: email.toLowerCase(),
           password_hash,
@@ -130,7 +130,7 @@ const authController = {
   me: async (req, res) => {
     try {
       const { data: user, error } = await supabase
-        .from('utente')
+        .from('users')
         .select('id, nome, cognome, email, ruolo, workspace_id, ruoli, squadre_accesso, is_superadmin')
         .eq('id', req.user.id)
         .single();
@@ -152,7 +152,7 @@ const authController = {
       const { nome, cognome, telefono } = req.body;
       
       const { data, error } = await supabase
-        .from('utente')
+        .from('users')
         .update({ nome, cognome, telefono })
         .eq('id', req.user.id)
         .select()
@@ -175,7 +175,7 @@ const authController = {
       const workspaceId = req.query.workspace_id;
       
       let query = supabase
-        .from('utente')
+        .from('users')
         .select('id, nome, cognome, email, ruolo, workspace_id, ruoli, squadre_accesso, is_superadmin, is_active')
         .eq('is_active', true)
         .order('cognome');
@@ -205,7 +205,7 @@ const authController = {
       const password_hash = await bcrypt.hash(password || 'ChangeMe123!', 10);
       
       const { data, error } = await supabase
-        .from('utente')
+        .from('users')
         .insert({
           email: email.toLowerCase(),
           password_hash,
@@ -238,7 +238,7 @@ const authController = {
       const { nome, cognome, ruolo, workspace_id, ruoli, squadre_accesso, is_active } = req.body;
       
       const { data, error } = await supabase
-        .from('utente')
+        .from('users')
         .update({ 
           nome, 
           cognome, 
@@ -269,7 +269,7 @@ const authController = {
       const { id } = req.params;
       
       const { error } = await supabase
-        .from('utente')
+        .from('users')
         .update({ is_active: false })
         .eq('id', id);
       

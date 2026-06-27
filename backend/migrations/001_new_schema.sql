@@ -1,98 +1,60 @@
 -- ============================================================
--- YOUTH FOOTBALL MANAGER - NUOVO SCHEMA DB
--- Versione: 1.4 - 2026-06-27
+-- YOUTH FOOTBALL MANAGER - NUOVO SCHEMA DB (v2.0)
+-- Versione: 2.0 - 2026-06-27
 --
--- Questo script CREA SOLO LA STRUTTURA DEL DATABASE
+-- CONVENZIONE: Nomi tabelle in INGLESE, campi in ITALIANO
+--
+-- Questo script CREA LA STRUTTURA COMPLETA DEL DATABASE
 -- I dati vengono inseriti tramite webapp o script dedicati
 --
--- CONTENUTO:
--- 1. Drop tabelle vecchie
--- 2. Creazione tabelle nuove
--- 3. Modifica tabelle esistenti
--- 4. Creazione indici
---
--- ELENCO TABELLE NUOVE:
--- - category     (categorie - globali o specifiche del workspace)
--- - competition  (campionati/competizioni)
--- - facility    (impianti sportivi)
--- - staff       (anagrafica personale)
--- - team        (squadre per stagione)
--- - team_player (assegnazione giocatori - supporta aggregazioni)
--- - team_staff  (assegnazione staff)
--- - match       (partite)
--- - match_event (eventi partita)
--- - match_formation (formazione)
--- - convocation (convocazioni)
--- - training    (allenamenti)
--- - training_attendance (presenze allenamenti)
--- - match_statistics (statistiche)
--- - document    (documenti polimorfici)
---
--- NOTE:
--- - Categoria: workspace_id=NULL (globale), valorizzato (specifica)
--- - Giocatori: un calciatore puo' essere in piu' squadre (aggregazioni)
--- - team_player.is_primary = TRUE (rosa principale), FALSE (aggregazione)
 -- ============================================================
 
+
 -- 1. DROP TABELLE VECCHIE
-DROP TABLE IF EXISTS rosa CASCADE;
-DROP TABLE IF EXISTS partita CASCADE;
-DROP TABLE IF EXISTS evento_partita CASCADE;
-DROP TABLE IF EXISTS allenamento CASCADE;
-DROP TABLE IF EXISTS presenza_allenamento CASCADE;
-DROP TABLE IF EXISTS formazione_partita CASCADE;
-DROP TABLE IF EXISTS configurazione_allenamento CASCADE;
+DROP TABLE IF EXISTS match_statistics CASCADE;
+DROP TABLE IF EXISTS training_attendance CASCADE;
+DROP TABLE IF EXISTS convocation CASCADE;
+DROP TABLE IF EXISTS match_formation CASCADE;
+DROP TABLE IF EXISTS match_event CASCADE;
+DROP TABLE IF EXISTS match CASCADE;
+DROP TABLE IF EXISTS team_staff CASCADE;
+DROP TABLE IF EXISTS team_player CASCADE;
+DROP TABLE IF EXISTS team CASCADE;
+DROP TABLE IF EXISTS training CASCADE;
+DROP TABLE IF EXISTS document CASCADE;
+DROP TABLE IF EXISTS staff CASCADE;
+DROP TABLE IF EXISTS player CASCADE;
+DROP TABLE IF EXISTS facility CASCADE;
+DROP TABLE IF EXISTS competition CASCADE;
+DROP TABLE IF EXISTS category CASCADE;
+DROP TABLE IF EXISTS season CASCADE;
 
--- 2. CREA TABELLE NUOVE
+-- ============================================================
+-- 2. TABELLE ANAGRAFICHE (PERSISTENTI)
+-- ============================================================
 
--- CATEGORY
--- Nota: workspace_id NULL = categoria globale (creata da superadmin)
---       workspace_id valorizzato = categoria specifica del workspace (creata dall'admin del workspace)
-CREATE TABLE category (
+
+-- PLAYER - Anagrafica calciatori
+CREATE TABLE player (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    workspace_id UUID REFERENCES workspace(id) ON DELETE CASCADE,
     nome VARCHAR(100) NOT NULL,
-    tipo_campionato VARCHAR(50) DEFAULT 'Regionale',
-    anno_da INTEGER NOT NULL,
-    anno_a INTEGER NOT NULL,
-    genere VARCHAR(10) DEFAULT 'M',
-    is_active BOOLEAN DEFAULT true,
-    descrizione TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-COMMENT ON COLUMN category.workspace_id IS 'NULL = categoria globale, valorizzato = specifica del workspace';
-COMMENT ON COLUMN category.tipo_campionato IS 'Provinciale, Regionale, Elite, Pro';
-
--- COMPETITION
-CREATE TABLE competition (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nome VARCHAR(200) NOT NULL,
-    tipo VARCHAR(50) DEFAULT 'Campionato',
-    federazione VARCHAR(100),
-    regione VARCHAR(100),
-    logo_url TEXT,
-    descrizione TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- FACILITY
-CREATE TABLE facility (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nome VARCHAR(200) NOT NULL,
-    indirizzo TEXT,
-    citta VARCHAR(100),
-    capienza INTEGER,
-    superficie VARCHAR(50),
-    tipo VARCHAR(50),
-    illuminazione BOOLEAN DEFAULT false,
-    servizi TEXT[],
-    coordinate_gps JSONB,
+    cognome VARCHAR(100) NOT NULL,
+    data_nascita DATE,
+    sesso VARCHAR(1) DEFAULT 'M',
+    foto_url TEXT,
+    telefono VARCHAR(50),
+    email VARCHAR(255),
+    ruolo_principale VARCHAR(50),
+    piede_preferito VARCHAR(20),
+    altezza INTEGER,
+    peso INTEGER,
     note TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- STAFF
+
+-- STAFF - Anagrafica personale (allenatori, dirigenti, preparatori, etc.)
 CREATE TABLE staff (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nome VARCHAR(100) NOT NULL,
@@ -102,7 +64,7 @@ CREATE TABLE staff (
     foto_url TEXT,
     telefono VARCHAR(50),
     email VARCHAR(255),
-    ruolo VARCHAR(50) NOT NULL,
+    ruolo VARCHAR(50) NOT NULL,          -- Allenatore, Dirigente, Preparatore, Portieri, etc.
     qualifiche JSONB DEFAULT '{}',
     documento JSONB DEFAULT '{}',
     note TEXT,
@@ -110,10 +72,95 @@ CREATE TABLE staff (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- TEAM
+
+-- CATEGORY - Categorie (Under 14, Under 15, etc.)
+-- Nota: workspace_id NULL = categoria globale (creata da superadmin)
+--       workspace_id valorizzato = categoria specifica del workspace
+CREATE TABLE category (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workspace_id UUID REFERENCES workspace(id) ON DELETE CASCADE,
+    nome VARCHAR(100) NOT NULL,
+    tipo_campionato VARCHAR(50) DEFAULT 'Regionale',  -- Provinciale, Regionale, Elite, Pro
+    anno_da INTEGER NOT NULL,          -- Es. 2012 per U14
+    anno_a INTEGER NOT NULL,           -- Es. 2012 per U14
+    genere VARCHAR(10) DEFAULT 'M',
+    is_active BOOLEAN DEFAULT true,
+    descrizione TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+COMMENT ON COLUMN category.workspace_id IS 'NULL = categoria globale, valorizzato = specifica del workspace';
+
+
+-- COMPETITION - Campionati/Competizioni
+CREATE TABLE competition (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nome VARCHAR(200) NOT NULL,
+    tipo VARCHAR(50) DEFAULT 'Campionato',  -- Campionato, Coppa, Torneo, Amichevole
+    federazione VARCHAR(100),
+    regione VARCHAR(100),
+    logo_url TEXT,
+    descrizione TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- FACILITY - Impianti sportivi
+CREATE TABLE facility (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nome VARCHAR(200) NOT NULL,
+    indirizzo TEXT,
+    citta VARCHAR(100),
+    capienza INTEGER,
+    superficie VARCHAR(50),              -- Erba naturale, Erba sintetica, Terra battuta, etc.
+    tipo VARCHAR(50),                    -- Stadio, Centro sportivo, Campo comunale, etc.
+    illuminazione BOOLEAN DEFAULT false,
+    servizi TEXT[],
+    coordinate_gps JSONB,
+    note TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- DOCUMENT - Documenti polimorfici (con entita_tipo + entita_id)
+CREATE TABLE document (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tipo VARCHAR(50) NOT NULL,           -- Convocazione, Distinta, Report, etc.
+    entita_tipo VARCHAR(50) NOT NULL,    -- team, match, training, player, staff
+    entita_id UUID NOT NULL,
+    file_url TEXT NOT NULL,
+    nome_file VARCHAR(255),
+    mime_type VARCHAR(100),
+    dimensione INTEGER,
+    data_upload TIMESTAMP DEFAULT NOW(),
+    scadenza DATE,
+    note TEXT
+);
+
+
+-- ============================================================
+-- 3. TABELLE STAGIONALI
+-- ============================================================
+
+
+-- SEASON - Stagione sportiva
+CREATE TABLE season (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workspace_id UUID NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    nome VARCHAR(100) NOT NULL,          -- Es. "Stagione 2025/2026"
+    data_inizio DATE,
+    data_fine DATE,
+    attiva BOOLEAN DEFAULT false,
+    is_default BOOLEAN DEFAULT false,    -- Stagione predefinita per il workspace
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- TEAM - Squadra per una specifica stagione
 CREATE TABLE team (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    season_id UUID NOT NULL REFERENCES stagione(id) ON DELETE CASCADE,
+    season_id UUID NOT NULL REFERENCES season(id) ON DELETE CASCADE,
     category_id UUID REFERENCES category(id),
     nome VARCHAR(100) NOT NULL,
     colori_casa VARCHAR(50),
@@ -129,32 +176,34 @@ CREATE TABLE team (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- TEAM_PLAYER
+
+-- TEAM_PLAYER - Assegnazione giocatore a squadra
 -- Nota: Un giocatore puo' essere assegnato a piu' squadre.
--- is_primary=true indica la rosa principale, is_primary=false indica un'aggregazione.
+-- is_primary = TRUE (rosa principale), is_primary = FALSE (aggregazione)
 CREATE TABLE team_player (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_id UUID NOT NULL REFERENCES team(id) ON DELETE CASCADE,
-    player_id UUID NOT NULL REFERENCES calciatore(id) ON DELETE RESTRICT,
+    player_id UUID NOT NULL REFERENCES player(id) ON DELETE RESTRICT,
     is_primary BOOLEAN DEFAULT true,
     numero_maglia INTEGER,
     ruolo_preferito VARCHAR(50),
-    stato VARCHAR(50) DEFAULT 'Attivo',
+    stato VARCHAR(50) DEFAULT 'Attivo',  -- Attivo, Aggregato, Infortunato, Svincolato, Trasferito
     data_assegnazione DATE DEFAULT CURRENT_DATE,
     data_cessione DATE,
     note TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-COMMENT ON COLUMN team_player.is_primary IS 'TRUE = rosa principale, FALSE = aggregazione temporanea';
-COMMENT ON COLUMN team_player.stato IS 'Attivo, Aggregato, Infortunato, Svincolato, Trasferito';
 
--- TEAM_STAFF
+COMMENT ON COLUMN team_player.is_primary IS 'TRUE = rosa principale, FALSE = aggregazione temporanea';
+
+
+-- TEAM_STAFF - Assegnazione staff a squadra
 CREATE TABLE team_staff (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_id UUID NOT NULL REFERENCES team(id) ON DELETE CASCADE,
     staff_id UUID NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
-    ruolo_squadra VARCHAR(100) NOT NULL,
+    ruolo_squadra VARCHAR(100) NOT NULL,   -- Allenatore, Vice, Preparatore, etc.
     data_assegnazione DATE DEFAULT CURRENT_DATE,
     data_cessione DATE,
     note TEXT,
@@ -162,7 +211,8 @@ CREATE TABLE team_staff (
     UNIQUE(team_id, staff_id, ruolo_squadra)
 );
 
--- MATCH
+
+-- MATCH - Partita
 CREATE TABLE match (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_id UUID NOT NULL REFERENCES team(id) ON DELETE CASCADE,
@@ -170,35 +220,37 @@ CREATE TABLE match (
     venue_id UUID REFERENCES facility(id),
     data_ora TIMESTAMP NOT NULL,
     avversario VARCHAR(200) NOT NULL,
-    luogo VARCHAR(20) DEFAULT 'Casa',
+    luogo VARCHAR(20) DEFAULT 'Casa',    -- Casa, Trasferta, Campo neutro
     giornata INTEGER,
     gol_casa INTEGER DEFAULT 0,
     gol_ospite INTEGER DEFAULT 0,
-    stato VARCHAR(30) DEFAULT 'Da disputare',
-    archiviat BOOLEAN DEFAULT false,
+    stato VARCHAR(30) DEFAULT 'Da disputare',  -- Da disputare, In corso, Terminata, Rinviata, Annullata
+    archiviata BOOLEAN DEFAULT false,
     note TEXT,
     note_avversario TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- MATCH_EVENT
+
+-- MATCH_EVENT - Eventi partita (gol, cartellini, sostituzioni, etc.)
 CREATE TABLE match_event (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     match_id UUID NOT NULL REFERENCES match(id) ON DELETE CASCADE,
-    tipo_evento VARCHAR(50) NOT NULL,
+    tipo_evento VARCHAR(50) NOT NULL,    -- Gol, Assist, Ammonizione, Espulsione, Sostituzione, etc.
     minuto INTEGER,
-    player_id UUID REFERENCES calciatore(id),
-    player_id_secondario UUID REFERENCES calciatore(id),
+    player_id UUID REFERENCES player(id),
+    player_id_secondario UUID REFERENCES player(id),  -- Per assist, sostituzione, etc.
     note TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- MATCH_FORMATION
+
+-- MATCH_FORMATION - Formazione partita
 CREATE TABLE match_formation (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     match_id UUID NOT NULL REFERENCES match(id) ON DELETE CASCADE,
     team_player_id UUID NOT NULL REFERENCES team_player(id) ON DELETE CASCADE,
-    posizione VARCHAR(50),
+    posizione VARCHAR(50),               -- Portiere, Terzino, Centrocampista, Attaccante, etc.
     numero_maglia INTEGER,
     is_captain BOOLEAN DEFAULT false,
     is_vice_captain BOOLEAN DEFAULT false,
@@ -207,7 +259,8 @@ CREATE TABLE match_formation (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- CONVOCATION
+
+-- CONVOCATION - Convocazioni per partita
 CREATE TABLE convocation (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     match_id UUID NOT NULL REFERENCES match(id) ON DELETE CASCADE,
@@ -221,20 +274,22 @@ CREATE TABLE convocation (
     UNIQUE(match_id, team_player_id)
 );
 
--- TRAINING
+
+-- TRAINING - Allenamento
 CREATE TABLE training (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_id UUID NOT NULL REFERENCES team(id) ON DELETE CASCADE,
     venue_id UUID REFERENCES facility(id),
     data_ora TIMESTAMP NOT NULL,
     durata_minuti INTEGER DEFAULT 90,
-    tipo VARCHAR(50),
+    tipo VARCHAR(50),                    -- Tecnico, Tattico, Fisico, Combinato, etc.
     descrizione TEXT,
     note TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- TRAINING_ATTENDANCE
+
+-- TRAINING_ATTENDANCE - Presenze allenamenti
 CREATE TABLE training_attendance (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     training_id UUID NOT NULL REFERENCES training(id) ON DELETE CASCADE,
@@ -246,7 +301,8 @@ CREATE TABLE training_attendance (
     UNIQUE(training_id, team_player_id)
 );
 
--- MATCH_STATISTICS
+
+-- MATCH_STATISTICS - Statistiche partita per giocatore
 CREATE TABLE match_statistics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     match_id UUID NOT NULL REFERENCES match(id) ON DELETE CASCADE,
@@ -267,60 +323,120 @@ CREATE TABLE match_statistics (
     UNIQUE(match_id, team_player_id)
 );
 
--- DOCUMENT
-CREATE TABLE document (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tipo VARCHAR(50) NOT NULL,
-    entita_tipo VARCHAR(50) NOT NULL,
-    entita_id UUID NOT NULL,
-    file_url TEXT NOT NULL,
-    nome_file VARCHAR(255),
-    mime_type VARCHAR(100),
-    dimensione INTEGER,
-    data_upload TIMESTAMP DEFAULT NOW(),
-    scadenza DATE,
-    note TEXT
-);
 
--- 3. MODIFICA TABELLE ESISTENTI
-ALTER TABLE stagione ADD COLUMN IF NOT EXISTS attiva BOOLEAN DEFAULT false;
-ALTER TABLE stagione ADD COLUMN IF NOT EXISTS data_inizio DATE;
-ALTER TABLE stagione ADD COLUMN IF NOT EXISTS data_fine DATE;
-ALTER TABLE stagione ADD COLUMN IF NOT EXISTS is_default BOOLEAN DEFAULT false;
+-- ============================================================
+-- 4. INDICI
+-- ============================================================
 
-ALTER TABLE calciatore ADD COLUMN IF NOT EXISTS sesso VARCHAR(1) DEFAULT 'M';
-ALTER TABLE calciatore ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
 
--- 4. DATI (da inserire tramite webapp o script dedicati)
--- I dati iniziali (categorie, competizioni) verranno inseriti dall'utente o tramite script separati
+-- Category
+CREATE INDEX idx_category_workspace ON category(workspace_id);
+CREATE INDEX idx_category_tipo ON category(tipo_campionato);
+CREATE INDEX idx_category_anni ON category(anno_da, anno_a);
 
--- NOTE PER L'INSERIMENTO DATI:
--- 
--- CATEGORIE STAGIONE 2025/26:
--- U14 = nati 2012, U15 = nati 2011, U16 = nati 2010
--- U17 = nati 2009, U18 = nati 2008, U19 = nati 2007
--- Juniores = nati 2007-2008, Primavera = nati 2005-2006
---
--- tipo_campionato: Provinciale, Regionale, Elite, Pro
---
--- WORKSPACES ATTUALI:
--- 00000000-0000-0000-0000-000000000001 = ASD Green Academy (Demo)
--- 22222222-2222-2222-2222-222222222222 = SSD New Team
--- 752eab50-73c1-495b-9e0e-8b851e9c9a99 = ACP Annex
--- ab1186e5-a884-4355-b684-28e32b8157c2 = DF Academy
 
--- 5. INDICI
-CREATE INDEX IF NOT EXISTS idx_category_workspace ON category(workspace_id);
-CREATE INDEX IF NOT EXISTS idx_category_tipo ON category(tipo_campionato);
-CREATE INDEX IF NOT EXISTS idx_category_anni ON category(anno_da, anno_a);
-CREATE INDEX IF NOT EXISTS idx_team_season ON team(season_id);
-CREATE INDEX IF NOT EXISTS idx_team_category ON team(category_id);
-CREATE INDEX IF NOT EXISTS idx_team_player_team ON team_player(team_id);
-CREATE INDEX IF NOT EXISTS idx_team_player_player ON team_player(player_id);
-CREATE INDEX IF NOT EXISTS idx_team_staff_team ON team_staff(team_id);
-CREATE INDEX IF NOT EXISTS idx_team_staff_staff ON team_staff(staff_id);
-CREATE INDEX IF NOT EXISTS idx_match_team ON match(team_id);
-CREATE INDEX IF NOT EXISTS idx_match_data_ora ON match(data_ora);
-CREATE INDEX IF NOT EXISTS idx_match_event_match ON match_event(match_id);
-CREATE INDEX IF NOT EXISTS idx_convocation_match ON convocation(match_id);
-CREATE INDEX IF NOT EXISTS idx_training_team ON training(team_id);
+-- Season
+CREATE INDEX idx_season_workspace ON season(workspace_id);
+CREATE INDEX idx_season_attiva ON season(attiva);
+
+
+-- Team
+CREATE INDEX idx_team_season ON team(season_id);
+CREATE INDEX idx_team_category ON team(category_id);
+CREATE INDEX idx_team_allenatore ON team(allenatore_id);
+CREATE INDEX idx_team_competizione ON team(iscritta_competizione);
+
+
+-- Team Player
+CREATE INDEX idx_team_player_team ON team_player(team_id);
+CREATE INDEX idx_team_player_player ON team_player(player_id);
+CREATE INDEX idx_team_player_stato ON team_player(stato);
+
+
+-- Team Staff
+CREATE INDEX idx_team_staff_team ON team_staff(team_id);
+CREATE INDEX idx_team_staff_staff ON team_staff(staff_id);
+
+
+-- Match
+CREATE INDEX idx_match_team ON match(team_id);
+CREATE INDEX idx_match_data_ora ON match(data_ora);
+CREATE INDEX idx_match_stato ON match(stato);
+
+
+-- Match Event
+CREATE INDEX idx_match_event_match ON match_event(match_id);
+CREATE INDEX idx_match_event_player ON match_event(player_id);
+
+
+-- Convocation
+CREATE INDEX idx_convocation_match ON convocation(match_id);
+CREATE INDEX idx_convocation_player ON convocation(team_player_id);
+
+
+-- Training
+CREATE INDEX idx_training_team ON training(team_id);
+CREATE INDEX idx_training_data_ora ON training(data_ora);
+
+
+-- Training Attendance
+CREATE INDEX idx_training_attendance_training ON training_attendance(training_id);
+CREATE INDEX idx_training_attendance_player ON training_attendance(team_player_id);
+
+
+-- Match Statistics
+CREATE INDEX idx_match_statistics_match ON match_statistics(match_id);
+CREATE INDEX idx_match_statistics_player ON match_statistics(team_player_id);
+
+
+-- Document
+CREATE INDEX idx_document_entita ON document(entita_tipo, entita_id);
+CREATE INDEX idx_document_tipo ON document(tipo);
+
+
+-- ============================================================
+-- 5. NOTE PER L'INSERIMENTO DATI DEMO
+-- ============================================================
+
+
+/*
+CATEGORIE STAGIONE 2025/26:
+- U14 = nati 2012
+- U15 = nati 2011
+- U16 = nati 2010
+- U17 = nati 2009
+- U18 = nati 2008
+- U19 = nati 2007
+- Juniores = nati 2007-2008
+- Primavera = nati 2005-2006
+
+
+tipo_campionato: Provinciale, Regionale, Elite, Pro
+
+
+WORKSPACES:
+- 00000000-0000-0000-0000-000000000001 = ASD Green Academy (Demo)
+- 22222222-2222-2222-2222-222222222222 = SSD New Team
+- 752eab50-73c1-495b-9e0e-8b851e9c9a99 = ACP Annex
+- ab1186e5-a884-4355-b684-28e32b8157c2 = DF Academy
+*/
+
+
+-- ============================================================
+-- 6. MAPPA DI CONVERSIONE (Vecchie → Nuove Tabelle)
+-- ============================================================
+
+
+/*
+| Vecchia Tabella (IT) | Nuova Tabella (EN) | Note |
+|----------------------|-------------------|------|
+| rosa                 | team_player       | Assegnazioni stagionali |
+| partita              | match             | Ridenominata |
+| evento_partita       | match_event       | Ridenominata |
+| allenamento          | training          | Ridenominata |
+| presenza_allenamento | training_attendance | Ridenominata |
+| formazione_partita   | match_formation   | Ridenominata |
+| configurazione_allenamento | N/A         | Assorbita in training |
+| stagione             | season            | Rinominata |
+| calciatore           | player            | Rinominata |
+*/
