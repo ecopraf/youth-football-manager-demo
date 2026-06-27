@@ -715,7 +715,7 @@ app.get('/api/squadre/:squadraId/scadenze-mediche', async (req, res) => { const 
 // POST /api/squadre/:squadraId/calciatori-batch-insert - Crea giocatori con insert batch
 app.post('/api/squadre/:squadraId/calciatori-batch-insert', async (req, res) => { 
   const { giocatori } = req.body; 
-  const calciatori = giocatori.map(g => ({ workspace_id: '22222222-2222-2222-2222-222222222222', nome: g.nome, cognome: g.cognome, ruolo: g.ruolo, data_nascita: g.data_nascita }));
+  const calciatori = giocatori.map(g => ({ workspace_id: '22222222-2222-2222-2222-222222222222', nome: g.nome, cognome: g.cognome, data_nascita: g.data_nascita }));
   const { data: calData, error } = await supabase.from('calciatore').insert(calciatori);
   if (error) return res.status(500).json({ error: error.message });
   if (calData && calData.length > 0) { 
