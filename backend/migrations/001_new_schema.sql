@@ -1,27 +1,37 @@
 -- ============================================================
 -- YOUTH FOOTBALL MANAGER - NUOVO SCHEMA DB
--- Versione: 1.3 - 2026-06-27
--- 
--- STAGIONE 2025/26 - ANNI DI NASCITA:
--- U14 = nati 2012
--- U15 = nati 2011
--- U16 = nati 2010
--- U17 = nati 2009
--- U18 = nati 2008
--- U19 = nati 2007
--- Juniores = nati 2007-2008
--- Primavera = nati 2005-2006
+-- Versione: 1.4 - 2026-06-27
 --
--- NOTE CATEGORIE:
--- - Categoria con workspace_id = NULL -> globale (creata da superadmin)
--- - Categoria con workspace_id valorizzato -> specifica del workspace
--- - L'admin del workspace puo' creare categorie personalizzate
+-- Questo script CREA SOLO LA STRUTTURA DEL DATABASE
+-- I dati vengono inseriti tramite webapp o script dedicati
 --
--- NOTE GIOCATORI:
--- - Un giocatore (calciatore) puo' essere in piu' squadre
--- - team_player.is_primary = TRUE: rosa principale
--- - team_player.is_primary = FALSE: aggregazione temporanea
--- - team_player.stato: Attivo, Aggregato, Infortunato, Svincolato, Trasferito
+-- CONTENUTO:
+-- 1. Drop tabelle vecchie
+-- 2. Creazione tabelle nuove
+-- 3. Modifica tabelle esistenti
+-- 4. Creazione indici
+--
+-- ELENCO TABELLE NUOVE:
+-- - category     (categorie - globali o specifiche del workspace)
+-- - competition  (campionati/competizioni)
+-- - facility    (impianti sportivi)
+-- - staff       (anagrafica personale)
+-- - team        (squadre per stagione)
+-- - team_player (assegnazione giocatori - supporta aggregazioni)
+-- - team_staff  (assegnazione staff)
+-- - match       (partite)
+-- - match_event (eventi partita)
+-- - match_formation (formazione)
+-- - convocation (convocazioni)
+-- - training    (allenamenti)
+-- - training_attendance (presenze allenamenti)
+-- - match_statistics (statistiche)
+-- - document    (documenti polimorfici)
+--
+-- NOTE:
+-- - Categoria: workspace_id=NULL (globale), valorizzato (specifica)
+-- - Giocatori: un calciatore puo' essere in piu' squadre (aggregazioni)
+-- - team_player.is_primary = TRUE (rosa principale), FALSE (aggregazione)
 -- ============================================================
 
 -- 1. DROP TABELLE VECCHIE
@@ -281,37 +291,23 @@ ALTER TABLE stagione ADD COLUMN IF NOT EXISTS is_default BOOLEAN DEFAULT false;
 ALTER TABLE calciatore ADD COLUMN IF NOT EXISTS sesso VARCHAR(1) DEFAULT 'M';
 ALTER TABLE calciatore ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
 
--- 4. SEED DATA - CATEGORIE (Stagione 2025/26)
--- Anni di nascita: U14 = nati 2012, U15 = nati 2011, U16 = nati 2010, U17 = nati 2009, U18 = nati 2008, U19 = nati 2007/2006
--- Tipo campionato: Provinciale, Regionale, Elite, Pro
+-- 4. DATI (da inserire tramite webapp o script dedicati)
+-- I dati iniziali (categorie, competizioni) verranno inseriti dall'utente o tramite script separati
 
-INSERT INTO category (id, nome, tipo_campionato, anno_da, anno_a, descrizione) VALUES
-    ('c0000001-0000-0000-0000-000000000001', 'Under 14 Provinciale', 'Provinciale', 2012, 2012, 'Ragazzi nati nel 2012'),
-    ('c0000002-0000-0000-0000-000000000002', 'Under 14 Regionale', 'Regionale', 2012, 2012, 'Ragazzi nati nel 2012'),
-    ('c0000003-0000-0000-0000-000000000003', 'Under 14 Elite', 'Elite', 2012, 2012, 'Ragazzi nati nel 2012'),
-    ('c0000004-0000-0000-0000-000000000004', 'Under 15 Provinciale', 'Provinciale', 2011, 2011, 'Ragazzi nati nel 2011'),
-    ('c0000005-0000-0000-0000-000000000005', 'Under 15 Regionale', 'Regionale', 2011, 2011, 'Ragazzi nati nel 2011'),
-    ('c0000006-0000-0000-0000-000000000006', 'Under 15 Elite', 'Elite', 2011, 2011, 'Ragazzi nati nel 2011'),
-    ('c0000007-0000-0000-0000-000000000007', 'Under 16 Provinciale', 'Provinciale', 2010, 2010, 'Ragazzi nati nel 2010'),
-    ('c0000008-0000-0000-0000-000000000008', 'Under 16 Regionale', 'Regionale', 2010, 2010, 'Ragazzi nati nel 2010'),
-    ('c0000009-0000-0000-0000-000000000009', 'Under 16 Elite', 'Elite', 2010, 2010, 'Ragazzi nati nel 2010'),
-    ('c0000010-0000-0000-0000-000000000010', 'Under 17 Provinciale', 'Provinciale', 2009, 2009, 'Ragazzi nati nel 2009'),
-    ('c0000011-0000-0000-0000-000000000011', 'Under 17 Regionale', 'Regionale', 2009, 2009, 'Ragazzi nati nel 2009'),
-    ('c0000012-0000-0000-0000-000000000012', 'Under 17 Elite', 'Elite', 2009, 2009, 'Ragazzi nati nel 2009'),
-    ('c0000013-0000-0000-0000-000000000013', 'Under 18 Provinciale', 'Provinciale', 2008, 2008, 'Ragazzi nati nel 2008'),
-    ('c0000014-0000-0000-0000-000000000014', 'Under 18 Regionale', 'Regionale', 2008, 2008, 'Ragazzi nati nel 2008'),
-    ('c0000015-0000-0000-0000-000000000015', 'Under 19 Regionale', 'Regionale', 2007, 2007, 'Ragazzi nati nel 2007'),
-    ('c0000016-0000-0000-0000-000000000016', 'Under 19 Pro', 'Pro', 2006, 2006, 'Ragazzi nati nel 2006'),
-    ('c0000017-0000-0000-0000-000000000017', 'Juniores Provinciale', 'Provinciale', 2007, 2008, 'Giovani 2007-2008'),
-    ('c0000018-0000-0000-0000-000000000018', 'Juniores Regionale', 'Regionale', 2007, 2008, 'Giovani 2007-2008'),
-    ('c0000019-0000-0000-0000-000000000019', 'Primavera', 'Regionale', 2005, 2006, 'Giovani calciatori 2005-2006');
-
--- SEED DATA - COMPETIZIONI
-INSERT INTO competition (id, nome, tipo, regione, descrizione) VALUES
-    ('cc000001-0000-0000-0000-000000000001', 'Campionato Regionale Lazio', 'Campionato', 'Lazio', 'Campionato regionale FIGC'),
-    ('cc000002-0000-0000-0000-000000000002', 'Coppa Lazio', 'Coppa', 'Lazio', 'Coppa regionale FIGC'),
-    ('cc000003-0000-0000-0000-000000000003', 'Campionato Nazionale U19', 'Campionato', 'Nazionale', 'Campionato federale under 19'),
-    ('cc000004-0000-0000-0000-000000000004', 'Torneo Friendlies', 'Amichevole', NULL, 'Partite amichevoli');
+-- NOTE PER L'INSERIMENTO DATI:
+-- 
+-- CATEGORIE STAGIONE 2025/26:
+-- U14 = nati 2012, U15 = nati 2011, U16 = nati 2010
+-- U17 = nati 2009, U18 = nati 2008, U19 = nati 2007
+-- Juniores = nati 2007-2008, Primavera = nati 2005-2006
+--
+-- tipo_campionato: Provinciale, Regionale, Elite, Pro
+--
+-- WORKSPACES ATTUALI:
+-- 00000000-0000-0000-0000-000000000001 = ASD Green Academy (Demo)
+-- 22222222-2222-2222-2222-222222222222 = SSD New Team
+-- 752eab50-73c1-495b-9e0e-8b851e9c9a99 = ACP Annex
+-- ab1186e5-a884-4355-b684-28e32b8157c2 = DF Academy
 
 -- 5. INDICI
 CREATE INDEX IF NOT EXISTS idx_category_workspace ON category(workspace_id);
