@@ -157,7 +157,7 @@ export async function showWorkspaceSelectorModal() {
  * Crea e aggiunge il dropdown switcher nella sidebar
  */
 export async function initWorkspaceSwitcherInSidebar() {
-  const user = window.YFM.currentUser;
+  const user = window.YFM.getUser();
   if (!user || !isSuperAdmin(user)) return;
   
   const workspaces = await loadAvailableWorkspaces();

@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // Utenti normali: carica dal backend
       loadAvailableWorkspaces().then(async (workspaces) => {
-        const user = window.YFM.currentUser;
+        const user = window.YFM.getUser();
         
         // Superadmin: mostra selettore workspace iniziale
         if (isSuperAdmin(user)) {
