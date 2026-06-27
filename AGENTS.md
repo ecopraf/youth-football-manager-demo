@@ -10,7 +10,17 @@
 ## Info
 - **Versione**: v3.14
 - **Build ID**: `v3.14.<git-hash>`
-- **Deploy**: Vercel (automatico su push a main, disabilitabile via API)
+- **Deploy**: Manuale via API (NON automatico su push a main)
+
+## ⚠️ ISTRUZIONI IMPORTANTI
+
+### Git & Deploy
+- **NON fare push automatico su main** che triggera deploy Vercel
+- Per ogni modifica:
+  1. Disabilita deploy Vercel via API
+  2. Fai commit e push
+  3. Riabilita deploy Vercel
+- Per deploy manuale: usare l'API Vercel con commit SHA specifico (richiedere conferma)
 
 ## 🔐 Credenziali Configurate
 
