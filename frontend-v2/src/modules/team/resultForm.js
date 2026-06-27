@@ -78,8 +78,9 @@ function renderFormReadOnly(match, eventi, modal) {
   
   html += '<div class="rf">';
   html += '<div style="text-align:center;"><span class="archived-badge">📦 Partita Archiviata - Solo Lettura</span></div>';
+  const societaNome = (window.YFM.getSocietaName ? window.YFM.getSocietaName() : 'La tua Società');
   html += '<div class="score"><div class="score-num"><span style="color:#27AE60;">' + golFatti + '</span> - <span style="color:#E74C3C;">' + golSubiti + '</span></div>';
-  html += '<div class="score-sub">SSD Albalonga - ' + match.avversario + '</div></div>';
+  html += '<div class="score-sub">' + societaNome + ' - ' + match.avversario + '</div></div>';
   
   const eventiOrd = [...eventi].sort((a, b) => (parseInt(a.minuto) || 0) - (parseInt(b.minuto) || 0));
   html += '<div id="evtList">';
@@ -117,9 +118,10 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   html += '.check-row{display:flex;align-items:center;gap:8px;margin-top:8px;}.check-row input{width:auto;}';
   html += '</style>';
   
+  const societaNome2 = (window.YFM.getSocietaName ? window.YFM.getSocietaName() : 'La tua Società');
   html += '<div class="rf">';
   html += '<div class="score"><div class="score-num"><span style="color:#27AE60;">' + golFatti + '</span> - <span style="color:#E74C3C;">' + golSubiti + '</span></div>';
-  html += '<div class="score-sub">SSD Albalonga - ' + match.avversario + '</div></div>';
+  html += '<div class="score-sub">' + societaNome2 + ' - ' + match.avversario + '</div></div>';
   
   html += '<div id="evtList">';
   const eventiOrd = [...eventi].sort((a, b) => (parseInt(a.minuto) || 0) - (parseInt(b.minuto) || 0));

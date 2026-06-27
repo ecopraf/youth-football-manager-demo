@@ -4,11 +4,15 @@ import { initRouter } from './router'
 import { loadWorkspaceInfo } from './modules/club/workspace'
 import { loadSquadre } from './modules/team/squadre'
 import { loadPlayerDetail } from './modules/team/playerDetail.js'
+import { showWorkspaceSelectorModal, initWorkspaceSwitcherInSidebar, getSavedWorkspaceId, resetWorkspaceCache, getRealWorkspaces, loadAvailableWorkspaces, isSuperAdmin, saveCurrentWorkspace } from './modules/club/workspaceSwitcher'
 import demoManager from './modules/demo/demo'
 import { BUILD_INFO } from './build-info'
 
 // Imposta build ID globale per la UI
 window.YFM_BUILD_ID = BUILD_INFO.id
+
+// Workspace demo
+const DEMO_WORKSPACE_ID = '00000000-0000-0000-0000-000000000001';
 
 // ═══════════════════════════════════════════════════════════════
 // DATI DEMO IN MEMORIA (no API, no backend)
@@ -122,6 +126,7 @@ window.YFM.handleLogout = function() {
   localStorage.removeItem('yfm_guest');
   localStorage.removeItem('yfm_demo_session');
   localStorage.removeItem('yfm_demo_progress');
+  localStorage.removeItem('yfm_active_workspace');
   Object.keys(localStorage).forEach(key => {
     if (key.startsWith('yfm_demo') || key.startsWith('demo_')) {
       localStorage.removeItem(key);
@@ -133,6 +138,8 @@ window.YFM.handleLogout = function() {
       document.getElementById(id)?.remove();
     });
   }
+  // Resetta cache workspace switcher
+  resetWorkspaceCache();
   window.location.href = '/landing.html';
 };
 
@@ -202,9 +209,35 @@ document.addEventListener('DOMContentLoaded', () => {
       initDemoSession();
     } else {
       // Utenti normali: carica dal backend
-      Promise.all([loadWorkspaceInfo(), loadSquadre()]).then(() => {
+      loadAvailableWorkspaces().then(async (workspaces) => {
+        const user = window.YFM.currentUser;
+        
+        // Superadmin: mostra selettore workspace iniziale
+        if (isSuperAdmin(user)) {
+          const realWs = getRealWorkspaces(workspaces);
+          
+          if (realWs.length > 1) {
+            // Mostra modal di selezione
+            const selectedWs = await showWorkspaceSelectorModal();
+            if (selectedWs) {
+              window.YFM.workspaceInfo = selectedWs;
+              window.YFM.activeWorkspaceId = selectedWs.id;
+            }
+          } else if (realWs.length === 1) {
+            // Solo uno, usa quello
+            saveCurrentWorkspace(realWs[0].id);
+            window.YFM.workspaceInfo = realWs[0];
+            window.YFM.activeWorkspaceId = realWs[0].id;
+          }
+          
+          // Inizializza switcher in sidebar
+          setTimeout(() => initWorkspaceSwitcherInSidebar(), 100);
+        }
+        
+        await Promise.all([loadWorkspaceInfo(), loadSquadre()]);
         window.YFM.navigateTo('dashboard');
-      }).catch(() => {
+      }).catch(async () => {
+        await Promise.all([loadWorkspaceInfo(), loadSquadre()]);
         window.YFM.navigateTo('dashboard');
       });
     }

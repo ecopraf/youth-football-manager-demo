@@ -158,7 +158,7 @@ function renderDistinta(d, staff) {
     }
   }
   
-  const societa = window.YFM.getSocietaName ? window.YFM.getSocietaName() : (d.societa || 'ASD Albalonga');
+  const societa = window.YFM.getSocietaName ? window.YFM.getSocietaName() : (d.societa || 'La tua Società');
   
   // Costruisci le righe dello staff – TUTTI i ruoli, anche se vuoti
   const staffRows = [

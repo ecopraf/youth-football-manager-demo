@@ -15,6 +15,6 @@ export async function loadWorkspaceInfo() {
       }
     }
   } catch (e) {
-    document.getElementById('workspaceName').textContent = 'ASD Albalonga';
+    document.getElementById('workspaceName').textContent = 'Carica società...';
   }
 }

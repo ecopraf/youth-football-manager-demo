@@ -69,5 +69,5 @@ window.YFM.getSquadra = () => {
 };
 
 window.YFM.getSocietaName = () => {
-  return window.YFM.workspaceInfo ? window.YFM.workspaceInfo.nome : 'ASD Albalonga';
+  return window.YFM.workspaceInfo ? window.YFM.workspaceInfo.nome : 'La tua Società';
 };
