@@ -110,10 +110,21 @@ DROP TABLE IF EXISTS squadra CASCADE;
 -- stagione (referenziata da squadra)
 DROP TABLE IF EXISTS stagione CASCADE;
 
--- utente (tabella auth, verificare che non sia più usata)
--- Attenzione: questa tabella potrebbe essere ancora usata per l'autenticazione
--- Verificare che sia stata sostituita da 'users' prima di eliminarla
-DROP TABLE IF EXISTS utente CASCADE;
+-- utente -> users (rinomina se users non esiste)
+-- Il codice backend è già aggiornato per usare 'users'
+DO $$
+BEGIN
+    -- Verifica se esiste già 'users'
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users') THEN
+        -- Rinomina utente in users
+        ALTER TABLE utente RENAME TO users;
+        RAISE NOTICE 'Tabella utente rinominata in users';
+    ELSE
+        -- Se 'users' esiste già, droppa 'utente'
+        DROP TABLE IF EXISTS utente CASCADE;
+        RAISE NOTICE 'Tabella utente eliminata (users già esistente)';
+    END IF;
+END $$;
 
 
 -- Riabilita i check di foreign key
