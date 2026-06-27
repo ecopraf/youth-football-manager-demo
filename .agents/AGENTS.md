@@ -1,102 +1,132 @@
-# Istruzioni per Agenti AI - Youth Football Manager
+# Youth Football Manager - AI Agent Workspace
 
-Questo file contiene istruzioni specifiche per gli agenti AI che lavorano sul progetto Youth Football Manager.
-
----
-
-## Contesto Progetto
-
-**Versione Attuale**: v3.14
-**Build ID**: `v3.14.<git-hash>` (formato: versione + commit hash)
-**Backend**: Node.js/Express con Supabase
-**Frontend**: Vite + JavaScript ES Modules
-**Database**: Supabase (PostgreSQL)
-**Deploy**: Vercel (automatico su push a main)
-**Logo**: `/frontend-v2/public/assets/logo.png`
-**Email**: youthfootballmanager@gmail.com
+> **Entry point per agenti AI** (OpenHands, Agent Canvas, Claude Code, etc.)
 
 ---
 
-## Sistema Build Info
+## 📁 Struttura Repository
 
-Build ID basato su **versione SW + git commit hash**, univoco e confrontabile tra locale e produzione.
-
-| Dove | Build ID |
-|------|----------|
-| Login footer | `build: v3.14.XXXXXXX` |
-| Sidebar footer | `build: v3.14.XXXXXXX` |
-| Variabile JS | `window.YFM_BUILD_ID` |
-
-**File**: `frontend-v2/src/build-info.js` (rigenerato automaticamente da `vite.config.js`) - **NON modificare manualmente**
-
----
-
-## Credenziali e Configurazione
-
-### Supabase (Backend Vercel)
 ```
-SUPABASE_URL=https://csxdlxbhcnyfppojwwzy.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<stored in Vercel env>
-JWT_SECRET=<stored in Vercel env>
+.agents/                    # Configurazione agenti AI
+├── AGENTS.md              # ← Questo file (entry point)
+├── knowledge/             # Conoscenza del prodotto
+│   ├── VISION.md          # Missione, valori, target
+│   ├── ARCHITECTURE.md    # Stack, API, database
+│   └── ROADMAP.md         # Backlog, priorità
+├── standards/             # Convenzioni e regole
+│   └── CODING_STANDARDS.md
+├── tasks/                 # Template task
+│   └── TEMPLATE.md
+└── prompts/               # System prompts
+    └── SYSTEM_PROMPT.md
 ```
 
-### API Keys Pubbliche
-- **ANON KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTEzMTMsImV4cCI6MjA5NzMyNzMxM30.KTL6Z_Mwo_QzNidWt95YLqc7ZvdbfxyQdzxCT5uNRIw`
-
 ---
 
-## Schema Database (Tabelle Principali)
+## 🚀 Prima di Iniziare
 
-| Tabella | Campi Chiave | Descrizione |
-|---------|--------------|-------------|
-| `workspace` | id, nome, logo_url, referral_code | Società/club |
-| `stagione` | id, workspace_id, nome, data_inizio, data_fine, is_attiva | Stagione sportiva |
-| `squadra` | id, stagione_id, nome, categoria, allenatore | Squadra |
-| `calciatore` | id, workspace_id, nome, cognome, data_nascita, ... | Giocatore |
-| `rosa` | id, squadra_id, calciatore_id, numero_maglia, ruolo | Associazione |
-| `partita` | id, squadra_id, data_ora, avversario, luogo, archiviata | Partita |
-| `evento_partita` | id, partita_id, tipo_evento_codice, calciatore_principale_id, minuto | Eventi |
-| `convocazione` | id, partita_id, calciatore_id | Convocazioni |
-| `formazione_partita` | id, partita_id, calciatore_id, ruolo, numero_maglia | Formazione |
-| `valutazione_partita` | id, partita_id, calciatore_id, voto, note | Valutazioni |
-| `utente` | id, workspace_id, email, password_hash, nome, ruolo, is_superadmin | Utente |
-| `guest_token` | id, token, tipo, scadenza, utente_id | Token guest |
-
-### Tipo Eventi Partita (tipo_evento_codice)
-- `GOAL` - Gol segnato
-- `SUBITO` - Gol subito (portiere)
-- `ASSIST` - Assist
-- `YELLOW` - Cartellino giallo
-- `RED` - Cartellino rosso
-- `IN` - Entrato in campo
-- `OUT` - Uscito dal campo
-
----
-
-## Prima di Iniziare
-
-### 1. Leggi i Documenti di Contesto
-Prima di qualsiasi task, consulta:
+### 1. Leggi i documenti di contesto
 ```
-.agents/
-├── VISION.md      → Missione e valori prodotto
-├── ARCHITECTURE.md → Architettura tecnica
-├── ROADMAP.md     → Priorità e backlog
-└── CODING_STANDARDS.md → Convenzioni codice
+.agents/knowledge/VISION.md      → Cosa stiamo costruendo
+.agents/knowledge/ARCHITECTURE.md → Come è fatto il sistema
+.agents/knowledge/ROADMAP.md     → Cosa c'è da fare
+.agents/standards/CODING_STANDARDS.md → Come scrivere codice
 ```
 
-### 2. Verifica lo Stato Corrente
+### 2. Verifica stato attuale
 ```bash
-git log --oneline -5
+git log --oneline -3
 git status
 ```
 
-### 3. Identifica i File da Modificare
-Consulta la struttura in ARCHITECTURE.md per capire dove operare.
+### 3. Consulta il system prompt
+`.agents/prompts/SYSTEM_PROMPT.md`
 
 ---
 
-## Regole Operative
+## 📋 Info Progetto
+
+| Info | Valore |
+|------|--------|
+| **Versione** | v3.14 |
+| **Build ID** | `v3.14.<git-hash>` |
+| **Frontend** | Vite + JavaScript ES Modules |
+| **Backend** | Node.js/Express + Supabase |
+| **Deploy** | Vercel (auto su push a main) |
+| **Logo** | `/frontend-v2/public/assets/logo.png` |
+
+---
+
+## 🔗 Link Utili
+
+- **App**: https://youth-football-manager.vercel.app
+- **Backend API**: https://youth-football-manager-backend.vercel.app/api
+- **Repo**: https://github.com/ecopraf/youth-football-manager
+
+---
+
+## 📖 Documentazione Dettagliata
+
+| Documento | Descrizione |
+|-----------|-------------|
+| `.agents/knowledge/VISION.md` | Missione, valori, modello business |
+| `.agents/knowledge/ARCHITECTURE.md` | Stack, struttura, API, DB |
+| `.agents/knowledge/ROADMAP.md` | Backlog, priorità, bug noti |
+| `.agents/standards/CODING_STANDARDS.md` | Convenzioni codice, naming, git |
+| `.agents/prompts/SYSTEM_PROMPT.md` | System prompt per agenti |
+| `.agents/tasks/TEMPLATE.md` | Template per task |
+
+---
+
+## 🗄️ Schema Database
+
+| Tabella | Descrizione |
+|---------|-------------|
+| `workspace` | Società/club |
+| `stagione` | Stagione sportiva |
+| `squadra` | Squadra |
+| `calciatore` | Giocatore |
+| `rosa` | Associazione giocatore-squadra |
+| `partita` | Partita |
+| `evento_partita` | Eventi (GOAL, ASSIST, YELLOW, etc.) |
+| `convocazione` | Convocazioni |
+| `formazione_partita` | Formazione |
+| `valutazione_partita` | Valutazioni |
+| `utente` | Utente sistema |
+| `guest_token` | Token guest |
+
+---
+
+## 🔧 Workflow Raccomandato
+
+### Per nuove feature:
+```
+1. Leggi .agents/knowledge/ per contesto
+2. Pianifica modifiche
+3. Implementa seguendo standards
+4. Testa locally
+5. Commit: git add . && git commit -m "tipo: descrizione"
+6. Push: git push origin main
+7. Verifica produzione (~2 min dopo)
+```
+
+### Per bug fix:
+```
+1. Riproduci il bug
+2. Identifica causa
+3. Implementa fix minima
+4. Verifica fix
+5. Commit + Push
+```
+
+---
+
+## ⚠️ Regole Importanti
+
+- **NON modificare**: `frontend-v2/src/build-info.js` (auto-generato)
+- **NON hardcodare**: credenziali, API keys
+- **Deploy**: automatico su push a main
+- **Build ID**: `v3.14.<git-hash>` (mostrato dopo `npm run build`)
 
 ### Modifiche Database
 1. **Usa le API esistenti** quando possibili
