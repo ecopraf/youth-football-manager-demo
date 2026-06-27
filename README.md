@@ -2,6 +2,28 @@
 
 La memoria digitale della squadra di calcio giovanile
 
+## 🤖 Per Agenti AI (OpenHands / Agent Canvas)
+
+Questo progetto è ottimizzato per lavorare con agenti AI. Prima di iniziare qualsiasi task, l'agente dovrebbe leggere:
+
+```
+.agents/
+├── VISION.md           → Missione, valori, target utente
+├── ARCHITECTURE.md     → Stack, struttura, API, database
+├── ROADMAP.md          → Backlog, priorità, bug noti
+├── CODING_STANDARDS.md → Convenzioni codice, naming, git
+└── AGENTS.md           → Istruzioni specifiche per agenti
+```
+
+**Workflow consigliato**:
+1. Leggi `.agents/` per contesto completo
+2. Analizza il task e crea un piano
+3. Implementa seguendo coding standards
+4. Commit con messaggio descrittivo + build ID
+5. Push → deploy automatico su Vercel
+
+---
+
 ## Panoramica
 
 Youth Football Manager è un'applicazione web completa per la gestione di squadre di calcio giovanili. Permette di gestire giocatori, partite, statistiche, allenamenti e molto altro.
