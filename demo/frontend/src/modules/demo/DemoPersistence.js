@@ -12,6 +12,7 @@ const KEYS = {
   FORMATIONS: 'formations',
   CONVOCATIONS: 'convocations',
   TRAINING: 'training',
+  TRAINING_CONFIG: 'trainingConfig',
   PLAYERS: 'players',
   CUSTOM_PLAYERS: 'customPlayers',
   MATCH_RESULTS: 'matchResults'
@@ -99,6 +100,9 @@ class DemoPersistence {
       }
       if (this.data[KEYS.TRAINING]) {
         window.YFM.demoAllenamenti = this.data[KEYS.TRAINING];
+      }
+      if (this.data[KEYS.TRAINING_CONFIG]) {
+        window.YFM.demoConfig = this.data[KEYS.TRAINING_CONFIG];
       }
       if (this.data[KEYS.PLAYERS]) {
         window.YFM.allPlayers = this.data[KEYS.PLAYERS];
@@ -287,6 +291,7 @@ class DemoPersistence {
     if (training) {
       training.presenze = presences.presenti || [];
       training.assenti = presences.assenti || [];
+      training.motivi_assenza = presences.motivi || training.motivi_assenza || {};
       training.note = presences.note || training.note;
       training.updatedAt = new Date().toISOString();
       this._markDirty();
@@ -308,6 +313,98 @@ class DemoPersistence {
     this.data[KEYS.TRAINING].unshift(newTraining);
     this._markDirty();
     return newTraining;
+  }
+
+  /**
+   * Aggiorna la configurazione allenamenti
+   */
+  updateTrainingConfig(configId, configData) {
+    if (!this.data[KEYS.TRAINING_CONFIG]) {
+      this.data[KEYS.TRAINING_CONFIG] = [];
+    }
+    const idx = this.data[KEYS.TRAINING_CONFIG].findIndex(c => c.id === configId);
+    if (idx >= 0) {
+      this.data[KEYS.TRAINING_CONFIG][idx] = { ...this.data[KEYS.TRAINING_CONFIG][idx], ...configData };
+    } else {
+      this.data[KEYS.TRAINING_CONFIG].push({ ...configData, id: configId || `cfg_${Date.now()}` });
+    }
+    this._markDirty();
+  }
+
+  /**
+   * Elimina una configurazione allenamento
+   */
+  deleteTrainingConfig(configId) {
+    if (this.data[KEYS.TRAINING_CONFIG]) {
+      this.data[KEYS.TRAINING_CONFIG] = this.data[KEYS.TRAINING_CONFIG].filter(c => c.id !== configId);
+      this._markDirty();
+    }
+  }
+
+  /**
+   * Aggiunge motivo assenza a un giocatore per un allenamento
+   */
+  setAbsenceReason(trainingId, playerId, motivo) {
+    if (!this.data[KEYS.TRAINING]) {
+      return;
+    }
+    const training = this.data[KEYS.TRAINING].find(t => t.id === trainingId);
+    if (training) {
+      training.motivi_assenza = training.motivi_assenza || {};
+      if (motivo) {
+        training.motivi_assenza[playerId] = motivo;
+      } else {
+        delete training.motivi_assenza[playerId];
+      }
+      this._markDirty();
+    }
+  }
+
+  /**
+   * Inizializza dati pregressi allenamenti per demo
+   */
+  initTrainingHistory(giocatori) {
+    if (this.data[KEYS.TRAINING] && this.data[KEYS.TRAINING].length > 0) {
+      return; // Già ha dati
+    }
+    
+    const now = new Date();
+    const tuttiId = giocatori.map(g => g.id);
+    
+    // Genera 12 settimane di storico
+    const allenamentiStorico = [];
+    for (let w = -12; w <= -1; w++) {
+      const lunedi = new Date(now);
+      lunedi.setDate(now.getDate() - now.getDay() + 1 + (w * 7));
+      
+      // Martedì e Giovedì
+      [2, 4].forEach((giorno, idx) => {
+        const dataAllenamento = new Date(lunedi.getTime() + giorno * 24 * 60 * 60 * 1000);
+        const dataStr = dataAllenamento.toISOString().split('T')[0];
+        
+        // 2-3 assenti casuali
+        const assenti = tuttiId.sort(() => Math.random() - 0.5).slice(0, 2 + Math.floor(Math.random() * 2));
+        const motivi = {};
+        const motiviDisponibili = ['Impegni Scolastici', 'Motivi Familiari', 'Infortunio', 'Malattia'];
+        assenti.forEach(aId => {
+          motivi[aId] = motiviDisponibili[Math.floor(Math.random() * motiviDisponibili.length)];
+        });
+        
+        allenamentiStorico.push({
+          id: `hist_tr_${w}_${idx}`,
+          data: dataStr,
+          tipo: 'Allenamento',
+          durata: 90,
+          presenze: tuttiId.filter(id => !assenti.includes(id)),
+          assenti: assenti,
+          motivi_assenza: motivi,
+          note: ''
+        });
+      });
+    }
+    
+    this.data[KEYS.TRAINING] = allenamentiStorico;
+    this._markDirty();
   }
 
   // ============ GIOCATORI ============
