@@ -30,27 +30,109 @@ const DEMO_SQUADRE = [
   { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Allievi B', allenatore: 'Roberto Rossi', dirigente: 'Paolo Gialli' }
 ];
 
+// Partite demo
+const DEMO_PARTITE = [
+  // Prossime partite
+  { id: 'm001', avversario: 'Roma Academy', luogo: 'Trasferta', data_ora: '2026-07-05T15:30:00', competizione: 'Campionato Primavera', stato: 'Da disputare' },
+  { id: 'm002', avversario: 'Lazio Youth', luogo: 'Casa', data_ora: '2026-07-12T16:00:00', competizione: 'Campionato Primavera', stato: 'Da disputare' },
+  // Partite terminate
+  { id: 'm003', avversario: 'Inter Academy', luogo: 'Casa', data_ora: '2026-06-20T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 3, gol_trasferta: 1 },
+  { id: 'm004', avversario: 'Milan Youth', luogo: 'Trasferta', data_ora: '2026-06-13T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 2, gol_trasferta: 2 },
+  { id: 'm005', avversario: 'Juventus Academy', luogo: 'Casa', data_ora: '2026-06-06T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 4, gol_trasferta: 0 },
+  { id: 'm006', avversario: 'Napoli Academy', luogo: 'Trasferta', data_ora: '2026-05-30T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 1, gol_trasferta: 2 },
+  { id: 'm007', avversario: 'Fiorentina Youth', luogo: 'Casa', data_ora: '2026-05-23T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 5, gol_trasferta: 1 },
+];
+
+// Eventi partite demo (gol, assist)
+const DEMO_EVENTI = [
+  // m003: Green 3-1 Inter
+  { match_id: 'm003', player_id: 'c007', tipo: 'GOAL', minuto: 15 },
+  { match_id: 'm003', player_id: 'c011', tipo: 'GOAL', minuto: 34 },
+  { match_id: 'm003', player_id: 'c009', tipo: 'GOAL', minuto: 67 },
+  { match_id: 'm003', player_id: 'c007', tipo: 'ASSIST', minuto: 67 },
+  { match_id: 'm003', player_id: 'c011', tipo: 'ASSIST', minuto: 15 },
+  // m003: Inter gol
+  { match_id: 'm003', player_id: null, tipo: 'GOAL', minuto: 52, note: 'Inter' },
+  // m004: Green 2-2 Milan
+  { match_id: 'm004', player_id: 'c005', tipo: 'GOAL', minuto: 23 },
+  { match_id: 'm004', player_id: 'c008', tipo: 'GOAL', minuto: 78 },
+  { match_id: 'm004', player_id: 'c005', tipo: 'ASSIST', minuto: 78 },
+  // m005: Green 4-0 Juventus
+  { match_id: 'm005', player_id: 'c009', tipo: 'GOAL', minuto: 12 },
+  { match_id: 'm005', player_id: 'c011', tipo: 'GOAL', minuto: 28 },
+  { match_id: 'm005', player_id: 'c017', tipo: 'GOAL', minuto: 55 },
+  { match_id: 'm005', player_id: 'c007', tipo: 'GOAL', minuto: 72 },
+  { match_id: 'm005', player_id: 'c009', tipo: 'ASSIST', minuto: 72 },
+  // m006: Green 1-2 Napoli
+  { match_id: 'm006', player_id: 'c011', tipo: 'GOAL', minuto: 41 },
+  // m007: Green 5-1 Fiorentina
+  { match_id: 'm007', player_id: 'c007', tipo: 'GOAL', minuto: 8 },
+  { match_id: 'm007', player_id: 'c011', tipo: 'GOAL', minuto: 19 },
+  { match_id: 'm007', player_id: 'c009', tipo: 'GOAL', minuto: 35 },
+  { match_id: 'm007', player_id: 'c017', tipo: 'GOAL', minuto: 58 },
+  { match_id: 'm007', player_id: 'c020', tipo: 'GOAL', minuto: 81 },
+  { match_id: 'm007', player_id: 'c007', tipo: 'ASSIST', minuto: 35 },
+  { match_id: 'm007', player_id: 'c011', tipo: 'ASSIST', minuto: 58 },
+];
+
+// Statistiche demo
+const DEMO_STATISTICHE = {
+  punti: 34,
+  partiteGiocate: 14,
+  vittorie: 10,
+  pareggi: 4,
+  sconfitte: 0,
+  golFatti: 38,
+  golSubiti: 12,
+  differenzaReti: 26
+};
+
+// Top players demo
+const DEMO_TOP_PLAYERS = {
+  marcatori: [
+    { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', gol: 12 },
+    { id: 'c007', nome: 'Simone', cognome: 'Arancioni', gol: 9 },
+    { id: 'c009', nome: 'Tommaso', cognome: 'Viola', gol: 7 },
+    { id: 'c017', nome: 'Niccolò', cognome: 'Piombo', gol: 5 },
+    { id: 'c020', nome: 'Marco', cognome: 'Marea', gol: 3 }
+  ],
+  assistmen: [
+    { id: 'c007', nome: 'Simone', cognome: 'Arancioni', assist: 8 },
+    { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', assist: 6 },
+    { id: 'c005', nome: 'Andrea', cognome: 'Neri', assist: 4 },
+    { id: 'c009', nome: 'Tommaso', cognome: 'Viola', assist: 3 },
+    { id: 'c008', nome: 'Federico', cognome: 'Rosa', assist: 2 }
+  ],
+  presenze: [
+    { id: 'c002', nome: 'Luca', cognome: 'Bianchi', presenze: 14 },
+    { id: 'c003', nome: 'Matteo', cognome: 'Verdi', presenze: 14 },
+    { id: 'c005', nome: 'Andrea', cognome: 'Neri', presenze: 13 },
+    { id: 'c007', nome: 'Simone', cognome: 'Arancioni', presenze: 13 },
+    { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', presenze: 12 }
+  ]
+};
+
 const DEMO_CALCIATORI = [
-  { id: 'c001', nome: 'Alessandro', cognome: 'Rossi', data_nascita: '2010-03-15', numero_maglia: 1, ruolo: 'P' },
-  { id: 'c002', nome: 'Luca', cognome: 'Bianchi', data_nascita: '2010-01-20', numero_maglia: 2, ruolo: 'D' },
-  { id: 'c003', nome: 'Matteo', cognome: 'Verdi', data_nascita: '2010-05-10', numero_maglia: 3, ruolo: 'D' },
-  { id: 'c004', nome: 'Francesco', cognome: 'Gialli', data_nascita: '2010-02-28', numero_maglia: 4, ruolo: 'D' },
-  { id: 'c005', nome: 'Andrea', cognome: 'Neri', data_nascita: '2010-07-14', numero_maglia: 5, ruolo: 'C' },
-  { id: 'c006', nome: 'Davide', cognome: 'Blu', data_nascita: '2010-04-05', numero_maglia: 6, ruolo: 'C' },
-  { id: 'c007', nome: 'Simone', cognome: 'Arancioni', data_nascita: '2010-06-22', numero_maglia: 7, ruolo: 'A' },
-  { id: 'c008', nome: 'Federico', cognome: 'Rosa', data_nascita: '2010-08-30', numero_maglia: 8, ruolo: 'C' },
-  { id: 'c009', nome: 'Tommaso', cognome: 'Viola', data_nascita: '2010-09-12', numero_maglia: 9, ruolo: 'A' },
-  { id: 'c010', nome: 'Nicolò', cognome: 'Grigi', data_nascita: '2010-11-03', numero_maglia: 10, ruolo: 'C' },
-  { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', data_nascita: '2010-12-18', numero_maglia: 11, ruolo: 'A' },
-  { id: 'c012', nome: 'Riccardo', cognome: 'Celesti', data_nascita: '2010-03-25', numero_maglia: 12, ruolo: 'P' },
-  { id: 'c013', nome: 'Filippo', cognome: 'Oro', data_nascita: '2010-01-08', numero_maglia: 13, ruolo: 'D' },
-  { id: 'c014', nome: 'Edoardo', cognome: 'Argento', data_nascita: '2010-05-30', numero_maglia: 14, ruolo: 'C' },
-  { id: 'c015', nome: 'Gabriele', cognome: 'Bronzo', data_nascita: '2010-07-11', numero_maglia: 15, ruolo: 'D' },
-  { id: 'c016', nome: 'Lorenzo', cognome: 'Rame', data_nascita: '2010-02-14', numero_maglia: 16, ruolo: 'P' },
-  { id: 'c017', nome: 'Niccolò', cognome: 'Piombo', data_nascita: '2010-10-07', numero_maglia: 17, ruolo: 'A' },
-  { id: 'c018', nome: 'Samuele', cognome: 'Zinco', data_nascita: '2010-04-28', numero_maglia: 18, ruolo: 'C' },
-  { id: 'c019', nome: 'Antonio', cognome: 'Stagno', data_nascita: '2010-06-16', numero_maglia: 19, ruolo: 'D' },
-  { id: 'c020', nome: 'Marco', cognome: 'Marea', data_nascita: '2010-08-03', numero_maglia: 20, ruolo: 'A' }
+  { id: 'c001', nome: 'Alessandro', cognome: 'Rossi', data_nascita: '2010-03-15', numero_maglia: 1, ruolo: 'Portiere', stato: 'Attivo', presenze: 10, gol: 0, assist: 0 },
+  { id: 'c002', nome: 'Luca', cognome: 'Bianchi', data_nascita: '2010-01-20', numero_maglia: 2, ruolo: 'Difensore', stato: 'Attivo', presenze: 14, gol: 1, assist: 2 },
+  { id: 'c003', nome: 'Matteo', cognome: 'Verdi', data_nascita: '2010-05-10', numero_maglia: 3, ruolo: 'Difensore', stato: 'Attivo', presenze: 14, gol: 0, assist: 1 },
+  { id: 'c004', nome: 'Francesco', cognome: 'Gialli', data_nascita: '2010-02-28', numero_maglia: 4, ruolo: 'Difensore', stato: 'Attivo', presenze: 11, gol: 0, assist: 0 },
+  { id: 'c005', nome: 'Andrea', cognome: 'Neri', data_nascita: '2010-07-14', numero_maglia: 5, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 13, gol: 2, assist: 4 },
+  { id: 'c006', nome: 'Davide', cognome: 'Blu', data_nascita: '2010-04-05', numero_maglia: 6, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 10, gol: 1, assist: 1 },
+  { id: 'c007', nome: 'Simone', cognome: 'Arancioni', data_nascita: '2010-06-22', numero_maglia: 7, ruolo: 'Attaccante', stato: 'Attivo', presenze: 13, gol: 9, assist: 8 },
+  { id: 'c008', nome: 'Federico', cognome: 'Rosa', data_nascita: '2010-08-30', numero_maglia: 8, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 12, gol: 2, assist: 2 },
+  { id: 'c009', nome: 'Tommaso', cognome: 'Viola', data_nascita: '2010-09-12', numero_maglia: 9, ruolo: 'Attaccante', stato: 'Attivo', presenze: 11, gol: 7, assist: 3 },
+  { id: 'c010', nome: 'Nicolò', cognome: 'Grigi', data_nascita: '2010-11-03', numero_maglia: 10, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 9, gol: 1, assist: 2 },
+  { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', data_nascita: '2010-12-18', numero_maglia: 11, ruolo: 'Attaccante', stato: 'Attivo', presenze: 12, gol: 12, assist: 6 },
+  { id: 'c012', nome: 'Riccardo', cognome: 'Celesti', data_nascita: '2010-03-25', numero_maglia: 12, ruolo: 'Portiere', stato: 'Attivo', presenze: 4, gol: 0, assist: 0 },
+  { id: 'c013', nome: 'Filippo', cognome: 'Oro', data_nascita: '2010-01-08', numero_maglia: 13, ruolo: 'Difensore', stato: 'Attivo', presenze: 8, gol: 0, assist: 1 },
+  { id: 'c014', nome: 'Edoardo', cognome: 'Argento', data_nascita: '2010-05-30', numero_maglia: 14, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 6, gol: 0, assist: 0 },
+  { id: 'c015', nome: 'Gabriele', cognome: 'Bronzo', data_nascita: '2010-07-11', numero_maglia: 15, ruolo: 'Difensore', stato: 'Attivo', presenze: 5, gol: 0, assist: 0 },
+  { id: 'c016', nome: 'Lorenzo', cognome: 'Rame', data_nascita: '2010-02-14', numero_maglia: 16, ruolo: 'Portiere', stato: 'Attivo', presenze: 0, gol: 0, assist: 0 },
+  { id: 'c017', nome: 'Niccolò', cognome: 'Piombo', data_nascita: '2010-10-07', numero_maglia: 17, ruolo: 'Attaccante', stato: 'Attivo', presenze: 10, gol: 5, assist: 2 },
+  { id: 'c018', nome: 'Samuele', cognome: 'Zinco', data_nascita: '2010-04-28', numero_maglia: 18, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 7, gol: 0, assist: 1 },
+  { id: 'c019', nome: 'Antonio', cognome: 'Stagno', data_nascita: '2010-06-16', numero_maglia: 19, ruolo: 'Difensore', stato: 'Infortunato', presenze: 3, gol: 0, assist: 0 },
+  { id: 'c020', nome: 'Marco', cognome: 'Marea', data_nascita: '2010-08-03', numero_maglia: 20, ruolo: 'Attaccante', stato: 'Attivo', presenze: 8, gol: 3, assist: 1 }
 ];
 
 // Popola il select delle squadre
@@ -78,6 +160,10 @@ function initDemoSession() {
   window.YFM.allSquadre = DEMO_SQUADRE;
   window.YFM.squadraId = DEMO_SQUADRE[0].id; // Primavera
   window.YFM.allPlayers = DEMO_CALCIATORI;
+  window.YFM.demoMatches = DEMO_PARTITE;
+  window.YFM.demoEvents = DEMO_EVENTI;
+  window.YFM.demoStats = DEMO_STATISTICHE;
+  window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
   
   // Aggiorna UI
   const wsName = document.getElementById('workspaceName');
