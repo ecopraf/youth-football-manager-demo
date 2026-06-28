@@ -343,6 +343,21 @@ export default async function loadLogin() {
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
       
+      // IMPOSTA IL WORKSPACE PRIMA DI CARICARE LE SQUADRE
+      const user = res.user;
+      if (user?.workspace_id) {
+        // Per utenti normali, imposta direttamente il workspace dal profilo
+        // Il backend /api/auth/workspaces restituirà solo il workspace dell'utente
+        const { loadAvailableWorkspaces } = await import('../../modules/club/workspaceSwitcher');
+        const workspaces = await loadAvailableWorkspaces();
+        const userWorkspace = workspaces.find(w => w.id === user.workspace_id);
+        if (userWorkspace) {
+          window.YFM.workspaceInfo = userWorkspace;
+          window.YFM.activeWorkspaceId = userWorkspace.id;
+          console.log('[Login] Workspace impostato:', userWorkspace.nome);
+        }
+      }
+      
       // Carica dati necessari per la dashboard
       const { loadWorkspaceInfo } = await import('../../modules/club/workspace');
       const { loadSquadre } = await import('../../modules/team/squadre');
