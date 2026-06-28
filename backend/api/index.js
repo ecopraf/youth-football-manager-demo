@@ -511,26 +511,48 @@ app.post('/api/squadre/:squadraId/calciatori', async (req, res) => {
   try {
     const c = req.body;
     
-    // Inserisci solo i campi che esistono nella tabella player
+    // Inserisci giocatore con tutti i campi dalla scheda
     const playerData = {
-      nome: c.nome, 
+      nome: c.nome,
       cognome: c.cognome,
-      data_nascita: c.data_nascita || c.dataVisitaMedica,
+      data_nascita: c.data_nascita,
+      sesso: c.sesso || 'M',
       telefono: c.telefono,
-      sesso: c.sesso || 'M'
+      email: c.email,
+      foto_url: c.foto_url,
+      ruolo_principale: c.ruolo_principale,
+      piede_preferito: c.piede_preferito,
+      altezza: c.altezza,
+      peso: c.peso,
+      note: c.note,
+      // Campi nuovi
+      luogo_nascita: c.luogo_nascita,
+      nazionalita: c.nazionalita,
+      residenza: c.residenza,
+      matricola_figc: c.matricola_figc,
+      tipo_documento: c.tipo_documento,
+      numero_documento: c.numero_documento,
+      rilasciato_da: c.rilasciato_da,
+      data_visita_medica: c.data_visita_medica,
+      scadenza_visita_medica: c.scadenza_visita_medica,
+      tesserato_dal: c.tesserato_dal,
+      tesserato_fino_al: c.tesserato_fino_al
     };
     
     const { data: cal, error } = await supabase.from('player').insert(playerData).select().single();
     if (error) return res.status(500).json({ error: error.message });
     
-    // Inserisci in team_player
-    await supabase.from('team_player').insert({ 
-      team_id: req.params.squadraId, 
-      player_id: cal.id, 
-      numero_maglia: c.numero_maglia || c.numeroMaglia, 
-      ruolo: c.ruolo, 
-      stato: 'Attivo' 
-    });
+    // Inserisci in team_player con i dati stagionali
+    const teamPlayerData = {
+      team_id: req.params.squadraId,
+      player_id: cal.id,
+      numero_maglia: c.numero_maglia,
+      ruolo_preferito: c.ruolo_preferito,
+      stato: c.stato || 'Attivo',
+      data_assegnazione: new Date().toISOString().split('T')[0]
+    };
+    
+    await supabase.from('team_player').insert(teamPlayerData);
     
     res.status(201).json(cal);
   } catch (err) {
@@ -543,11 +565,27 @@ app.get('/api/squadre/:squadraId/scadenze-mediche', async (req, res) => {
   try {
     const { data: rosa } = await supabase
       .from('team_player')
-      .select('calciatore:player_id(id, nome, cognome)')
+      .select('calciatore:player_id(id, nome, cognome, scadenza_visita_medica)')
       .eq('team_id', req.params.squadraId);
     
-    // Per ora restituisci array vuoto - non c'è campo medical_cert_date
-    res.json([]);
+    const oggi = new Date();
+    const scadenze = (rosa || [])
+      .filter(r => r.calciatore?.scadenza_visita_medica)
+      .map(r => {
+        const scadenza = new Date(r.calciatore.scadenza_visita_medica);
+        const giorniRimanenti = Math.ceil((scadenza - oggi) / (1000 * 60 * 60 * 24));
+        return {
+          id: r.calciatore.id,
+          nome: r.calciatore.nome,
+          cognome: r.calciatore.cognome,
+          scadenza: r.calciatore.scadenza_visita_medica,
+          giorni_rimanenti: giorniRimanenti
+        };
+      })
+      .filter(s => s.giorni_rimanenti <= 30)
+      .sort((a, b) => a.giorni_rimanenti - b.giorni_rimanenti);
+    
+    res.json(scadenze);
   } catch (err) {
     console.error('scadenze-mediche error:', err);
     res.status(500).json({ error: err.message });
