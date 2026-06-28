@@ -5,23 +5,6 @@ import demoPersistence from '../demo/DemoPersistence';
 
 let trainingData = null;
 
-// Sync wrapper for localStorage persistence (synchronous for simplicity)
-const Persist = {
-  STORAGE_KEY: 'yfm_demo_persistence',
-  get() {
-    try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}'); } 
-    catch { return {}; }
-  },
-  set(data) {
-    try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data)); } 
-    catch {}
-  },
-  markDirty() {
-    // Re-save to trigger persistence
-    this.set(this.get());
-  }
-};
-
 export default async function loadTraining() {
   const c = document.getElementById('pageContent');
   c.innerHTML = '<div class="loading"><div class="spinner"></div>Caricamento...</div>';
@@ -32,12 +15,14 @@ export default async function loadTraining() {
   
   if (isDemo) {
     const tuttiGiocatori = window.YFM.allPlayers || [];
+    console.log('[Training] Giocatori:', tuttiGiocatori.length);
     
     // Inizializza storico allenamenti se non esiste
     demoPersistence.initTrainingHistory(tuttiGiocatori);
     
     // Usa i dati persistenti
     let allenamentiDemo = demoPersistence.data.training || window.YFM.demoAllenamenti || [];
+    console.log('[Training] Allenamenti caricati:', allenamentiDemo.length);
     
     // Configurazione default o salvata
     const savedConfig = demoPersistence.data.trainingConfig;
@@ -129,6 +114,8 @@ export default async function loadTraining() {
     ];
     
     window.YFM.allPlayers = giocatori;
+    console.log('[Training] Summary calcolato, giocatori con dati:', Object.keys(sumData.summary || {}).length);
+    console.log('[Training] Settimana:', sumData.settimana);
     trainingData = { config, presenze, giocatori, summary: sumData.summary || {}, settimana: sumData.settimana || {}, materiale: materiale || [], allenamenti: allenamentiDemo };
     renderTraining(c);
   } else {
@@ -209,13 +196,13 @@ function renderTraining(c) {
     
     <!-- Riepilogo -->
     <div class="card" style="margin-bottom:20px;">
-      <h3 class="section-title">📊 Riepilogo <span style="font-size:12px;color:var(--gray);">(Sett. ${settimana.da ? formatDateShort(settimana.da) : '...'} - ${settimana.a ? formatDateShort(settimana.a) : '...'})</span></h3>
+      <h3 class="section-title">📊 Riepilogo</h3>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#F8F9FA;">
             <th style="padding:8px;">#</th><th style="padding:8px;">Calciatore</th><th style="padding:8px;">Tot.</th>
             <th style="padding:8px;color:#27AE60;">Pres.</th><th style="padding:8px;color:#E74C3C;">Ass.</th>
-            <th style="padding:8px;">%</th><th style="padding:8px;color:#E74C3C;">Ass.Sett.</th>
+<th style="padding:8px;color:#E74C3C;" title="Assenze settimana ${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}">Ass.Sett.<br><span style="font-size:10px;font-weight:normal;color:var(--gray);">${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}</span></th>
           </tr></thead>
           <tbody>${[...giocatori].sort((a,b) => a.cognome.localeCompare(b.cognome)).map((g,i) => {
             const s = summary[g.id] || { totali:0, presenti:0, assenti:0, assentiSett:0 };
