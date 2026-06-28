@@ -70,10 +70,17 @@ youth-football-manager/
 | Matteo Urilli | Allenatore | matteo@urilli.it | mister | DF Academy |
 | Francesco Annese | Admin | francesco@annese.it | annex | ACP Annex |
 
-### Demo
-| Email | Password |
-|-------|----------|
-| demo_yfm | demo_yfm |
+### Demo (ModalitГ  Demo Interattiva)
+| Accesso | Password |
+|---------|----------|
+| "Entra in Demo" (pulsante) | - |
+
+La modalitГ  demo include:
+- Dati di esempio realistici (giocatori, partite, statistiche)
+- Sistema di mini-missioni guidate per pagina
+- PossibilitГ  di provare tutte le funzionalitГ  (salvate in locale)
+
+**Link diretto demo**: https://youth-football-manager.vercel.app/login?demo_email=demo_yfm&demo_password=demo_yfm&auto_login=1
 
 ---
 
@@ -333,5 +340,5 @@ Il backend sarà disponibile su **http://localhost:3001**
 - ✅ Report PDF partita/stagionale
 - ✅ Sistema auth con ruoli
 - ✅ Link guest temporanei
-- ✅ Demo mode con tooltip guidati
+- ✅ Demo mode interattiva con mini-missioni e tooltip guidati
 - ✅ Dashboard con top players

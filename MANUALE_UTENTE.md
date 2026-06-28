@@ -18,8 +18,9 @@ Guida completa all'utilizzo della piattaforma per la gestione di una società di
 10. [Report](#report)
 11. [Impostazioni](#impostazioni)
 12. [Gestione Utenti (Admin)](#gestione-utenti-admin)
-13. [Link Guest](#link-guest)
-14. [FAQ e Supporto](#faq-e-supporto)
+13. [ModalitГ  Demo](#modalitГ -demo)
+14. [Link Guest](#link-guest)
+15. [FAQ e Supporto](#faq-e-supporto)
 
 ---
 
@@ -392,6 +393,79 @@ Sistema per dare accesso temporaneo a genitori o atleti.
 1. Il destinatario clicca sul link
 2. Viene reindirizzato alla Dashboard
 3. Può vedere solo le categorie e le funzionalità consentite
+
+---
+
+
+## ModalitГ  Demo
+
+La modalitГ  demo permette di esplorare Youth Football Manager senza bisogno di account o configurazione.
+
+### Accedere alla Demo
+
+1. Nella pagina di login, clicca su **"Entra in Demo"**
+2. Verrai reindirizzato alla Dashboard con dati di esempio
+3. Potrai navigare tutte le sezioni dell'applicazione
+
+### Cosa Include la Demo
+
+La demo include dati realistici di esempio:
+
+| Sezione | Contenuto Demo |
+|---------|----------------|
+| Dashboard | Statistiche, prossima partita, top players |
+| Rosa | 20+ giocatori con ruoli e numeri di maglia |
+| Calendario | 7 partite (2 future, 5 terminate con risultati) |
+| Allenamenti | Sedute programmate di esempio |
+| Statistiche | Classifiche marcatori, assist, presenze |
+| Report | Template di report partita e stagionali |
+
+### Mini Missioni
+
+Durante l'esplorazione della demo, vedrai piccole missioni guidate:
+
+| Pagina | Missione |
+|--------|----------|
+| Dashboard | Esplora la panoramica della societГ |
+| Rosa | Visualizza i giocatori della squadra |
+| Calendario | Scopri le partite in programma |
+| Allenamenti | Esplora le sedute programmate |
+| Statistiche | Visualizza le classifiche |
+| Report | Genera un report di esempio |
+
+Le missioni si completano automaticamente esplorando le sezioni.
+
+### Provare le FunzionalitГ
+
+Nella modalitГ  demo puoi:
+
+- **Creare partite**: Aggiungi nuove partite al calendario
+- **Inserire risultati**: Segna gol, assist e cartellini
+- **Gestire convocazioni**: Seleziona i giocatori convocati
+- **Impostare formazioni**: Definisci titolari e panchina
+- **Gestire allenamenti**: Crea sedute e segna presenze
+
+Tutte le modifiche vengono salvate localmente nel browser.
+
+### Reset della Demo
+
+Per ripristinare i dati originali della demo:
+
+1. Apri la console del browser (F12)
+2. Esegui: `window.YFM.demoPersistence.reset()`
+3. Ricarica la pagina
+
+```javascript
+// Via console del browser
+window.YFM.demoPersistence.reset();
+location.reload();
+```
+
+### Limitazioni della Demo
+
+- I dati sono solo locali (non vengono salvati sul server)
+- Riferiti solo al workspace demo "ASD Green Academy"
+- Dopo il reset, tutte le modifiche vengono perse
 
 ---
 

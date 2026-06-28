@@ -169,7 +169,87 @@ Macro-aree funzionali:
 
 ---
 
-## 5. Logica Archiviazione Partite
+
+## 5. ModalitГ  Demo Interattiva вњ… COMPLETATA
+
+### Panoramica
+La modalitГ  demo permette di esplorare l'applicazione senza bisogno di account o backend. Include dati di esempio realistici e un sistema di mini-missioni per guidare l'utente.
+
+### Attivazione
+La modalitГ  demo si attiva cliccando "Entra in Demo" nella pagina di login. Viene impostato `localStorage.setItem('yfm_demo_session', 'active')`.
+
+### Struttura File
+
+| File | Descrizione |
+|------|-------------|
+| `modules/demo/demo.js` | DemoManager + MiniMissionManager (2138 righe) |
+| `modules/demo/DemoPersistence.js` | Persistenza dati demo in localStorage |
+
+### Componenti Demo
+
+| Componente | Descrizione |
+|------------|-------------|
+| **DemoManager** | Gestisce sessione, navigazione, tooltip e progressi |
+| **MiniMissionManager** | Missioni guidate per pagina con completamento automatico |
+| **DemoPersistence** | Salva modifiche in localStorage durante la demo |
+
+### Mini Missioni per Pagina
+
+| Pagina | Steps | Trigger |
+|--------|-------|---------|
+| Dashboard | Esplora dashboard | page_view |
+| Rosa | Esplora rosa | page_view |
+| Calendario | Esplora calendario | page_view |
+| Allenamenti | Esplora allenamenti | page_view |
+| Statistiche | Esplora statistiche | auto_complete |
+| Report | Esplora, genera report, scarica PDF | click |
+
+### Dati Demo
+
+| Tipo | Contenuto |
+|------|-----------|
+| Workspace | ASD Green Academy (Roma) |
+| Squadre | Primavera, Allievi B |
+| Giocatori | 20+ giocatori con stats |
+| Partite | 7 partite (2 future, 5 terminate) |
+| Eventi | Gol, assist per partite terminate |
+| Convocazioni | Per partite future |
+| Formazioni | Per partite terminate |
+| Statistiche | Punti, V/P/S, GF/GS, DR |
+| Top Players | Marcatori, assist, presenze |
+
+### Persistenza Demo
+
+Le modifiche vengono salvate in `localStorage` sotto la chiave `yfm_demo_persistence`:
+
+```javascript
+window.YFM.demoPersistence.saveMatchResult(matchId, golCasa, golOspiti)
+window.YFM.demoPersistence.addEvent(matchId, { tipo, minuto, player_id })
+window.YFM.demoPersistence.saveFormation(matchId, formation)
+window.YFM.demoPersistence.saveConvocation(matchId, playerIds)
+window.YFM.demoPersistence.saveTrainingPresence(trainingId, { presenti, assenti })
+window.YFM.demoPersistence.addPlayer(player)
+window.YFM.demoPersistence.reset() // Resetta tutti i dati
+```
+
+### Reset Dati Demo
+
+```javascript
+window.YFM.demoPersistence.reset()
+location.reload()
+```
+
+### ID Speciali Demo
+
+| Tipo | ID |
+|------|-----|
+| Workspace Demo | `00000000-0000-0000-0000-000000000001` |
+| Squadra Primavera | `00000000-0000-0000-0000-000000000010` |
+| Squadra Allievi B | `00000000-0000-0000-0000-000000000011` |
+
+---
+
+## 6. Logica Archiviazione Partite
 
 ### Campo Database
 - Tabella: `match`
@@ -200,7 +280,7 @@ Macro-aree funzionali:
 
 ---
 
-## 6. Routing e Navigazione
+## 7. Routing e Navigazione
 
 Il router (`router.js`) definisce le pagine accessibili dalla sidebar:
 
@@ -224,7 +304,7 @@ Navigazione: `window.YFM.navigateTo('nomePagina')`
 
 ---
 
-## 7. Servizi e Utility
+## 8. Servizi e Utility
 
 ### API (`src/services/api.js`)
 - `apiFetch(path, options?)` → chiama il backend
@@ -241,7 +321,7 @@ Navigazione: `window.YFM.navigateTo('nomePagina')`
 
 ---
 
-## 8. Linee Guida per Collaboratori
+## 9. Linee Guida per Collaboratori
 
 ### Regole fondamentali
 1. **Mai inventare route, nomi tabelle o funzioni** → verificare prima nel codice
@@ -276,7 +356,7 @@ unction renderModule(container, data) {
 
 ---
 
-## 9. Roadmap MVP 2026
+## 10. Roadmap MVP 2026
 
 ### 🎯 Obiettivo
 **Versione completa e stabile entro metà Settembre 2026** per inizio campionati.
@@ -325,7 +405,7 @@ unction renderModule(container, data) {
 
 ---
 
-## 10. Deploy
+## 11. Deploy
 
 ### Frontend (Vercel)
 - **URL**: https://youth-football-manager.vercel.app
@@ -347,7 +427,7 @@ unction renderModule(container, data) {
 
 ---
 
-## 11. Ultimi Commit
+## 12. Ultimi Commit
 
 | Hash | Descrizione |
 |------|------------|
@@ -363,7 +443,7 @@ unction renderModule(container, data) {
 
 ---
 
-## 12. Utenti di Sistema
+## 13. Utenti di Sistema
 
 ### Superadmin
 | Ruolo | Email | Password | Note |
@@ -385,7 +465,7 @@ unction renderModule(container, data) {
 
 ---
 
-## 13. Workspace di Test - SSD New Team
+## 14. Workspace di Test - SSD New Team
 
 ### Creazione Workspace Test
 Per creare il workspace di test SSD New Team, eseguire lo script SQL:
