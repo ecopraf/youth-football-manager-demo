@@ -182,3 +182,58 @@ Esempio: `004_add_player_fields.sql` aggiunge i campi mancanti alla tabella play
 - `/api/squadre/:id/scadenze-mediche` → giocatori con certificato in scadenza (30 giorni)
 - `/api/squadre/:id/statistiche-complete` → statistiche squadre
 - `/api/squadre/:id/top-players` → top marcatori/assist/presenze
+
+---
+
+## 🎭 Modalità Demo
+
+### Attivazione
+La modalità demo si attiva quando un utente clicca "Entra in Demo" sulla pagina di login. Viene impostato `localStorage.setItem('yfm_demo_session', 'active')`.
+
+### Struttura Dati Demo (`frontend-v2/src/main.js`)
+
+```javascript
+// Dati demo sono costanti definite all'inizio del file
+const DEMO_WORKSPACE = { id: '...', nome: 'ASD Green Academy', ... };
+const DEMO_SQUADRE = [{ id: '...', nome: 'Green Academy', categoria: 'Primavera', ... }];
+const DEMO_CALCIATORI = [{ id: 'c001', nome: 'Alessandro', cognome: 'Rossi', ... }, ...];
+const DEMO_PARTITE = [{ id: 'm001', avversario: 'Roma Academy', gol_casa: 3, gol_trasferta: 1, ... }, ...];
+const DEMO_EVENTI = [{ match_id: 'm003', player_id: 'c007', tipo: 'GOAL', minuto: 15 }, ...];
+const DEMO_STATISTICHE = { punti: 34, vittorie: 10, pareggi: 4, sconfitte: 0, ... };
+const DEMO_TOP_PLAYERS = { marcatori: [...], assistmen: [...], presenze: [...] };
+const DEMO_CONVOCAZIONI = { m001: ['c001', 'c002', ...], m002: [...] };
+const DEMO_FORMAZIONI = { m003: { portiere: 'c001', difensori: [...], ... }, ... };
+const DEMO_ALLENAMENTI = [{ id: 'a001', data: '2026-06-26', tipo: 'Tattico', presenze: [...], assenti: [...], ... }];
+```
+
+### Init Demo Session (`initDemoSession()`)
+```javascript
+window.YFM.workspaceInfo = DEMO_WORKSPACE;
+window.YFM.allSquadre = DEMO_SQUADRE;
+window.YFM.squadraId = DEMO_SQUADRE[0].id; // Primavera
+window.YFM.allPlayers = DEMO_CALCIATORI;
+window.YFM.demoMatches = DEMO_PARTITE;
+window.YFM.demoEvents = DEMO_EVENTI;
+window.YFM.demoStats = DEMO_STATISTICHE;
+window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
+window.YFM.demoConvocazioni = DEMO_CONVOCAZIONI;
+window.YFM.demoFormazioni = DEMO_FORMAZIONI;
+window.YFM.demoAllenamenti = DEMO_ALLENAMENTI;
+```
+
+### Moduli con Supporto Demo
+Ogni modulo verifica `localStorage.getItem('yfm_demo_session') === 'active'` e usa i dati da `window.YFM.*`:
+- `dashboard.js` - usa `demoStats`
+- `calendar.js` - usa `demoMatches` (con `gol_casa`, `gol_trasferta`)
+- `roster.js` - usa `allPlayers`
+- `training.js` - usa `demoAllenamenti`
+- `matchDetail.js` - usa `demoMatches`, `demoEvents`
+- `reports.js` - usa `demoStats`, `demoTopPlayers`, `demoMatches`
+
+### Nota su Partite e Risultati
+Le partite demo hanno i campi `gol_casa` e `gol_trasferta` direttamente nell'oggetto partita (non in un oggetto stats separato). Il renderer `renderMatchCard()` cerca prima in `stats?.risultati` e poi usa i valori diretti dalla partita.
+
+### ID Squadra Demo
+- **Primavera**: `00000000-0000-0000-0000-000000000010`
+- **Allievi B**: `00000000-0000-0000-0000-000000000011`
+- **Workspace Demo**: `00000000-0000-0000-0000-000000000001`

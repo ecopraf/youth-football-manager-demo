@@ -89,8 +89,16 @@ export default async function loadReports() {
 }
 
 async function loadPlayerList() {
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  
   try {
-    const players = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori');
+    let players;
+    if (isDemo) {
+      players = window.YFM.allPlayers || [];
+    } else {
+      players = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori');
+    }
+    
     // Ordina alfabeticamente per cognome + nome
     const sortedPlayers = (players || []).sort((a, b) => {
       const nameA = (a.cognome || a.nome || '').toLowerCase();
@@ -110,8 +118,16 @@ async function loadPlayerList() {
 }
 
 async function loadMatchList() {
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  
   try {
-    const partite = await apiFetch('/squadre/' + window.YFM.squadraId + '/partite');
+    let partite;
+    if (isDemo) {
+      partite = window.YFM.demoMatches || [];
+    } else {
+      partite = await apiFetch('/squadre/' + window.YFM.squadraId + '/partite');
+    }
+    
     const select = document.getElementById('reportMatchSelect');
     
     if (!partite || partite.length === 0) {
@@ -408,6 +424,7 @@ async function generateSeasonalReport() {
       // Genera report demo
       const stats = window.YFM.demoStats || {};
       const topPlayers = window.YFM.demoTopPlayers || {};
+      const matches = window.YFM.demoMatches || [];
       const s = window.YFM.getSquadra();
       report = {
         societa: window.YFM.workspaceInfo?.nome || 'ASD Green Academy',
@@ -424,6 +441,7 @@ async function generateSeasonalReport() {
         topMarcatori: topPlayers.marcatori || [],
         topAssist: topPlayers.assistmen || [],
         topPresenze: topPlayers.presenze || [],
+        partite: matches,
         ammonizioni: 18,
         espulsioni: 2,
         capienzeMedie: 45

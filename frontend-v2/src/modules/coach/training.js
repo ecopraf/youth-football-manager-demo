@@ -13,49 +13,58 @@ export default async function loadTraining() {
   let config, presenze, giocatori, sumData, materiale;
   
   if (isDemo) {
-    // Dati demo per allenamenti
+    // Usa i dati demo strutturati da window.YFM.demoAllenamenti
+    const allenamentiDemo = window.YFM.demoAllenamenti || [];
+    
     config = [
       { id: 't1', giorno_settimana: 2, ora_inizio: '17:00', ora_fine: '19:00', campo: 'Campo 1', tipo: 'Tattico' },
       { id: 't2', giorno_settimana: 4, ora_inizio: '17:00', ora_fine: '19:00', campo: 'Campo 1', tipo: 'Tecnico' },
-      { id: 't3', giorno_settimana: 6, ora_inizio: '10:00', ora_fine: '12:00', campo: 'Campo 1', tipo: 'Amichevole' }
+      { id: 't3', giorno_settimana: 6, ora_inizio: '10:00', ora_fine: '12:00', campo: 'Campo 1', tipo: 'Atletico' }
     ];
     
-    const oggi = new Date();
     presenze = [];
+    const tuttiGiocatori = window.YFM.allPlayers || [];
     
-    // Genera presenze demo per le ultime settimane
-    for (let w = 0; w < 4; w++) {
-      const weekDate = new Date(oggi);
-      weekDate.setDate(weekDate.getDate() - (w * 7));
-      for (let d of [2, 4, 6]) {
-        const dayDate = new Date(weekDate);
-        dayDate.setDate(dayDate.getDate() + ((d - weekDate.getDay() + 7) % 7));
-        if (dayDate < oggi) {
-          const dateStr = dayDate.toISOString().split('T')[0];
-          (window.YFM.allPlayers || []).slice(0, 15).forEach((p, i) => {
-            presenze.push({
-              id: `pr_${w}_${d}_${i}`,
-              player_id: p.id,
-              nome: p.nome,
-              cognome: p.cognome,
-              data: dateStr,
-              presente: Math.random() > 0.2,
-              assenza_giustificata: Math.random() > 0.8
-            });
-          });
-        }
+    // Converte allenamenti demo in presenze
+    allenamentiDemo.forEach(a => {
+      tuttiGiocatori.forEach(p => {
+        const presente = a.presenze.includes(p.id);
+        const assente = a.assenti.includes(p.id);
+        presenze.push({
+          id: `pr_${a.id}_${p.id}`,
+          player_id: p.id,
+          nome: p.nome,
+          cognome: p.cognome,
+          data: a.data,
+          presente: presente,
+          assenza_giustificata: assente && Math.random() > 0.5
+        });
+      });
+    });
+    
+    giocatori = tuttiGiocatori;
+    
+    // Calcola summary dai dati demo
+    const giorniPresenze = {};
+    allenamentiDemo.forEach(a => {
+      const giorno = new Date(a.data).getDay();
+      if (!giorniPresenze[giorno]) {
+        giorniPresenze[giorno] = { totale: 0, presenti: 0, assenti: 0 };
       }
-    }
+      giorniPresenze[giorno].totale = giocatori.length;
+      giorniPresenze[giorno].presenti = a.presenze.length;
+      giorniPresenze[giorno].assenti = a.assenti.length;
+    });
     
-    giocatori = window.YFM.allPlayers || [];
     sumData = {
-      summary: {
-        '2': { totale: 15, presenti: Math.floor(Math.random() * 5) + 10, assenti: Math.floor(Math.random() * 3) },
-        '4': { totale: 15, presenti: Math.floor(Math.random() * 5) + 10, assenti: Math.floor(Math.random() * 3) },
-        '6': { totale: 15, presenti: Math.floor(Math.random() * 5) + 10, assenti: Math.floor(Math.random() * 3) }
-      },
-      settimana: { totale: 45, presenti: 38, assenti: 7 }
+      summary: giorniPresenze,
+      settimana: {
+        totale: giocatori.length,
+        presenti: allenamentiDemo.reduce((s, a) => s + a.presenze.length, 0) / Math.max(allenamentiDemo.length, 1),
+        assenti: allenamentiDemo.reduce((s, a) => s + a.assenti.length, 0) / Math.max(allenamentiDemo.length, 1)
+      }
     };
+    
     materiale = [
       { id: 'm1', nome: 'Paletti', quantita: 20, disponibilita: 20 },
       { id: 'm2', nome: 'Coni', quantita: 30, disponibilita: 30 },

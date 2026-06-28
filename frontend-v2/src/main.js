@@ -112,6 +112,86 @@ const DEMO_TOP_PLAYERS = {
   ]
 };
 
+// Convocazioni demo (per prossime partite)
+const DEMO_CONVOCAZIONI = {
+  m001: ['c001', 'c002', 'c003', 'c004', 'c005', 'c006', 'c007', 'c008', 'c009', 'c010', 'c011', 'c012', 'c013', 'c017', 'c018', 'c019', 'c020'],
+  m002: ['c001', 'c002', 'c003', 'c004', 'c005', 'c006', 'c007', 'c008', 'c009', 'c010', 'c011', 'c012', 'c013', 'c014', 'c015', 'c017', 'c018', 'c020']
+};
+
+// Formazioni demo (solo partite passate con risultato)
+const DEMO_FORMAZIONI = {
+  m003: {
+    portiere: 'c001',
+    difensori: ['c002', 'c003', 'c004', 'c013'],
+    centrocampisti: ['c005', 'c008', 'c010'],
+    attaccanti: ['c007', 'c011']
+  },
+  m004: {
+    portiere: 'c012',
+    difensori: ['c002', 'c003', 'c004', 'c015'],
+    centrocampisti: ['c005', 'c006', 'c018'],
+    attaccanti: ['c007', 'c009']
+  },
+  m005: {
+    portiere: 'c001',
+    difensori: ['c002', 'c003', 'c004', 'c013'],
+    centrocampisti: ['c005', 'c008', 'c014'],
+    attaccanti: ['c009', 'c011', 'c017']
+  },
+  m006: {
+    portiere: 'c012',
+    difensori: ['c002', 'c003', 'c004', 'c015'],
+    centrocampisti: ['c005', 'c006', 'c018'],
+    attaccanti: ['c011', 'c020']
+  },
+  m007: {
+    portiere: 'c001',
+    difensori: ['c002', 'c003', 'c004', 'c013'],
+    centrocampisti: ['c005', 'c008', 'c010'],
+    attaccanti: ['c007', 'c009', 'c011']
+  }
+};
+
+// Allenamenti demo (ultimi 4 allenamenti)
+const DEMO_ALLENAMENTI = [
+  { 
+    id: 'a001', 
+    data: '2026-06-26', 
+    tipo: 'Tattico', 
+    durata: 90,
+    presenze: ['c001', 'c002', 'c003', 'c004', 'c005', 'c006', 'c007', 'c008', 'c009', 'c010', 'c011', 'c012', 'c013', 'c014', 'c015', 'c017', 'c018', 'c020'],
+    assenti: ['c016', 'c019'],
+    note: 'Esercizi su sviluppo gioco sulle fasce'
+  },
+  { 
+    id: 'a002', 
+    data: '2026-06-24', 
+    tipo: 'Tecnico', 
+    durata: 75,
+    presenze: ['c001', 'c002', 'c003', 'c004', 'c005', 'c006', 'c007', 'c008', 'c010', 'c011', 'c012', 'c013', 'c014', 'c015', 'c016', 'c017', 'c018', 'c019', 'c020'],
+    assenti: ['c009'],
+    note: 'Passaggi e controllo palla'
+  },
+  { 
+    id: 'a003', 
+    data: '2026-06-21', 
+    tipo: 'Atletico', 
+    durata: 60,
+    presenze: ['c001', 'c002', 'c003', 'c004', 'c005', 'c007', 'c008', 'c009', 'c010', 'c011', 'c012', 'c013', 'c015', 'c016', 'c017', 'c018', 'c020'],
+    assenti: ['c006', 'c014', 'c019'],
+    note: 'Circuiti di forza e resistenza'
+  },
+  { 
+    id: 'a004', 
+    data: '2026-06-19', 
+    tipo: 'Partita a tema', 
+    durata: 80,
+    presenze: ['c001', 'c002', 'c003', 'c004', 'c005', 'c006', 'c007', 'c008', 'c009', 'c010', 'c011', 'c012', 'c013', 'c014', 'c017', 'c018', 'c019', 'c020'],
+    assenti: ['c015', 'c016'],
+    note: 'Situazioni di gioco su palla inattiva'
+  }
+];
+
 const DEMO_CALCIATORI = [
   { id: 'c001', nome: 'Alessandro', cognome: 'Rossi', data_nascita: '2010-03-15', numero_maglia: 1, ruolo: 'Portiere', stato: 'Attivo', presenze: 10, gol: 0, assist: 0 },
   { id: 'c002', nome: 'Luca', cognome: 'Bianchi', data_nascita: '2010-01-20', numero_maglia: 2, ruolo: 'Difensore', stato: 'Attivo', presenze: 14, gol: 1, assist: 2 },
@@ -164,6 +244,9 @@ function initDemoSession() {
   window.YFM.demoEvents = DEMO_EVENTI;
   window.YFM.demoStats = DEMO_STATISTICHE;
   window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
+  window.YFM.demoConvocazioni = DEMO_CONVOCAZIONI;
+  window.YFM.demoFormazioni = DEMO_FORMAZIONI;
+  window.YFM.demoAllenamenti = DEMO_ALLENAMENTI;
   
   // Aggiorna UI
   const wsName = document.getElementById('workspaceName');
