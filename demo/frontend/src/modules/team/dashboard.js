@@ -96,13 +96,14 @@ export default async function loadDashboard() {
     const value = tipo === 'gol' ? giocatore.gol + ' Gol' : tipo === 'assist' ? giocatore.assist + ' Assist' : giocatore.presenze + ' Pres.';
     const bgColor = index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : '#CD7F32';
     const bgEnd = index === 0 ? '#FFA500' : index === 1 ? '#A0A0A0' : '#8B4513';
-    return '<div style="flex:1;background:linear-gradient(180deg,' + bgColor + ' 0%,' + bgEnd + ' 100%);padding:16px 8px;border-radius:16px;text-align:center;cursor:pointer;" onclick="if(typeof loadPlayerDetail===\'function\') loadPlayerDetail(\'' + giocatore.id + '\',\'' + giocatore.nome + '\');">' +
-      '<div style="font-size:32px;margin-bottom:8px;">' + medal + '</div>' +
-      '<div style="font-size:13px;font-weight:bold;color:#fff;margin-bottom:6px;">' + giocatore.nome + '</div>' +
+    const playerName = giocatore.cognome + '. ' + (giocatore.nome ? giocatore.nome[0] : '');
+    return '<div class="player-box" style="background:linear-gradient(180deg,' + bgColor + ' 0%,' + bgEnd + ' 100%);border-radius:16px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;min-height:120px;" onclick="if(typeof loadPlayerDetail===\'function\') loadPlayerDetail(\'' + giocatore.id + '\',\'' + giocatore.nome + '\');">' +
+      '<div style="font-size:28px;margin-bottom:8px;">' + medal + '</div>' +
+      '<div style="font-size:14px;font-weight:bold;color:#fff;margin-bottom:6px;">' + playerName + '</div>' +
       '<div style="font-size:16px;font-weight:bold;color:#fff;">' + value + '</div></div>';
   };
 
-  const createEmptyBoxHtml = () => '<div style="flex:1;background:#e8e8e8;padding:16px 8px;border-radius:16px;text-align:center;color:#aaa;">-</div>';
+  const createEmptyBoxHtml = () => '<div class="player-box" style="background:#e8e8e8;border-radius:16px;text-align:center;color:#aaa;display:flex;align-items:center;justify-content:center;min-height:120px;padding:16px 8px;">-</div>';
 
   // Render top players
   const renderTopSection = (title, players, tipo) => {
@@ -184,10 +185,13 @@ export default async function loadDashboard() {
     '.dash-card { background:white; padding:12px 6px; text-align:center; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.08); }' +
     '.top-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }' +
     '@media (max-width: 900px) { .top-grid { grid-template-columns: 1fr !important; } }' +
-    '.top-section { background:linear-gradient(180deg, #fff 0%, #f5f5f5 100%); padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }' +
+    '.top-section { background:linear-gradient(180deg, #fff 0%, #f5f5f5 100%); padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); display:flex; flex-direction:column; }' +
     '.top-section-title { font-size:15px;font-weight:600;color:#333;margin:0 0 14px 0;display:flex;align-items:center;gap:8px; }' +
-    '.players-row { display:flex; gap:10px; }' +
-    '@media (max-width: 600px) { .players-row { flex-direction:column; } }' +
+    '.players-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; flex:1; }' +
+    '@media (max-width: 600px) { .players-row { grid-template-columns: repeat(3, 1fr) !important; gap:6px; } }' +
+    '@media (max-width: 400px) { .players-row { grid-template-columns: repeat(3, 1fr) !important; gap:4px; } }' +
+    '.player-box { flex:1; min-height:120px; }' +
+    '@media (max-width: 600px) { .player-box { min-height:80px !important; padding:10px 4px !important; } .player-box > div:first-child { font-size:20px !important; } .player-box > div:nth-child(2) { font-size:11px !important; } .player-box > div:last-child { font-size:12px !important; } }' +
     '.bottom-grid { display:grid; gap:20px; grid-template-columns:1fr; }' +
     '@media (min-width: 900px) { .bottom-grid { grid-template-columns: 1.5fr 1fr !important; } }' +
     '.result-card { background:white; padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }' +
