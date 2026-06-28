@@ -52,9 +52,14 @@ export async function loadSquadre(stagioneId) {
     window.YFM.allSquadre = allSquadre;
     const sel = document.getElementById('squadraSelect');
     if (sel) {
-      sel.innerHTML = allSquadre.map(s => 
-        `<option value="${s.id}" ${s.id === window.YFM.squadraId ? 'selected' : ''}>${s.nome}</option>`
-      ).join('');
+      sel.innerHTML = allSquadre.map(s => {
+        const categoriaNome = s.category?.nome || s.categoria || '';
+        const tipoCampionato = s.category?.tipo_campionato || '';
+        const displayNome = categoriaNome && tipoCampionato 
+          ? `${categoriaNome} ${tipoCampionato}` 
+          : (categoriaNome || s.nome);
+        return `<option value="${s.id}" ${s.id === window.YFM.squadraId ? 'selected' : ''}>${displayNome}</option>`;
+      }).join('');
       sel.addEventListener('change', e => {
         window.YFM.squadraId = e.target.value;
         window.YFM.allPlayers = [];
@@ -74,7 +79,13 @@ export async function loadSquadre(stagioneId) {
 window.YFM = window.YFM || {};
 window.YFM.getSquadraName = () => {
   const s = window.YFM.allSquadre.find(x => x.id === window.YFM.squadraId);
-  return s ? s.nome : 'Squadra';
+  if (!s) return 'Squadra';
+  const categoriaNome = s.category?.nome || s.categoria || '';
+  const tipoCampionato = s.category?.tipo_campionato || '';
+  if (categoriaNome && tipoCampionato) {
+    return `${categoriaNome} ${tipoCampionato}`;
+  }
+  return categoriaNome || s.nome;
 };
 
 window.YFM.getSquadra = () => {
