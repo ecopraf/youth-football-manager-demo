@@ -2,19 +2,32 @@ import { apiFetch } from '../../services/api';
 
 export async function loadWorkspaceInfo() {
   try {
-    const w = await apiFetch('/workspaces');
-    if (w && w.length > 0) {
-      window.YFM.workspaceInfo = w[0];
-      document.getElementById('workspaceName').textContent = w[0].nome;
+    // Usa il workspace già impostato in window.YFM.workspaceInfo
+    // (impostato da main.js o workspaceSwitcher)
+    let ws = window.YFM.workspaceInfo;
+    
+    if (!ws) {
+      // Fallback: carica da /auth/workspaces
+      const workspaces = await apiFetch('/auth/workspaces');
+      ws = workspaces[0];
+      if (ws) {
+        window.YFM.workspaceInfo = ws;
+        window.YFM.activeWorkspaceId = ws.id;
+      }
+    }
+    
+    if (ws) {
+      document.getElementById('workspaceName').textContent = ws.nome || 'Società';
       const hn = document.getElementById('headerSocName');
-      if (hn) hn.textContent = w[0].nome;
+      if (hn) hn.textContent = ws.nome || 'Società';
       const logo = document.getElementById('headerLogo');
-      if (logo && w[0].logo_url) {
-        logo.src = w[0].logo_url;
+      if (logo && ws.logo_url) {
+        logo.src = ws.logo_url;
         logo.style.display = 'block';
       }
     }
   } catch (e) {
-    document.getElementById('workspaceName').textContent = 'Carica società...';
+    console.error('loadWorkspaceInfo error:', e);
+    document.getElementById('workspaceName').textContent = 'Società';
   }
 }

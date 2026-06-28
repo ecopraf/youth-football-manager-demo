@@ -40,7 +40,7 @@ export async function loadSquadre(stagioneId) {
       
       // Cerca stagioni del workspace e prendi quella attiva
       const stagioni = await apiFetch(`/workspaces/${currentWorkspace?.id}/stagioni`);
-      const stagioneAttiva = stagioni.find(s => s.is_attiva) || stagioni[0];
+      const stagioneAttiva = stagioni.find(s => s.attiva) || stagioni[0];
       
       if (stagioneAttiva) {
         allSquadre = await apiFetch(`/stagioni/${stagioneAttiva.id}/squadre`);
