@@ -237,3 +237,40 @@ Le partite demo hanno i campi `gol_casa` e `gol_trasferta` direttamente nell'ogg
 - **Primavera**: `00000000-0000-0000-0000-000000000010`
 - **Allievi B**: `00000000-0000-0000-0000-000000000011`
 - **Workspace Demo**: `00000000-0000-0000-0000-000000000001`
+
+### Persistenza Demo (`DemoPersistence.js`)
+Le modifiche in modalità demo vengono salvate in `localStorage` sotto la chiave `yfm_demo_persistence`.
+
+**Cosa viene persistito:**
+- `matches` - Partite con risultati
+- `matchResults` - Risultati partite (gol fatti/subiti)
+- `events` - Eventi partita (gol, assist, cartellini)
+- `formations` - Formazioni salvate
+- `convocations` - Convocazioni per partita
+- `training` - Allenamenti con presenze
+- `players` - Giocatori aggiunti/modificati
+
+**API DemoPersistence:**
+```javascript
+window.YFM.demoPersistence.saveMatchResult(matchId, golCasa, golOspiti)
+window.YFM.demoPersistence.addEvent(matchId, { tipo, minuto, player_id })
+window.YFM.demoPersistence.getEvents(matchId)
+window.YFM.demoPersistence.saveFormation(matchId, formation)
+window.YFM.demoPersistence.saveConvocation(matchId, playerIds)
+window.YFM.demoPersistence.saveTrainingPresence(trainingId, { presenti, assenti })
+window.YFM.demoPersistence.addPlayer(player)
+window.YFM.demoPersistence.updatePlayer(playerId, updates)
+window.YFM.demoPersistence.reset() // Pulisce tutti i dati
+```
+
+**Riferimento in window.YFM:**
+```javascript
+window.YFM.demoPersistence // Istanza singleton
+```
+
+### Reset Dati Demo
+Per resettare tutti i dati demo persistenti e tornare ai valori originali:
+```javascript
+window.YFM.demoPersistence.reset()
+location.reload()
+```

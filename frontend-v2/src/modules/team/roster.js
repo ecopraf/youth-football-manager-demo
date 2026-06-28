@@ -1,6 +1,7 @@
 import { apiFetch } from '../../services/api';
 import { formatDateShort, getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 export { openPlayerForm, filterRoster, updateRosterGrid };
 
@@ -307,15 +308,36 @@ function openPlayerForm(pid) {
       numero_documento: document.getElementById('pfND').value,
       rilasciato_da: document.getElementById('pfRD').value
     };
+    
+    const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+    
     showLoading();
     try {
-      if (p) {
-        await apiFetch('/calciatori/' + p.id, { method: 'PUT', body: JSON.stringify(d) });
+      if (isDemo) {
+        if (p) {
+          // Aggiorna giocatore esistente
+          demoPersistence.updatePlayer(p.id, d);
+          // Aggiorna window.YFM.allPlayers
+          const idx = window.YFM.allPlayers.findIndex(pl => pl.id === p.id);
+          if (idx !== -1) {
+            window.YFM.allPlayers[idx] = { ...window.YFM.allPlayers[idx], ...d };
+          }
+        } else {
+          // Aggiunge nuovo giocatore
+          const newPlayer = demoPersistence.addPlayer(d);
+          window.YFM.allPlayers.push(newPlayer);
+        }
+        closeModal();
+        loadRoster();
       } else {
-        await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori', { method: 'POST', body: JSON.stringify(d) });
+        if (p) {
+          await apiFetch('/calciatori/' + p.id, { method: 'PUT', body: JSON.stringify(d) });
+        } else {
+          await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori', { method: 'POST', body: JSON.stringify(d) });
+        }
+        closeModal();
+        loadRoster();
       }
-      closeModal();
-      loadRoster();
     } catch (e) {
       alert('Errore: ' + e.message);
     } finally {

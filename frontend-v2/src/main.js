@@ -6,6 +6,7 @@ import { loadSquadre } from './modules/team/squadre'
 import { loadPlayerDetail } from './modules/team/playerDetail.js'
 import { showWorkspaceSelectorModal, initWorkspaceSwitcherInSidebar, getSavedWorkspaceId, resetWorkspaceCache, getRealWorkspaces, loadAvailableWorkspaces, isSuperAdmin, saveCurrentWorkspace } from './modules/club/workspaceSwitcher'
 import demoManager from './modules/demo/demo'
+import demoPersistence from './modules/demo/DemoPersistence'
 import { BUILD_INFO } from './build-info'
 
 // Imposta build ID globale per la UI
@@ -235,18 +236,47 @@ function populateSquadreSelect() {
 function initDemoSession() {
   console.log('[MAIN] Init demo - ASD Green Academy');
   
+  // Inizializza persistenza demo
+  demoPersistence.init({
+    matches: DEMO_PARTITE,
+    events: DEMO_EVENTI,
+    formations: DEMO_FORMAZIONI,
+    convocations: DEMO_CONVOCAZIONI,
+    training: DEMO_ALLENAMENTI,
+    players: DEMO_CALCIATORI
+  });
+  
   // Imposta dati demo (sovrascrive qualsiasi workspace caricato)
   window.YFM.workspaceInfo = DEMO_WORKSPACE;
   window.YFM.allSquadre = DEMO_SQUADRE;
   window.YFM.squadraId = DEMO_SQUADRE[0].id; // Primavera
-  window.YFM.allPlayers = DEMO_CALCIATORI;
-  window.YFM.demoMatches = DEMO_PARTITE;
-  window.YFM.demoEvents = DEMO_EVENTI;
+  
+  // I dati vengono già impostati da demoPersistence._applyToWindow()
+  // Ma sovrascriviamo per sicurezza se non ci sono dati persistenti
+  if (!window.YFM.allPlayers || window.YFM.allPlayers.length === 0) {
+    window.YFM.allPlayers = DEMO_CALCIATORI;
+  }
+  if (!window.YFM.demoMatches) {
+    window.YFM.demoMatches = DEMO_PARTITE;
+  }
+  if (!window.YFM.demoEvents) {
+    window.YFM.demoEvents = DEMO_EVENTI;
+  }
+  if (!window.YFM.demoFormazioni) {
+    window.YFM.demoFormazioni = DEMO_FORMAZIONI;
+  }
+  if (!window.YFM.demoConvocazioni) {
+    window.YFM.demoConvocazioni = DEMO_CONVOCAZIONI;
+  }
+  if (!window.YFM.demoAllenamenti) {
+    window.YFM.demoAllenamenti = DEMO_ALLENAMENTI;
+  }
+  
   window.YFM.demoStats = DEMO_STATISTICHE;
   window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
-  window.YFM.demoConvocazioni = DEMO_CONVOCAZIONI;
-  window.YFM.demoFormazioni = DEMO_FORMAZIONI;
-  window.YFM.demoAllenamenti = DEMO_ALLENAMENTI;
+  
+  // Riferimento alla persistenza
+  window.YFM.demoPersistence = demoPersistence;
   
   // Aggiorna UI
   const wsName = document.getElementById('workspaceName');

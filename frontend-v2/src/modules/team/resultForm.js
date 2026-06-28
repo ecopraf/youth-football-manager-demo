@@ -1,5 +1,6 @@
 import { apiFetch } from '../../services/api.js';
 import { showLoading, hideLoading } from '../../utils/ui.js';
+import demoPersistence from '../demo/DemoPersistence.js';
 
 const EVENTI = {
   'GOAL': { icon: '⚽', label: 'Gol', color: '#27AE60' },
@@ -14,35 +15,61 @@ const EVENTI = {
 const CON_GIOCATORE = ['GOAL', 'YELLOW', 'RED', 'ASSIST', 'IN', 'OUT'];
 
 export async function openResultForm(mid) {
-  const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const match = window.YFM.demoMatches?.find(m => m.id === mid) || window.YFM.allMatches?.find(m => m.id === mid) || {};
   const isArchiviata = match.archiviata === true || match.archiviata === 'true';
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   
   let eventi = [];
-  try {
-    const detRes = await apiFetch('/partite/' + mid + '/dettaglio');
-    eventi = detRes.eventi || [];
-  } catch(e) {}
-  
   let giocatori = [];
-  try {
-    const res = await apiFetch('/partite/' + mid + '/formazione');
-    giocatori = Array.isArray(res) ? res : [];
-  } catch(e) {}
   
-  if (giocatori.length === 0) {
+  if (isDemo) {
+    // Carica eventi e giocatori dai dati demo
+    eventi = demoPersistence.getEvents(mid) || [];
+    
+    // Carica giocatori dalla formazione o convocazioni demo
+    const formazione = demoPersistence.getFormation(mid);
+    const convocazione = demoPersistence.getConvocation(mid);
+    const allPlayers = window.YFM.allPlayers || [];
+    
+    if (formazione) {
+      // Estrai giocatori dalla formazione
+      const ids = [formazione.portiere, ...(formazione.difensori || []), ...(formazione.centrocampisti || []), ...(formazione.attaccanti || [])];
+      giocatori = ids.map(id => {
+        const p = allPlayers.find(x => x.id === id);
+        return p ? { calciatoreId: p.id, nome: p.nome || '', cognome: p.cognome || '' } : null;
+      }).filter(Boolean);
+    } else if (convocazione) {
+      giocatori = convocazione.map(id => {
+        const p = allPlayers.find(x => x.id === id);
+        return p ? { calciatoreId: p.id, nome: p.nome || '', cognome: p.cognome || '' } : null;
+      }).filter(Boolean);
+    }
+  } else {
     try {
-      const convRes = await apiFetch('/partite/' + mid + '/convocazioni');
-      const convocati = (convRes.convocazioni || []).filter(c => c.presente);
-      if (convocati.length > 0) {
-        const rosaRes = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => []);
-        const rosaMap = {};
-        (rosaRes || []).forEach(g => { rosaMap[g.id] = g; });
-        giocatori = convocati.map(c => {
-          const g = rosaMap[c.calciatoreId] || {};
-          return { calciatoreId: c.calciatoreId, nome: g.nome || '', cognome: g.cognome || '' };
-        });
-      }
+      const detRes = await apiFetch('/partite/' + mid + '/dettaglio');
+      eventi = detRes.eventi || [];
     } catch(e) {}
+    
+    try {
+      const res = await apiFetch('/partite/' + mid + '/formazione');
+      giocatori = Array.isArray(res) ? res : [];
+    } catch(e) {}
+    
+    if (giocatori.length === 0) {
+      try {
+        const convRes = await apiFetch('/partite/' + mid + '/convocazioni');
+        const convocati = (convRes.convocazioni || []).filter(c => c.presente);
+        if (convocati.length > 0) {
+          const rosaRes = await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => []);
+          const rosaMap = {};
+          (rosaRes || []).forEach(g => { rosaMap[g.id] = g; });
+          giocatori = convocati.map(c => {
+            const g = rosaMap[c.calciatoreId] || {};
+            return { calciatoreId: c.calciatoreId, nome: g.nome || '', cognome: g.cognome || '' };
+          });
+        }
+      } catch(e) {}
+    }
   }
   
   giocatori.sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
@@ -57,7 +84,7 @@ export async function openResultForm(mid) {
     const footer = '<button class="btn btn-secondary" id="modalCancelBtn">Annulla</button><button class="btn btn-primary" id="saveBtn">💾 Salva Eventi</button>';
     const modal = createModal('⚽ Inserisci Risultato', '<div id="rfContent"></div>', footer, '500px');
     renderForm(mid, match, eventi, giocatori, modal);
-    document.getElementById('saveBtn').addEventListener('click', () => saveEventi(mid, modal, eventi, giocatori));
+    document.getElementById('saveBtn').addEventListener('click', () => saveEventi(mid, modal, eventi, giocatori, isDemo));
   }
 }
 
@@ -195,21 +222,48 @@ function renderForm(mid, match, eventi, giocatori, modal) {
   });
 }
 
-async function saveEventi(mid, modal, eventi, giocatori) {
+async function saveEventi(mid, modal, eventi, giocatori, isDemo = false) {
   showLoading();
   try {
-    await apiFetch('/partite/' + mid + '/eventi-batch', { method: 'DELETE' }).catch(() => {});
-    
-    for (const e of eventi) {
-      const body = { tipo: e.tipo, minuto: parseInt(e.minuto) };
-      if (e.principale_id) body.calciatorePrincipaleId = e.principale_id;
-      await apiFetch('/partite/' + mid + '/evento-item', { method: 'POST', body: JSON.stringify(body) });
+    if (isDemo) {
+      // Salva eventi in persistenza demo
+      const existingEvents = demoPersistence.getEvents(mid) || [];
+      // Rimuovi eventi esistenti per questa partita
+      existingEvents.forEach(e => demoPersistence.removeEvent(e.id));
+      // Aggiungi nuovi eventi
+      eventi.forEach(e => {
+        demoPersistence.addEvent(mid, {
+          player_id: e.principale_id,
+          tipo: e.tipo,
+          minuto: parseInt(e.minuto),
+          principale: e.principale,
+          autogol: e.autogol
+        });
+      });
+      
+      // Salva anche il risultato (gol fatti/subiti)
+      const golFatti = eventi.filter(ev => ev.tipo === 'GOAL' && !ev.autogol).length;
+      const golSubiti = eventi.filter(ev => ev.tipo === 'SUBITO' || (ev.tipo === 'GOAL' && ev.autogol)).length;
+      demoPersistence.saveMatchResult(mid, golFatti, golSubiti);
+      
+      hideLoading();
+      modal.close();
+      alert('✅ Eventi salvati in demo! (' + eventi.length + ' eventi)');
+      if (window.YFM?.loadCalendar) window.YFM.loadCalendar();
+    } else {
+      await apiFetch('/partite/' + mid + '/eventi-batch', { method: 'DELETE' }).catch(() => {});
+      
+      for (const e of eventi) {
+        const body = { tipo: e.tipo, minuto: parseInt(e.minuto) };
+        if (e.principale_id) body.calciatorePrincipaleId = e.principale_id;
+        await apiFetch('/partite/' + mid + '/evento-item', { method: 'POST', body: JSON.stringify(body) });
+      }
+      
+      hideLoading();
+      modal.close();
+      alert('✅ Eventi salvati! (' + eventi.length + ' eventi)');
+      if (window.YFM?.loadCalendar) window.YFM.loadCalendar();
     }
-    
-    hideLoading();
-    modal.close();
-    alert('✅ Eventi salvati! (' + eventi.length + ' eventi)');
-    if (window.YFM?.loadCalendar) window.YFM.loadCalendar();
   } catch (err) {
     hideLoading();
     alert('Errore: ' + err.message);

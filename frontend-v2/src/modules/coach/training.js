@@ -1,6 +1,7 @@
 import { apiFetch } from '../../services/api';
 import { formatDateShort, formatTime, getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 let trainingData = null;
 
@@ -249,43 +250,97 @@ function attachListeners(savedDate) {
           });
         });
         
+        const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+        
         console.log('DEBUG: Dati da salvare:', presenzeData);
         showLoading();
         try {
-          var saved = 0;
-          for (var i = 0; i < presenzeData.length; i++) {
-            var p = presenzeData[i];
-            try {
-              await apiFetch('/squadre/' + window.YFM.squadraId + '/allenamenti/presenze', {
-                method: 'POST',
-                body: JSON.stringify({ calciatoreId: p.calciatoreId, data: p.data, presente: p.presente, note: p.note })
-              });
-              saved++;
-            } catch(e) {
-              console.error('Errore salvataggio giocatore:', p.calciatoreId, e);
+          if (isDemo) {
+            // Demo mode: salva in persistenza
+            const presenti = presenzeData.filter(p => p.presente).map(p => p.calciatoreId);
+            const assenti = presenzeData.filter(p => !p.presente).map(p => p.calciatoreId);
+            
+            // Trova l'allenamento per questa data o creane uno nuovo
+            let allenamento = window.YFM.demoAllenamenti?.find(a => a.data === date);
+            if (!allenamento) {
+              allenamento = { id: `tr_${Date.now()}`, data: date, tipo: 'Demo', durata: 90, note: '' };
+              window.YFM.demoAllenamenti = window.YFM.demoAllenamenti || [];
+              window.YFM.demoAllenamenti.unshift(allenamento);
             }
-          }
-          console.log('DEBUG: Salvati ' + saved + '/' + presenzeData.length + ' giocatori');
-          // Aggiorna i dati locali immediatamente
-          presenzeData.forEach(function(np) {
-            var idx = trainingData.presenze.findIndex(function(p) {
-              return p.calciatoreId === np.calciatoreId && p.data === np.data;
+            allenamento.presenze = presenti;
+            allenamento.assenti = assenti;
+            
+            demoPersistence.saveTrainingPresence(allenamento.id, { presenti, assenti });
+            console.log('DEBUG: Salvati ' + presenzeData.length + ' presenze in demo');
+            
+            // Aggiorna i dati locali
+            presenzeData.forEach(np => {
+              const idx = trainingData.presenze.findIndex(p => p.calciatoreId === np.calciatoreId && p.data === np.data);
+              if (idx >= 0) {
+                trainingData.presenze[idx] = np;
+              } else {
+                trainingData.presenze.push(np);
+              }
             });
-            if (idx >= 0) {
-              trainingData.presenze[idx] = np;
-            } else {
-              trainingData.presenze.push(np);
+            
+            // Ricalcola summary
+            const giorniPresenze = {};
+            (window.YFM.demoAllenamenti || []).forEach(a => {
+              const giorno = new Date(a.data).getDay();
+              if (!giorniPresenze[giorno]) {
+                giorniPresenze[giorno] = { totale: 0, presenti: 0, assenti: 0 };
+              }
+              giorniPresenze[giorno].totale = trainingData.giocatori.length;
+              giorniPresenze[giorno].presenti = a.presenze.length;
+              giorniPresenze[giorno].assenti = a.assenti.length;
+            });
+            trainingData.summary = giorniPresenze;
+            trainingData.settimana = {
+              totale: trainingData.giocatori.length,
+              presenti: presenzeData.filter(p => p.presente).length,
+              assenti: presenzeData.filter(p => !p.presente).length
+            };
+            
+            hideLoading();
+            alert('✅ Presenze salvate in demo!');
+            renderTraining(document.getElementById('pageContent'));
+          } else {
+            // Normal mode: salva su server
+            var saved = 0;
+            for (var i = 0; i < presenzeData.length; i++) {
+              var p = presenzeData[i];
+              try {
+                await apiFetch('/squadre/' + window.YFM.squadraId + '/allenamenti/presenze', {
+                  method: 'POST',
+                  body: JSON.stringify({ calciatoreId: p.calciatoreId, data: p.data, presente: p.presente, note: p.note })
+                });
+                saved++;
+              } catch(e) {
+                console.error('Errore salvataggio giocatore:', p.calciatoreId, e);
+              }
             }
-          });
-          hideLoading();
-          // Ricarica solo il summary dal server
-          try {
-            var sumData = await apiFetch('/squadre/' + window.YFM.squadraId + '/allenamenti/summary?_=' + Date.now());
-            trainingData.summary = sumData.summary || {};
-            trainingData.settimana = sumData.settimana || {};
-          } catch(e) { console.warn('Summary non aggiornato:', e); }
-          // Ridisegna la UI con i dati aggiornati
-          renderTraining(document.getElementById('pageContent'));
+            console.log('DEBUG: Salvati ' + saved + '/' + presenzeData.length + ' giocatori');
+            // Aggiorna i dati locali immediatamente
+            presenzeData.forEach(function(np) {
+              var idx = trainingData.presenze.findIndex(function(p) {
+                return p.calciatoreId === np.calciatoreId && p.data === np.data;
+              });
+              if (idx >= 0) {
+                trainingData.presenze[idx] = np;
+              } else {
+                trainingData.presenze.push(np);
+              }
+            });
+            hideLoading();
+            // Ricarica solo il summary dal server
+            try {
+              var sumData = await apiFetch('/squadre/' + window.YFM.squadraId + '/allenamenti/summary?_=' + Date.now());
+              trainingData.summary = sumData.summary || {};
+              trainingData.settimana = sumData.settimana || {};
+            } catch(e) { console.warn('Summary non aggiornato:', e); }
+            // Ridisegna la UI con i dati aggiornati
+            renderTraining(document.getElementById('pageContent'));
+          }
         } catch (e) {
           hideLoading();
           console.error('DEBUG: Errore salvataggio:', e);
