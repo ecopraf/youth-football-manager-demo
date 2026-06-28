@@ -1078,17 +1078,15 @@ class DemoManager {
           <button class="celebration-btn-primary" onclick="window.demoManager.showRegistrationForm()">
             ✉️ Registrati Adesso
           </button>
-          <div class="demo-completion-extra-actions">
-            <button class="demo-btn-continue" onclick="window.demoManager.closeCelebrationBanner()">
-              🔍 Continua a Esplorare
-            </button>
-            <button class="demo-btn-reload" onclick="window.demoManager.resetDemo()">
-              🔄 Ricarica Demo
-            </button>
-            <button class="demo-btn-close" onclick="window.demoManager.exitDemo()">
-              🚪 Chiudi Demo
-            </button>
-          </div>
+          <button class="celebration-btn-continue" onclick="window.demoManager.closeCelebrationBanner()">
+            🔍 Continua a Esplorare
+          </button>
+          <button class="celebration-btn-reload" onclick="window.demoManager.resetDemo()">
+            🔄 Ricarica Demo
+          </button>
+          <button class="celebration-btn-close" onclick="window.demoManager.exitDemo()">
+            🚪 Chiudi Demo
+          </button>
         </div>
       </div>
     `;
@@ -1661,50 +1659,62 @@ class DemoManager {
         gap: 10px;
         align-items: center;
       }
-      #demo-celebration .celebration-btn-primary {
-        background: linear-gradient(135deg, #27AE60, #2ECC71);
-        color: white;
-        border: none;
-        padding: 14px 32px;
+      #demo-celebration .celebration-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+      #demo-celebration .celebration-btn-primary,
+      #demo-celebration .celebration-btn-continue,
+      #demo-celebration .celebration-btn-reload,
+      #demo-celebration .celebration-btn-close {
+        width: 100%;
+        max-width: 280px;
+        padding: 14px 24px;
         border-radius: 10px;
         font-weight: 600;
         font-size: 15px;
         cursor: pointer;
-        width: 100%;
-        max-width: 280px;
+        border: none;
         transition: all 0.3s ease;
+      }
+      #demo-celebration .celebration-btn-primary {
+        background: linear-gradient(135deg, #27AE60, #2ECC71);
+        color: white;
         box-shadow: 0 4px 15px rgba(39,174,96,0.3);
       }
       #demo-celebration .celebration-btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(39,174,96,0.4);
       }
-      #demo-celebration .demo-completion-extra-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 8px;
-        width: 100%;
+      #demo-celebration .celebration-btn-continue {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
       }
-      #demo-celebration .demo-btn-continue,
-      #demo-celebration .demo-btn-reload,
-      #demo-celebration .demo-btn-close {
+      #demo-celebration .celebration-btn-continue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+      }
+      #demo-celebration .celebration-btn-reload {
+        background: #f0f0f0;
+        color: #666;
+        border: 1px solid #ddd;
+      }
+      #demo-celebration .celebration-btn-reload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background: #e8e8e8;
+      }
+      #demo-celebration .celebration-btn-close {
         background: linear-gradient(135deg, #E74C3C, #C0392B);
         color: white;
-        border: none;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        width: 100%;
-        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(231,76,60,0.3);
       }
-      #demo-celebration .demo-btn-continue:hover,
-      #demo-celebration .demo-btn-reload:hover,
-      #demo-celebration .demo-btn-close:hover {
+      #demo-celebration .celebration-btn-close:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(231,76,60,0.4);
+        box-shadow: 0 6px 20px rgba(231,76,60,0.4);
       }
       @keyframes popIn {
         from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }

@@ -1,11 +1,11 @@
 // Auto-generated build info
 // SW Version: v3.14
-// Git Hash: e2a0bdb
-// Date: 2026-06-28T20:59:53.378Z
+// Git Hash: 721d48d
+// Date: 2026-06-28T21:08:01.172Z
 export const BUILD_INFO = {
-  id: 'v3.14.e2a0bdb',
+  id: 'v3.14.721d48d',
   version: 'v3.14',
-  gitHash: 'e2a0bdb',
-  date: '2026-06-28T20:59:53.378Z'
+  gitHash: '721d48d',
+  date: '2026-06-28T21:08:01.172Z'
 };
 export const SW_VERSION = 'v3.14';
