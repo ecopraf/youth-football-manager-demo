@@ -362,22 +362,50 @@ function attachListeners(savedDate) {
               }
             });
             
-            // Ricalcola summary
-            const giorniPresenze = {};
-            (window.YFM.demoAllenamenti || []).forEach(a => {
-              const giorno = new Date(a.data).getDay();
-              if (!giorniPresenze[giorno]) {
-                giorniPresenze[giorno] = { totale: 0, presenti: 0, assenti: 0 };
-              }
-              giorniPresenze[giorno].totale = trainingData.giocatori.length;
-              giorniPresenze[giorno].presenti = a.presenze.length;
-              giorniPresenze[giorno].assenti = a.assenti.length;
+            // Ricalcola summary usando lo stesso algoritmo del caricamento
+            const config = trainingData.config || [];
+            const giorniConfigurati = config.map(c => c.giorno_settimana);
+            const now = new Date();
+            const inizioSett = new Date(now);
+            inizioSett.setDate(now.getDate() - now.getDay() + 1);
+            const fineSett = new Date(inizioSett);
+            fineSett.setDate(inizioSett.getDate() + 6);
+            
+            const summaryPerGiocatore = {};
+            trainingData.giocatori.forEach(g => {
+              summaryPerGiocatore[g.id] = { totali: 0, presenti: 0, assenti: 0, assentiSett: 0 };
             });
-            trainingData.summary = giorniPresenze;
+            
+            trainingData.allenamenti.forEach(a => {
+              const dataAllenamento = new Date(a.data);
+              const giornoSett = dataAllenamento.getDay();
+              if (!giorniConfigurati.includes(giornoSett)) return;
+              
+              const presIds = Array.isArray(a.presenze) ? a.presenze : [];
+              const assIds = Array.isArray(a.assenti) ? a.assenti : [];
+              
+              trainingData.giocatori.forEach(g => {
+                summaryPerGiocatore[g.id].totali++;
+                if (presIds.includes(g.id)) {
+                  summaryPerGiocatore[g.id].presenti++;
+                } else if (assIds.includes(g.id)) {
+                  summaryPerGiocatore[g.id].assenti++;
+                  if (dataAllenamento >= inizioSett && dataAllenamento <= fineSett) {
+                    summaryPerGiocatore[g.id].assentiSett++;
+                  }
+                } else {
+                  summaryPerGiocatore[g.id].presenti++;
+                }
+              });
+            });
+            
+            trainingData.summary = summaryPerGiocatore;
             trainingData.settimana = {
+              da: inizioSett.toISOString().split('T')[0],
+              a: fineSett.toISOString().split('T')[0],
               totale: trainingData.giocatori.length,
-              presenti: presenzeData.filter(p => p.presente).length,
-              assenti: presenzeData.filter(p => !p.presente).length
+              presenti: Object.values(summaryPerGiocatore).reduce((s, g) => s + g.presenti, 0),
+              assenti: Object.values(summaryPerGiocatore).reduce((s, g) => s + g.assenti, 0)
             };
             
             hideLoading();
