@@ -364,42 +364,99 @@ class DemoPersistence {
    * Inizializza dati pregressi allenamenti per demo
    */
   initTrainingHistory(giocatori) {
-    if (this.data[KEYS.TRAINING] && this.data[KEYS.TRAINING].length > 0) {
-      return; // Già ha dati
+    // Versione dati per forzare rigenerazione se cambiata
+    const DATA_VERSION = 2;
+    
+    // Reset se versione diversa o dati insufficienti
+    if (this.data.trainingVersion !== DATA_VERSION || 
+        !this.data[KEYS.TRAINING] || 
+        this.data[KEYS.TRAINING].length < 30) {
+      delete this.data[KEYS.TRAINING];
+      this.data.trainingVersion = DATA_VERSION;
+    } else {
+      return; // Già ha dati aggiornati
     }
     
     const now = new Date();
     const tuttiId = giocatori.map(g => g.id);
     
-    // Genera 12 settimane di storico
+    // Schema assenze predefinito (id giocatore -> frequenza assenze)
+    // Giocatori con assenze frequenti (es. impegni scolastici, famiglia numerosa)
+    const assenzeFrequenti = {
+      2: 12,  // Marco Bianchi - impegni scolastici
+      5: 8,   // Luca Russo - motivi familiari
+      8: 6,   // Andrea Ferraro - impegni scolastici
+      11: 10, // Giovanni Conti - motivi familiari
+      14: 5,  // Matteo Fontana - infortuni
+    };
+    
+    // Giocatori sempre presenti (alta affidabilità)
+    const semprePresente = [1, 3, 6, 9, 12];
+    
+    // Motivi assenza per giocatore
+    const motiviPerGiocatore = {
+      2: ['Impegni Scolastici', 'Studio', 'Compiti'],
+      5: ['Motivi Familiari', 'Assistenza familiare'],
+      8: ['Impegni Scolastici', 'Ripetizioni'],
+      11: ['Motivi Familiari', 'Compiti'],
+      14: ['Infortunio', 'Recupero infortunio'],
+    };
+    
+    const motiviDefault = ['Malattia', 'Impegni Scolastici', 'Motivi Familiari'];
+    
+    // Genera 30 settimane di storico (15 settimane per le due categorie)
     const allenamentiStorico = [];
-    for (let w = -12; w <= -1; w++) {
+    let sessionId = 1;
+    
+    for (let w = -30; w <= -1; w++) {
       const lunedi = new Date(now);
       lunedi.setDate(now.getDate() - now.getDay() + 1 + (w * 7));
       
-      // Martedì e Giovedì
-      [2, 4].forEach((giorno, idx) => {
-        const dataAllenamento = new Date(lunedi.getTime() + giorno * 24 * 60 * 60 * 1000);
+      // Martedì e Giovedì per Under 17, Sabato per Under 19
+      const configurazioni = w % 2 === 0 
+        ? [{ giorno: 2, tipo: 'Under 17' }, { giorno: 4, tipo: 'Under 17' }]
+        : [{ giorno: 6, tipo: 'Under 19' }];
+      
+      configurazioni.forEach(cfg => {
+        const dataAllenamento = new Date(lunedi.getTime() + cfg.giorno * 24 * 60 * 60 * 1000);
         const dataStr = dataAllenamento.toISOString().split('T')[0];
         
-        // 2-3 assenti casuali
-        const assenti = tuttiId.sort(() => Math.random() - 0.5).slice(0, 2 + Math.floor(Math.random() * 2));
+        const assenti = [];
         const motivi = {};
-        const motiviDisponibili = ['Impegni Scolastici', 'Motivi Familiari', 'Infortunio', 'Malattia'];
-        assenti.forEach(aId => {
-          motivi[aId] = motiviDisponibili[Math.floor(Math.random() * motiviDisponibili.length)];
+        
+        // Calcola assenze basate su schema predefinito
+        tuttiId.forEach(id => {
+          if (semprePresente.includes(id)) {
+            // 10% probabilità di assenza anche per i semprepresenti
+            if (Math.random() < 0.1) {
+              assenti.push(id);
+              motivi[id] = motiviDefault[Math.floor(Math.random() * motiviDefault.length)];
+            }
+          } else {
+            // Calcola assenze basate su frequenza
+            const freq = assenzeFrequenti[id] || 2;
+            const prob = freq / 30; // 30 sessioni totali
+            if (Math.random() < prob) {
+              assenti.push(id);
+              const mp = motiviPerGiocatore[id];
+              motivi[id] = mp 
+                ? mp[Math.floor(Math.random() * mp.length)] 
+                : motiviDefault[Math.floor(Math.random() * motiviDefault.length)];
+            }
+          }
         });
         
         allenamentiStorico.push({
-          id: `hist_tr_${w}_${idx}`,
+          id: `hist_tr_${sessionId}`,
           data: dataStr,
-          tipo: 'Allenamento',
+          tipo: cfg.tipo,
           durata: 90,
           presenze: tuttiId.filter(id => !assenti.includes(id)),
           assenti: assenti,
           motivi_assenza: motivi,
           note: ''
         });
+        sessionId++;
       });
     }
     

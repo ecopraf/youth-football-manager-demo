@@ -15,14 +15,12 @@ export default async function loadTraining() {
   
   if (isDemo) {
     const tuttiGiocatori = window.YFM.allPlayers || [];
-    console.log('[Training] Giocatori:', tuttiGiocatori.length);
     
     // Inizializza storico allenamenti se non esiste
     demoPersistence.initTrainingHistory(tuttiGiocatori);
     
     // Usa i dati persistenti
     let allenamentiDemo = demoPersistence.data.training || window.YFM.demoAllenamenti || [];
-    console.log('[Training] Allenamenti caricati:', allenamentiDemo.length);
     
     // Configurazione default o salvata
     const savedConfig = demoPersistence.data.trainingConfig;
@@ -114,8 +112,6 @@ export default async function loadTraining() {
     ];
     
     window.YFM.allPlayers = giocatori;
-    console.log('[Training] Summary calcolato, giocatori con dati:', Object.keys(sumData.summary || {}).length);
-    console.log('[Training] Settimana:', sumData.settimana);
     trainingData = { config, presenze, giocatori, summary: sumData.summary || {}, settimana: sumData.settimana || {}, materiale: materiale || [], allenamenti: allenamentiDemo };
     renderTraining(c);
   } else {
@@ -303,7 +299,6 @@ function attachListeners(savedDate) {
         
         const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
         
-        console.log('DEBUG: Dati da salvare:', presenzeData);
         showLoading();
         try {
           if (isDemo) {
@@ -416,7 +411,6 @@ function attachListeners(savedDate) {
                 console.error('Errore salvataggio giocatore:', p.calciatoreId, e);
               }
             }
-            console.log('DEBUG: Salvati ' + saved + '/' + presenzeData.length + ' giocatori');
             // Aggiorna i dati locali immediatamente
             presenzeData.forEach(function(np) {
               var idx = trainingData.presenze.findIndex(function(p) {
