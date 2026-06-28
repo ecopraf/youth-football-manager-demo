@@ -196,9 +196,9 @@ function renderTraining(c) {
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#F8F9FA;">
-            <th style="padding:8px;">#</th><th style="padding:8px;">Calciatore</th><th style="padding:8px;">Tot.</th>
-            <th style="padding:8px;color:#27AE60;">Pres.</th><th style="padding:8px;color:#E74C3C;text-align:center;">Ass.</th>
-<th style="padding:8px;color:#E74C3C;text-align:center;" title="Assenze settimana ${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}">Ass.Sett.<br><span style="font-size:10px;font-weight:normal;color:var(--gray);">${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}</span></th>
+            <th style="padding:8px;text-align:center;">#</th><th style="padding:8px;">Calciatore</th><th style="padding:8px;text-align:center;">Tot.</th>
+            <th style="padding:8px;color:#27AE60;text-align:center;">Pres.</th><th style="padding:8px;color:#E74C3C;text-align:center;">Ass.</th>
+<th style="padding:8px;color:#E74C3C;text-align:right;" title="Assenze settimana ${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}">Ass.Sett.<br><span style="font-size:10px;font-weight:normal;color:var(--gray);">${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}</span></th>
           </tr></thead>
           <tbody>${[...giocatori].sort((a,b) => a.cognome.localeCompare(b.cognome)).map((g,i) => {
             const s = summary[g.id] || { totali:0, presenti:0, assenti:0, assentiSett:0 };
@@ -210,7 +210,7 @@ function renderTraining(c) {
               <td style="padding:8px;text-align:center;color:#27AE60;">${s.presenti}</td>
               <td style="padding:8px;text-align:center;color:#E74C3C;">${s.assenti}</td>
               <td style="padding:8px;text-align:center;">${perc}%</td>
-              <td style="padding:8px;text-align:center;color:#E74C3C;">${s.assentiSett}</td>
+              <td style="padding:8px;text-align:right;color:#E74C3C;">${s.assentiSett}</td>
             </tr>`;
           }).join('')}</tbody>
         </table>
