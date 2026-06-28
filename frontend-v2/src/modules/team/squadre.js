@@ -5,14 +5,18 @@ export async function loadSquadre(stagioneId) {
   // In demo mode, skip API call - use hardcoded DEMO_SQUADRE from main.js
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   if (isDemo) {
+    console.log('[loadSquadre] Demo mode - skipping API');
     return; // Squadre sono già impostate in initDemoSession()
   }
+  
+  console.log('[loadSquadre] Starting...', { stagioneId, workspaceInfo: window.YFM.workspaceInfo });
   
   try {
     let allSquadre;
     
     if (stagioneId) {
       // Se passato stagioneId, usa quello
+      console.log('[loadSquadre] Using provided stagioneId:', stagioneId);
       allSquadre = await apiFetch(`/stagioni/${stagioneId}/squadre`);
     } else {
       // Determina il workspace corrente
@@ -21,9 +25,13 @@ export async function loadSquadre(stagioneId) {
       // 3. Oppure il primo dalla lista
       let currentWorkspace = window.YFM.workspaceInfo;
       
+      console.log('[loadSquadre] Current workspace from window.YFM:', currentWorkspace?.id, currentWorkspace?.nome);
+      
       if (!currentWorkspace) {
+        console.log('[loadSquadre] No workspace in window.YFM, fetching from API...');
         const savedWsId = getSavedWorkspaceId();
         const workspaces = await apiFetch('/auth/workspaces');
+        console.log('[loadSquadre] Got workspaces:', workspaces.map(w => w.nome));
         
         if (savedWsId) {
           currentWorkspace = workspaces.find(w => w.id === savedWsId);
@@ -33,23 +41,38 @@ export async function loadSquadre(stagioneId) {
         }
         
         if (currentWorkspace) {
+          console.log('[loadSquadre] Selected workspace:', currentWorkspace.nome);
           window.YFM.workspaceInfo = currentWorkspace;
           window.YFM.activeWorkspaceId = currentWorkspace.id;
         }
       }
       
+      if (!currentWorkspace) {
+        console.error('[loadSquadre] CRITICAL: No workspace found!');
+        return;
+      }
+      
       // Cerca stagioni del workspace e prendi quella attiva
-      const stagioni = await apiFetch(`/workspaces/${currentWorkspace?.id}/stagioni`);
+      console.log('[loadSquadre] Fetching seasons for workspace:', currentWorkspace.id);
+      const stagioni = await apiFetch(`/workspaces/${currentWorkspace.id}/stagioni`);
+      console.log('[loadSquadre] Got seasons:', stagioni.map(s => s.nome + (s.attiva ? ' (attiva)' : '')));
+      
       const stagioneAttiva = stagioni.find(s => s.attiva) || stagioni[0];
+      console.log('[loadSquadre] Selected season:', stagioneAttiva?.id, stagioneAttiva?.nome);
       
       if (stagioneAttiva) {
+        console.log('[loadSquadre] Fetching teams for season:', stagioneAttiva.id);
         allSquadre = await apiFetch(`/stagioni/${stagioneAttiva.id}/squadre`);
+        console.log('[loadSquadre] Got teams:', allSquadre.length);
       } else {
+        console.warn('[loadSquadre] No active season found!');
         allSquadre = [];
       }
     }
     
+    console.log('[loadSquadre] Setting allSquadre:', allSquadre.length, 'teams');
     window.YFM.allSquadre = allSquadre;
+    
     const sel = document.getElementById('squadraSelect');
     if (sel) {
       sel.innerHTML = allSquadre.map(s => {
@@ -69,9 +92,12 @@ export async function loadSquadre(stagioneId) {
     }
     if (allSquadre.length > 0 && !allSquadre.find(s => s.id === window.YFM.squadraId)) {
       window.YFM.squadraId = allSquadre[0].id;
+      console.log('[loadSquadre] Set default squadraId:', window.YFM.squadraId);
     }
+    
+    console.log('[loadSquadre] Done. Current squadraId:', window.YFM.squadraId);
   } catch (err) {
-    console.error('loadSquadre error:', err);
+    console.error('[loadSquadre] ERROR:', err);
   }
 }
 
