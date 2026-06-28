@@ -187,10 +187,10 @@ export default async function loadDashboard() {
     '@media (max-width: 900px) { .top-grid { grid-template-columns: 1fr !important; } }' +
     '.top-section { background:linear-gradient(180deg, #fff 0%, #f5f5f5 100%); padding:16px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); display:flex; flex-direction:column; }' +
     '.top-section-title { font-size:15px;font-weight:600;color:#333;margin:0 0 14px 0;display:flex;align-items:center;gap:8px; }' +
-    '.players-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; flex:1; }' +
-    '@media (max-width: 600px) { .players-row { grid-template-columns: repeat(3, 1fr) !important; gap:6px; } }' +
-    '@media (max-width: 400px) { .players-row { grid-template-columns: repeat(3, 1fr) !important; gap:4px; } }' +
-    '.player-box { flex:1; min-height:120px; }' +
+    '.players-row { display:flex; flex-direction:column; gap:8px; }' +
+    '@media (max-width: 600px) { .players-row { flex-direction:row !important; gap:6px; } }' +
+    '@media (max-width: 400px) { .players-row { flex-direction:row !important; gap:4px; } }' +
+    '.player-box { flex:1; min-height:80px; }' +
     '@media (max-width: 600px) { .player-box { min-height:80px !important; padding:10px 4px !important; } .player-box > div:first-child { font-size:20px !important; } .player-box > div:nth-child(2) { font-size:11px !important; } .player-box > div:last-child { font-size:12px !important; } }' +
     '.bottom-grid { display:grid; gap:20px; grid-template-columns:1fr; }' +
     '@media (min-width: 900px) { .bottom-grid { grid-template-columns: 1.5fr 1fr !important; } }' +

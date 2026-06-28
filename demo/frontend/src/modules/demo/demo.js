@@ -495,64 +495,24 @@ class DemoManager {
   // UI COMPONENTS
   // ═══════════════════════════════════════════════════════════════
 
-  // Badge nell'header
+  // Aggiorna badge nel header
   updateBadge() {
-    console.log('[DEMO] updateBadge called, isDemo:', this.isDemo, 'missions:', this.missions.length);
+    const progressEl = document.getElementById('demoProgress');
+    const badgeEl = document.getElementById('yfmMissionBadge');
     
-    let badge = document.getElementById('demo-badge');
+    if (!progressEl) return;
     
-    // Forza creazione badge se siamo in demo mode
-    if (this.isDemo && !badge) {
-      console.log('[DEMO] Creating badge...');
-      badge = document.createElement('div');
-      badge.id = 'demo-badge';
-      document.body.appendChild(badge);
-    }
+    const progress = this.missions.length > 0 
+      ? Math.round((this.completedCount / this.missions.length) * 100) 
+      : 0;
     
-    if (badge) {
-      const progress = this.missions.length > 0 
-        ? Math.round((this.completedCount / this.missions.length) * 100) 
-        : 0;
-      
-      badge.innerHTML = '🌱 Demo';
-      badge.style.cssText = `
-        position: fixed;
-        top: 70px;
-        right: 20px;
-        background: white;
-        color: #27AE60;
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-size: 14px;
-        font-weight: 700;
-        z-index: 9999;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 2px 4px rgba(39,174,96,0.2), inset 0 1px 2px rgba(255,255,255,0.8);
-        border: 2px solid #27AE60;
-        text-shadow: 0 1px 1px rgba(39,174,96,0.2);
-      `;
-      badge.onmouseover = function() {
-        this.style.transform = 'translateY(-3px) scale(1.05)';
-        this.style.boxShadow = '0 8px 25px rgba(39,174,96,0.4), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 2px rgba(255,255,255,0.8)';
-      };
-      badge.onmouseout = function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15), 0 2px 4px rgba(39,174,96,0.2), inset 0 1px 2px rgba(255,255,255,0.8)';
-      };
-      badge.onclick = () => this.toggleMissionPanel();
-      
-      // Aggiorna testo con progress
-      if (this.missions.length > 0) {
-        badge.innerHTML = `🌱 Demo ${progress}%`;
-      }
-      
-      if (progress === 100) {
-        badge.style.background = 'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)';
-        badge.style.color = 'white';
-        badge.style.borderColor = '#FF8C00';
-        badge.innerHTML = '🎉 Demo Completa!';
-      }
+    progressEl.textContent = progress + '%';
+    
+    if (progress === 100 && badgeEl) {
+      badgeEl.innerHTML = '🎉 Completa!';
+      badgeEl.style.background = 'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)';
+      badgeEl.style.color = 'white';
+      badgeEl.style.borderColor = '#FF8C00';
     }
   }
 
