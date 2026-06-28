@@ -561,7 +561,7 @@ function renderSeasonalReport(report) {
                 <tr style="background:${i === 0 ? '#e6f3ff' : 'white'};">
                   <td style="padding:8px;font-weight:bold;">${i + 1}</td>
                   <td style="padding:8px;">${p.cognome || p.nome} ${p.nome}</td>
-                  <td style="padding:8px;text-align:center;font-weight:bold;">${p.presenze} <span style="font-weight:normal;color:#666;font-size:11px;">(${p.minuti}')</span></td>
+                  <td style="padding:8px;text-align:center;font-weight:bold;">${p.presenze}</td>
                 </tr>
               `).join('')}
               ${report.topPresenze.length === 0 ? '<tr><td colspan="3" style="padding:12px;text-align:center;color:#666;">-</td></tr>' : ''}

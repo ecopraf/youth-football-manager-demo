@@ -8,31 +8,26 @@ export default async function loadCalendar() {
   const c = document.getElementById('pageContent');
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   
-  // In demo mode, use in-memory data
+  let matches = [];
+  let stats = { risultati: [] };
+  
   if (isDemo) {
-    const matches = window.YFM.demoMatches || [];
-    const stats = { risultati: [] };
-    allMatches = matches;
-    window.YFM.allMatches = matches;
-    renderCalendarPage(c, matches, stats);
-    return;
+    // Usa i dati demo
+    matches = window.YFM.demoMatches || [];
+    stats = window.YFM.demoStats || { risultati: [] };
+  } else {
+    try {
+      [matches, stats] = await Promise.all([
+        apiFetch('/squadre/' + window.YFM.squadraId + '/partite'),
+        apiFetch('/squadre/' + window.YFM.squadraId + '/statistiche-complete').catch(() => ({ risultati: [] }))
+      ]);
+    } catch (err) {
+      console.error('Errore caricamento calendario:', err);
+    }
   }
   
-  try {
-    const [matches, stats] = await Promise.all([
-      apiFetch('/squadre/' + window.YFM.squadraId + '/partite'),
-      apiFetch('/squadre/' + window.YFM.squadraId + '/statistiche-complete').catch(() => ({ risultati: [] }))
-    ]);
-    allMatches = matches;
-    window.YFM.allMatches = matches;
-    
-    renderCalendarPage(c, matches, stats);
-  } catch (e) {
-    c.innerHTML = '<div class="error-box">' + e.message + '</div>';
-  }
-}
-
-function renderCalendarPage(c, matches, stats) {
+  allMatches = matches;
+  window.YFM.allMatches = matches;
 
   const now = new Date();
   
@@ -109,6 +104,9 @@ function renderCalendarPage(c, matches, stats) {
   document.getElementById('btnAdd').addEventListener('click', () => openMatchForm());
   document.getElementById('btnImport').addEventListener('click', openImportCSV);
   attachCardListeners();
+  } catch (e) {
+  c.innerHTML = '<div class="error-box">' + e.message + '</div>';
+  }
 }
 
 function attachCardListeners() {
