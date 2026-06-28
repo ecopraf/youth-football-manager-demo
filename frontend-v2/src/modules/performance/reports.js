@@ -449,10 +449,15 @@ function printReport() {
 }
 
 function generateSocialComment(report) {
-  const { societa, categoria, partita, score, ammonizioni, espulsioni, eventi } = report;
-  const golFatti = score.golCasa;
-  const golSubiti = score.golOspiti;
-  const marcatori = eventi.filter(e => e.tipo === 'GOAL');
+  const societa = report.societa || 'ASD';
+  const categoria = report.partita?.competizione || 'Campionato';
+  const partita = report.partita || {};
+  const score = report.score || { golCasa: 0, golOspiti: 0 };
+  const golFatti = score.golCasa || 0;
+  const golSubiti = score.golOspiti || 0;
+  const marcatori = (report.eventi || []).filter(e => e.tipo === 'GOAL');
+  const ammonizioni = report.ammonizioni || 0;
+  const espulsioni = report.espulsioni || 0;
   
   // Determina il risultato
   let intro = '';
@@ -466,12 +471,12 @@ function generateSocialComment(report) {
 
   // Costruisce il commento
   let comment = `${intro}\n\n`;
-  comment += `${societa} ${golFatti}-${golSubiti} ${partita.avversario}\n`;
+  comment += `${societa} ${golFatti}-${golSubiti} ${partita.avversario || 'Avversario'}\n`;
   
   if (marcatori.length > 0) {
     const marcatoriList = marcatori.map(m => {
-      const nome = m.principale.split(' ')[0]; // Solo il nome
-      return `${nome} (${m.minuto}')`;
+      const nome = (m.principale || 'Giocatore').split(' ')[0];
+      return `${nome} (${m.minuto || '?'}')`;
     }).join(', ');
     comment += `⚽ Marcatori: ${marcatoriList}\n`;
   }
@@ -488,10 +493,12 @@ function generateSocialComment(report) {
     comment += `🟥 ${espulsioni} espulsion${espulsioni > 1 ? 'i' : 'e'}\n`;
   }
   
-  comment += `\n${partita.competizione}${partita.giornata ? ' - Giornata ' + partita.giornata : ''}\n\n`;
+  comment += `\n${partita.competizione || ''}${partita.giornata ? ' - Giornata ' + partita.giornata : ''}\n\n`;
   
-  // Hashtag
-  comment += `#${societa.replace(/\s+/g, '')} #${categoria.replace(/\s+/g, '')} #calciogiovanile`;
+  // Hashtag sicuri
+  const cleanSocieta = (societa || '').replace(/\s+/g, '');
+  const cleanCategoria = (categoria || '').replace(/\s+/g, '');
+  comment += `#${cleanSocieta} #${cleanCategoria} #calciogiovanile`;
   
   return comment;
 }

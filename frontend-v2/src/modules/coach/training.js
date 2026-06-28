@@ -17,16 +17,62 @@ export default async function loadTraining() {
     // Usa i dati demo strutturati da window.YFM.demoAllenamenti
     const allenamentiDemo = window.YFM.demoAllenamenti || [];
     
-    config = [
-      { id: 't1', giorno_settimana: 2, ora_inizio: '17:00', ora_fine: '19:00', campo: 'Campo 1', tipo: 'Tattico' },
-      { id: 't2', giorno_settimana: 4, ora_inizio: '17:00', ora_fine: '19:00', campo: 'Campo 1', tipo: 'Tecnico' },
-      { id: 't3', giorno_settimana: 6, ora_inizio: '10:00', ora_fine: '12:00', campo: 'Campo 1', tipo: 'Atletico' }
+    config = window.YFM.demoConfig?.length > 0 ? window.YFM.demoConfig : [
+      { id: 't1', giorno_settimana: 2, ora_inizio: '17:00', ora_fine: '19:00', luogo: 'Campo 1' },
+      { id: 't2', giorno_settimana: 4, ora_inizio: '17:00', ora_fine: '19:00', luogo: 'Campo 1' },
+      { id: 't3', giorno_settimana: 6, ora_inizio: '10:00', ora_fine: '12:00', luogo: 'Campo 1' }
     ];
     
-    presenze = [];
+    // Calcola il summary DAGLI ALLENAMENTI esistenti
     const tuttiGiocatori = window.YFM.allPlayers || [];
+    const numGiocatori = tuttiGiocatori.length;
     
-    // Converte allenamenti demo in presenze
+    // Per ogni giocatore, conta presenze/assenti totali
+    const summaryPerGiocatore = {};
+    tuttiGiocatori.forEach(g => {
+      summaryPerGiocatore[g.id] = { totali: 0, presenti: 0, assenti: 0, assentiSett: 0 };
+    });
+    
+    // I giorni configurati
+    const giorniConfigurati = config.map(c => c.giorno_settimana);
+    
+    // Settimana corrente (ultimi 7 giorni)
+    const now = new Date();
+    const inizioSett = new Date(now);
+    inizioSett.setDate(now.getDate() - now.getDay() + 1); // Lunedì
+    const fineSett = new Date(inizioSett);
+    fineSett.setDate(inizioSett.getDate() + 6); // Domenica
+    
+    // Processa ogni allenamento
+    allenamentiDemo.forEach(a => {
+      const dataAllenamento = new Date(a.data);
+      const giornoSett = dataAllenamento.getDay();
+      
+      // Solo allenamenti nei giorni configurati
+      if (!giorniConfigurati.includes(giornoSett)) return;
+      
+      const presIds = Array.isArray(a.presenze) ? a.presenze : [];
+      const assIds = Array.isArray(a.assenti) ? a.assenti : [];
+      
+      tuttiGiocatori.forEach(g => {
+        summaryPerGiocatore[g.id].totali++;
+        if (presIds.includes(g.id)) {
+          summaryPerGiocatore[g.id].presenti++;
+        } else if (assIds.includes(g.id)) {
+          summaryPerGiocatore[g.id].assenti++;
+          // È assente in questa settimana?
+          if (dataAllenamento >= inizioSett && dataAllenamento <= fineSett) {
+            summaryPerGiocatore[g.id].assentiSett++;
+          }
+        } else {
+          // Presunto presente (non in lista assenti)
+          summaryPerGiocatore[g.id].presenti++;
+        }
+      });
+    });
+    
+    presenze = [];
+    // Converte allenamenti demo in presenze per compatibilità
     allenamentiDemo.forEach(a => {
       tuttiGiocatori.forEach(p => {
         const presente = a.presenze.includes(p.id);
@@ -45,32 +91,23 @@ export default async function loadTraining() {
     
     giocatori = tuttiGiocatori;
     
-    // Calcola summary dai dati demo
-    const giorniPresenze = {};
-    allenamentiDemo.forEach(a => {
-      const giorno = new Date(a.data).getDay();
-      if (!giorniPresenze[giorno]) {
-        giorniPresenze[giorno] = { totale: 0, presenti: 0, assenti: 0 };
-      }
-      giorniPresenze[giorno].totale = giocatori.length;
-      giorniPresenze[giorno].presenti = a.presenze.length;
-      giorniPresenze[giorno].assenti = a.assenti.length;
-    });
-    
+    // Usa summaryPerGiocatore già calcolato (per giocatore)
     sumData = {
-      summary: giorniPresenze,
+      summary: summaryPerGiocatore,
       settimana: {
-        totale: giocatori.length,
-        presenti: allenamentiDemo.reduce((s, a) => s + a.presenze.length, 0) / Math.max(allenamentiDemo.length, 1),
-        assenti: allenamentiDemo.reduce((s, a) => s + a.assenti.length, 0) / Math.max(allenamentiDemo.length, 1)
+        da: inizioSett.toISOString().split('T')[0],
+        a: fineSett.toISOString().split('T')[0],
+        totale: numGiocatori,
+        presenti: Object.values(summaryPerGiocatore).reduce((s, g) => s + g.presenti, 0),
+        assenti: Object.values(summaryPerGiocatore).reduce((s, g) => s + g.assenti, 0)
       }
     };
     
     materiale = [
-      { id: 'm1', nome: 'Paletti', quantita: 20, disponibilita: 20 },
-      { id: 'm2', nome: 'Coni', quantita: 30, disponibilita: 30 },
-      { id: 'm3', nome: 'Palloni', quantita: 15, disponibilita: 12 },
-      { id: 'm4', nome: 'Sacchi porta goal', quantita: 4, disponibilita: 4 }
+      { id: 'm1', titolo: 'Paletti', descrizione: 'Paletti per esercitazioni', tipo: 'link', url: '#' },
+      { id: 'm2', titolo: 'Coni', descrizione: 'Coni segnaletici', tipo: 'link', url: '#' },
+      { id: 'm3', titolo: 'Palloni', descrizione: 'Palloni da allenamento', tipo: 'link', url: '#' },
+      { id: 'm4', titolo: 'Sacchi porta goal', descrizione: 'Sacchi porta goal portatili', tipo: 'link', url: '#' }
     ];
     
     window.YFM.allPlayers = giocatori;
@@ -184,15 +221,17 @@ function renderTraining(c) {
       <h3 class="section-title">📁 Materiale Allenamenti</h3>
       ${materiale.length > 0
         ? '<div style="display:flex;flex-direction:column;gap:12px;">' + materiale.map(mat => {
-            const icon = mat.tipo === 'pdf' ? '📄' : '🔗';
-            const btnLabel = mat.tipo === 'pdf' ? 'Visualizza PDF' : 'Apri Link';
+            const icon = mat.tipo === 'pdf' ? '📄' : mat.tipo === 'video' ? '🎥' : '🔗';
+            const btnLabel = mat.tipo === 'pdf' ? 'Visualizza PDF' : mat.tipo === 'video' ? 'Guarda Video' : 'Apri Link';
+            const titolo = mat.titolo || 'Materiale senza titolo';
+            const url = mat.url || '#';
             return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:white;border:1px solid var(--border);border-radius:12px;">
               <div style="flex:1;">
-                <div style="font-weight:600;margin-bottom:4px;">${icon} ${mat.titolo}</div>
+                <div style="font-weight:600;margin-bottom:4px;">${icon} ${titolo}</div>
                 ${mat.descrizione ? '<div style="font-size:13px;color:var(--gray);margin-bottom:6px;">' + mat.descrizione + '</div>' : ''}
-                <a href="${mat.url}" target="_blank" class="btn btn-secondary btn-small">${btnLabel}</a>
+                ${url !== '#' ? '<a href="' + url + '" target="_blank" class="btn btn-secondary btn-small">' + btnLabel + '</a>' : ''}
               </div>
-              <button class="btn btn-secondary btn-small btn-del-mat" data-mid="${mat.id}">🗑️</button>
+              <button class="btn btn-secondary btn-small btn-del-mat" data-mid="${mat.id || mat._id || ''}">🗑️</button>
             </div>`;
           }).join('') + '</div>'
         : '<p style="color:var(--gray);">Nessun materiale caricato.</p>'}
