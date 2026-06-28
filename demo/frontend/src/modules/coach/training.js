@@ -192,32 +192,37 @@ function renderTraining(c) {
     
     <!-- Riepilogo -->
     <div class="card" style="margin-bottom:20px;">
-      <h3 class="section-title">📊 Riepilogo</h3>
+      <h3 class="section-title">📊 Riepilogo Presenze <span style="font-size:12px;color:var(--gray);font-weight:normal;">(${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''})</span></h3>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#F8F9FA;">
-            <th style="padding:8px;text-align:center;">#</th><th style="padding:8px;">Calciatore</th><th style="padding:8px;text-align:center;">Tot.</th>
-            <th style="padding:8px;color:#27AE60;text-align:center;">Pres.</th><th style="padding:8px;color:#E74C3C;text-align:center;">Ass.</th>
-<th style="padding:8px;color:#E74C3C;text-align:right;" title="Assenze settimana ${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}">Ass.Sett.<br><span style="font-size:10px;font-weight:normal;color:var(--gray);">${settimana.da ? formatDateShort(settimana.da) : ''} - ${settimana.a ? formatDateShort(settimana.a) : ''}</span></th>
+            <th style="padding:8px;text-align:center;">#</th>
+            <th style="padding:8px;text-align:left;">Calcioatore</th>
+            <th style="padding:8px;text-align:center;">Tot.</th>
+            <th style="padding:8px;text-align:center;color:#27AE60;">Pres.</th>
+            <th style="padding:8px;text-align:center;color:#E74C3C;">Ass.</th>
+            <th style="padding:8px;text-align:right;color:#666;">% Pres.</th>
+            <th style="padding:8px;text-align:center;color:#E74C3C;">Ass. Sett.</th>
           </tr></thead>
           <tbody>${[...giocatori].sort((a,b) => a.cognome.localeCompare(b.cognome)).map((g,i) => {
             const s = summary[g.id] || { totali:0, presenti:0, assenti:0, assentiSett:0 };
             const perc = s.totali > 0 ? Math.round((s.presenti / s.totali) * 100) : 0;
-            return `<tr style="border-bottom:1px solid var(--border);">
+            return `<tr>
               <td style="padding:8px;text-align:center;color:var(--gray);">${i+1}</td>
-              <td style="padding:8px;">${g.nome} ${g.cognome}</td>
+              <td style="padding:8px;text-align:left;">${g.nome} ${g.cognome}</td>
               <td style="padding:8px;text-align:center;">${s.totali}</td>
               <td style="padding:8px;text-align:center;color:#27AE60;">${s.presenti}</td>
               <td style="padding:8px;text-align:center;color:#E74C3C;">${s.assenti}</td>
-              <td style="padding:8px;text-align:center;">${perc}%</td>
-              <td style="padding:8px;text-align:right;color:#E74C3C;">${s.assentiSett}</td>
+              <td style="padding:8px;text-align:right;">${perc}%</td>
+              <td style="padding:8px;text-align:center;color:#E74C3C;">${s.assentiSett || 0}</td>
             </tr>`;
           }).join('')}</tbody>
         </table>
       </div>
     </div>
-    
+
     <!-- Materiale -->
+    
     <div class="card" style="margin-bottom:20px;">
       <h3 class="section-title">📁 Materiale Allenamenti</h3>
       ${materiale.length > 0
