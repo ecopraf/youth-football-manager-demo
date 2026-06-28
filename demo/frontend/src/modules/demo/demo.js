@@ -916,20 +916,37 @@ class DemoManager {
     this.hideSidebarTooltip();
     
     const rect = targetEl.getBoundingClientRect();
+    const tooltipWidth = 220;
+    const tooltipHeight = 50;
+    const spaceRight = window.innerWidth - rect.right;
+    
+    // Determina se mostrare a destra o a sinistra
+    const showRight = spaceRight > tooltipWidth + 20;
     
     const tip = document.createElement('div');
     tip.id = 'demo-sidebar-tooltip';
     tip.innerHTML = `<div class="demo-st-content">${text}</div>`;
     
+    // Posizione verticale: centrare sull'elemento, ma non uscire dallo schermo
+    let topPos = rect.top;
+    if (rect.top + tooltipHeight > window.innerHeight - 10) {
+      topPos = window.innerHeight - tooltipHeight - 20;
+    }
+    if (rect.top < 10) {
+      topPos = 10;
+    }
+    
+    const leftPos = showRight ? rect.right + 12 : rect.left - tooltipWidth - 12;
+    
     tip.style.cssText = `
       position: fixed;
-      top: ${rect.top}px;
-      left: ${rect.right + 12}px;
+      top: ${topPos}px;
+      left: ${leftPos}px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       padding: 8px 14px;
       border-radius: 8px;
-      max-width: 220px;
+      max-width: ${tooltipWidth}px;
       box-shadow: 0 4px 15px rgba(102,126,234,0.4);
       z-index: 10001;
       font-family: 'Inter', -apple-system, sans-serif;
@@ -940,17 +957,29 @@ class DemoManager {
     `;
     
     const arrow = document.createElement('div');
-    arrow.style.cssText = `
-      position: absolute;
-      left: -6px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      border-right: 6px solid #764ba2;
-    `;
+    if (showRight) {
+      arrow.style.cssText = `
+        position: absolute;
+        left: -6px;
+        top: 12px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 6px solid #764ba2;
+      `;
+    } else {
+      arrow.style.cssText = `
+        position: absolute;
+        right: -6px;
+        top: 12px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 6px solid #764ba2;
+      `;
+    }
     tip.appendChild(arrow);
     
     document.body.appendChild(tip);
@@ -983,6 +1012,12 @@ class DemoManager {
     this.hideElementTooltip();
     
     const rect = targetEl.getBoundingClientRect();
+    const tooltipHeight = 80; // Stima altezza tooltip
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    
+    // Determina se mostrare sopra o sotto
+    const showAbove = spaceAbove > tooltipHeight + 20;
     
     const tip = document.createElement('div');
     tip.id = 'demo-element-tooltip';
@@ -991,11 +1026,15 @@ class DemoManager {
       <div class="demo-et-desc">${description}</div>
     `;
     
+    const leftPos = rect.left + rect.width / 2;
+    const topPos = showAbove ? rect.top - 10 : rect.bottom + 10;
+    const transform = showAbove ? 'translateX(-50%) translateY(-100%)' : 'translateX(-50%)';
+    
     tip.style.cssText = `
       position: fixed;
-      top: ${rect.top - 10}px;
-      left: ${rect.left + rect.width / 2}px;
-      transform: translateX(-50%) translateY(-100%);
+      top: ${topPos}px;
+      left: ${leftPos}px;
+      transform: ${transform};
       background: linear-gradient(135deg, #27AE60, #2ECC71);
       color: white;
       padding: 10px 16px;
@@ -1011,17 +1050,31 @@ class DemoManager {
     `;
     
     const arrow = document.createElement('div');
-    arrow.style.cssText = `
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-top: 8px solid #2ECC71;
-    `;
+    if (showAbove) {
+      arrow.style.cssText = `
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #2ECC71;
+      `;
+    } else {
+      arrow.style.cssText = `
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #2ECC71;
+      `;
+    }
     tip.appendChild(arrow);
     
     document.body.appendChild(tip);
@@ -1295,6 +1348,9 @@ class DemoManager {
   closeCelebrationBanner() {
     const banner = document.getElementById('demo-celebration');
     if (banner) banner.remove();
+    // Chiudi anche il panel missioni se aperto
+    const panel = document.getElementById('demo-mission-panel');
+    if (panel) panel.remove();
     // Reimposta missione completata per permettere altre interazioni
     if (window.miniMissionManager) {
       window.miniMissionManager.completedSteps.clear();
