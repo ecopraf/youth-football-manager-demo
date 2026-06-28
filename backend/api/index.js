@@ -82,8 +82,25 @@ app.post('/api/auth/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, users.password_hash);
     if (!validPassword) return res.status(401).json({ error: 'Credenziali non valide' });
     
-    const token = jwt.sign({ userId: users.id, email: users.email, ruolo: users.ruolo, workspace_id: users.workspace_id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: users.id, nome: users.nome, cognome: users.cognome, email: users.email, ruolo: users.ruolo, workspace_id: users.workspace_id } });
+    const token = jwt.sign({ 
+      userId: users.id, 
+      email: users.email, 
+      ruolo: users.ruolo, 
+      workspace_id: users.workspace_id,
+      is_superadmin: users.is_superadmin || false
+    }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ 
+      token, 
+      user: { 
+        id: users.id, 
+        nome: users.nome, 
+        cognome: users.cognome, 
+        email: users.email, 
+        ruolo: users.ruolo, 
+        workspace_id: users.workspace_id,
+        is_superadmin: users.is_superadmin || false
+      } 
+    });
   } catch (err) {
     res.status(500).json({ error: 'Errore server' });
   }
@@ -316,7 +333,7 @@ app.put('/api/workspaces/:id/logo', authMiddleware, async (req, res) => {
 app.get('/api/workspaces/:id/stagioni', async (req, res) => {
   try {
     const { id } = req.params;
-    const { data, error } = await supabase.from('season').select('*').eq('workspace_id', id).order('year_start', { ascending: false });
+    const { data, error } = await supabase.from('season').select('*').eq('workspace_id', id).order('data_inizio', { ascending: false });
     if (error) return res.status(400).json({ error: error.message });
     res.json(data || []);
   } catch (err) {
@@ -327,10 +344,10 @@ app.get('/api/workspaces/:id/stagioni', async (req, res) => {
 app.post('/api/workspaces/:id/stagioni', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, year_start, year_end, data_inizio, data_fine } = req.body;
-    if (!nome || !year_start || !year_end) return res.status(400).json({ error: 'Nome, anno inizio e fine richiesti' });
+    const { nome, data_inizio, data_fine } = req.body;
+    if (!nome || !data_inizio || !data_fine) return res.status(400).json({ error: 'Nome, data inizio e data fine richiesti' });
     const { data, error } = await supabase.from('season').insert({
-      workspace_id: id, nome, year_start, year_end, data_inizio, data_fine, attiva: true
+      workspace_id: id, nome, data_inizio, data_fine, attiva: true
     }).select().single();
     if (error) return res.status(400).json({ error: error.message });
     res.status(201).json(data);
@@ -343,7 +360,7 @@ app.post('/api/workspaces/:id/stagioni', authMiddleware, async (req, res) => {
 app.get('/api/stagioni', async (req, res) => {
   try {
     const workspaceId = req.query.workspace_id;
-    let query = supabase.from('season').select('*').order('year_start', { ascending: false });
+    let query = supabase.from('season').select('*').order('data_inizio', { ascending: false });
     if (workspaceId) query = query.eq('workspace_id', workspaceId);
     const { data, error } = await query;
     if (error) return res.status(400).json({ error: error.message });
