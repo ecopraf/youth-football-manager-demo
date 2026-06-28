@@ -13,6 +13,7 @@ export default async function loadRoster() {
   const c = document.getElementById('pageContent');
   const wasAdmin = isAdminMode;
   isAdminMode = window.YFM.isAdmin && window.YFM.isAdmin();
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   
   // Se isAdminMode cambia, resetta la selezione
   if (wasAdmin !== isAdminMode) {
@@ -20,18 +21,33 @@ export default async function loadRoster() {
     isSelectionMode = false;
   }
   
-  try {
-    const [players, scadenze, allSquadre] = await Promise.all([
-      apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori'),
-      apiFetch('/squadre/' + window.YFM.squadraId + '/scadenze-mediche').catch(() => []),
-      apiFetch('/squadre').catch(() => [])
-    ]);
+  let players = [];
+  let scadenze = [];
+  let allSquadre = [];
+  
+  if (isDemo) {
+    // Usa i dati demo
+    players = window.YFM.allPlayers || [];
+    scadenze = [];
+    allSquadre = window.YFM.allSquadre || [];
     allPlayers = players;
     window.YFM.allPlayers = players;
     window.YFM.allSquadreForMove = allSquadre;
     renderRoster(c, players, scadenze);
-  } catch (e) {
-    c.innerHTML = '<div class="error-box">' + e.message + '</div>';
+  } else {
+    try {
+      [players, scadenze, allSquadre] = await Promise.all([
+        apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori'),
+        apiFetch('/squadre/' + window.YFM.squadraId + '/scadenze-mediche').catch(() => []),
+        apiFetch('/squadre').catch(() => [])
+      ]);
+      allPlayers = players;
+      window.YFM.allPlayers = players;
+      window.YFM.allSquadreForMove = allSquadre;
+      renderRoster(c, players, scadenze);
+    } catch (e) {
+      c.innerHTML = '<div class="error-box">' + e.message + '</div>';
+    }
   }
 }
 

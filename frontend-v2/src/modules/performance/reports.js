@@ -407,10 +407,11 @@ async function generateSeasonalReport() {
     if (isDemo) {
       // Genera report demo
       const stats = window.YFM.demoStats || {};
+      const topPlayers = window.YFM.demoTopPlayers || {};
       const s = window.YFM.getSquadra();
       report = {
         societa: window.YFM.workspaceInfo?.nome || 'ASD Green Academy',
-        squadra: { categoria: s.categoria || 'Primavera' },
+        squadra: { categoria: s?.categoria || 'Primavera' },
         stagione: '2025/26',
         punti: stats.punti || 34,
         partiteGiocate: stats.partiteGiocate || 14,
@@ -419,9 +420,10 @@ async function generateSeasonalReport() {
         sconfitte: stats.sconfitte || 0,
         golFatti: stats.golFatti || 38,
         golSubiti: stats.golSubiti || 12,
-        migliorMarcatore: window.YFM.demoTopPlayers?.marcatori?.[0] || { nome: 'Giovanni', cognome: 'Marroni', gol: 12 },
-        migliorAssistman: window.YFM.demoTopPlayers?.assistmen?.[0] || { nome: 'Simone', cognome: 'Arancioni', assist: 8 },
-        topPresenze: window.YFM.demoTopPlayers?.presenze?.[0] || { nome: 'Luca', cognome: 'Bianchi', presenze: 14 },
+        differenzaReti: stats.differenzaReti || 26,
+        topMarcatori: topPlayers.marcatori || [],
+        topAssist: topPlayers.assistmen || [],
+        topPresenze: topPlayers.presenze || [],
         ammonizioni: 18,
         espulsioni: 2,
         capienzeMedie: 45

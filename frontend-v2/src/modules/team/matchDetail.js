@@ -5,15 +5,39 @@ export async function openMatchDetail(mid) {
   const content = '<div id="detailInner"><div class="loading"><div class="spinner"></div>Caricamento...</div></div>';
   const footer = '<button class="btn btn-secondary" id="modalCancel">Chiudi</button>';
   const modal = createModal('📋 Dettaglio Partita', content, footer, '900px');
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
 
   try {
-    const d = await apiFetch('/partite/' + mid + '/dettaglio');
-    const p = d.partita;
-    const eventi = d.eventi || [];
-    const golCasa = d.golCasa || 0;
-    const golOspiti = d.golOspiti || 0;
-    const ammonizioni = eventi.filter(e => e.tipo === 'YELLOW').length;
-    const espulsioni = eventi.filter(e => e.tipo === 'RED').length;
+    let d, p, eventi, golCasa, golOspiti, ammonizioni, espulsioni;
+    
+    if (isDemo) {
+      // Trova la partita nei dati demo
+      const match = (window.YFM.demoMatches || []).find(m => m.id === mid);
+      if (!match) {
+        document.getElementById('detailInner').innerHTML = '<p>Partita non trovata.</p>';
+        return;
+      }
+      golCasa = match.gol_casa || 0;
+      golOspiti = match.gol_trasferta || 0;
+      eventi = (window.YFM.demoEvents || []).filter(e => e.match_id === mid && e.player_id);
+      ammonizioni = Math.floor(Math.random() * 5);
+      espulsioni = Math.random() > 0.8 ? 1 : 0;
+      p = {
+        data_ora: match.data_ora,
+        avversario: match.avversario,
+        luogo: match.luogo,
+        giornata: match.giornata,
+        competizione: match.competizione
+      };
+    } else {
+      d = await apiFetch('/partite/' + mid + '/dettaglio');
+      p = d.partita;
+      eventi = d.eventi || [];
+      golCasa = d.golCasa || 0;
+      golOspiti = d.golOspiti || 0;
+      ammonizioni = eventi.filter(e => e.tipo === 'YELLOW').length;
+      espulsioni = eventi.filter(e => e.tipo === 'RED').length;
+    }
     
     const resultBg = golCasa > golOspiti ? 'linear-gradient(135deg, #27AE60, #2ecc71)' : golCasa === golOspiti ? 'linear-gradient(135deg, #F39C12, #f1c40f)' : 'linear-gradient(135deg, #E74C3C, #c0392b)';
     const resultLabel = golCasa > golOspiti ? 'Vittoria!' : golCasa === golOspiti ? 'Pareggio' : 'Sconfitta';
