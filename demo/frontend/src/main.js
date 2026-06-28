@@ -27,8 +27,8 @@ const DEMO_WORKSPACE = {
 };
 
 const DEMO_SQUADRE = [
-  { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy', categoria: 'Primavera', allenatore: 'Marco Bianchi', dirigente: 'Luca Verdi' },
-  { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Allievi B', allenatore: 'Roberto Rossi', dirigente: 'Paolo Gialli' }
+  { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy', categoria: 'Under 19', allenatore: 'Marco Bianchi', dirigente: 'Luca Verdi' },
+  { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Under 17', allenatore: 'Roberto Rossi', dirigente: 'Paolo Gialli' }
 ];
 
 // Partite demo
@@ -110,6 +110,93 @@ const DEMO_TOP_PLAYERS = {
     { id: 'c005', nome: 'Andrea', cognome: 'Neri', presenze: 13 },
     { id: 'c007', nome: 'Simone', cognome: 'Arancioni', presenze: 13 },
     { id: 'c011', nome: 'Giovanni', cognome: 'Marroni', presenze: 12 }
+  ]
+};
+
+// Calciatori U17
+const DEMO_CALCIATORI_U17 = [
+  { id: 'u001', nome: 'Leonardo', cognome: 'Ferrari', data_nascita: '2011-04-12', numero_maglia: 1, ruolo: 'Portiere', stato: 'Attivo', presenze: 8, gol: 0, assist: 0 },
+  { id: 'u002', nome: 'Mattia', cognome: 'Esposito', data_nascita: '2011-02-28', numero_maglia: 2, ruolo: 'Difensore', stato: 'Attivo', presenze: 12, gol: 0, assist: 1 },
+  { id: 'u003', nome: 'Alessandro', cognome: 'Romano', data_nascita: '2011-06-15', numero_maglia: 3, ruolo: 'Difensore', stato: 'Attivo', presenze: 11, gol: 1, assist: 0 },
+  { id: 'u004', nome: 'Gabriele', cognome: 'Bruno', data_nascita: '2011-01-10', numero_maglia: 4, ruolo: 'Difensore', stato: 'Attivo', presenze: 10, gol: 0, assist: 0 },
+  { id: 'u005', nome: 'Lorenzo', cognome: 'Colombo', data_nascita: '2011-08-22', numero_maglia: 5, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 12, gol: 3, assist: 4 },
+  { id: 'u006', nome: 'Andrea', cognome: 'Ricci', stato: 'Attivo', cognome: 'Ricci', data_nascita: '2011-03-05', numero_maglia: 6, ruolo: 'Centrocampista', presenze: 9, gol: 1, assist: 2 },
+  { id: 'u007', nome: 'Filippo', cognome: ' Marino', data_nascita: '2011-07-18', numero_maglia: 7, ruolo: 'Attaccante', stato: 'Attivo', presenze: 11, gol: 8, assist: 5 },
+  { id: 'u008', nome: 'Davide', cognome: 'Costa', data_nascita: '2011-05-30', numero_maglia: 8, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 10, gol: 2, assist: 3 },
+  { id: 'u009', nome: 'Tommaso', cognome: 'Rizzo', data_nascita: '2011-09-14', numero_maglia: 9, ruolo: 'Attaccante', stato: 'Attivo', presenze: 8, gol: 5, assist: 2 },
+  { id: 'u010', nome: 'Nicolò', cognome: 'Conti', data_nascita: '2011-11-25', numero_maglia: 10, ruolo: 'Centrocampista', stato: 'Attivo', presenze: 12, gol: 4, assist: 6 },
+  { id: 'u011', nome: 'Federico', cognome: 'De Luca', data_nascita: '2011-12-08', numero_maglia: 11, ruolo: 'Attaccante', stato: 'Attivo', presenze: 9, gol: 6, assist: 3 },
+  { id: 'u012', nome: 'Giovanni', cognome: 'Moretti', data_nascita: '2011-04-20', numero_maglia: 12, ruolo: 'Portiere', stato: 'Attivo', presenze: 4, gol: 0, assist: 0 },
+  { id: 'u013', nome: 'Manuel', cognome: 'Oliveira', data_nascita: '2011-02-14', numero_maglia: 13, ruolo: 'Difensore', stato: 'Attivo', presenze: 7, gol: 0, assist: 1 },
+  { id: 'u014', nome: 'Stefano', cognome: 'Garcia', data_nascita: '2011-06-08', numero_maglia: 14, ruolo: 'Centrocampista', stato: 'Infortunato', presenze: 5, gol: 1, assist: 0 },
+  { id: 'u015', nome: 'Edoardo', cognome: 'Silva', data_nascita: '2011-01-30', numero_maglia: 15, ruolo: 'Difensore', stato: 'Attivo', presenze: 8, gol: 0, assist: 0 }
+];
+
+// Partite U17
+const DEMO_PARTITE_U17 = [
+  { id: 'u001', avversario: 'Atalanta Jr', luogo: 'Casa', data_ora: '2026-07-08T16:00:00', competizione: 'Campionato Under 17', stato: 'Da disputare', giornata: 18 },
+  { id: 'u002', avversario: 'Verona Youth', luogo: 'Trasferta', data_ora: '2026-07-15T15:30:00', competizione: 'Campionato Under 17', stato: 'Da disputare', giornata: 19 },
+  { id: 'u003', avversario: 'Torino Academy', luogo: 'Casa', data_ora: '2026-06-22T15:00:00', competizione: 'Campionato Under 17', stato: 'Terminata', gol_casa: 2, gol_trasferta: 1, giornata: 17 },
+  { id: 'u004', avversario: 'Sampdoria Youth', luogo: 'Trasferta', data_ora: '2026-06-15T15:00:00', competizione: 'Campionato Under 17', stato: 'Terminata', gol_casa: 1, gol_trasferta: 1, giornata: 16 },
+  { id: 'u005', avversario: 'Genoa Academy', luogo: 'Casa', data_ora: '2026-06-08T15:00:00', competizione: 'Campionato Under 17', stato: 'Terminata', gol_casa: 3, gol_trasferta: 0, giornata: 15 }
+];
+
+// Formazioni U17
+const DEMO_FORMAZIONI_U17 = {
+  u003: {
+    portiere: 'u001',
+    difensori: ['u002', 'u003', 'u004', 'u013'],
+    centrocampisti: ['u005', 'u008', 'u010'],
+    attaccanti: ['u007', 'u011']
+  },
+  u004: {
+    portiere: 'u012',
+    difensori: ['u002', 'u004', 'u013', 'u015'],
+    centrocampisti: ['u006', 'u008', 'u010'],
+    attaccanti: ['u009', 'u011']
+  },
+  u005: {
+    portiere: 'u001',
+    difensori: ['u002', 'u003', 'u004', 'u015'],
+    centrocampisti: ['u005', 'u008', 'u010'],
+    attaccanti: ['u007', 'u009', 'u011']
+  }
+};
+
+// Statistiche U17
+const DEMO_STATISTICHE_U17 = {
+  punti: 28,
+  partiteGiocate: 12,
+  vittorie: 8,
+  pareggi: 4,
+  sconfitte: 0,
+  golFatti: 24,
+  golSubiti: 8,
+  differenzaReti: 16
+};
+
+// Top players U17
+const DEMO_TOP_PLAYERS_U17 = {
+  marcatori: [
+    { id: 'u011', nome: 'Federico', cognome: 'De Luca', gol: 6 },
+    { id: 'u007', nome: 'Filippo', cognome: 'Marino', gol: 8 },
+    { id: 'u009', nome: 'Tommaso', cognome: 'Rizzo', gol: 5 },
+    { id: 'u010', nome: 'Nicolò', cognome: 'Conti', gol: 4 },
+    { id: 'u005', nome: 'Lorenzo', cognome: 'Colombo', gol: 3 }
+  ],
+  assistmen: [
+    { id: 'u010', nome: 'Nicolò', cognome: 'Conti', assist: 6 },
+    { id: 'u007', nome: 'Filippo', cognome: 'Marino', assist: 5 },
+    { id: 'u005', nome: 'Lorenzo', cognome: 'Colombo', assist: 4 },
+    { id: 'u008', nome: 'Davide', cognome: 'Costa', assist: 3 },
+    { id: 'u011', nome: 'Federico', cognome: 'De Luca', assist: 3 }
+  ],
+  presenze: [
+    { id: 'u002', nome: 'Mattia', cognome: 'Esposito', presenze: 12 },
+    { id: 'u005', nome: 'Lorenzo', cognome: 'Colombo', presenze: 12 },
+    { id: 'u010', nome: 'Nicolò', cognome: 'Conti', presenze: 12 },
+    { id: 'u007', nome: 'Filippo', cognome: 'Marino', presenze: 11 },
+    { id: 'u011', nome: 'Federico', cognome: 'De Luca', presenze: 9 }
   ]
 };
 
@@ -225,10 +312,30 @@ function populateSquadreSelect() {
     ).join('');
     sel.addEventListener('change', e => {
       window.YFM.squadraId = e.target.value;
-      window.YFM.allPlayers = [];
-      window.YFM.allMatches = [];
+      loadSquadraData(e.target.value);
       window.YFM.navigateTo(window.YFM.currentPage);
     });
+  }
+}
+
+// Carica i dati per la squadra selezionata
+function loadSquadraData(squadraId) {
+  const isU17 = squadraId === '00000000-0000-0000-0000-000000000011';
+  
+  if (isU17) {
+    window.YFM.allPlayers = DEMO_CALCIATORI_U17;
+    window.YFM.demoMatches = DEMO_PARTITE_U17;
+    window.YFM.demoFormazioni = DEMO_FORMAZIONI_U17;
+    window.YFM.demoStats = DEMO_STATISTICHE_U17;
+    window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS_U17;
+    window.YFM.demoConvocazioni = {};
+  } else {
+    window.YFM.allPlayers = DEMO_CALCIATORI;
+    window.YFM.demoMatches = DEMO_PARTITE;
+    window.YFM.demoFormazioni = DEMO_FORMAZIONI;
+    window.YFM.demoStats = DEMO_STATISTICHE;
+    window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
+    window.YFM.demoConvocazioni = DEMO_CONVOCAZIONI;
   }
 }
 

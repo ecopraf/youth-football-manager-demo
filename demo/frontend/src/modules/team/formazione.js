@@ -187,6 +187,20 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
     document.querySelectorAll('#currentModal .form-check-tit:not(:checked)').forEach(cb => { cb.disabled = titChecked >= 11; });
   };
 
+  // Sincronizza checkbox all'avvio (mutua esclusione iniziale)
+  document.querySelectorAll('#currentModal .form-check-tit').forEach(cbTit => {
+    if (cbTit.checked) {
+      const pan = document.querySelector('#currentModal .form-check-pan[data-pid="' + cbTit.dataset.pid + '"]');
+      if (pan) pan.checked = false;
+    }
+  });
+  document.querySelectorAll('#currentModal .form-check-pan').forEach(cbPan => {
+    if (cbPan.checked) {
+      const tit = document.querySelector('#currentModal .form-check-tit[data-pid="' + cbPan.dataset.pid + '"]');
+      if (tit) tit.checked = false;
+    }
+  });
+
   document.querySelectorAll('#currentModal .form-check-tit').forEach(cbTit => {
     cbTit.addEventListener('change', () => {
       if (cbTit.checked) {
@@ -225,7 +239,10 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
 
     const assegnati = new Set([...titolariIds, ...riserveIds]);
     const nonAssegnati = giocatoriConvocati.filter(g => !assegnati.has(g.id));
-    if (nonAssegnati.length > 0 && !confirm('Ci sono ' + nonAssegnati.length + ' convocati non assegnati. Procedere?')) return;
+    if (nonAssegnati.length > 0) {
+      const names = nonAssegnati.map(g => g.cognome + ' ' + g.nome).join(', ');
+      if (!confirm('Giocatori non assegnati: ' + names + '\n\nProcedere?')) return;
+    }
 
     showLoading();
     try {
