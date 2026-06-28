@@ -25,6 +25,11 @@ export function setupLayout() {
       cursor: not-allowed;
       opacity: 0.6;
     }
+    .sidebar-demo-btn,
+    .sidebar-disabled,
+    [title] {
+      -webkit-touch-callout: default;
+    }
     .demo-badge {
       background: white;
       color: #27AE60;

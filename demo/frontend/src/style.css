@@ -13,6 +13,11 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Abilita tooltip nativi */
+[title] { cursor: inherit; }
+.sidebar-demo-btn { cursor: pointer; }
+.sidebar-disabled { cursor: not-allowed; }
+
 body { 
   font-family: 'Inter', system-ui, -apple-system, sans-serif; 
   background: var(--gray-light); 
