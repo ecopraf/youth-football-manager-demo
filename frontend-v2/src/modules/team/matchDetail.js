@@ -1,5 +1,6 @@
 import { apiFetch } from '../../services/api';
 import { formatDate } from '../../utils/formatters';
+import demoPersistence from '../demo/DemoPersistence';
 
 export async function openMatchDetail(mid) {
   const content = '<div id="detailInner"><div class="loading"><div class="spinner"></div>Caricamento...</div></div>';
@@ -19,9 +20,12 @@ export async function openMatchDetail(mid) {
       }
       golCasa = match.gol_casa || 0;
       golOspiti = match.gol_trasferta || 0;
-      eventi = (window.YFM.demoEvents || []).filter(e => e.match_id === mid && e.player_id);
-      ammonizioni = Math.floor(Math.random() * 5);
-      espulsioni = Math.random() > 0.8 ? 1 : 0;
+      // Usa eventi dalla persistenza o dai dati demo originali
+      eventi = (demoPersistence.getEvents(mid) || []).length > 0 
+        ? demoPersistence.getEvents(mid)
+        : (window.YFM.demoEvents || []).filter(e => e.match_id === mid && e.player_id);
+      ammonizioni = eventi.filter(e => e.tipo === 'YELLOW').length;
+      espulsioni = eventi.filter(e => e.tipo === 'RED').length;
       p = {
         data_ora: match.data_ora,
         avversario: match.avversario,

@@ -1,14 +1,30 @@
 import { apiFetch } from '../../services/api';
 import { formatDate, getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 export async function openConvocation(mid, readOnly) {
-  const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  const match = (isDemo ? window.YFM.demoMatches : window.YFM.allMatches)?.find(m => m.id === mid) || {};
   const isArchiviata = match.archiviata === true || match.archiviata === 'true';
-  const [conv, gioc] = await Promise.all([
-    apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
-    apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori')
-  ]);
+  
+  let conv = [];
+  let gioc = [];
+  
+  if (isDemo) {
+    // Demo mode: usa dati dalla persistenza
+    const convocazioneIds = demoPersistence.getConvocation(mid) || window.YFM.demoConvocazioni?.[mid] || [];
+    gioc = window.YFM.allPlayers || [];
+    conv = convocazioneIds.map(id => {
+      const p = gioc.find(g => g.id === id);
+      return { calciatoreId: id, nome: p?.nome || '', cognome: p?.cognome || '', presente: true };
+    });
+  } else {
+    [conv, gioc] = await Promise.all([
+      apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
+      apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori')
+    ]);
+  }
 
   const ids = conv.filter(c => c.presente === true).map(c => c.calciatoreId);
   const sorted = [...gioc].sort((a, b) => {
@@ -95,13 +111,28 @@ export async function openConvocation(mid, readOnly) {
     if (checks.length > 20) { alert('⚠️ Max 20 convocabili!'); return; }
     if (checks.length < 11) { alert('⚠️ Minimo 11 calciatori!'); return; }
     if (checks.length < 16 && !confirm('Solo ' + checks.length + ' convocati. Procedere?')) return;
+    
+    const selectedIds = Array.from(checks).map(cb => cb.dataset.pid);
+    
     showLoading();
-    for (const cb of document.querySelectorAll('#currentModal .conv-check')) {
-      await apiFetch('/partite/' + mid + '/convocazioni', {
-        method: 'POST', body: JSON.stringify({ calciatoreId: cb.dataset.pid, presente: cb.checked })
-      });
+    try {
+      if (isDemo) {
+        demoPersistence.saveConvocation(mid, selectedIds);
+        window.YFM.demoConvocazioni = window.YFM.demoConvocazioni || {};
+        window.YFM.demoConvocazioni[mid] = selectedIds;
+        hideLoading(); modal.close(); alert('✅ Convocazioni salvate in demo!');
+      } else {
+        for (const cb of document.querySelectorAll('#currentModal .conv-check')) {
+          await apiFetch('/partite/' + mid + '/convocazioni', {
+            method: 'POST', body: JSON.stringify({ calciatoreId: cb.dataset.pid, presente: cb.checked })
+          });
+        }
+        hideLoading(); modal.close(); alert('✅ Convocazioni salvate!');
+      }
+    } catch (e) {
+      hideLoading();
+      alert('Errore: ' + e.message);
     }
-    hideLoading(); modal.close(); alert('✅ Convocazioni salvate!');
   });
 }
 

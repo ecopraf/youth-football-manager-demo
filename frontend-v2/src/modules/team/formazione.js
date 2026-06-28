@@ -1,19 +1,43 @@
 import { apiFetch } from '../../services/api';
 import { getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 const RUOLO_ACR = { 'Portiere': 'POR', 'Difensore': 'DIF', 'Centrocampista': 'CEN', 'Attaccante': 'ATT' };
 
 export async function openFormazioneForm(mid) {
-  const match = window.YFM.allMatches.find(m => m.id === mid) || {};
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  const match = (isDemo ? window.YFM.demoMatches : window.YFM.allMatches)?.find(m => m.id === mid) || {};
   const isPast = new Date(match.data_ora) < new Date();
   const isArchiviata = match.archiviata === true || match.archiviata === 'true';
   
-  const [convocazioni, formazioneEsistente, giocatori] = await Promise.all([
-    apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
-    apiFetch('/partite/' + mid + '/formazione').catch(() => []),
-    apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => [])
-  ]);
+  let convocazioni = [], formazioneEsistente = [], giocatori = [];
+  
+  if (isDemo) {
+    // Demo mode: usa dati dalla persistenza
+    const convocazioneIds = demoPersistence.getConvocation(mid) || window.YFM.demoConvocazioni?.[mid] || [];
+    const formazioneSalvata = demoPersistence.getFormation(mid);
+    giocatori = window.YFM.allPlayers || [];
+    
+    // Crea oggetto convocazioni con solo i presenti
+    convocazioni = convocazioneIds.map(id => ({ calciatoreId: id, presente: true }));
+    
+    // Estrai formazione esistente
+    if (formazioneSalvata) {
+      const allFormIds = [formazioneSalvata.portiere, ...(formazioneSalvata.difensori || []), ...(formazioneSalvata.centrocampisti || []), ...(formazioneSalvata.attaccanti || [])];
+      formazioneEsistente = allFormIds.map(id => {
+        const p = giocatori.find(g => g.id === id);
+        const isTitolare = id === formazioneSalvata.portiere || (formazioneSalvata.difensori || []).includes(id) || (formazioneSalvata.centrocampisti || []).includes(id) || (formazioneSalvata.attaccanti || []).includes(id);
+        return { calciatoreId: id, numeroMaglia: p?.numero_maglia || p?.numeroMaglia || 99, posizione: isTitolare ? 'Titolare' : 'Panchina' };
+      });
+    }
+  } else {
+    [convocazioni, formazioneEsistente, giocatori] = await Promise.all([
+      apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
+      apiFetch('/partite/' + mid + '/formazione').catch(() => []),
+      apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => [])
+    ]);
+  }
 
   const convocatiIds = convocazioni.filter(c => c.presente === true).map(c => c.calciatoreId);
   const ruoloOrder = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'];
@@ -31,7 +55,7 @@ export async function openFormazioneForm(mid) {
     renderFormazioneReadOnly(match, giocatoriConvocati, formMap, isArchiviata);
   } else {
     // FORM EDITABILE per partite future e passate (se non archiviate)
-    renderFormazioneEdit(mid, match, giocatoriConvocati, formMap);
+    renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo);
   }
 }
 
@@ -124,7 +148,7 @@ function renderFormazioneReadOnly(match, giocatori, formMap, isArchiviata) {
 }
 
 // ==================== FORM EDITABILE (FUTURE) ====================
-function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap) {
+function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = false) {
   let html = '<p style="margin-bottom:16px;"><strong>Formazione - ' + window.YFM.getSocietaName() + ' vs ' + match.avversario + '</strong></p>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
 
@@ -133,7 +157,7 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap) {
   giocatoriConvocati.forEach(g => {
     const f = formMap[g.id];
     const checked = f && f.posizione === 'Titolare' ? ' checked' : '';
-    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-tit" style="accent-color:var(--green);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : g.numeroMaglia) + '" data-pid="' + g.id + '" class="form-num-tit" style="width:50px;padding:4px;" placeholder="N."></div>';
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-tit" style="accent-color:var(--green);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : (g.numeroMaglia || g.numero_maglia || 99)) + '" data-pid="' + g.id + '" class="form-num-tit" style="width:50px;padding:4px;" placeholder="N."></div>';
   });
   html += '</div>';
 
@@ -142,7 +166,7 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap) {
   giocatoriConvocati.forEach(g => {
     const f = formMap[g.id];
     const checked = f && f.posizione === 'Panchina' ? ' checked' : '';
-    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-pan" style="accent-color:var(--orange);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : g.numeroMaglia) + '" data-pid="' + g.id + '" class="form-num-pan" style="width:50px;padding:4px;" placeholder="N."></div>';
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-pan" style="accent-color:var(--orange);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : (g.numeroMaglia || g.numero_maglia || 99)) + '" data-pid="' + g.id + '" class="form-num-pan" style="width:50px;padding:4px;" placeholder="N."></div>';
   });
   html += '</div></div>';
 
@@ -189,27 +213,72 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap) {
   updateCounters();
 
   document.getElementById('saveFormBtn').addEventListener('click', async () => {
-    const formazione = [];
+    const titolariIds = [];
+    const riserveIds = [];
+    
     document.querySelectorAll('#currentModal .form-check-tit:checked').forEach(cb => {
-      const pid = cb.dataset.pid;
-      const numInput = document.querySelector('#currentModal .form-num-tit[data-pid="' + pid + '"]');
-      formazione.push({ calciatoreId: pid, numeroMaglia: parseInt(numInput?.value) || giocatoriConvocati.find(g => g.id === pid)?.numeroMaglia || 99, posizione: 'Titolare', capitano: false, viceCapitano: false });
+      titolariIds.push(cb.dataset.pid);
     });
     document.querySelectorAll('#currentModal .form-check-pan:checked').forEach(cb => {
-      const pid = cb.dataset.pid;
-      const numInput = document.querySelector('#currentModal .form-num-pan[data-pid="' + pid + '"]');
-      formazione.push({ calciatoreId: pid, numeroMaglia: parseInt(numInput?.value) || giocatoriConvocati.find(g => g.id === pid)?.numeroMaglia || 99, posizione: 'Panchina', capitano: false, viceCapitano: false });
+      riserveIds.push(cb.dataset.pid);
     });
 
-    const assegnati = new Set(formazione.map(f => f.calciatoreId));
+    const assegnati = new Set([...titolariIds, ...riserveIds]);
     const nonAssegnati = giocatoriConvocati.filter(g => !assegnati.has(g.id));
     if (nonAssegnati.length > 0 && !confirm('Ci sono ' + nonAssegnati.length + ' convocati non assegnati. Procedere?')) return;
 
     showLoading();
-    await apiFetch('/partite/' + mid + '/formazione', { method: 'PUT', body: JSON.stringify({ formazione }) });
-    hideLoading();
-    modal.close();
-    alert('✅ Formazione salvata! La distinta è aggiornata.');
+    try {
+      if (isDemo) {
+        // Demo mode: salva in persistenza
+        const formation = {
+          portiere: titolariIds.find(id => {
+            const g = giocatoriConvocati.find(p => p.id === id);
+            return g?.ruolo === 'Portiere';
+          }) || titolariIds[0],
+          difensori: titolariIds.filter(id => {
+            const g = giocatoriConvocati.find(p => p.id === id);
+            return g?.ruolo === 'Difensore';
+          }),
+          centrocampisti: titolariIds.filter(id => {
+            const g = giocatoriConvocati.find(p => p.id === id);
+            return g?.ruolo === 'Centrocampista';
+          }),
+          attaccanti: titolariIds.filter(id => {
+            const g = giocatoriConvocati.find(p => p.id === id);
+            return g?.ruolo === 'Attaccante';
+          })
+        };
+        
+        demoPersistence.saveFormation(mid, formation);
+        window.YFM.demoFormazioni = window.YFM.demoFormazioni || {};
+        window.YFM.demoFormazioni[mid] = formation;
+        
+        hideLoading();
+        modal.close();
+        alert('✅ Formazione salvata in demo!');
+      } else {
+        const formazione = [];
+        document.querySelectorAll('#currentModal .form-check-tit:checked').forEach(cb => {
+          const pid = cb.dataset.pid;
+          const numInput = document.querySelector('#currentModal .form-num-tit[data-pid="' + pid + '"]');
+          formazione.push({ calciatoreId: pid, numeroMaglia: parseInt(numInput?.value) || giocatoriConvocati.find(g => g.id === pid)?.numeroMaglia || 99, posizione: 'Titolare', capitano: false, viceCapitano: false });
+        });
+        document.querySelectorAll('#currentModal .form-check-pan:checked').forEach(cb => {
+          const pid = cb.dataset.pid;
+          const numInput = document.querySelector('#currentModal .form-num-pan[data-pid="' + pid + '"]');
+          formazione.push({ calciatoreId: pid, numeroMaglia: parseInt(numInput?.value) || giocatoriConvocati.find(g => g.id === pid)?.numeroMaglia || 99, posizione: 'Panchina', capitano: false, viceCapitano: false });
+        });
+
+        await apiFetch('/partite/' + mid + '/formazione', { method: 'PUT', body: JSON.stringify({ formazione }) });
+        hideLoading();
+        modal.close();
+        alert('✅ Formazione salvata! La distinta è aggiornata.');
+      }
+    } catch (e) {
+      hideLoading();
+      alert('Errore: ' + e.message);
+    }
   });
 }
 
