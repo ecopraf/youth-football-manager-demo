@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://youth-football-manager-backend.vercel.app/api/$1" }
-  ]
-}
