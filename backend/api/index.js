@@ -370,16 +370,45 @@ app.get('/api/stagioni', async (req, res) => {
   }
 });
 
+// DEBUG: Test endpoint per verificare route
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          routes.push({
+            path: handler.route.path,
+            methods: Object.keys(handler.route.methods)
+          });
+        }
+      });
+    }
+  });
+  res.json({ routes: routes.filter(r => r.path.includes('stagioni')) });
+});
+
 app.get('/api/stagioni/:id/squadre', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('[DEBUG] /api/stagioni/:id/squadre called with id:', id);
     const { data, error } = await supabase.from('team')
       .select('*, category:category_id(id, nome, tipo_campionato)')
       .eq('season_id', id)
       .order('nome');
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) {
+      console.error('[DEBUG] Supabase error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+    console.log('[DEBUG] Returning teams:', data?.length);
     res.json(data || []);
   } catch (err) {
+    console.error('[DEBUG] Catch error:', err);
     res.status(500).json({ error: 'Errore server' });
   }
 });
