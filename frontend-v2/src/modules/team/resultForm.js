@@ -28,7 +28,6 @@ export async function openResultForm(mid) {
     
     // Carica giocatori dalla formazione o convocazioni demo
     const formazione = demoPersistence.getFormation(mid);
-    const convocazione = demoPersistence.getConvocation(mid);
     const allPlayers = window.YFM.allPlayers || [];
     
     if (formazione) {
@@ -38,11 +37,26 @@ export async function openResultForm(mid) {
         const p = allPlayers.find(x => x.id === id);
         return p ? { calciatoreId: p.id, nome: p.nome || '', cognome: p.cognome || '' } : null;
       }).filter(Boolean);
-    } else if (convocazione) {
-      giocatori = convocazione.map(id => {
-        const p = allPlayers.find(x => x.id === id);
-        return p ? { calciatoreId: p.id, nome: p.nome || '', cognome: p.cognome || '' } : null;
-      }).filter(Boolean);
+    }
+    
+    // Prova a prendere dalla persistenza o dai dati in memoria
+    if (giocatori.length === 0) {
+      const convocIds = demoPersistence.getConvocation(mid) || window.YFM.demoConvocazioni?.[mid] || [];
+      if (convocIds.length > 0) {
+        giocatori = convocIds.map(id => {
+          const p = allPlayers.find(x => x.id === id);
+          return p ? { calciatoreId: p.id, nome: p.nome || '', cognome: p.cognome || '' } : null;
+        }).filter(Boolean);
+      }
+    }
+    
+    // Se ancora vuoto, usa tutti i giocatori demo (fallback)
+    if (giocatori.length === 0 && allPlayers.length > 0) {
+      giocatori = allPlayers.slice(0, 18).map(p => ({
+        calciatoreId: p.id,
+        nome: p.nome || '',
+        cognome: p.cognome || ''
+      }));
     }
   } else {
     try {

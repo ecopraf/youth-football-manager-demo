@@ -274,3 +274,65 @@ Per resettare tutti i dati demo persistenti e tornare ai valori originali:
 window.YFM.demoPersistence.reset()
 location.reload()
 ```
+
+---
+
+## 🧪 Test Modalità Demo
+
+### Avvio Frontend Locale
+```bash
+cd /workspace/youth-football-manager/frontend-v2
+npm install  # se necessario
+npx vite --host 0.0.0.0 --port 8080
+```
+Frontend disponibile su: http://localhost:8080 (o porta successiva)
+
+### Flusso Test Completo
+1. Apri browser → http://localhost:8080
+2. Clicca "🎮 Avvia Demo"
+3. Testa sequenzialmente:
+   - **Dashboard**: verifica statistiche e top giocatori
+   - **Rosa**: verifica lista 18 giocatori con filtri
+   - **Calendario**: verifica partite con risultati
+   - **Convocazioni**: verifica lista giocatori (BUG comune: lista vuota)
+   - **Formazione**: verifica caricamento convocati
+   - **Risultato**: verifica lista giocatori per eventi (BUG comune: lista vuota)
+   - **Allenamenti**: verifica date e tabella presenze
+   - **Report**: verifica generazione report
+
+### Bug Comuni e Correzioni
+
+#### 1. Lista Giocatori Vuota in Convoca/Formazione/Risultato
+Se i giocatori non appaiono nei dropdown:
+- Verificare che `window.YFM.allPlayers` sia popolato
+- Verificare che `window.YFM.demoConvocazioni[mid]` esista per la partita
+- In `convocazioni.js`, `formazione.js`, `resultForm.js` controllare il fallback:
+
+```javascript
+// Pattern corretto per caricare giocatori in demo mode
+const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+if (isDemo) {
+  // Prova prima da demoConvocazioni
+  let giocatoriIds = window.YFM.demoConvocazioni?.[mid] || [];
+  // Fallback: usa tutti i giocatori se non ci sono convocazioni
+  if (giocatoriIds.length === 0) {
+    giocatoriIds = window.YFM.allPlayers?.map(p => p.id) || [];
+  }
+}
+```
+
+#### 2. Persistenza Non Funziona
+Verificare che:
+- `DemoPersistence.js` sia importato in `main.js`
+- `window.YFM.demoPersistence` sia inizializzato
+- I metodi `saveConvocation()`, `saveFormation()`, etc. siano chiamati
+
+### Commit e Push
+```bash
+cd /workspace/youth-football-manager
+git add .
+git commit -m "fix: descrizione fix"
+git push
+```
+
+**NOTA**: Non dimenticare di disabilitare deploy Vercel prima di push se richiesto.
