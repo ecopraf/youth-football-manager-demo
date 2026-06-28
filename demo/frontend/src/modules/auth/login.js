@@ -69,7 +69,15 @@ export default async function loadLogin() {
         object-fit: contain;
         border-radius: 24px !important;
         box-shadow: 0 8px 30px rgba(102,126,234,0.3);
-        margin-bottom: 24px;
+        margin: 0 auto 24px auto;
+        display: block;
+      }
+      .btn-demo-start {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 0 auto;
       }
       .demo-welcome h1 {
         font-size: 28px;

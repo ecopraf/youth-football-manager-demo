@@ -634,7 +634,19 @@ class DemoManager {
             border-radius:8px;
             font-size:13px;
             cursor:pointer;
+            margin-bottom:8px;
           ">🔄 Riprova la demo</button>
+          <button onclick="window.YFM.logout()" style="
+            width:100%;
+            padding:10px;
+            background:linear-gradient(135deg,#E74C3C,#C0392B);
+            color:white;
+            border:none;
+            border-radius:8px;
+            font-size:13px;
+            font-weight:600;
+            cursor:pointer;
+          ">🚪 Chiudi Demo</button>
         </div>
       ` : ''}
     `;
@@ -1669,9 +1681,10 @@ class DemoManager {
       }
       #demo-celebration .demo-completion-extra-actions {
         display: flex;
+        flex-direction: column;
         gap: 8px;
         margin-top: 8px;
-        flex-wrap: nowrap;
+        width: 100%;
       }
       #demo-celebration .demo-btn-continue,
       #demo-celebration .demo-btn-reload,
@@ -1679,12 +1692,12 @@ class DemoManager {
         background: linear-gradient(135deg, #E74C3C, #C0392B);
         color: white;
         border: none;
-        padding: 10px 16px;
+        padding: 12px 16px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 13px;
+        font-size: 14px;
         cursor: pointer;
-        white-space: nowrap;
+        width: 100%;
         transition: all 0.3s ease;
       }
       #demo-celebration .demo-btn-continue:hover,
@@ -1705,15 +1718,6 @@ class DemoManager {
         #demo-celebration .celebration-content p {
           white-space: normal !important;
           font-size: 13px;
-        }
-        #demo-celebration .demo-completion-extra-actions {
-          flex-direction: column;
-          width: 100%;
-        }
-        #demo-celebration .demo-btn-reload,
-        #demo-celebration .demo-btn-close,
-        #demo-celebration .demo-btn-continue {
-          width: 100%;
         }
       }
     `;

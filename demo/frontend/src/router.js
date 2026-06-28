@@ -21,6 +21,14 @@ export function initRouter() {
     return localStorage.getItem('yfm_demo_session') === 'active';
   };
 
+  window.YFM.isAdmin = function() {
+    return true; // Demo ha sempre accesso admin
+  };
+
+  window.YFM.hasRole = function(role) {
+    return true; // Demo ha tutti i ruoli
+  };
+
   window.YFM.getUser = function() {
     const userStr = localStorage.getItem('yfm_demo_user');
     return userStr ? JSON.parse(userStr) : null;
