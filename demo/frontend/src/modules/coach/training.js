@@ -388,10 +388,13 @@ function attachListeners(savedDate) {
             var saved = 0;
             for (var i = 0; i < presenzeData.length; i++) {
               var p = presenzeData[i];
+              // Get motivo for this player
+              var select = document.querySelector('#presenzeList .motivo-select[data-pid="' + p.calciatoreId + '"]');
+              var motivo = (select && !p.presente) ? select.value : '';
               try {
                 await apiFetch('/squadre/' + window.YFM.squadraId + '/allenamenti/presenze', {
                   method: 'POST',
-                  body: JSON.stringify({ calciatoreId: p.calciatoreId, data: p.data, presente: p.presente, note: p.note })
+                  body: JSON.stringify({ calciatoreId: p.calciatoreId, data: p.data, presente: p.presente, motivo_assenza: motivo, note: p.note })
                 });
                 saved++;
               } catch(e) {
