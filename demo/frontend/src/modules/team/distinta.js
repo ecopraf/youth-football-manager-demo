@@ -207,7 +207,7 @@ function renderDistinta(d, staff) {
   const c = document.getElementById('distintaInner');
   if (!c) return;
   
-  const t = (d.formazione || []).sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
+  const t = [...(d.formazione || []), ...(d.riserve || [])].sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
   const dt = new Date(d.match?.data_ora || d.partita?.dataOra || new Date());
   const s = staff || {};
   const righe = [];
