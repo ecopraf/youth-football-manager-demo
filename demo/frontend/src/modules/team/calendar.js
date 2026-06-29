@@ -10,8 +10,12 @@ const PULLED_DOT = '<span class="pallino-blink" style="display:inline-block;widt
 const PULLED_STYLE = '@keyframes blink-pallino{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.8);}';
 
 function getNextStep(matchId) {
+  // Controlla sia demoPersistence che i dati precaricati
   const convocazioneData = demoPersistence.getConvocation(matchId);
-  const hasConvocazioni = convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0;
+  const demoConvocazioneData = window.YFM.demoConvocazioni?.[matchId];
+  const hasConvocazioni = 
+    (convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0) ||
+    (demoConvocazioneData !== null && Array.isArray(demoConvocazioneData) && demoConvocazioneData.length > 0);
   
   const formazioneData = demoPersistence.getFormation(matchId);
   const hasFormazione = formazioneData && (
