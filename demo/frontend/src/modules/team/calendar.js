@@ -333,6 +333,7 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
   R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
   R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
+  R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
