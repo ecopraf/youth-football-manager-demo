@@ -314,10 +314,18 @@ function openPlayerForm(pid) {
     showLoading();
     try {
       if (isDemo) {
+        const isU17 = window.YFM.squadraId === '00000000-0000-0000-0000-000000000011';
+        const customPlayersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+        
         if (p) {
-          // Aggiorna giocatore esistente
-          demoPersistence.updatePlayer(p.id, d);
-          // Aggiorna window.YFM.allPlayers
+          // Verifica se è un giocatore personalizzato o demo
+          const isCustomPlayer = p.id && !p.id.startsWith('c');
+          
+          if (isCustomPlayer) {
+            // Giocatore personalizzato - aggiorna in persistenza
+            demoPersistence.updateCustomPlayer(p.id, d, customPlayersKey);
+          }
+          // Aggiorna window.YFM.allPlayers (sempre)
           const idx = window.YFM.allPlayers.findIndex(pl => pl.id === p.id);
           if (idx !== -1) {
             window.YFM.allPlayers[idx] = { ...window.YFM.allPlayers[idx], ...d };

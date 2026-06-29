@@ -316,15 +316,20 @@ function populateSquadreSelect() {
 function loadSquadraData(squadraId) {
   const isU17 = squadraId === '00000000-0000-0000-0000-000000000011';
   
+  // I giocatori aggiunti dall'utente in demo persistono tra i cambi di squadra
+  // Vengono salvati con chiave separata per non mescolarsi con quelli demo
+  const customPlayersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+  const savedCustomPlayers = demoPersistence.data[customPlayersKey] || [];
+  
   if (isU17) {
-    window.YFM.allPlayers = DEMO_CALCIATORI_U17;
+    window.YFM.allPlayers = [...DEMO_CALCIATORI_U17, ...savedCustomPlayers];
     window.YFM.demoMatches = DEMO_PARTITE_U17;
     window.YFM.demoFormazioni = DEMO_FORMAZIONI_U17;
     window.YFM.demoStats = DEMO_STATISTICHE_U17;
     window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS_U17;
     window.YFM.demoConvocazioni = {};
   } else {
-    window.YFM.allPlayers = DEMO_CALCIATORI;
+    window.YFM.allPlayers = [...DEMO_CALCIATORI, ...savedCustomPlayers];
     window.YFM.demoMatches = DEMO_PARTITE;
     window.YFM.demoFormazioni = DEMO_FORMAZIONI;
     window.YFM.demoStats = DEMO_STATISTICHE;

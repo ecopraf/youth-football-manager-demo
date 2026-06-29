@@ -467,20 +467,67 @@ class DemoPersistence {
   // ============ GIOCATORI ============
 
   /**
-   * Aggiunge un nuovo giocatore
+   * Genera un UUID v4 valido
+   */
+  _generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  /**
+   * Aggiunge un nuovo giocatore (con deduplicazione)
+   * Salva i giocatori in una chiave separata basata sulla squadra corrente
    */
   addPlayer(player) {
-    if (!this.data[KEYS.PLAYERS]) {
-      this.data[KEYS.PLAYERS] = [];
+    // Determina la chiave in base alla squadra
+    const squadraId = window.YFM?.squadraId || 'default';
+    const isU17 = squadraId === '00000000-0000-0000-0000-000000000011';
+    const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+    
+    if (!this.data[playersKey]) {
+      this.data[playersKey] = [];
     }
+    
+    // Verifica se esiste già un giocatore con stesso nome/cognome/data_nascita
+    const existingPlayer = this.data[playersKey].find(p => 
+      p.nome?.toLowerCase() === player.nome?.toLowerCase() &&
+      p.cognome?.toLowerCase() === player.cognome?.toLowerCase() &&
+      p.data_nascita === player.data_nascita
+    );
+    
+    if (existingPlayer) {
+      // Aggiorna invece di creare duplicato
+      return this.updateCustomPlayer(existingPlayer.id, player, playersKey);
+    }
+    
     const newPlayer = {
       ...player,
-      id: `pl_${Date.now()}`,
+      id: this._generateUUID(),
       createdAt: new Date().toISOString()
     };
-    this.data[KEYS.PLAYERS].push(newPlayer);
+    this.data[playersKey].push(newPlayer);
     this._markDirty();
     return newPlayer;
+  }
+  
+  /**
+   * Aggiorna un giocatore personalizzato
+   */
+  updateCustomPlayer(playerId, updates, playersKey) {
+    const index = this.data[playersKey]?.findIndex(p => p.id === playerId);
+    if (index !== undefined && index !== -1) {
+      this.data[playersKey][index] = {
+        ...this.data[playersKey][index],
+        ...updates,
+        updatedAt: new Date().toISOString()
+      };
+      this._markDirty();
+      return this.data[playersKey][index];
+    }
+    return null;
   }
 
   /**
