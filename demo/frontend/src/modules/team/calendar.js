@@ -128,6 +128,29 @@ function renderCalendarPage(c, matches, stats) {
     .badge-pareggio { background: #FFF3CD; color: #856404; }
     .badge-next { background: #D1ECF1; color: #0C5460; border: 1px solid #B8DAFF; }
     .badge-section { background: #E9ECEF; color: #495057; padding: 2px 8px; border-radius: 8px; font-size: 11px; }
+    /* ===== RISULTATO CON ICONA ===== */
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .result-victory { background: #D4EDDA; color: #155724; }
+    .result-defeat { background: #F8D7DA; color: #721C24; }
+    .result-draw { background: #FFF3CD; color: #856404; }
+    .result-score { font-size: 16px; font-weight: 700; }
+    
+    /* ===== EDIT BUTTONS ===== */
+    .edit-buttons {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .edit-buttons .btn { padding: 4px 8px !important; }
+    
     @media (max-width: 640px) {
       .mobile-short-date { display: inline !important; }
       .mobile-full-date { display: none !important; }
@@ -135,6 +158,9 @@ function renderCalendarPage(c, matches, stats) {
       .mobile-actions .btn .btn-text { display: none; }
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
+      .result-badge { font-size: 12px; padding: 3px 8px; }
+      .result-score { font-size: 14px; }
+      .edit-buttons { order: -1; }
     }
     
     /* ===== GRIGLIA MOBILE PULSANTI ===== */
