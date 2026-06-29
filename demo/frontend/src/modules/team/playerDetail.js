@@ -120,7 +120,7 @@ function renderPlayerDetail(container, data) {
   }
 
   const isAdmin = window.YFM?.isAdmin?.() || false;
-  const isDemoMode = window.YFM && window.YFM.demoMode === true;
+  const isDemoMode = window.YFM && (typeof window.YFM.isDemo === 'function' ? window.YFM.isDemo() : window.YFM.demoMode);
   const isCustomPlayer = player.id && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(player.id);
   
   // Popola allSquadre se vuoto (necessario per giocatori custom in demo)
@@ -370,23 +370,38 @@ function renderPlayerDetail(container, data) {
       };
       showLoading('Salvataggio...');
       try {
-        if (isDemoMode && isCustomPlayer) {
-          // Giocatore custom: salva in demoPersistence
+        // Verifica se è un giocatore demo (ID inizia con 'c') o custom (UUID v4)
+        const isDemoPlayer = player.id && player.id.startsWith('c');
+        
+        if (isDemoMode || isDemoPlayer) {
+          // Giocatore demo o custom: salva in demoPersistence
           const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';
           const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
-          demoPersistence.updateCustomPlayer(player.id, d, playersKey);
+          
+          // Trova il giocatore esistente o crea nuovo
+          const existingPlayer = (demoPersistence.data[playersKey] || []).find(p => p.id === player.id);
+          
+          if (existingPlayer) {
+            demoPersistence.updateCustomPlayer(player.id, d, playersKey);
+          } else {
+            // Se è un giocatore demo, aggiungi come custom
+            demoPersistence.addPlayer({ ...d, id: player.id });
+          }
           
           // Aggiorna anche window.YFM.allPlayers per riflettere le modifiche
           const playerIndex = window.YFM.allPlayers.findIndex(p => p.id === player.id);
           if (playerIndex !== -1) {
             window.YFM.allPlayers[playerIndex] = { ...window.YFM.allPlayers[playerIndex], ...d };
           }
+          
+          // Ricarica la scheda
+          loadPlayerDetail(container, player.id);
         } else {
           // Giocatore normale: salva sul backend
           await apiFetch('/calciatori/' + player.id, { method: 'PUT', body: JSON.stringify(d) });
+          // Ricarica la scheda
+          loadPlayerDetail(container, player.id);
         }
-        // Ricarica la scheda
-        loadPlayerDetail(container, player.id);
       } catch (e) {
         alert('Errore: ' + e.message);
       } finally {
@@ -464,8 +479,17 @@ function openMoveModalPlayer(playerId, playerName, squadre) {
   document.getElementById('confirmMoveBtn').addEventListener('click', async () => {
     const targetSquadraId = document.getElementById('targetSquadra').value;
     
-    // Verifica se è un giocatore custom
+    // Verifica se è un giocatore custom (UUID v4)
     const isCustomPlayer = playerId && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(playerId);
+    
+    // Verifica se è in modalità demo
+    const isDemoMode = window.YFM && (typeof window.YFM.isDemo === 'function' ? window.YFM.isDemo() : window.YFM.demoMode);
+    
+    if (isDemoMode) {
+      alert('In modalità demo lo spostamento non è disponibile.\nI giocatori demo non possono essere spostati.');
+      modal.remove();
+      return;
+    }
     
     if (isCustomPlayer) {
       alert('I giocatori aggiunti in demo non possono essere spostati.\nPer spostarli, elimina il giocatore e aggiungilo nell\'altra categoria.');
