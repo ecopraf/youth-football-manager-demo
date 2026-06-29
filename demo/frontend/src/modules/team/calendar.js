@@ -37,14 +37,17 @@ function getNextStep(matchId) {
 }
 
 // Helper per creare bottone con pallino
-function makeBtn(label, onclick, isNextStep, extraClass = '') {
+function makeBtn(label, onclick, isNextStep, extraClass = '', isCompleted = false) {
   const icon = label.includes('Convoca') ? '📋' :
                label.includes('Formazione') ? '🏟️' :
                label.includes('Distinta') ? '📄' :
                label.includes('Risultato') ? '⚽' :
                label.includes('Eventi') ? '📊' : '📝';
   const prefix = isNextStep ? PULLED_DOT : '';
-  return `<button class="btn btn-secondary btn-small ${extraClass}" data-icon="${icon}" onclick="event.stopPropagation();${onclick}">${prefix}${icon} <span class="btn-text">${label}</span></button>`;
+  let stateClass = '';
+  if (isNextStep) stateClass = 'btn-next-step';
+  else if (isCompleted) stateClass = 'btn-completed';
+  return `<button class="btn btn-secondary btn-small ${stateClass} ${extraClass}" data-icon="${icon}" onclick="event.stopPropagation();${onclick}">${prefix}${icon} <span class="btn-text">${label}</span></button>`;
 }
 
 export default async function loadCalendar() {
@@ -135,7 +138,59 @@ function renderCalendarPage(c, matches, stats) {
       .mobile-actions .btn .btn-text { display: none; }
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
-    }</style>`;
+    }</style>
+
+    /* ===== GRIGLIA MOBILE PULSANTI ===== */
+    .match-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .match-actions-grid .btn {
+      padding: 8px 4px !important;
+      font-size: 11px;
+      text-align: center;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .match-actions-grid .btn .btn-text { display: block; margin-top: 2px; }
+
+    /* ===== STATO PULSANTI ===== */
+    .btn-next-step {
+      border: 2px solid #007bff !important;
+      background: #e8f4ff !important;
+      color: #007bff !important;
+    }
+    .btn-completed {
+      border-color: #28a745 !important;
+      background: #e8f5e9 !important;
+      color: #28a745 !important;
+    }
+
+    /* ===== RISULTATO INTEGRATO ===== */
+    .score-integrated {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+    }
+    .score-integrated .score { font-size: 18px; font-weight: 700; }
+    .score-integrated .score-victory { color: #28a745; }
+    .score-integrated .score-defeat { color: #dc3545; }
+    .score-integrated .score-draw { color: #ffc107; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 640px) {
+      .match-actions-grid { grid-template-columns: repeat(3, 1fr); }
+      .mobile-date-text { font-size: 12px; }
+      .mobile-teams { font-size: 13px; }
+    }
+`;
 
   html += `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
