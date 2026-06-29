@@ -37,14 +37,14 @@ function getNextStep(matchId) {
 }
 
 // Helper per creare bottone con pallino
-function makeBtn(label, onclick, isNextStep) {
+function makeBtn(label, onclick, isNextStep, extraClass = '') {
   const icon = label.includes('Convoca') ? '📋' :
-               label.includes('Formazione') ? '📋' :
+               label.includes('Formazione') ? '🏟️' :
                label.includes('Distinta') ? '📄' :
                label.includes('Risultato') ? '⚽' :
                label.includes('Eventi') ? '📊' : '📝';
   const prefix = isNextStep ? PULLED_DOT : '';
-  return `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();${onclick}">${prefix}${icon} ${label}</button>`;
+  return `<button class="btn btn-secondary btn-small ${extraClass}" data-icon="${icon}" onclick="event.stopPropagation();${onclick}">${prefix}${icon} <span class="btn-text">${label}</span></button>`;
 }
 
 export default async function loadCalendar() {
@@ -111,7 +111,31 @@ function renderCalendarPage(c, matches, stats) {
     .live-text {
       animation: blink-text 1s ease-in-out infinite;
     }
-  </style>`;
+  
+    .match-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-casa { background: #D4EDDA; color: #155724; }
+    .badge-trasferta { background: #FFF3CD; color: #856404; }
+    .badge-vittoria { background: #D4EDDA; color: #155724; }
+    .badge-sconfitta { background: #F8D7DA; color: #721C24; }
+    .badge-pareggio { background: #FFF3CD; color: #856404; }
+    .badge-next { background: #D1ECF1; color: #0C5460; border: 1px solid #B8DAFF; }
+    .badge-section { background: #E9ECEF; color: #495057; padding: 2px 8px; border-radius: 8px; font-size: 11px; }
+    @media (max-width: 640px) {
+      .mobile-short-date { display: inline !important; }
+      .mobile-full-date { display: none !important; }
+      .mobile-actions .btn { padding: 6px 4px !important; min-width: 36px; }
+      .mobile-actions .btn .btn-text { display: none; }
+      .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+      .match-badge { font-size: 10px; padding: 2px 6px; }
+    }</style>`;
 
   html += `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
@@ -125,15 +149,15 @@ function renderCalendarPage(c, matches, stats) {
   // PROSSIMA PARTITA in evidenza
   if (nextMatch) {
     html += `
-      <div class="card" style="margin-bottom:20px;border-left:4px solid var(--green);background:#E8F8F0;">
-        <h3 class="section-title">⚽ PROSSIMA PARTITA</h3>
+      <div class="card" style="margin-bottom:20px;border-left:4px solid #28a745;background:linear-gradient(135deg, #E8F8F0 0%, #D4F1E0 100%);">
+        <h3 class="section-title" style="color:#155724;"><span class="badge badge-next">🟢 PROSSIMA</span></h3>
         ${renderMatchCard(nextMatch, stats, true)}
       </div>`;
   }
 
   // ALTRE PARTITE FUTURE
   if (otherFutureMatches.length > 0) {
-    html += `<h3 class="section-title" style="margin:20px 0 12px 0;">📅 Prossime Partite</h3>`;
+    html += `<h3 class="section-title" style="margin:20px 0 12px 0;"><span class="badge badge-next">📅 IN ARRIVO</span></h3>`;
     otherFutureMatches.forEach(m => {
       html += `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
     });
@@ -141,7 +165,7 @@ function renderCalendarPage(c, matches, stats) {
 
   // PARTITE GIOCATE
   if (pastMatches.length > 0) {
-    html += `<h3 class="section-title" style="margin:20px 0 12px 0;">🏆 Partite Giocate</h3>`;
+    html += `<h3 class="section-title" style="margin:20px 0 12px 0;"><span class="badge badge-section">🏆 GIOCATE</span></h3>`;
     pastMatches.forEach(m => {
       html += `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
     });
@@ -179,9 +203,9 @@ export function renderMatchCard(m, stats, isNext = false) {
   const golSubiti = r?.golSubiti ?? m.gol_trasferta ?? null;
 
   let L = `
-  <div class="match-date">${archivedIcon}${formatDate(m.data_ora)}</div>
+  <div class="match-date mobile-date">${archivedIcon}<span class="mobile-short-date" style="display:none;">${formatDateShort(m.data_ora)}</span><span class="mobile-full-date">${formatDate(m.data_ora)}</span></div>
   <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
-  <div class="match-info">${m.giornata ? 'Giornata ' + m.giornata + ' - ' : ''}${m.competizione} · ${m.luogo}</div>`;
+  <div class="match-info"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
 
   let R = '';
   
@@ -189,6 +213,8 @@ export function renderMatchCard(m, stats, isNext = false) {
   if (!isPast && hasResult && golFatti !== null && golSubiti !== null) {
     // Partita futura con risultato: mostra LIVE
     const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
+    const resultBadge = golFatti > golSubiti ? 'badge-vittoria' : golFatti === golSubiti ? 'badge-pareggio' : 'badge-sconfitta';
+    const resultLabel = golFatti > golSubiti ? 'Vittoria' : golFatti === golSubiti ? 'Pareggio' : 'Sconfitta';
     const liveIndicator = `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
       <span class="live-dot" style="background:#E74C3C;"></span>
