@@ -355,17 +355,44 @@ export function renderMatchCard(m, stats, isNext = false) {
   }
   
   // Edit e Elimina - nascondi SOLO per partite archiviate
+  let editButtons = '';
   if (!isArchiviata) {
-  R += `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>`;
-  R += `<button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
+    editButtons = `<div class="edit-buttons">
+      <button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>
+      <button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>
+    </div>`;
   } else {
-  // Partita archiviata: mostra solo pulsante Sblocca
-  R += `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓 Sblocca</button>`;
+    editButtons = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓</button>`;
   }
 
-  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
-  <div style="flex:1;min-width:220px;">${L}</div>
-  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}</div>
+  // Per partite giocate con risultato: mostra risultato con icona
+  let resultWithIcon = '';
+  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    let icon, label, resultClass;
+    if (golFatti > golSubiti) {
+      icon = '✅'; label = 'Vittoria'; resultClass = 'result-victory';
+    } else if (golFatti < golSubiti) {
+      icon = '❌'; label = 'Sconfitta'; resultClass = 'result-defeat';
+    } else {
+      icon = '🤝'; label = 'Pareggio'; resultClass = 'result-draw';
+    }
+    resultWithIcon = `<div style="margin-top:8px;">
+      <span class="result-badge ${resultClass}">
+        <span class="result-score">${golFatti} - ${golSubiti}</span>
+        ${icon} ${label}
+      </span>
+    </div>`;
+  }
+
+  return `<div class="match-card-layout" style="${archivedStyle}">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        ${L}
+        ${resultWithIcon}
+      </div>
+      ${editButtons}
+    </div>
+    <div class="match-actions-grid">${R}</div>
   </div>`;
 }
 
