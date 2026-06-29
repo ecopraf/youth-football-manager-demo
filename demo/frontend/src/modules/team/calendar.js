@@ -5,8 +5,11 @@ import demoPersistence from '../demo/DemoPersistence';
 
 let allMatches = [];
 
-// ===== STATO PARTITA PER FLUSSO SEQUENZIALE =====
-function getMatchStepsStatus(matchId) {
+// ===== PALLINO LAMPEGGIANTE PER PROSSIMO PASSO =====
+const PULLED_DOT = '<span class="pallino-blink" style="display:inline-block;width:8px;height:8px;background:#007bff;border-radius:50%;margin-right:4px;animation:blink-pallino 1s infinite;"></span>';
+const PULLED_STYLE = '@keyframes blink-pallino{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.8);}';
+
+function getNextStep(matchId) {
   const convocazioneData = demoPersistence.getConvocation(matchId);
   const hasConvocazioni = convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0;
   
@@ -22,23 +25,22 @@ function getMatchStepsStatus(matchId) {
   const hasRisultato = match && (match.gol_casa !== undefined || match.gol_trasferta !== undefined);
   const hasEventi = (demoPersistence.getEvents(matchId) || []).length > 0;
   
-  return {
-    hasConvocazioni,
-    hasFormazione: !!hasFormazione,
-    hasDistinta: !!hasFormazione,
-    hasRisultato: !!hasRisultato,
-    hasEventi,
-    isComplete: hasConvocazioni && hasFormazione && hasRisultato && hasEventi
-  };
+  if (!hasConvocazioni) return 'convocazione';
+  if (!hasFormazione) return 'formazione';
+  if (!hasRisultato) return 'risultato';
+  if (!hasEventi) return 'eventi';
+  return null; // Tutto completato
 }
 
-function getNextStep(matchId) {
-  const steps = getMatchStepsStatus(matchId);
-  if (!steps.hasConvocazioni) return 'convocazione';
-  if (!steps.hasFormazione) return 'formazione';
-  if (!steps.hasRisultato) return 'risultato';
-  if (!steps.hasEventi) return 'eventi';
-  return 'complete';
+// Helper per creare bottone con pallino
+function makeBtn(label, onclick, isNextStep) {
+  const icon = label.includes('Convoca') ? '📋' :
+               label.includes('Formazione') ? '📋' :
+               label.includes('Distinta') ? '📄' :
+               label.includes('Risultato') ? '⚽' :
+               label.includes('Eventi') ? '📊' : '📝';
+  const prefix = isNextStep ? PULLED_DOT : '';
+  return `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();${onclick}">${prefix}${icon} ${label}</button>`;
 }
 
 export default async function loadCalendar() {
@@ -201,49 +203,43 @@ export function renderMatchCard(m, stats, isNext = false) {
     R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
-  // ===== PULSANTI: Flusso sequenziale con tutti i bottoni abilitati =====
-  // Ottieni stato step per questa partita
-  const steps = getMatchStepsStatus(m.id);
+  // ===== PULSANTI: Tutti attivi con pallino per prossimo passo =====
   const nextStep = getNextStep(m.id);
   
-  // Partite future: tutti i bottoni abilitati, colore indica stato
+  // Partite future: tutti i bottoni abilitati, pallino indica prossimo passo
   if (!isPast) {
+    // Aggiungi CSS per animazione pallino
+    if (!document.getElementById('pallino-style')) {
+      const style = document.createElement('style');
+      style.id = 'pallino-style';
+      style.textContent = '@keyframes blink-pallino{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.8);}';
+      document.head.appendChild(style);
+    }
+    
     // Convocazione
-    const convoComplete = steps.hasConvocazioni;
-    const convoNext = nextStep === 'convocazione';
-    const convoStyle = convoComplete ? 'background:#28a745;color:white;border-color:#28a745;' : convoNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#007bff;color:white;border-color:#007bff;';
-    R += `<button class="btn btn-small" style="${convoStyle}" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">${convoComplete ? '✅' : '📋'} Convocazione</button>`;
+    R += makeBtn('Convocazione', `window.YFM.openConvocation('${m.id}',false)`, nextStep === 'convocazione');
     
     // Formazione
-    const formComplete = steps.hasFormazione;
-    const formNext = nextStep === 'formazione';
-    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#17a2b8;color:white;border-color:#17a2b8;box-shadow:0 0 0 2px rgba(23,162,184,0.3);' : 'background:#17a2b8;color:white;border-color:#17a2b8;';
-    R += `<button class="btn btn-small" style="${formStyle}" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">${formComplete ? '✅' : '📋'} Formazione</button>`;
+    R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, nextStep === 'formazione');
     
     // Distinta
-    const distComplete = steps.hasDistinta;
-    const distNext = nextStep === 'risultato' || nextStep === 'eventi' || nextStep === 'complete';
-    const distStyle = distComplete ? 'background:#28a745;color:white;border-color:#28a745;' : distNext ? 'background:#fd7e14;color:white;border-color:#fd7e14;box-shadow:0 0 0 2px rgba(253,126,20,0.3);' : 'background:#fd7e14;color:white;border-color:#fd7e14;';
-    R += `<button class="btn btn-small" style="${distStyle}" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">${distComplete ? '✅' : '📄'} Distinta</button>`;
+    R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, nextStep === 'risultato');
     
-    // Note (sempre attivo)
-    R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+    // Note (sempre attivo, senza pallino)
+    R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
     
     // Eventi: solo se c'è un risultato
     if (hasResult) {
-      const eventiComplete = steps.hasEventi;
-      const eventiNext = nextStep === 'eventi';
-      const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6f42c1;color:white;border-color:#6f42c1;';
-      R += `<button class="btn btn-small" style="${eventiStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
+      R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, nextStep === 'eventi');
     }
     
   } else if (isPast && hasResult && !isArchiviata) {
-  // Partita passata con risultato ma non archiviata - tutti attivi
-  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">✅ Conv.</button>`;
-  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">✅ Form.</button>`;
-  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">✅ Dist.</button>`;
-  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">✅ Eventi</button>`;
-  R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
+  // Partita passata con risultato - tutti attivi
+  R += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
+  R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
+  R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
+  R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
