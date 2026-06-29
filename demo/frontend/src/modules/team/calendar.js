@@ -5,6 +5,42 @@ import demoPersistence from '../demo/DemoPersistence';
 
 let allMatches = [];
 
+// ===== STATO PARTITA PER FLUSSO SEQUENZIALE =====
+function getMatchStepsStatus(matchId) {
+  const convocazioneData = demoPersistence.getConvocation(matchId);
+  const hasConvocazioni = convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0;
+  
+  const formazioneData = demoPersistence.getFormation(matchId);
+  const hasFormazione = formazioneData && (
+    formazioneData.portiere ||
+    (formazioneData.difensori && formazioneData.difensori.length > 0) ||
+    (formazioneData.centrocampisti && formazioneData.centrocampisti.length > 0) ||
+    (formazioneData.attaccanti && formazioneData.attaccanti.length > 0)
+  );
+  
+  const match = (window.YFM.demoMatches || []).find(m => m.id === matchId);
+  const hasRisultato = match && (match.gol_casa !== undefined || match.gol_trasferta !== undefined);
+  const hasEventi = (demoPersistence.getEvents(matchId) || []).length > 0;
+  
+  return {
+    hasConvocazioni,
+    hasFormazione: !!hasFormazione,
+    hasDistinta: !!hasFormazione,
+    hasRisultato: !!hasRisultato,
+    hasEventi,
+    isComplete: hasConvocazioni && hasFormazione && hasRisultato && hasEventi
+  };
+}
+
+function getNextStep(matchId) {
+  const steps = getMatchStepsStatus(matchId);
+  if (!steps.hasConvocazioni) return 'convocazione';
+  if (!steps.hasFormazione) return 'formazione';
+  if (!steps.hasRisultato) return 'risultato';
+  if (!steps.hasEventi) return 'eventi';
+  return 'complete';
+}
+
 export default async function loadCalendar() {
   const c = document.getElementById('pageContent');
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
@@ -158,47 +194,42 @@ export function renderMatchCard(m, stats, isNext = false) {
     R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
-  // ===== PULSANTI: Flusso sequenziale =====
+  // ===== PULSANTI: Flusso sequenziale con tutti i bottoni abilitati =====
   // Ottieni stato step per questa partita
   const steps = getMatchStepsStatus(m.id);
   const nextStep = getNextStep(m.id);
   
-  // Partite future: flusso guidato
+  // Partite future: tutti i bottoni abilitati, colore indica stato
   if (!isPast) {
     // Convocazione
     const convoComplete = steps.hasConvocazioni;
     const convoNext = nextStep === 'convocazione';
-    const convoStyle = convoComplete ? 'background:#28a745;color:white;border-color:#28a745;' : convoNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-    const convoDisabled = !convoComplete && !convoNext;
-    R += `<button class="btn btn-small" style="${convoStyle}" ${convoDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${convoDisabled ? '' : 'window.YFM.openConvocation(\'' + m.id + '\',false)'}">${convoComplete ? '✅' : '📋'} Convocazione</button>`;
+    const convoStyle = convoComplete ? 'background:#28a745;color:white;border-color:#28a745;' : convoNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#007bff;color:white;border-color:#007bff;';
+    R += `<button class="btn btn-small" style="${convoStyle}" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">${convoComplete ? '✅' : '📋'} Convocazione</button>`;
     
     // Formazione
     const formComplete = steps.hasFormazione;
     const formNext = nextStep === 'formazione';
-    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-    const formDisabled = !formComplete && !formNext;
-    R += `<button class="btn btn-small" style="${formStyle}" ${formDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${formDisabled ? '' : 'window.YFM.openFormazioneForm(\'' + m.id + '\')'}">${formComplete ? '✅' : '📋'} Formazione</button>`;
+    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#007bff;color:white;border-color:#007bff;';
+    R += `<button class="btn btn-small" style="${formStyle}" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">${formComplete ? '✅' : '📋'} Formazione</button>`;
     
     // Distinta
     const distComplete = steps.hasDistinta;
     const distNext = nextStep === 'risultato' || nextStep === 'eventi' || nextStep === 'complete';
-    const distStyle = distComplete ? 'background:#28a745;color:white;border-color:#28a745;' : distNext ? 'background:#fd7e14;color:white;border-color:#fd7e14;box-shadow:0 0 0 2px rgba(253,126,20,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-    const distDisabled = !distComplete && !distNext;
-    R += `<button class="btn btn-small" style="${distStyle}" ${distDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${distDisabled ? '' : 'window.YFM.openDistinta(\'' + m.id + '\')'}">${distComplete ? '✅' : '📄'} Distinta</button>`;
+    const distStyle = distComplete ? 'background:#28a745;color:white;border-color:#28a745;' : distNext ? 'background:#fd7e14;color:white;border-color:#fd7e14;box-shadow:0 0 0 2px rgba(253,126,20,0.3);' : 'background:#fd7e14;color:white;border-color:#fd7e14;';
+    R += `<button class="btn btn-small" style="${distStyle}" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">${distComplete ? '✅' : '📄'} Distinta</button>`;
     
     // Risultato
     const risComplete = steps.hasRisultato;
     const risNext = nextStep === 'risultato';
-    const risStyle = risComplete ? 'background:#28a745;color:white;border-color:#28a745;' : risNext ? 'background:#dc3545;color:white;border-color:#dc3545;box-shadow:0 0 0 2px rgba(220,53,69,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-    const risDisabled = !risComplete && !risNext;
-    R += `<button class="btn btn-small" style="${risStyle}" ${risDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${risDisabled ? '' : 'window.YFM.openResultForm(\'' + m.id + '\')'}">${risComplete ? '✅' : '⚽'} Risultato</button>`;
+    const risStyle = risComplete ? 'background:#28a745;color:white;border-color:#28a745;' : risNext ? 'background:#dc3545;color:white;border-color:#dc3545;box-shadow:0 0 0 2px rgba(220,53,69,0.3);' : 'background:#dc3545;color:white;border-color:#dc3545;';
+    R += `<button class="btn btn-small" style="${risStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">${risComplete ? '✅' : '⚽'} Risultato</button>`;
     
     // Eventi
     const eventiComplete = steps.hasEventi;
     const eventiNext = nextStep === 'eventi';
-    const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-    const eventiDisabled = !eventiComplete && !eventiNext;
-    R += `<button class="btn btn-small" style="${eventiStyle}" ${eventiDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${eventiDisabled ? '' : 'window.YFM.openResultForm(\'' + m.id + '\',true)'}">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
+    const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6f42c1;color:white;border-color:#6f42c1;';
+    R += `<button class="btn btn-small" style="${eventiStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
     
     // Note (sempre attivo)
     R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
