@@ -64,12 +64,12 @@ export default async function loadDashboard() {
   const widgets = [
     { v:stats.punti, l:'Punti', c:'#27AE60' },
     { v:stats.partiteGiocate, l:'Giocate' },
-    { v:stats.vittorie, l:'V', c:'#27AE60' },
-    { v:stats.pareggi, l:'P', c:'#F39C12' },
-    { v:stats.sconfitte, l:'S', c:'#E74C3C' },
-    { v:stats.golFatti, l:'GF', c:'#27AE60' },
-    { v:stats.golSubiti, l:'GS' },
-    { v:(stats.differenzaReti >= 0 ? '+' : '') + stats.differenzaReti, l:'DR', c:stats.differenzaReti >= 0 ? '#27AE60' : '#E74C3C' }
+    { v:stats.vittorie, l:'Vittorie', c:'#27AE60' },
+    { v:stats.pareggi, l:'Pareggi', c:'#F39C12' },
+    { v:stats.sconfitte, l:'Sconfitte', c:'#E74C3C' },
+    { v:stats.golFatti, l:'Gol Fatti', c:'#27AE60' },
+    { v:stats.golSubiti, l:'Gol Subiti' },
+    { v:(stats.differenzaReti >= 0 ? '+' : '') + stats.differenzaReti, l:'Diff. Reti', c:stats.differenzaReti >= 0 ? '#27AE60' : '#E74C3C' }
   ];
   
   // Helper function for conditional sections
