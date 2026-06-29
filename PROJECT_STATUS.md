@@ -24,28 +24,55 @@ Macro-aree funzionali:
 - 📈 **PERFORMANCE** – Statistiche e report
 - 🔐 **ADMIN** – Gestione utenti e link guest
 
-> ⚠️ Il vecchio frontend `frontend/` è **dismesso**. Tutto lo sviluppo va fatto su `frontend-v2/`.
+### Repository Demo
+Questo repository (`youth-football-manager-demo`) contiene una **versione demo standalone** dell'applicazione, utilizzabile senza backend. I dati vengono gestiti tramite localStorage.
 
 ---
 
 ## 2. Architettura Tecnica
 
-### Backend (`backend/api/index.js`)
-- **Stack**: Node.js + Express
-- **Database**: Supabase (PostgreSQL)
-- **Esport**: `module.exports = app;` per Vercel
-- **CORS**: abilitato globalmente
-
-### Frontend (`frontend-v2/src/`)
+### Frontend Demo (`demo/frontend/`)
 - **Tooling**: Vite + JavaScript ES modules
 - **Stile**: CSS custom in `src/style.css` (responsive, media queries)
 - **Routing**: gestito via `window.YFM` in `src/router.js`
+- **Persistenza**: localStorage tramite `DemoPersistence.js`
 
 #### Entry point
-- `frontend-v2/index.html` → `<div id="app">`
-- `frontend-v2/src/main.js` → bootstrap, inizializza `window.YFM`
-- `frontend-v2/src/router.js` → definisce le "pagine" logiche
-- `frontend-v2/src/components/layout/Sidebar.js` → layout + sidebar + header
+- `demo/frontend/index.html` → `<div id="app">`
+- `demo/frontend/src/main.js` → bootstrap, inizializza `window.YFM`
+- `demo/frontend/src/router.js` → definisce le "pagine" logiche
+- `demo/frontend/src/components/layout/Sidebar.js` → layout + sidebar + header
+
+#### Struttura Directory Frontend
+```
+demo/frontend/
+├── index.html              # Entry point
+├── src/
+│   ├── main.js             # Bootstrap app
+│   ├── router.js           # Routing e navigazione
+│   ├── style.css           # Stili globali
+│   ├── build-info.js       # Info versione build
+│   ├── components/         # Componenti riutilizzabili
+│   │   └── layout/         # Sidebar, Header
+│   ├── modules/            # Pagine applicazione
+│   │   ├── auth/           # Login
+│   │   ├── team/           # Dashboard, Rosa, Calendario, etc.
+│   │   ├── coach/          # Allenamenti, Presenze
+│   │   ├── performance/    # Statistiche, Report
+│   │   ├── club/           # Impostazioni
+│   │   ├── admin/          # Gestione utenti
+│   │   └── demo/           # DemoManager, DemoPersistence
+│   ├── services/           # API client
+│   └── utils/              # Formatters, UI helpers
+├── landing/                # Landing page
+│   └── index.html          # Pagina promozionale con link demo
+└── vercel.json            # Configurazione deploy
+```
+
+### Landing Page (`landing/`)
+- Pagina promozionale pubblica
+- Link a demo: `https://youth-football-manager-demo.vercel.app`
+- Deploy separato su Vercel (progetto `yfm-landing`)
 
 ### Database (Supabase)
 
@@ -170,20 +197,20 @@ Macro-aree funzionali:
 ---
 
 
-## 5. ModalitГ  Demo Interattiva вњ… COMPLETATA
+## 5. Modalità Demo Interattiva ✅ COMPLETATA
 
 ### Panoramica
-La modalitГ  demo permette di esplorare l'applicazione senza bisogno di account o backend. Include dati di esempio realistici e un sistema di mini-missioni per guidare l'utente.
+La modalità demo permette di esplorare l'applicazione senza bisogno di account o backend. Include dati di esempio realistici e un sistema di mini-missioni per guidare l'utente.
 
 ### Attivazione
-La modalitГ  demo si attiva cliccando "Entra in Demo" nella pagina di login. Viene impostato `localStorage.setItem('yfm_demo_session', 'active')`.
+La modalità demo si attiva cliccando "Entra in Demo" nella pagina di login. Viene impostato `localStorage.setItem('yfm_demo_session', 'active')`.
 
 ### Struttura File
 
-| File | Descrizione |
-|------|-------------|
-| `modules/demo/demo.js` | DemoManager + MiniMissionManager (2138 righe) |
-| `modules/demo/DemoPersistence.js` | Persistenza dati demo in localStorage |
+| File | Percorso | Descrizione |
+|------|----------|-------------|
+| `demo.js` | `src/modules/demo/demo.js` | DemoManager + MiniMissionManager |
+| `DemoPersistence.js` | `src/modules/demo/DemoPersistence.js` | Persistenza dati demo in localStorage |
 
 ### Componenti Demo
 
@@ -204,19 +231,29 @@ La modalitГ  demo si attiva cliccando "Entra in Demo" nella pagina di login. Vi
 | Statistiche | Esplora statistiche | auto_complete |
 | Report | Esplora, genera report, scarica PDF | click |
 
-### Dati Demo
+### Dati Demo Precaricati
 
 | Tipo | Contenuto |
 |------|-----------|
 | Workspace | ASD Green Academy (Roma) |
-| Squadre | Primavera, Allievi B |
-| Giocatori | 20+ giocatori con stats |
+| Squadre | Under 19, Under 17 |
+| Giocatori | 20 giocatori con stats |
 | Partite | 7 partite (2 future, 5 terminate) |
 | Eventi | Gol, assist per partite terminate |
 | Convocazioni | Per partite future |
 | Formazioni | Per partite terminate |
+| Allenamenti | 30 sessioni storiche precaricate |
 | Statistiche | Punti, V/P/S, GF/GS, DR |
 | Top Players | Marcatori, assist, presenze |
+
+### Riepilogo Presenze Allenamenti
+
+La sezione "Riepilogo Presenze" nella pagina Allenamenti mostra:
+- Numero totale sessioni per giocatore
+- Presenze totali
+- Assenze totali
+- Percentuale presenze
+- Assenze nell'ultima settimana
 
 ### Persistenza Demo
 
@@ -229,6 +266,7 @@ window.YFM.demoPersistence.saveFormation(matchId, formation)
 window.YFM.demoPersistence.saveConvocation(matchId, playerIds)
 window.YFM.demoPersistence.saveTrainingPresence(trainingId, { presenti, assenti })
 window.YFM.demoPersistence.addPlayer(player)
+window.YFM.demoPersistence.initTrainingHistory(giocatori) // 30 sessioni precaricate
 window.YFM.demoPersistence.reset() // Resetta tutti i dati
 ```
 
@@ -244,8 +282,8 @@ location.reload()
 | Tipo | ID |
 |------|-----|
 | Workspace Demo | `00000000-0000-0000-0000-000000000001` |
-| Squadra Primavera | `00000000-0000-0000-0000-000000000010` |
-| Squadra Allievi B | `00000000-0000-0000-0000-000000000011` |
+| Squadra Under 19 | `00000000-0000-0000-0000-000000000010` |
+| Squadra Under 17 | `00000000-0000-0000-0000-000000000011` |
 
 ---
 
@@ -407,23 +445,25 @@ unction renderModule(container, data) {
 
 ## 11. Deploy
 
-### Frontend (Vercel)
-- **URL**: https://youth-football-manager.vercel.app
-- Root Directory: `frontend-v2`
+### Demo Frontend (Vercel)
+- **URL**: https://youth-football-manager-demo.vercel.app
+- Root Directory: `demo/frontend`
 - Build: `npm run build`
 - Output: `dist`
+- Vercel Project: `youth-football-manager-demo`
 
-### Backend (Vercel)
+### Landing Page (Vercel)
+- **URL**: https://yfm-landing.vercel.app
+- Root Directory: `landing`
+- Vercel Project: `yfm-landing`
+
+### Backend (Vercel) - Progetto Principale
 - **URL**: https://youth-football-manager-backend.vercel.app
 - Root Directory: `backend`
 
-### Env richieste (Backend)
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_ANON_KEY`
-
-### Database (Supabase)
-- **URL**: https://csxdlxbhcnyfppojwwzy.supabase.co
+### Frontend Principale (Vercel) - Progetto Principale
+- **URL**: https://youth-football-manager.vercel.app
+- Root Directory: `frontend-v2`
 
 ---
 
