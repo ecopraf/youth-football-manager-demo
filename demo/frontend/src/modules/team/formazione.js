@@ -25,12 +25,27 @@ export async function openFormazioneForm(mid) {
     
     // Estrai formazione esistente
     if (formazioneSalvata) {
-      const allFormIds = [formazioneSalvata.portiere, ...(formazioneSalvata.difensori || []), ...(formazioneSalvata.centrocampisti || []), ...(formazioneSalvata.attaccanti || [])];
-      formazioneEsistente = allFormIds.map(id => {
+      // Costruisci lista titolari
+      const titolariIds = [
+        formazioneSalvata.portiere,
+        ...(formazioneSalvata.difensori || []),
+        ...(formazioneSalvata.centrocampisti || []),
+        ...(formazioneSalvata.attaccanti || [])
+      ].filter(Boolean);
+      
+      formazioneEsistente = titolariIds.map(id => {
         const p = giocatori.find(g => g.id === id);
-        const isTitolare = id === formazioneSalvata.portiere || (formazioneSalvata.difensori || []).includes(id) || (formazioneSalvata.centrocampisti || []).includes(id) || (formazioneSalvata.attaccanti || []).includes(id);
-        return { calciatoreId: id, numeroMaglia: p?.numero_maglia || p?.numeroMaglia || 99, posizione: isTitolare ? 'Titolare' : 'Panchina' };
+        return { calciatoreId: id, numeroMaglia: p?.numero_maglia || p?.numeroMaglia || 99, posizione: 'Titolare' };
       });
+      
+      // Aggiungi riserve se esistono
+      if (riserveIds.length > 0) {
+        const riserveEsistenti = riserveIds.map(id => {
+          const p = giocatori.find(g => g.id === id);
+          return { calciatoreId: id, numeroMaglia: p?.numero_maglia || p?.numeroMaglia || 99, posizione: 'Panchina' };
+        });
+        formazioneEsistente = [...formazioneEsistente, ...riserveEsistenti];
+      }
     }
   }
 
@@ -291,6 +306,13 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
         
         hideLoading();
         modal.close();
+        
+        // Ricarica il calendario per aggiornare i bottoni (es. attiva Eventi)
+        if (window.YFM?.loadCalendar) {
+          window.YFM.loadCalendar();
+        } else if (window.loadCalendar) {
+          window.loadCalendar();
+        }
         alert('✅ Formazione salvata!');
       } else {
         const formazione = [];
