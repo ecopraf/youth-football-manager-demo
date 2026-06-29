@@ -345,6 +345,7 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
+  R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   }
   
   // Edit e Elimina e Archivia - in alto a destra (sempre visibili)
