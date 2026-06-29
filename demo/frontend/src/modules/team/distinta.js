@@ -218,13 +218,13 @@ function renderDistinta(d, staff) {
       righe.push('<tr class="' + (f.capitano ? 'capitano' : f.viceCapitano ? 'vice' : '') + '">' +
         '<td style="border:none;font-size:7px;">' + (i + 1) + '</td>' +
         '<td>' + (f.numeroMaglia || '-') + '</td>' +
-        '<td>' + (f.dataNascita ? formatDateShort(f.dataNascita) : '-') + '</td>' +
+        '<td>' + (f.data_nascita ? formatDateShort(f.data_nascita) : '-') + '</td>' +
         '<td style="text-align:left;">' + (f.cognome || '').toUpperCase() + ' ' + (f.nome || '') + '</td>' +
         '<td>' + (f.capitano ? 'CAP' : f.viceCapitano ? 'V.CAP' : '') + '</td>' +
-        '<td>' + (f.matricolaFigc || '-') + '</td>' +
-        '<td>' + (f.tipoDocumento || '-') + '</td>' +
-        '<td>' + (f.numeroDocumento || '-') + '</td>' +
-        '<td>' + (f.rilasciatoDa || '-') + '</td>' +
+        '<td>' + (f.matricola_figc || '-') + '</td>' +
+        '<td>' + (f.tipo_documento || '-') + '</td>' +
+        '<td>' + (f.numero_documento || '-') + '</td>' +
+        '<td>' + (f.rilasciato_da || '-') + '</td>' +
         '<td></td><td></td></tr>');
     } else {
       righe.push('<tr><td style="border:none;font-size:7px;">' + (i + 1) + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
