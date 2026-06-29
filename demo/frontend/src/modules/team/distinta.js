@@ -1,8 +1,11 @@
 import { apiFetch } from '../../services/api';
 import { formatDateShort } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 export async function openDistinta(mid, staffOverrides) {
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  
   const content = '<div id="distintaInner"><div class="loading"><div class="spinner"></div>Caricamento distinta...</div></div>';
   const footer = '<button class="btn btn-secondary" id="modalCancel">Chiudi</button>' +
     '<button class="btn btn-secondary" id="staffBtn">👥 Staff</button>' +
@@ -11,12 +14,72 @@ export async function openDistinta(mid, staffOverrides) {
   const modal = createModal('📄 Distinta Gara', content, footer, '980px');
   
   let curStaff = null;
-  try {
-    const data = await apiFetch('/partite/' + mid + '/distinta');
-    curStaff = staffOverrides || data.staff || {};
-    renderDistinta(data, curStaff);
-  } catch (e) {
-    document.getElementById('distintaInner').innerHTML = '<div class="error-box">Formazione non disponibile</div>';
+  
+  if (isDemo) {
+    // Demo mode: usa dati dalla persistenza
+    try {
+      const formazioneSalvata = demoPersistence.getFormation(mid);
+      if (!formazioneSalvata || (!formazioneSalvata.portiere && (!formazioneSalvata.difensori || formazioneSalvata.difensori.length === 0))) {
+        document.getElementById('distintaInner').innerHTML = '<div class="error-box">⚠️ Salva prima la formazione per visualizzare la distinta</div>';
+        return;
+      }
+      
+      const match = (window.YFM.demoMatches || []).find(m => m.id === mid);
+      const giocatori = window.YFM.allPlayers || [];
+      
+      // Costruisci lista titolari
+      const titolariIds = [
+        formazioneSalvata.portiere,
+        ...(formazioneSalvata.difensori || []),
+        ...(formazioneSalvata.centrocampisti || []),
+        ...(formazioneSalvata.attaccanti || [])
+      ].filter(Boolean);
+      
+      const titolari = titolariIds.map(id => {
+        const g = giocatori.find(p => p.id === id);
+        if (!g) return null;
+        return {
+          calciatoreId: id,
+          nome: g.nome,
+          cognome: g.cognome,
+          ruolo: g.ruolo,
+          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99
+        };
+      }).filter(Boolean);
+      
+      // Riserve
+      const riserve = (formazioneSalvata.riserve || []).map(id => {
+        const g = giocatori.find(p => p.id === id);
+        if (!g) return null;
+        return {
+          calciatoreId: id,
+          nome: g.nome,
+          cognome: g.cognome,
+          ruolo: g.ruolo,
+          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99
+        };
+      }).filter(Boolean);
+      
+      const data = {
+        match: match,
+        formazione: titolari,
+        riserve: riserve,
+        staff: staffOverrides || {}
+      };
+      
+      curStaff = data.staff;
+      renderDistinta(data, curStaff);
+    } catch (e) {
+      document.getElementById('distintaInner').innerHTML = '<div class="error-box">Errore: ' + e.message + '</div>';
+    }
+  } else {
+    try {
+      const data = await apiFetch('/partite/' + mid + '/distinta');
+      curStaff = staffOverrides || data.staff || {};
+      renderDistinta(data, curStaff);
+    } catch (e) {
+      document.getElementById('distintaInner').innerHTML = '<div class="error-box">Formazione non disponibile</div>';
+    }
   }
   
   document.getElementById('printBtn').addEventListener('click', () => {
