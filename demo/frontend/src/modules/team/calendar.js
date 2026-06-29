@@ -162,20 +162,16 @@ export function renderMatchCard(m, stats, isNext = false) {
   }
 
   // ===== PULSANTI: Logica corretta =====
-  // Verifica se ci sono convocazioni e formazione salvate
-  const hasConvocazioni = demoPersistence.getConvocation(m.id) !== null;
-  const hasFormazione = demoPersistence.getFormation(m.id) !== null;
-  const canSaveEvents = hasConvocazioni && hasFormazione;
   
-  // Partite future: Convoca → Formazione → Distinta → Eventi (se possible)
+  // Partite future: Convoca → Formazione → Distinta → Note → Eventi
   if (!isPast) {
     R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">👥 Convoca</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">📋 Formazione</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Distinta</button>`;
     R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
     
-    // Se ha già un risultato e ci sono convo+form salvate: mostra pulsante per modificare eventi
-    if (hasResult && !isArchiviata && canSaveEvents) {
+    // Se ha già un risultato: mostra pulsante per modificare eventi
+    if (hasResult && !isArchiviata) {
       R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
     }
     
