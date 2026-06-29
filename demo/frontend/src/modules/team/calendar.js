@@ -210,7 +210,7 @@ export function renderMatchCard(m, stats, isNext = false) {
     // Formazione
     const formComplete = steps.hasFormazione;
     const formNext = nextStep === 'formazione';
-    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#007bff;color:white;border-color:#007bff;';
+    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#17a2b8;color:white;border-color:#17a2b8;box-shadow:0 0 0 2px rgba(23,162,184,0.3);' : 'background:#17a2b8;color:white;border-color:#17a2b8;';
     R += `<button class="btn btn-small" style="${formStyle}" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">${formComplete ? '✅' : '📋'} Formazione</button>`;
     
     // Distinta
