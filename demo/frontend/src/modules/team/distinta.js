@@ -43,7 +43,12 @@ export async function openDistinta(mid, staffOverrides) {
           nome: g.nome,
           cognome: g.cognome,
           ruolo: g.ruolo,
-          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99
+          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
+          data_nascita: g.data_nascita,
+          tipo_documento: g.tipo_documento,
+          numero_documento: g.numero_documento,
+          rilasciato_da: g.rilasciato_da,
+          matricola_figc: g.matricola_figc
         };
       }).filter(Boolean);
       
@@ -56,7 +61,12 @@ export async function openDistinta(mid, staffOverrides) {
           nome: g.nome,
           cognome: g.cognome,
           ruolo: g.ruolo,
-          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99
+          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
+          data_nascita: g.data_nascita,
+          tipo_documento: g.tipo_documento,
+          numero_documento: g.numero_documento,
+          rilasciato_da: g.rilasciato_da,
+          matricola_figc: g.matricola_figc
         };
       }).filter(Boolean);
       
