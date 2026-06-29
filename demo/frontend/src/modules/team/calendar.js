@@ -166,9 +166,9 @@ function renderCalendarPage(c, matches, stats) {
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
       /* Griglia 3x2 pulsanti azione */
-      .match-actions-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .match-actions-wrap .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
-      .match-actions-wrap .btn .btn-text { display: block; margin-top: 2px; }
+      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px !important; }
+      .match-actions-row .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
+      .match-actions-row .btn .btn-text { display: block; margin-top: 2px; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
       .result-score { font-size: 14px; }
       /* Pulsanti azione in alto a destra */
@@ -348,9 +348,11 @@ export function renderMatchCard(m, stats, isNext = false) {
   }
 
   return `<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
-  <div style="flex:1;min-width:220px;">${L}</div>
+  <div style="flex:1;min-width:220px;">
+    ${L}
+    <div class="match-actions-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">${R}</div>
+  </div>
   <div class="match-card-actions">${editBtns}</div>
-  <div class="match-actions-wrap" style="width:100%;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}</div>
   </div>`;
 }
 
