@@ -8,18 +8,26 @@ let allMatches = [];
 // ===== STATO PARTITA PER FLUSSO SEQUENZIALE =====
 // Verifica quali step sono stati completati
 function getMatchStepsStatus(matchId) {
-  const hasConvocazioni = demoPersistence.getConvocation(matchId) !== null;
-  const hasFormazione = demoPersistence.getFormation(matchId) !== null;
-  const hasDistinta = false; // La distinta dipende dalla formazione, verificata via JS
+  const convocazioneData = demoPersistence.getConvocation(matchId);
+  const hasConvocazioni = convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0;
+  
+  const formazioneData = demoPersistence.getFormation(matchId);
+  const hasFormazione = formazioneData && (
+    formazioneData.portiere ||
+    (formazioneData.difensori && formazioneData.difensori.length > 0) ||
+    (formazioneData.centrocampisti && formazioneData.centrocampisti.length > 0) ||
+    (formazioneData.attaccanti && formazioneData.attaccanti.length > 0)
+  );
+  
   const match = (window.YFM.demoMatches || []).find(m => m.id === matchId);
   const hasRisultato = match && (match.gol_casa !== undefined || match.gol_trasferta !== undefined);
   const hasEventi = (demoPersistence.getEvents(matchId) || []).length > 0;
   
   return {
     hasConvocazioni,
-    hasFormazione,
-    hasDistinta: hasFormazione, // La distinta si considera pronta se la formazione è salvata
-    hasRisultato,
+    hasFormazione: !!hasFormazione,
+    hasDistinta: !!hasFormazione, // La distinta si considera pronta se la formazione è salvata
+    hasRisultato: !!hasRisultato,
     hasEventi,
     isComplete: hasConvocazioni && hasFormazione && hasRisultato && hasEventi
   };
@@ -187,22 +195,19 @@ export function renderMatchCard(m, stats, isNext = false) {
 
   let R = '';
   
-  // ===== PARTE SINISTRA: Risultato/Dettaglio =====
-  if (hasResult && golFatti !== null && golSubiti !== null) {
-  const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
-  // Pallino e LIVE lampeggianti per partite in corso
-  const liveIndicator = !isPast ? `
+  // ===== PARTE SINISTRA: Risultato/Dettaglio (solo per partite passate) =====
+  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
+    // Pallino e LIVE lampeggianti per partite in corso
+    const liveIndicator = !isPast ? `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
       <span class="live-dot" style="background:#E74C3C;"></span>
       <span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>
     </div>` : '';
-  R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
-  } else if (!isPast) {
-  // Partita futura senza risultato: mostra pulsante Risultato
-  R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">📊 Risultato</button>`;
-  } else {
-  // Partita passata senza risultato: mostra dettaglio
-  R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
+    R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
+  } else if (isPast) {
+    // Partita passata senza risultato: mostra dettaglio
+    R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
   // ===== PULSANTI: Flusso sequenziale =====
