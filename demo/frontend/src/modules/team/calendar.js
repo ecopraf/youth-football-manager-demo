@@ -179,17 +179,24 @@ export function renderMatchCard(m, stats, isNext = false) {
 
   let R = '';
   
-  // ===== PARTE SINISTRA: Risultato/Dettaglio (solo per partite passate) =====
-  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+  // ===== PARTE SINISTRA: Risultato/LIVE/bottone Risultato =====
+  if (!isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    // Partita futura con risultato: mostra LIVE
     const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
-    // Pallino e LIVE lampeggianti per partite in corso
-    const liveIndicator = !isPast ? `
+    const liveIndicator = `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
       <span class="live-dot" style="background:#E74C3C;"></span>
       <span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>
-    </div>` : '';
+    </div>`;
     R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
-  } else if (isPast) {
+  } else if (hasResult && golFatti !== null && golSubiti !== null) {
+    // Partita passata con risultato: mostra score
+    const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
+    R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio"><div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
+  } else if (!isPast) {
+    // Partita futura senza risultato: mostra pulsante Risultato
+    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">⚽ Risultato</button>`;
+  } else {
     // Partita passata senza risultato: mostra dettaglio
     R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
@@ -219,20 +226,16 @@ export function renderMatchCard(m, stats, isNext = false) {
     const distStyle = distComplete ? 'background:#28a745;color:white;border-color:#28a745;' : distNext ? 'background:#fd7e14;color:white;border-color:#fd7e14;box-shadow:0 0 0 2px rgba(253,126,20,0.3);' : 'background:#fd7e14;color:white;border-color:#fd7e14;';
     R += `<button class="btn btn-small" style="${distStyle}" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">${distComplete ? '✅' : '📄'} Distinta</button>`;
     
-    // Risultato
-    const risComplete = steps.hasRisultato;
-    const risNext = nextStep === 'risultato';
-    const risStyle = risComplete ? 'background:#28a745;color:white;border-color:#28a745;' : risNext ? 'background:#dc3545;color:white;border-color:#dc3545;box-shadow:0 0 0 2px rgba(220,53,69,0.3);' : 'background:#dc3545;color:white;border-color:#dc3545;';
-    R += `<button class="btn btn-small" style="${risStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">${risComplete ? '✅' : '⚽'} Risultato</button>`;
-    
-    // Eventi
-    const eventiComplete = steps.hasEventi;
-    const eventiNext = nextStep === 'eventi';
-    const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6f42c1;color:white;border-color:#6f42c1;';
-    R += `<button class="btn btn-small" style="${eventiStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
-    
     // Note (sempre attivo)
     R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+    
+    // Eventi: solo se c'è un risultato
+    if (hasResult) {
+      const eventiComplete = steps.hasEventi;
+      const eventiNext = nextStep === 'eventi';
+      const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6f42c1;color:white;border-color:#6f42c1;';
+      R += `<button class="btn btn-small" style="${eventiStyle}" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
+    }
     
   } else if (isPast && hasResult && !isArchiviata) {
   // Partita passata con risultato ma non archiviata - tutti attivi
