@@ -128,6 +128,7 @@ function renderCalendarPage(c, matches, stats) {
     .badge-pareggio { background: #FFF3CD; color: #856404; }
     .badge-next { background: #D1ECF1; color: #0C5460; border: 1px solid #B8DAFF; }
     .badge-section { background: #E9ECEF; color: #495057; padding: 2px 8px; border-radius: 8px; font-size: 11px; }
+    
     /* ===== RISULTATO CON ICONA ===== */
     .result-badge {
       display: inline-flex;
@@ -143,14 +144,18 @@ function renderCalendarPage(c, matches, stats) {
     .result-draw { background: #FFF3CD; color: #856404; }
     .result-score { font-size: 16px; font-weight: 700; }
     
-    /* ===== EDIT BUTTONS ===== */
-    .edit-buttons {
+    /* ===== POSIZIONE ASSOLUTA PULSANTI MODIFICA ===== */
+    .match-card-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
       display: flex;
       gap: 4px;
-      flex-shrink: 0;
+      z-index: 10;
     }
-    .edit-buttons .btn { padding: 4px 8px !important; }
+    .match-card { position: relative; }
     
+    /* ===== MOBILE ===== */
     @media (max-width: 640px) {
       .mobile-short-date { display: inline !important; }
       .mobile-full-date { display: none !important; }
@@ -158,55 +163,14 @@ function renderCalendarPage(c, matches, stats) {
       .mobile-actions .btn .btn-text { display: none; }
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
-      .result-badge { font-size: 12px; padding: 3px 8px; }
+      /* Griglia 3x2 pulsanti azione */
+      .match-actions-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .match-actions-wrap .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
+      .match-actions-wrap .btn .btn-text { display: block; margin-top: 2px; }
+      .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
       .result-score { font-size: 14px; }
-      .edit-buttons { order: -1; }
-    }
-    
-    /* ===== GRIGLIA MOBILE PULSANTI ===== */
-    .match-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 12px;
-    }
-    .match-actions-grid .btn {
-      padding: 8px 4px !important;
-      font-size: 11px;
-      text-align: center;
-      min-height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-    .match-actions-grid .btn .btn-text { display: block; margin-top: 2px; }
-    
-    /* ===== STATO PULSANTI ===== */
-    .btn-next-step {
-      border: 2px solid #007bff !important;
-      background: #e8f4ff !important;
-      color: #007bff !important;
-    }
-    .btn-completed {
-      border-color: #28a745 !important;
-      background: #e8f5e9 !important;
-      color: #28a745 !important;
-    }
-    
-    /* ===== RISULTATO INTEGRATO ===== */
-    .score-integrated {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4px 8px;
-    }
-    .score-integrated .score { font-size: 18px; font-weight: 700; }
-    .score-integrated .score-victory { color: #28a745; }
-    .score-integrated .score-defeat { color: #dc3545; }
-    .score-integrated .score-draw { color: #ffc107; }
-}</style>`;
+      .match-card-actions { top: 6px; right: 6px; }
+    }</style>`;
 
   html += `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
@@ -238,7 +202,7 @@ function renderCalendarPage(c, matches, stats) {
   if (pastMatches.length > 0) {
     html += `<h3 class="section-title" style="margin:20px 0 12px 0;"><span class="badge badge-section">🏆 GIOCATE</span></h3>`;
     pastMatches.forEach(m => {
-      html += `<div class="card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
+      html += `<div class="card match-card" style="margin-bottom:12px;">${renderMatchCard(m, stats)}</div>`;
     });
   }
 
@@ -355,44 +319,28 @@ export function renderMatchCard(m, stats, isNext = false) {
   }
   
   // Edit e Elimina - nascondi SOLO per partite archiviate
-  let editButtons = '';
+  let editBtns = '';
   if (!isArchiviata) {
-    editButtons = `<div class="edit-buttons">
-      <button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>
-      <button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>
-    </div>`;
+    editBtns = `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>
+    <button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
   } else {
-    editButtons = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓</button>`;
+    editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓</button>`;
   }
 
-  // Per partite giocate con risultato: mostra risultato con icona
-  let resultWithIcon = '';
+  // Risultato con icona per partite passate con risultato
+  let resultIcon = '';
   if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
-    let icon, label, resultClass;
-    if (golFatti > golSubiti) {
-      icon = '✅'; label = 'Vittoria'; resultClass = 'result-victory';
-    } else if (golFatti < golSubiti) {
-      icon = '❌'; label = 'Sconfitta'; resultClass = 'result-defeat';
-    } else {
-      icon = '🤝'; label = 'Pareggio'; resultClass = 'result-draw';
-    }
-    resultWithIcon = `<div style="margin-top:8px;">
-      <span class="result-badge ${resultClass}">
-        <span class="result-score">${golFatti} - ${golSubiti}</span>
-        ${icon} ${label}
-      </span>
-    </div>`;
+    let icon, label, cls;
+    if (golFatti > golSubiti) { icon = '✅'; label = 'Vittoria'; cls = 'result-victory'; }
+    else if (golFatti < golSubiti) { icon = '❌'; label = 'Sconfitta'; cls = 'result-defeat'; }
+    else { icon = '🤝'; label = 'Pareggio'; cls = 'result-draw'; }
+    resultIcon = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
   }
 
-  return `<div class="match-card-layout" style="${archivedStyle}">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
-      <div style="flex:1;min-width:0;">
-        ${L}
-        ${resultWithIcon}
-      </div>
-      ${editButtons}
-    </div>
-    <div class="match-actions-grid">${R}</div>
+  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
+  <div style="flex:1;min-width:220px;">${L}</div>
+  <div class="match-card-actions">${editBtns}</div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}${resultIcon ? '&nbsp;' + resultIcon : ''}</div>
   </div>`;
 }
 
