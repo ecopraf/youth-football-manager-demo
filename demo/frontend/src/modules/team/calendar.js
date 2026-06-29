@@ -260,8 +260,8 @@ export function renderMatchCard(m, stats, isNext = false) {
 
   let L = `
   <div class="match-date mobile-date">${archivedIcon}<span class="mobile-short-date" style="display:none;">${formatDateShort(m.data_ora)}</span><span class="mobile-full-date">${formatDate(m.data_ora)}</span></div>
-  <div class="match-teams" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${window.YFM.getSocietaName()} vs ${m.avversario}</span>
+  <div class="match-teams" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">${window.YFM.getSocietaName()} vs ${m.avversario}</span>
     ${resultIconHtml}
   </div>
   <div class="match-info"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
