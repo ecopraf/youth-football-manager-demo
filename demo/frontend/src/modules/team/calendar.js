@@ -5,6 +5,50 @@ import demoPersistence from '../demo/DemoPersistence';
 
 let allMatches = [];
 
+// ===== STATO PARTITA PER FLUSSO SEQUENZIALE =====
+// Verifica quali step sono stati completati
+function getMatchStepsStatus(matchId) {
+  const hasConvocazioni = demoPersistence.getConvocation(matchId) !== null;
+  const hasFormazione = demoPersistence.getFormation(matchId) !== null;
+  const hasDistinta = false; // La distinta dipende dalla formazione, verificata via JS
+  const match = (window.YFM.demoMatches || []).find(m => m.id === matchId);
+  const hasRisultato = match && (match.gol_casa !== undefined || match.gol_trasferta !== undefined);
+  const hasEventi = (demoPersistence.getEvents(matchId) || []).length > 0;
+  
+  return {
+    hasConvocazioni,
+    hasFormazione,
+    hasDistinta: hasFormazione, // La distinta si considera pronta se la formazione è salvata
+    hasRisultato,
+    hasEventi,
+    isComplete: hasConvocazioni && hasFormazione && hasRisultato && hasEventi
+  };
+}
+
+// Restituisce il prossimo step da completare
+function getNextStep(matchId) {
+  const steps = getMatchStepsStatus(matchId);
+  if (!steps.hasConvocazioni) return 'convocazione';
+  if (!steps.hasFormazione) return 'formazione';
+  if (!steps.hasRisultato) return 'risultato';
+  if (!steps.hasEventi) return 'eventi';
+  return 'complete';
+}
+
+// Colori e stili per i bottoni
+function getStepButtonStyle(step, isActive, isComplete, isNext, isDisabled) {
+  if (isDisabled) {
+    return 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+  }
+  if (isComplete) {
+    return 'background:#28a745;color:white;border-color:#28a745;';
+  }
+  if (isNext) {
+    return 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);';
+  }
+  return ''; // Default button style
+}
+
 export default async function loadCalendar() {
   const c = document.getElementById('pageContent');
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
@@ -161,26 +205,58 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
   }
 
-  // ===== PULSANTI: Logica corretta =====
+  // ===== PULSANTI: Flusso sequenziale =====
+  // Ottieni stato step per questa partita
+  const steps = getMatchStepsStatus(m.id);
+  const nextStep = getNextStep(m.id);
   
-  // Partite future: Convoca → Formazione → Distinta → Note → Eventi
+  // Partite future: flusso guidato
   if (!isPast) {
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">👥 Convoca</button>`;
-    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">📋 Formazione</button>`;
-    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Distinta</button>`;
-    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+    // Convocazione
+    const convoComplete = steps.hasConvocazioni;
+    const convoNext = nextStep === 'convocazione';
+    const convoStyle = convoComplete ? 'background:#28a745;color:white;border-color:#28a745;' : convoNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+    const convoDisabled = !convoComplete && !convoNext;
+    R += `<button class="btn btn-small" style="${convoStyle}" ${convoDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${convoDisabled ? '' : 'window.YFM.openConvocation(\'' + m.id + '\',false)'}">${convoComplete ? '✅' : '📋'} Convocazione</button>`;
     
-    // Se ha già un risultato: mostra pulsante per modificare eventi
-    if (hasResult && !isArchiviata) {
-      R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
-    }
+    // Formazione
+    const formComplete = steps.hasFormazione;
+    const formNext = nextStep === 'formazione';
+    const formStyle = formComplete ? 'background:#28a745;color:white;border-color:#28a745;' : formNext ? 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+    const formDisabled = !formComplete && !formNext;
+    R += `<button class="btn btn-small" style="${formStyle}" ${formDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${formDisabled ? '' : 'window.YFM.openFormazioneForm(\'' + m.id + '\')'}">${formComplete ? '✅' : '📋'} Formazione</button>`;
+    
+    // Distinta
+    const distComplete = steps.hasDistinta;
+    const distNext = nextStep === 'risultato' || nextStep === 'eventi' || nextStep === 'complete';
+    const distStyle = distComplete ? 'background:#28a745;color:white;border-color:#28a745;' : distNext ? 'background:#fd7e14;color:white;border-color:#fd7e14;box-shadow:0 0 0 2px rgba(253,126,20,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+    const distDisabled = !distComplete && !distNext;
+    R += `<button class="btn btn-small" style="${distStyle}" ${distDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${distDisabled ? '' : 'window.YFM.openDistinta(\'' + m.id + '\')'}">${distComplete ? '✅' : '📄'} Distinta</button>`;
+    
+    // Risultato
+    const risComplete = steps.hasRisultato;
+    const risNext = nextStep === 'risultato';
+    const risStyle = risComplete ? 'background:#28a745;color:white;border-color:#28a745;' : risNext ? 'background:#dc3545;color:white;border-color:#dc3545;box-shadow:0 0 0 2px rgba(220,53,69,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+    const risDisabled = !risComplete && !risNext;
+    R += `<button class="btn btn-small" style="${risStyle}" ${risDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${risDisabled ? '' : 'window.YFM.openResultForm(\'' + m.id + '\')'}">${risComplete ? '✅' : '⚽'} Risultato</button>`;
+    
+    // Eventi
+    const eventiComplete = steps.hasEventi;
+    const eventiNext = nextStep === 'eventi';
+    const eventiStyle = eventiComplete ? 'background:#28a745;color:white;border-color:#28a745;' : eventiNext ? 'background:#6f42c1;color:white;border-color:#6f42c1;box-shadow:0 0 0 2px rgba(111,66,193,0.3);' : 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
+    const eventiDisabled = !eventiComplete && !eventiNext;
+    R += `<button class="btn btn-small" style="${eventiStyle}" ${eventiDisabled ? 'disabled' : ''} onclick="event.stopPropagation();${eventiDisabled ? '' : 'window.YFM.openResultForm(\'' + m.id + '\',true)'}">${eventiComplete ? '✅' : '📊'} Eventi</button>`;
+    
+    // Note (sempre attivo)
+    R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
     
   } else if (isPast && hasResult && !isArchiviata) {
-  // Partita passata con risultato ma non archiviata
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
-  R += `<button class="btn btn-secondary btn-small" style="background:#8B7355;color:white;border-color:#8B7355;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
+  // Partita passata con risultato ma non archiviata - tutti attivi
+  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">✅ Conv.</button>`;
+  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">✅ Form.</button>`;
+  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">✅ Dist.</button>`;
+  R += `<button class="btn btn-small" style="background:#28a745;color:white;border-color:#28a745;" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}',true)">✅ Eventi</button>`;
+  R += `<button class="btn btn-small" style="background:#6c757d;color:white;border-color:#6c757d;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
