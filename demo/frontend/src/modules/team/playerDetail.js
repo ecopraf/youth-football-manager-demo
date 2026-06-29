@@ -1,6 +1,7 @@
 import { apiFetch } from '../../services/api.js';
 import { formatDateShort, getAvatarColor } from '../../utils/formatters.js';
 import { showLoading, hideLoading } from '../../utils/ui.js';
+import demoPersistence from '../demo/DemoPersistence.js';
 
 export async function loadPlayerDetail(container, playerId) {
   if (!container) {
@@ -343,7 +344,24 @@ function renderPlayerDetail(container, data) {
       };
       showLoading('Salvataggio...');
       try {
-        await apiFetch('/calciatori/' + player.id, { method: 'PUT', body: JSON.stringify(d) });
+        // Verifica se è un giocatore custom (UUID v4 generato localmente)
+        const isCustomPlayer = player.id && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(player.id);
+        
+        if (isDemoMode && isCustomPlayer) {
+          // Giocatore custom: salva in demoPersistence
+          const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';
+          const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+          demoPersistence.updateCustomPlayer(player.id, d, playersKey);
+          
+          // Aggiorna anche window.YFM.allPlayers per riflettere le modifiche
+          const playerIndex = window.YFM.allPlayers.findIndex(p => p.id === player.id);
+          if (playerIndex !== -1) {
+            window.YFM.allPlayers[playerIndex] = { ...window.YFM.allPlayers[playerIndex], ...d };
+          }
+        } else {
+          // Giocatore normale: salva sul backend
+          await apiFetch('/calciatori/' + player.id, { method: 'PUT', body: JSON.stringify(d) });
+        }
         // Ricarica la scheda
         loadPlayerDetail(container, player.id);
       } catch (e) {
@@ -371,7 +389,28 @@ function renderPlayerDetail(container, data) {
 async function deletePlayer(playerId) {
   showLoading();
   try {
-    await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori/' + playerId, { method: 'DELETE' });
+    // Verifica se è un giocatore custom (UUID v4 generato localmente)
+    const isCustomPlayer = playerId && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(playerId);
+    
+    if (isCustomPlayer) {
+      // Giocatore custom: rimuovi da demoPersistence
+      const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';
+      const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+      
+      if (demoPersistence.data[playersKey]) {
+        demoPersistence.data[playersKey] = demoPersistence.data[playersKey].filter(p => p.id !== playerId);
+        demoPersistence._markDirty();
+      }
+      
+      // Rimuovi anche da window.YFM.allPlayers
+      if (window.YFM?.allPlayers) {
+        window.YFM.allPlayers = window.YFM.allPlayers.filter(p => p.id !== playerId);
+      }
+    } else {
+      // Giocatore normale: elimina dal backend
+      await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori/' + playerId, { method: 'DELETE' });
+    }
+    
     if (window.YFM?.navigateTo) window.YFM.navigateTo('roster');
     else if (window.navigateTo) window.navigateTo('roster');
   } catch (e) {
@@ -401,6 +440,16 @@ function openMoveModalPlayer(playerId, playerName, squadre) {
   
   document.getElementById('confirmMoveBtn').addEventListener('click', async () => {
     const targetSquadraId = document.getElementById('targetSquadra').value;
+    
+    // Verifica se è un giocatore custom
+    const isCustomPlayer = playerId && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(playerId);
+    
+    if (isCustomPlayer) {
+      alert('I giocatori aggiunti in demo non possono essere spostati.\nPer spostarli, elimina il giocatore e aggiungilo nell\'altra categoria.');
+      modal.remove();
+      return;
+    }
+    
     showLoading();
     try {
       await apiFetch('/calciatori/' + playerId + '/move', {
