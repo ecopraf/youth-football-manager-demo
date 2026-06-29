@@ -5,3 +5,6 @@ frontend-v2/build-info.js
 frontend-v2/.build-counter
 .env.local
 node_modules/
+# Build info generato automaticamente
+demo/frontend/src/build-info.js
+demo/frontend/.build-counter.json
