@@ -11,12 +11,13 @@ export async function openFormazioneForm(mid) {
   const isPast = new Date(match.data_ora) < new Date();
   const isArchiviata = match.archiviata === true || match.archiviata === 'true';
   
-  let convocazioni = [], formazioneEsistente = [], giocatori = [];
+  let convocazioni = [], formazioneEsistente = [], giocatori = [], riserveIds = [];
   
   if (isDemo) {
     // Demo mode: usa dati dalla persistenza
     const convocazioneIds = demoPersistence.getConvocation(mid) || window.YFM.demoConvocazioni?.[mid] || [];
     const formazioneSalvata = demoPersistence.getFormation(mid);
+    riserveIds = formazioneSalvata?.riserve || [];
     giocatori = window.YFM.allPlayers || [];
     
     // Crea oggetto convocazioni con solo i presenti
@@ -31,12 +32,6 @@ export async function openFormazioneForm(mid) {
         return { calciatoreId: id, numeroMaglia: p?.numero_maglia || p?.numeroMaglia || 99, posizione: isTitolare ? 'Titolare' : 'Panchina' };
       });
     }
-  } else {
-    [convocazioni, formazioneEsistente, giocatori] = await Promise.all([
-      apiFetch('/partite/' + mid + '/convocazioni').catch(() => []),
-      apiFetch('/partite/' + mid + '/formazione').catch(() => []),
-      apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori').catch(() => [])
-    ]);
   }
 
   const convocatiIds = convocazioni.filter(c => c.presente === true).map(c => c.calciatoreId);
@@ -55,7 +50,7 @@ export async function openFormazioneForm(mid) {
     renderFormazioneReadOnly(match, giocatoriConvocati, formMap, isArchiviata);
   } else {
     // FORM EDITABILE per partite future e passate (se non archiviate)
-    renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo);
+    renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo, riserveIds);
   }
 }
 
@@ -148,24 +143,30 @@ function renderFormazioneReadOnly(match, giocatori, formMap, isArchiviata) {
 }
 
 // ==================== FORM EDITABILE (FUTURE) ====================
-function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = false) {
+function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = false, riserveIds = []) {
+  // Se non c'è formazione salvata, tutti i convocati sono riserve di default
+  const hasExistingFormation = Object.keys(formMap).length > 0;
+  
   let html = '<p style="margin-bottom:16px;"><strong>Formazione - ' + window.YFM.getSocietaName() + ' vs ' + match.avversario + '</strong></p>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
 
   // Titolari
-  html += '<div><h4 style="margin-bottom:8px;">Titolari <span id="cntTitolari" style="font-size:12px;color:var(--gray);"></span></h4>';
+  html += '<div><h4 style="margin-bottom:8px;">⚽ Titolari <span id="cntTitolari" style="font-size:12px;color:var(--gray);"></span></h4>';
   giocatoriConvocati.forEach(g => {
     const f = formMap[g.id];
-    const checked = f && f.posizione === 'Titolare' ? ' checked' : '';
+    const isTitolare = f && f.posizione === 'Titolare';
+    const checked = isTitolare ? ' checked' : '';
     html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-tit" style="accent-color:var(--green);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : (g.numeroMaglia || g.numero_maglia || 99)) + '" data-pid="' + g.id + '" class="form-num-tit" style="width:50px;padding:4px;" placeholder="N."></div>';
   });
   html += '</div>';
 
-  // Panchina
-  html += '<div><h4 style="margin-bottom:8px;">Panchina <span id="cntRiserve" style="font-size:12px;color:var(--gray);"></span></h4>';
+  // Panchina (riserve)
+  html += '<div><h4 style="margin-bottom:8px;">🪑 Panchina <span id="cntRiserve" style="font-size:12px;color:var(--gray);"></span></h4>';
   giocatoriConvocati.forEach(g => {
     const f = formMap[g.id];
-    const checked = f && f.posizione === 'Panchina' ? ' checked' : '';
+    const isRiserve = f && f.posizione === 'Panchina';
+    // Se non c'è formazione esistente, metti tutti come riserve (default)
+    const checked = hasExistingFormation ? (isRiserve ? ' checked' : '') : ' checked';
     html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><input type="checkbox"' + checked + ' data-pid="' + g.id + '" class="form-check-pan" style="accent-color:var(--orange);"><span style="flex:1;">' + g.nome + ' ' + g.cognome + ' <span style="color:var(--gray);font-size:12px;">(' + g.ruolo + ')</span></span><input type="number" value="' + (f ? f.numeroMaglia : (g.numeroMaglia || g.numero_maglia || 99)) + '" data-pid="' + g.id + '" class="form-num-pan" style="width:50px;padding:4px;" placeholder="N."></div>';
   });
   html += '</div></div>';
@@ -237,6 +238,25 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
       riserveIds.push(cb.dataset.pid);
     });
 
+    // Validazione portiere
+    const titolariPortieri = titolariIds.filter(id => {
+      const g = giocatoriConvocati.find(p => p.id === id);
+      return g?.ruolo === 'Portiere';
+    });
+    
+    if (titolariPortieri.length === 0) {
+      alert('⚠️ La formazione deve avere almeno un portiere tra i titolari!');
+      return;
+    }
+    if (titolariPortieri.length > 1) {
+      const nomiPortieri = titolariPortieri.map(id => {
+        const g = giocatoriConvocati.find(p => p.id === id);
+        return g?.cognome + ' ' + g?.nome;
+      }).join(', ');
+      alert('⚠️ Hai selezionato ' + titolariPortieri.length + ' portieri tra i titolari:\n' + nomiPortieri + '\n\nUna formazione può avere solo 1 portiere titolare. Sposta gli altri in panchina!');
+      return;
+    }
+
     const assegnati = new Set([...titolariIds, ...riserveIds]);
     const nonAssegnati = giocatoriConvocati.filter(g => !assegnati.has(g.id));
     if (nonAssegnati.length > 0) {
@@ -249,10 +269,7 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
       if (isDemo) {
         // Demo mode: salva in persistenza
         const formation = {
-          portiere: titolariIds.find(id => {
-            const g = giocatoriConvocati.find(p => p.id === id);
-            return g?.ruolo === 'Portiere';
-          }) || titolariIds[0],
+          portiere: titolariPortieri[0],
           difensori: titolariIds.filter(id => {
             const g = giocatoriConvocati.find(p => p.id === id);
             return g?.ruolo === 'Difensore';
@@ -264,7 +281,8 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
           attaccanti: titolariIds.filter(id => {
             const g = giocatoriConvocati.find(p => p.id === id);
             return g?.ruolo === 'Attaccante';
-          })
+          }),
+          riserve: riserveIds
         };
         
         demoPersistence.saveFormation(mid, formation);
@@ -273,7 +291,7 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
         
         hideLoading();
         modal.close();
-        alert('✅ Formazione salvata in demo!');
+        alert('✅ Formazione salvata!');
       } else {
         const formazione = [];
         document.querySelectorAll('#currentModal .form-check-tit:checked').forEach(cb => {

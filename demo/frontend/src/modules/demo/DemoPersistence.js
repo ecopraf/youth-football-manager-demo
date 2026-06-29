@@ -218,6 +218,23 @@ class DemoPersistence {
     return this.data[KEYS.FORMATIONS]?.[matchId];
   }
 
+  /**
+   * Salva la lista delle riserve (giocatori convocati in panchina)
+   */
+  saveRiserve(matchId, riserveIds) {
+    const formation = this.getFormation(matchId) || {};
+    formation.riserve = riserveIds;
+    this.saveFormation(matchId, formation);
+  }
+
+  /**
+   * Ottiene la lista delle riserve per una partita
+   */
+  getRiserve(matchId) {
+    const formation = this.getFormation(matchId);
+    return formation?.riserve || [];
+  }
+
   // ============ CONVOCAZIONI ============
 
   /**

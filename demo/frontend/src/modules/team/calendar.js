@@ -162,36 +162,39 @@ export function renderMatchCard(m, stats, isNext = false) {
   }
 
   // ===== PULSANTI: Logica corretta =====
+  // Verifica se ci sono convocazioni e formazione salvate
+  const hasConvocazioni = demoPersistence.getConvocation(m.id) !== null;
+  const hasFormazione = demoPersistence.getFormation(m.id) !== null;
+  const canSaveEvents = hasConvocazioni && hasFormazione;
   
-  // Partite future: tutti i pulsanti modificabili
+  // Partite future: Convoca → Formazione → Distinta → Eventi (se possible)
   if (!isPast) {
-  // Formazione - UN SOLO pulsante
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">📋 Convoca</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Distinta</button>`;
-  
-  // Se ha già un risultato ma non è archiviata: mostra pulsante per modificare eventi
-  if (hasResult && !isArchiviata) {
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
-  }
-  
+    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',false)">👥 Convoca</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">📋 Formazione</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Distinta</button>`;
+    R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openNoteAvversario('${m.id}')">📝 Note</button>`;
+    
+    // Se ha già un risultato e ci sono convo+form salvate: mostra pulsante per modificare eventi
+    if (hasResult && !isArchiviata && canSaveEvents) {
+      R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">✏️ Eventi</button>`;
+    }
+    
   } else if (isPast && hasResult && !isArchiviata) {
-  // Partita passata con risultato ma non archiviata: mostra pulsante Archivia
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
+  // Partita passata con risultato ma non archiviata
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   R += `<button class="btn btn-secondary btn-small" style="background:#8B7355;color:white;border-color:#8B7355;" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   } else {
   // Partite archiviate: solo consultazione
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
+  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   }
   
