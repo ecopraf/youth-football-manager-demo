@@ -248,9 +248,22 @@ export function renderMatchCard(m, stats, isNext = false) {
   const golFatti = r?.golFatti ?? m.gol_casa ?? null;
   const golSubiti = r?.golSubiti ?? m.gol_trasferta ?? null;
 
+  // Risultato con icona per partite passate con risultato
+  let resultIconHtml = '';
+  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    let icon, label, cls;
+    if (golFatti > golSubiti) { icon = '✅'; label = 'Vittoria'; cls = 'result-victory'; }
+    else if (golFatti < golSubiti) { icon = '❌'; label = 'Sconfitta'; cls = 'result-defeat'; }
+    else { icon = '🤝'; label = 'Pareggio'; cls = 'result-draw'; }
+    resultIconHtml = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
+  }
+
   let L = `
   <div class="match-date mobile-date">${archivedIcon}<span class="mobile-short-date" style="display:none;">${formatDateShort(m.data_ora)}</span><span class="mobile-full-date">${formatDate(m.data_ora)}</span></div>
-  <div class="match-teams">${window.YFM.getSocietaName()} vs ${m.avversario}</div>
+  <div class="match-teams" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${window.YFM.getSocietaName()} vs ${m.avversario}</span>
+    ${resultIconHtml}
+  </div>
   <div class="match-info"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
 
   let R = '';
@@ -334,18 +347,8 @@ export function renderMatchCard(m, stats, isNext = false) {
     editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')" title="Sblocca">🔓</button>`;
   }
 
-  // Risultato con icona per partite passate con risultato
-  let resultIcon = '';
-  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
-    let icon, label, cls;
-    if (golFatti > golSubiti) { icon = '✅'; label = 'Vittoria'; cls = 'result-victory'; }
-    else if (golFatti < golSubiti) { icon = '❌'; label = 'Sconfitta'; cls = 'result-defeat'; }
-    else { icon = '🤝'; label = 'Pareggio'; cls = 'result-draw'; }
-    resultIcon = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
-  }
-
   return `<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
-  <div style="flex:1;min-width:220px;">${L}${resultIcon ? '<div style="margin-top:8px;">' + resultIcon + '</div>' : ''}</div>
+  <div style="flex:1;min-width:220px;">${L}</div>
   <div class="match-card-actions">${editBtns}</div>
   <div class="match-actions-wrap" style="width:100%;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}</div>
   </div>`;
