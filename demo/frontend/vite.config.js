@@ -2,35 +2,52 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 
 // Versione software (allineata con backend)
 const SW_VERSION = 'v3.14';
 
-// Ottieni git commit hash (short, 7 chars)
-function getGitHash() {
+const BUILD_COUNTER_FILE = path.resolve(__dirname, '.build-counter.json');
+
+function getBuildCounter() {
   try {
-    const hash = execSync('git rev-parse --short HEAD', { cwd: __dirname }).toString().trim();
-    return hash;
+    if (fs.existsSync(BUILD_COUNTER_FILE)) {
+      const data = JSON.parse(fs.readFileSync(BUILD_COUNTER_FILE, 'utf8'));
+      // Reset counter se la versione è cambiata
+      if (data.version === SW_VERSION) {
+        return data.counter;
+      }
+    }
   } catch {
-    return 'unknown';
+    // File non esiste o errore di lettura
   }
+  return 0;
+}
+
+function saveBuildCounter(counter) {
+  const data = {
+    version: SW_VERSION,
+    counter: counter,
+    updatedAt: new Date().toISOString()
+  };
+  fs.writeFileSync(BUILD_COUNTER_FILE, JSON.stringify(data, null, 2));
 }
 
 function generateBuildInfo() {
-  const gitHash = getGitHash();
+  const currentCounter = getBuildCounter();
+  const newCounter = currentCounter + 1;
+  saveBuildCounter(newCounter);
+  
+  const buildId = `${SW_VERSION}.${newCounter}`;
   const now = new Date();
-  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
-  const timeStr = now.toISOString().slice(11, 19).replace(/:/g, '');
-  const buildId = `${SW_VERSION}.${dateStr}.${timeStr}.${gitHash}`;
   const buildInfo = `// Auto-generated build info
 // SW Version: ${SW_VERSION}
+// Build Number: ${newCounter}
 // Build ID: ${buildId}
 // Date: ${now.toLocaleString('it-IT')}
 export const BUILD_INFO = {
   id: '${buildId}',
   version: '${SW_VERSION}',
-  gitHash: '${gitHash}',
+  buildNumber: ${newCounter},
   date: '${now.toISOString()}',
   buildDate: '${now.toLocaleString('it-IT')}'
 };
