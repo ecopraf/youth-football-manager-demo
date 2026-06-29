@@ -163,6 +163,7 @@ function renderCalendarPage(c, matches, stats) {
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+      margin-top: 8px;
     }
     
     /* ===== MOBILE ===== */
@@ -174,7 +175,7 @@ function renderCalendarPage(c, matches, stats) {
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
       /* Griglia 3x2 pulsanti azione */
-      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
+      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px !important; width: 100%; }
       .match-actions-row .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
       .match-actions-row .btn .btn-text { display: block; margin-top: 2px; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
@@ -184,14 +185,9 @@ function renderCalendarPage(c, matches, stats) {
         position: absolute;
         top: 6px;
         right: 6px;
-        display: flex;
-        gap: 2px;
-        flex-wrap: wrap;
-        max-width: 120px;
-        justify-content: flex-end;
       }
       .match-card-actions .btn {
-        padding: 4px 6px !important;
+        padding: 4px !important;
         font-size: 11px;
       }
     }</style>`;
@@ -277,7 +273,7 @@ export function renderMatchCard(m, stats, isNext = false) {
     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">${window.YFM.getSocietaName()} vs ${m.avversario}</span>
     ${resultIconHtml}
   </div>
-  <div class="match-info" style="margin-top:4px;"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
+  <div class="match-info"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
 
   let R = '';
   
@@ -337,7 +333,6 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
   R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
   R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
-  R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
@@ -351,14 +346,12 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   }
   
-  // Edit e Elimina e Archivia e Note - in alto a destra
+  // Edit e Elimina e Archivia - in alto a destra (sempre visibili)
   let editBtns = '';
   if (!isArchiviata) {
-    // Archivia per partite giocate con risultato
+    // Archivia per partite giocate, altrimenti solo Edit e Delete
     const archBtn = (isPast && hasResult) ? `<button class="btn btn-secondary btn-small" style="color:#856404;" onclick="event.stopPropagation();archiveMatch('${m.id}')" title="Archivia">📦</button>` : '';
-    // Note in alto a destra per partite future (mobile)
-    const noteBtn = (!isPast) ? makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false) : '';
-    editBtns = `${archBtn}${noteBtn}<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}" title="Modifica">✏️</button><button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}" title="Elimina">🗑️</button>`;
+    editBtns = `${archBtn}<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}" title="Modifica">✏️</button><button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}" title="Elimina">🗑️</button>`;
   } else {
     editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')" title="Sblocca">🔓</button>`;
   }
