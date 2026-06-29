@@ -157,6 +157,15 @@ function renderCalendarPage(c, matches, stats) {
     }
     .match-card { position: relative; }
     
+    /* ===== PULSANTI AZIONE - STESSA RIGA ===== */
+    .match-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    
     /* ===== MOBILE ===== */
     @media (max-width: 640px) {
       .mobile-short-date { display: inline !important; }
@@ -166,7 +175,7 @@ function renderCalendarPage(c, matches, stats) {
       .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
       .match-badge { font-size: 10px; padding: 2px 6px; }
       /* Griglia 3x2 pulsanti azione */
-      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px !important; }
+      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px !important; width: 100%; }
       .match-actions-row .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
       .match-actions-row .btn .btn-text { display: block; margin-top: 2px; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
