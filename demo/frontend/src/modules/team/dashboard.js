@@ -123,9 +123,13 @@ export default async function loadDashboard() {
     if (risultati.length === 0) return '<p style="color:var(--gray);text-align:center;padding:20px;">Nessuna partita disputata</p>';
     
     const ultimi5 = risultati.slice(0, 5);
+    // Calcola statistiche SOLO dalle partite visualizzate (congruenti con il trend)
     const gf5 = ultimi5.reduce((sum, r) => sum + (r.golFatti || 0), 0);
     const gs5 = ultimi5.reduce((sum, r) => sum + (r.golSubiti || 0), 0);
     const dr5 = gf5 - gs5;
+    const vv5 = ultimi5.filter(r => (r.golFatti || 0) > (r.golSubiti || 0)).length;
+    const pp5 = ultimi5.filter(r => (r.golFatti || 0) === (r.golSubiti || 0)).length;
+    const ss5 = ultimi5.filter(r => (r.golFatti || 0) < (r.golSubiti || 0)).length;
     
     // Helper per badge competizione
     const getCompetitionBadge = (tipo, dettaglio) => {
@@ -148,7 +152,8 @@ export default async function loadDashboard() {
     
     const trendBox = '<div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:14px;padding:16px;margin-bottom:16px;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
-      '<span style="color:white;font-size:11px;font-weight:600;opacity:0.9;">ANDAMENTO ULTIME 5</span></div>' +
+      '<span style="color:white;font-size:11px;font-weight:600;opacity:0.9;">ANDAMENTO ULTIME ' + ultimi5.length + '</span>' +
+      '<span style="color:white;font-size:10px;opacity:0.8;">' + vv5 + 'V ' + pp5 + 'P ' + ss5 + 'S</span></div>' +
       '<div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;margin-bottom:12px;">' + trendHtml + '</div>' +
       '<div style="display:flex;justify-content:center;gap:16px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);">' +
       '<div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 16px;text-align:center;min-width:60px;">' +

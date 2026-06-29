@@ -76,17 +76,20 @@ const DEMO_EVENTI = [
   { match_id: 'm007', player_id: 'c011', tipo: 'ASSIST', minuto: 58 },
 ];
 
-// Statistiche demo
-const DEMO_STATISTICHE = {
-  punti: 34,
-  partiteGiocate: 14,
-  vittorie: 10,
-  pareggi: 4,
-  sconfitte: 0,
-  golFatti: 38,
-  golSubiti: 12,
-  differenzaReti: 26
-};
+// Statistiche demo - calcolate dinamicamente dalle partite
+function calculateStatsFromMatches(partite) {
+  const terminate = partite.filter(p => p.stato === 'Terminata' || p.stato === 'Archiviata');
+  const vittorie = terminate.filter(p => p.gol_casa > p.gol_trasferta).length;
+  const pareggi = terminate.filter(p => p.gol_casa === p.gol_trasferta).length;
+  const sconfitte = terminate.filter(p => p.gol_casa < p.gol_trasferta).length;
+  const golFatti = terminate.reduce((sum, p) => sum + (p.gol_casa || 0), 0);
+  const golSubiti = terminate.reduce((sum, p) => sum + (p.gol_trasferta || 0), 0);
+  const partiteGiocate = terminate.length;
+  const punti = vittorie * 3 + pareggi;
+  return { punti, partiteGiocate, vittorie, pareggi, sconfitte, golFatti, golSubiti, differenzaReti: golFatti - golSubiti };
+}
+
+const DEMO_STATISTICHE = calculateStatsFromMatches(DEMO_PARTITE);
 
 // Top players demo
 const DEMO_TOP_PLAYERS = {
@@ -164,16 +167,7 @@ const DEMO_FORMAZIONI_U17 = {
 };
 
 // Statistiche U17
-const DEMO_STATISTICHE_U17 = {
-  punti: 28,
-  partiteGiocate: 12,
-  vittorie: 8,
-  pareggi: 4,
-  sconfitte: 0,
-  golFatti: 24,
-  golSubiti: 8,
-  differenzaReti: 16
-};
+const DEMO_STATISTICHE_U17 = calculateStatsFromMatches(DEMO_PARTITE_U17);
 
 // Top players U17
 const DEMO_TOP_PLAYERS_U17 = {
