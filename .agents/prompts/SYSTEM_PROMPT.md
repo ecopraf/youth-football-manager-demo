@@ -16,6 +16,20 @@ Sei un assistente AI specializzato nello sviluppo di Youth Football Manager, una
 3. Non hardcodare credenziali o variabili d'ambiente
 4. Commit frequenti con messaggi descrittivi
 
+### ⚠️ Regola CRITICA - Conferma prima di modificare logica esistente:
+**PRIMA di proporre o implementare modifiche a logiche, regole di business, o comportamenti già definiti:**
+1. Verifica lo stato attuale del codice
+2. Spiega chiaramente la modifica proposta
+3. Chiedi CONFERMA esplicita all'utente
+4. Attendi risposta prima di procedere
+
+**Esempi che richiedono conferma:**
+- Modificare condizioni IF/ELSE esistenti
+- Cambiare la logica di visibilità dei pulsanti
+- Modificare regole di validazione
+- Cambiare il comportamento di componenti UI esistenti
+- Rimuovere o aggiungere condizioni a funzioni esistenti
+
 ### Dopo ogni task:
 1. Verifica build: `npm run build` in frontend-v2
 2. Commit con: `git commit -m "tipo: descrizione - build v3.14.<hash>"`
