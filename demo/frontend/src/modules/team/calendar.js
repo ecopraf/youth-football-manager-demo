@@ -5,58 +5,6 @@ import demoPersistence from '../demo/DemoPersistence';
 
 let allMatches = [];
 
-// ===== STATO PARTITA PER FLUSSO SEQUENZIALE =====
-// Verifica quali step sono stati completati
-function getMatchStepsStatus(matchId) {
-  const convocazioneData = demoPersistence.getConvocation(matchId);
-  const hasConvocazioni = convocazioneData !== null && Array.isArray(convocazioneData) && convocazioneData.length > 0;
-  
-  const formazioneData = demoPersistence.getFormation(matchId);
-  const hasFormazione = formazioneData && (
-    formazioneData.portiere ||
-    (formazioneData.difensori && formazioneData.difensori.length > 0) ||
-    (formazioneData.centrocampisti && formazioneData.centrocampisti.length > 0) ||
-    (formazioneData.attaccanti && formazioneData.attaccanti.length > 0)
-  );
-  
-  const match = (window.YFM.demoMatches || []).find(m => m.id === matchId);
-  const hasRisultato = match && (match.gol_casa !== undefined || match.gol_trasferta !== undefined);
-  const hasEventi = (demoPersistence.getEvents(matchId) || []).length > 0;
-  
-  return {
-    hasConvocazioni,
-    hasFormazione: !!hasFormazione,
-    hasDistinta: !!hasFormazione, // La distinta si considera pronta se la formazione è salvata
-    hasRisultato: !!hasRisultato,
-    hasEventi,
-    isComplete: hasConvocazioni && hasFormazione && hasRisultato && hasEventi
-  };
-}
-
-// Restituisce il prossimo step da completare
-function getNextStep(matchId) {
-  const steps = getMatchStepsStatus(matchId);
-  if (!steps.hasConvocazioni) return 'convocazione';
-  if (!steps.hasFormazione) return 'formazione';
-  if (!steps.hasRisultato) return 'risultato';
-  if (!steps.hasEventi) return 'eventi';
-  return 'complete';
-}
-
-// Colori e stili per i bottoni
-function getStepButtonStyle(step, isActive, isComplete, isNext, isDisabled) {
-  if (isDisabled) {
-    return 'background:#6c757d;color:white;border-color:#6c757d;opacity:0.6;cursor:not-allowed;';
-  }
-  if (isComplete) {
-    return 'background:#28a745;color:white;border-color:#28a745;';
-  }
-  if (isNext) {
-    return 'background:#007bff;color:white;border-color:#007bff;box-shadow:0 0 0 2px rgba(0,123,255,0.3);';
-  }
-  return ''; // Default button style
-}
-
 export default async function loadCalendar() {
   const c = document.getElementById('pageContent');
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
