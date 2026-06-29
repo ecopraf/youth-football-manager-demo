@@ -146,12 +146,14 @@ function renderCalendarPage(c, matches, stats) {
     
     /* ===== POSIZIONE ASSOLUTA PULSANTI MODIFICA ===== */
     .match-card-actions {
-      position: absolute;
-      top: 8px;
-      right: 8px;
       display: flex;
       gap: 4px;
-      z-index: 10;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+    .match-card-actions .btn {
+      padding: 4px 6px !important;
+      font-size: 12px;
     }
     .match-card { position: relative; }
     
@@ -169,7 +171,16 @@ function renderCalendarPage(c, matches, stats) {
       .match-actions-wrap .btn .btn-text { display: block; margin-top: 2px; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
       .result-score { font-size: 14px; }
-      .match-card-actions { top: 6px; right: 6px; }
+      /* Pulsanti azione in alto a destra */
+      .match-card-actions {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+      }
+      .match-card-actions .btn {
+        padding: 4px !important;
+        font-size: 11px;
+      }
     }</style>`;
 
   html += `
@@ -256,10 +267,6 @@ export function renderMatchCard(m, stats, isNext = false) {
       <span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>
     </div>`;
     R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
-  } else if (hasResult && golFatti !== null && golSubiti !== null) {
-    // Partita passata con risultato: mostra score
-    const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
-    R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio"><div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
   } else if (!isPast) {
     // Partita futura senza risultato: mostra pulsante Risultato
     R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">⚽ Risultato</button>`;
@@ -304,7 +311,6 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
   R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
   R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();archiveMatch('${m.id}')">📦 Archivia</button>`;
   
   } else if (isPast && !hasResult) {
   // Partita passata senza risultato
@@ -318,13 +324,14 @@ export function renderMatchCard(m, stats, isNext = false) {
   R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
   }
   
-  // Edit e Elimina - nascondi SOLO per partite archiviate
+  // Edit e Elimina e Archivia - in alto a destra (sempre visibili)
   let editBtns = '';
   if (!isArchiviata) {
-    editBtns = `<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}">✏️</button>
-    <button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}">🗑️</button>`;
+    // Archivia per partite giocate, altrimenti solo Edit e Delete
+    const archBtn = (isPast && hasResult) ? `<button class="btn btn-secondary btn-small" style="color:#856404;" onclick="event.stopPropagation();archiveMatch('${m.id}')" title="Archivia">📦</button>` : '';
+    editBtns = `${archBtn}<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}" title="Modifica">✏️</button><button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}" title="Elimina">🗑️</button>`;
   } else {
-    editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')">🔓</button>`;
+    editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')" title="Sblocca">🔓</button>`;
   }
 
   // Risultato con icona per partite passate con risultato
@@ -337,10 +344,10 @@ export function renderMatchCard(m, stats, isNext = false) {
     resultIcon = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
   }
 
-  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
-  <div style="flex:1;min-width:220px;">${L}</div>
+  return `<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
+  <div style="flex:1;min-width:220px;">${L}${resultIcon ? '<div style="margin-top:8px;">' + resultIcon + '</div>' : ''}</div>
   <div class="match-card-actions">${editBtns}</div>
-  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}${resultIcon ? '&nbsp;' + resultIcon : ''}</div>
+  <div class="match-actions-wrap" style="width:100%;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${R}</div>
   </div>`;
 }
 
