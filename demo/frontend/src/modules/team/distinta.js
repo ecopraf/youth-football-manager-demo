@@ -198,7 +198,7 @@ function renderDistinta(d, staff) {
   if (!c) return;
   
   const t = (d.formazione || []).sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
-  const dt = new Date(d.partita.dataOra);
+  const dt = new Date(d.match?.data_ora || d.partita?.dataOra || new Date());
   const s = staff || {};
   const righe = [];
   
