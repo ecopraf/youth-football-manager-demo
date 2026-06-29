@@ -49,10 +49,10 @@ git status
 | Info | Valore |
 |------|--------|
 | **Versione** | v3.14 |
-| **Build ID** | `v3.14.<git-hash>` |
+| **Build ID** | `v3.14.<build-number>` (es. v3.14.1) |
 | **Frontend** | Vite + JavaScript ES Modules |
 | **Backend** | Node.js/Express + Supabase |
-| **Deploy** | Vercel (auto su push a main) |
+| **Deploy** | ⚠️ **MANUALE** - chiedere conferma all'utente |
 | **Logo** | `/frontend-v2/public/assets/logo.png` |
 
 ---
@@ -125,8 +125,8 @@ git status
 
 - **NON modificare**: `frontend-v2/src/build-info.js` (auto-generato)
 - **NON hardcodare**: credenziali, API keys
-- **Deploy**: automatico su push a main
-- **Build ID**: `v3.14.<git-hash>` (mostrato dopo `npm run build`)
+- **Deploy**: ** MANUALE** - chiedere SEMPRE conferma prima del deploy su Vercel
+- **Build ID**: `v3.14.<build-number>` (generato automaticamente)
 
 ### 🔐 Credenziali Supabase (persistenti)
 
@@ -161,9 +161,10 @@ curl -s 'https://csxdlxbhcnyfppojwwzy.supabase.co/rest/v1/workspace?select=*' \
 3. Gestisci errori con messaggi user-friendly
 
 ### Deploy
-1. **Non fare deploy manuale** - è automatico su push
-2. Dopo ogni feature: commit + push
-3. Verifica con `curl https://.../api/health`
+1. **NON fare deploy automatico su push** - l'utente preferisce testare prima in locale
+2. **Chiedere SEMPRE conferma prima del deploy**: "Posso procedere con il deploy su Vercel?"
+3. Dopo ogni feature: commit + push + chiedi conferma deploy
+4. Verifica con `curl https://.../api/health`
 
 ---
 
@@ -191,7 +192,9 @@ curl -s 'https://csxdlxbhcnyfppojwwzy.supabase.co/rest/v1/workspace?select=*' \
    - Verifica API con curl
 
 5. DEPLOY
-   - Push su main → trigger automatico
+   - Commit + Push su main
+   - **Chiedi conferma all'utente** prima di fare deploy su Vercel
+   - Solo dopo OK dell'utente: esegui deploy
    - Attendi ~2 minuti
    - Verifica produzione
 ```
@@ -246,12 +249,15 @@ cd backend && npm install && node api/index.js
 
 # Verifica build
 npm run build
-# Output: Build ID: v3.14.XXXXXXX
+# Output: Build ID: v3.14.X
 
-# Deploy (automatico)
+# Commit e push (NO deploy automatico)
 git add .
 git commit -m "tipo: descrizione"
 git push origin main
+
+# ⚠️ DEPLOY: Chiedere SEMPRE conferma all'utente prima di procedere!
+# Solo dopo OK: vercel --prod --yes
 
 # Verifica produzione
 curl https://youth-football-manager-backend.vercel.app/api/health
