@@ -1,4 +1,3 @@
-import { apiFetch } from '../../services/api';
 import { formatDateShort, getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
 import demoPersistence from '../demo/DemoPersistence';
@@ -14,7 +13,6 @@ export default async function loadRoster() {
   const c = document.getElementById('pageContent');
   const wasAdmin = isAdminMode;
   isAdminMode = window.YFM.isAdmin && window.YFM.isAdmin();
-  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   
   // Se isAdminMode cambia, resetta la selezione
   if (wasAdmin !== isAdminMode) {
@@ -22,34 +20,14 @@ export default async function loadRoster() {
     isSelectionMode = false;
   }
   
-  let players = [];
-  let scadenze = [];
-  let allSquadre = [];
-  
-  if (isDemo) {
-    // Usa i dati demo
-    players = window.YFM.allPlayers || [];
-    scadenze = [];
-    allSquadre = window.YFM.allSquadre || [];
-    allPlayers = players;
-    window.YFM.allPlayers = players;
-    window.YFM.allSquadreForMove = allSquadre;
-    renderRoster(c, players, scadenze);
-  } else {
-    try {
-      [players, scadenze, allSquadre] = await Promise.all([
-        apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori'),
-        apiFetch('/squadre/' + window.YFM.squadraId + '/scadenze-mediche').catch(() => []),
-        apiFetch('/squadre').catch(() => [])
-      ]);
-      allPlayers = players;
-      window.YFM.allPlayers = players;
-      window.YFM.allSquadreForMove = allSquadre;
-      renderRoster(c, players, scadenze);
-    } catch (e) {
-      c.innerHTML = '<div class="error-box">' + e.message + '</div>';
-    }
-  }
+  // Demo mode: usa i dati in memoria (sempre attivo in questo repo)
+  const players = window.YFM.allPlayers || [];
+  const scadenze = [];
+  const allSquadre = window.YFM.allSquadre || [];
+  allPlayers = players;
+  window.YFM.allPlayers = players;
+  window.YFM.allSquadreForMove = allSquadre;
+  renderRoster(c, players, scadenze);
 }
 
 function renderRoster(c, players, scadenze) {
@@ -174,7 +152,21 @@ function updateBulkButtons() {
 async function deletePlayer(pid) {
   showLoading();
   try {
-    await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori/' + pid, { method: 'DELETE' });
+    // Demo mode: usa demoPersistence
+    const isCustomPlayer = pid && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(pid);
+    const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';
+    const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+    
+    if (isCustomPlayer) {
+      // Rimuovi da demoPersistence
+      if (demoPersistence.data[playersKey]) {
+        demoPersistence.data[playersKey] = demoPersistence.data[playersKey].filter(p => p.id !== pid);
+        demoPersistence._markDirty();
+      }
+      // Rimuovi da window.YFM.allPlayers
+      window.YFM.allPlayers = window.YFM.allPlayers.filter(p => p.id !== pid);
+    }
+    // I giocatori demo non possono essere eliminati
     loadRoster();
   } catch (e) {
     alert('Errore: ' + e.message);
@@ -188,8 +180,21 @@ async function deleteSelectedPlayers() {
   if (!confirm('Eliminare ' + selectedPlayers.size + ' giocatori dalla rosa?')) return;
   showLoading();
   try {
+    const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';
+    const playersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+    
     for (const pid of selectedPlayers) {
-      await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori/' + pid, { method: 'DELETE' });
+      const isCustomPlayer = pid && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(pid);
+      
+      if (isCustomPlayer) {
+        // Rimuovi da demoPersistence
+        if (demoPersistence.data[playersKey]) {
+          demoPersistence.data[playersKey] = demoPersistence.data[playersKey].filter(p => p.id !== pid);
+          demoPersistence._markDirty();
+        }
+        // Rimuovi da window.YFM.allPlayers
+        window.YFM.allPlayers = window.YFM.allPlayers.filter(p => p.id !== pid);
+      }
     }
     selectedPlayers.clear();
     isSelectionMode = false;
@@ -228,23 +233,8 @@ function openMoveModal(pids) {
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
   
   document.getElementById('confirmMoveBtn').addEventListener('click', async () => {
-    const targetSquadraId = document.getElementById('targetSquadra').value;
-    showLoading();
-    try {
-      for (const pid of playerIds) {
-        await apiFetch('/calciatori/' + pid + '/move', {
-          method: 'POST',
-          body: JSON.stringify({ fromSquadraId: currentSquadraId, toSquadraId: targetSquadraId })
-        });
-      }
-      modal.remove();
-      if (Array.isArray(pids) && pids.length > 1) cancelSelection();
-      loadRoster();
-    } catch (e) {
-      alert('Errore: ' + e.message);
-    } finally {
-      hideLoading();
-    }
+    alert('In modalità demo lo spostamento non è disponibile.\nPer spostare un giocatore, eliminalo e aggiungilo nell\'altra categoria.');
+    modal.remove();
   });
 }
 
@@ -309,43 +299,31 @@ function openPlayerForm(pid) {
       rilasciato_da: document.getElementById('pfRD').value
     };
     
-    const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
-    
     showLoading();
     try {
-      if (isDemo) {
-        const isU17 = window.YFM.squadraId === '00000000-0000-0000-0000-000000000011';
-        const customPlayersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+      const isU17 = window.YFM.squadraId === '00000000-0000-0000-0000-000000000011';
+      const customPlayersKey = isU17 ? 'customPlayers_U17' : 'customPlayers';
+      
+      if (p) {
+        // Verifica se è un giocatore personalizzato (UUID v4)
+        const isCustomPlayer = p.id && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(p.id);
         
-        if (p) {
-          // Verifica se è un giocatore personalizzato o demo
-          const isCustomPlayer = p.id && !p.id.startsWith('c');
-          
-          if (isCustomPlayer) {
-            // Giocatore personalizzato - aggiorna in persistenza
-            demoPersistence.updateCustomPlayer(p.id, d, customPlayersKey);
-          }
-          // Aggiorna window.YFM.allPlayers (sempre)
-          const idx = window.YFM.allPlayers.findIndex(pl => pl.id === p.id);
-          if (idx !== -1) {
-            window.YFM.allPlayers[idx] = { ...window.YFM.allPlayers[idx], ...d };
-          }
-        } else {
-          // Aggiunge nuovo giocatore
-          const newPlayer = demoPersistence.addPlayer(d);
-          window.YFM.allPlayers.push(newPlayer);
+        if (isCustomPlayer) {
+          // Giocatore personalizzato - aggiorna in persistenza
+          demoPersistence.updateCustomPlayer(p.id, d, customPlayersKey);
         }
-        closeModal();
-        loadRoster();
+        // Aggiorna window.YFM.allPlayers (sempre)
+        const idx = window.YFM.allPlayers.findIndex(pl => pl.id === p.id);
+        if (idx !== -1) {
+          window.YFM.allPlayers[idx] = { ...window.YFM.allPlayers[idx], ...d };
+        }
       } else {
-        if (p) {
-          await apiFetch('/calciatori/' + p.id, { method: 'PUT', body: JSON.stringify(d) });
-        } else {
-          await apiFetch('/squadre/' + window.YFM.squadraId + '/calciatori', { method: 'POST', body: JSON.stringify(d) });
-        }
-        closeModal();
-        loadRoster();
+        // Aggiunge nuovo giocatore
+        const newPlayer = demoPersistence.addPlayer(d);
+        window.YFM.allPlayers.push(newPlayer);
       }
+      closeModal();
+      loadRoster();
     } catch (e) {
       alert('Errore: ' + e.message);
     } finally {

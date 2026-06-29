@@ -1,53 +1,32 @@
-import { apiFetch } from '../../services/api';
 import { formatDate, formatDateShort, formatTime } from '../../utils/formatters';
 
 export default async function loadDashboard() {
   const c = document.getElementById('pageContent');
-  const squadraId = window.YFM.squadraId;
   
   // Demo mode: usa i dati in memoria
   const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   
-  let stats, top, topValutazioni, partiteFuture;
-  
-  if (isDemo) {
-    // Usa i dati demo
-    stats = window.YFM.demoStats || { punti: 0, partiteGiocate: 0, vittorie: 0, pareggi: 0, sconfitte: 0, golFatti: 0, golSubiti: 0, differenzaReti: 0 };
-    top = window.YFM.demoTopPlayers || { marcatori: [], assistmen: [], presenze: [] };
-    topValutazioni = { topGiocatori: [] };
-    // Filtra partite future e passate
-    const demoMatches = window.YFM.demoMatches || [];
-    const futureMatches = demoMatches.filter(p => p.stato === 'Da disputare');
-    const pastMatches = demoMatches.filter(p => p.stato === 'Terminata');
-    partiteFuture = futureMatches;
-    // Aggiungi risultati alle stats (con nuovi campi)
-    stats.risultati = pastMatches.map(m => ({
-      id: m.id,
-      avversario: m.avversario,
-      luogo: m.luogo,
-      dataOra: m.data_ora,
-      golFatti: m.gol_casa,
-      golSubiti: m.gol_trasferta,
-      tipo_evento: m.tipo_evento || 'campionato',
-      dettaglio_competizione: m.dettaglio_competizione,
-      badge_avversario: m.badge_avversario
-    }));
-  } else {
-    try {
-      [stats, top, topValutazioni, partiteFuture] = await Promise.all([
-        apiFetch('/squadre/' + squadraId + '/statistiche-complete').catch(() => ({ punti:0, partiteGiocate:0, vittorie:0, pareggi:0, sconfitte:0, golFatti:0, golSubiti:0, differenzaReti:0, risultati:[] })),
-        apiFetch('/squadre/' + squadraId + '/top-players').catch(() => ({ marcatori:[], assistmen:[], presenze:[] })),
-        apiFetch('/squadre/' + squadraId + '/valutazioni-top').catch(() => ({ topGiocatori:[] })),
-        apiFetch('/squadre/' + squadraId + '/partite-future').catch(() => [])
-      ]);
-    } catch (err) {
-      console.error('Dashboard load error:', err);
-      stats = { punti: 0, partiteGiocate: 0, vittorie: 0, pareggi: 0, sconfitte: 0, golFatti: 0, golSubiti: 0, differenzaReti: 0 };
-      top = { marcatori: [], assistmen: [], presenze: [] };
-      topValutazioni = { topGiocatori: [] };
-      partiteFuture = [];
-    }
-  }
+  // Usa i dati demo (sempre attivo in questo repo)
+  const stats = window.YFM.demoStats || { punti: 0, partiteGiocate: 0, vittorie: 0, pareggi: 0, sconfitte: 0, golFatti: 0, golSubiti: 0, differenzaReti: 0 };
+  const top = window.YFM.demoTopPlayers || { marcatori: [], assistmen: [], presenze: [] };
+  const topValutazioni = { topGiocatori: [] };
+  // Filtra partite future e passate
+  const demoMatches = window.YFM.demoMatches || [];
+  const futureMatches = demoMatches.filter(p => p.stato === 'Da disputare');
+  const pastMatches = demoMatches.filter(p => p.stato === 'Terminata');
+  const partiteFuture = futureMatches;
+  // Aggiungi risultati alle stats (con nuovi campi)
+  stats.risultati = pastMatches.map(m => ({
+    id: m.id,
+    avversario: m.avversario,
+    luogo: m.luogo,
+    dataOra: m.data_ora,
+    golFatti: m.gol_casa,
+    golSubiti: m.gol_trasferta,
+    tipo_evento: m.tipo_evento || 'campionato',
+    dettaglio_competizione: m.dettaglio_competizione,
+    badge_avversario: m.badge_avversario
+  }));
   
   const s = window.YFM.getSquadra();
   const prossimaPartita = partiteFuture && partiteFuture.length > 0 ? partiteFuture[0] : null;

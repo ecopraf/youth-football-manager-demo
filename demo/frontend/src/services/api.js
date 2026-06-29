@@ -6,9 +6,11 @@ export const API_BASE = (() => {
   return 'https://youth-football-manager-backend.vercel.app/api';
 })();
 
-// Warmup: ping al backend all'avvio
+// Warmup: ping al backend all'avvio (solo se non in demo)
 let warmed = false;
 export async function warmup() {
+  // Non fare warmup in demo mode
+  if (window.YFM?.demoMode || localStorage.getItem('yfm_demo_session') === 'active') return;
   if (warmed) return;
   try {
     await fetch(`${API_BASE}/health`, { timeout: 5000 }).catch(() => {});
@@ -17,6 +19,11 @@ export async function warmup() {
 }
 // Avvia warmup in background
 warmup();
+
+// ═══════════════════════════════════════════════════════════════
+// MODALITÀ DEMO: blocca tutte le chiamate API
+// ═══════════════════════════════════════════════════════════════
+const isDemoMode = () => window.YFM?.demoMode || localStorage.getItem('yfm_demo_session') === 'active';
 
 // ── AUTH HELPERS ──
 
@@ -70,6 +77,11 @@ export function setCurrentUser(user) {
 
 // Funzione per chiamate API con timeout e gestione errori
 export async function apiFetch(endpoint, options = {}) {
+  // In modalità demo, blocca tutte le chiamate API
+  if (isDemoMode()) {
+    throw new Error('[DEMO] API disabilitata');
+  }
+  
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000); // 30 sec timeout
   
