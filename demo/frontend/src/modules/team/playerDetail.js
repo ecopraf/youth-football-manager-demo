@@ -22,6 +22,9 @@ export async function loadPlayerDetail(container, playerId) {
     // Supporto modalità demo
     const isDemoMode = window.YFM && (typeof window.YFM.isDemo === 'function' ? window.YFM.isDemo() : window.YFM.demoMode);
     
+    // Verifica se è un giocatore custom (UUID v4 generato localmente)
+    const isCustomPlayer = playerId && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(playerId);
+    
     if (isDemoMode) {
       // Trova giocatore nei dati demo
       player = window.YFM.allPlayers?.find(p => p.id === playerId);
@@ -29,24 +32,36 @@ export async function loadPlayerDetail(container, playerId) {
         throw new Error('Giocatore non trovato in demo');
       }
       
-      // Genera statistiche demo basate sul giocatore
-      currentSeasonStats = {
-        partite: 2,
-        gol: player.id === 'c007' ? 3 : player.id === 'c009' ? 2 : player.id === 'c011' ? 1 : 0,
-        assist: player.id === 'c008' ? 2 : 0,
-        media_voto: (6 + Math.random() * 2).toFixed(1)
-      };
+      // Solo i giocatori demo (non custom) hanno statistiche precompilate
+      const isDemoPlayer = playerId && playerId.startsWith('c');
       
-      // Partite recenti demo
-      lastMatches = [
-        { id: 'p001', data: '2025-09-21', avversario: 'FC Torres', gol: 2, assist: 1, voto: 7.0 },
-        { id: 'p002', data: '2025-09-14', avversario: 'ASD Azzurri Roma', gol: 1, assist: 0, voto: 6.5 }
-      ];
+      if (isDemoPlayer) {
+        // Genera statistiche demo basate sul giocatore
+        currentSeasonStats = {
+          partite: 2,
+          gol: player.id === 'c007' ? 3 : player.id === 'c009' ? 2 : player.id === 'c011' ? 1 : 0,
+          assist: player.id === 'c008' ? 2 : 0,
+          media_voto: (6 + Math.random() * 2).toFixed(1)
+        };
+        
+        // Partite recenti demo
+        lastMatches = [
+          { id: 'p001', data: '2025-09-21', avversario: 'FC Torres', gol: 2, assist: 1, voto: 7.0 },
+          { id: 'p002', data: '2025-09-14', avversario: 'ASD Azzurri Roma', gol: 1, assist: 0, voto: 6.5 }
+        ];
+        
+        // Carriera demo
+        career = [
+          { stagione: '2024/25', partite: 15, gol: 5, media_voto: 6.2 },
+          { stagione: '2023/24', partite: 12, gol: 3, media_voto: 5.9 }
+        ];
+      }
+      // I giocatori custom NON hanno statistiche precompilate (valori null/[])
       
-      // Carriera demo
-      career = [
-        { stagione: '2024/25', partite: 15, gol: 5, media_voto: 6.2 },
-        { stagione: '2023/24', partite: 12, gol: 3, media_voto: 5.9 }
+      // In demo mode, popola allSquadre con le squadre disponibili
+      allSquadre = [
+        { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy Under 19' },
+        { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy Under 17' }
       ];
       
       hideLoading();
@@ -105,6 +120,17 @@ function renderPlayerDetail(container, data) {
   }
 
   const isAdmin = window.YFM?.isAdmin?.() || false;
+  const isDemoMode = window.YFM && window.YFM.demoMode === true;
+  const isCustomPlayer = player.id && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(player.id);
+  
+  // Popola allSquadre se vuoto (necessario per giocatori custom in demo)
+  if (isDemoMode && (!allSquadre || allSquadre.length === 0)) {
+    allSquadre = [
+      { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy Under 19' },
+      { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy Under 17' }
+    ];
+  }
+  
   const nome = player.nome || '';
   const cognome = player.cognome || '';
   const initials = (nome[0] || '') + (cognome[0] || '');
@@ -344,9 +370,6 @@ function renderPlayerDetail(container, data) {
       };
       showLoading('Salvataggio...');
       try {
-        // Verifica se è un giocatore custom (UUID v4 generato localmente)
-        const isCustomPlayer = player.id && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(player.id);
-        
         if (isDemoMode && isCustomPlayer) {
           // Giocatore custom: salva in demoPersistence
           const isU17 = window.YFM?.squadraId === '00000000-0000-0000-0000-000000000011';

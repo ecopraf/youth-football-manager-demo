@@ -27,8 +27,28 @@ const DEMO_WORKSPACE = {
 };
 
 const DEMO_SQUADRE = [
-  { id: '00000000-0000-0000-0000-000000000010', nome: 'Green Academy', categoria: 'Under 19', allenatore: 'Marco Bianchi', dirigente: 'Luca Verdi' },
-  { id: '00000000-0000-0000-0000-000000000011', nome: 'Green Academy', categoria: 'Under 17', allenatore: 'Roberto Rossi', dirigente: 'Paolo Gialli' }
+  { 
+    id: '00000000-0000-0000-0000-000000000010', 
+    nome: 'Green Academy', 
+    categoria: 'Under 19', 
+    allenatore: 'Marco Bianchi', 
+    allenatore2: 'Alessandro Ferro',
+    dirigente: 'Luca Verdi',
+    dirigente2: 'Giovanni Marroni',
+    preparatore_atletico: 'Francesco Zini',
+    allenatore_portieri: 'Paolo Conti'
+  },
+  { 
+    id: '00000000-0000-0000-0000-000000000011', 
+    nome: 'Green Academy', 
+    categoria: 'Under 17', 
+    allenatore: 'Roberto Rossi',
+    allenatore2: 'Michele Torre',
+    dirigente: 'Paolo Gialli',
+    dirigente2: 'Carlo Bianchi',
+    preparatore_atletico: 'Luca Ferrara',
+    allenatore_portieri: 'Antonio Greco'
+  }
 ];
 
 // Partite demo

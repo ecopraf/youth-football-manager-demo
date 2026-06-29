@@ -202,12 +202,13 @@ export default async function loadDashboard() {
   const renderStaff = () => {
     const roleLabels = {
       allenatore: 'Allenatore',
+      allenatore2: 'Allenatore 2ª',
       dirigente: '1° Dirigente',
       dirigente2: '2° Dirigente',
       preparatore_atletico: 'Prep. Atl.',
       allenatore_portieri: 'All. Portieri'
     };
-    const staffItems = ['allenatore','dirigente','dirigente2','preparatore_atletico','allenatore_portieri']
+    const staffItems = ['allenatore','allenatore2','dirigente','dirigente2','preparatore_atletico','allenatore_portieri']
       .filter(r => s[r])
       .map(r => '<div class="staff-item"><span style="font-size:11px;font-weight:600;color:#667eea;min-width:90px;background:#f0f4ff;padding:4px 8px;border-radius:6px;">' + roleLabels[r] + '</span><span style="font-weight:500;font-size:14px;">' + s[r] + '</span></div>')
       .join('');
