@@ -20,9 +20,10 @@ export function setOnDateSelect(callback) {
  * Renderizza il calendario mensile
  * @param {Array} config - Configurazione settimana tipo [{giorno_settimana, ...}]
  * @param {Array} allenamenti - Lista allenamenti con date e presenze
+ * @param {Array} partite - Lista partite con data_ora
  * @returns {string} HTML del calendario
  */
-export function renderCalendar(config, allenamenti) {
+export function renderCalendar(config, allenamenti, partite) {
   const giorniConfigurati = (config || []).map(c => c.giorno_settimana);
   const oggi = new Date();
   const oggiStr = oggi.toISOString().split('T')[0];
@@ -36,6 +37,15 @@ export function renderCalendar(config, allenamenti) {
       if ((a.presenze && a.presenze.length > 0) || (a.assenti && a.assenti.length > 0)) {
         dateConPresenze.add(a.data);
       }
+    }
+  });
+
+  // Mappa date con partita
+  const dateConPartita = new Set();
+  (partite || []).forEach(p => {
+    if (p.data_ora) {
+      const dataPartita = new Date(p.data_ora).toISOString().split('T')[0];
+      dateConPartita.add(dataPartita);
     }
   });
 
@@ -68,7 +78,10 @@ export function renderCalendar(config, allenamenti) {
     .cal-day.has-training:hover { background: #dcfce7; }
     .cal-day.has-presenze { cursor: pointer; background: #d1fae5; }
     .cal-day.has-presenze:hover { background: #a7f3d0; }
+    .cal-day.has-match { background: #fff3e0; border: 2px solid #F39C12; }
+    .cal-day.has-match:hover { background: #ffe0b2; }
     .cal-day.is-today { border: 2px solid #667eea; font-weight: 700; color: #667eea; }
+    .cal-day.is-today.has-match { border: 2px solid #E74C3C; background: #fff3e0; color: #E74C3C; }
     .cal-day.is-selected { background: #667eea !important; color: white !important; border-radius: 8px; }
     .cal-day.is-selected .cal-dot { background: white !important; }
     .cal-dot {
@@ -76,6 +89,7 @@ export function renderCalendar(config, allenamenti) {
     }
     .cal-dot.programmed { background: #86efac; border: 1px solid #22c55e; }
     .cal-dot.registered { background: #22c55e; }
+    .cal-dot.match { background: #F39C12; border: 1px solid #E67E22; }
     .cal-day.is-future-training { cursor: pointer; }
     .cal-day.is-future-training:hover { background: #eff6ff; }
     @media (max-width: 640px) {
@@ -111,8 +125,10 @@ export function renderCalendar(config, allenamenti) {
     const isProgrammed = giorniConfigurati.includes(dayOfWeek);
     const hasPresenze = dateConPresenze.has(dateStr);
     const hasAllenamento = dateConAllenamento.has(dateStr);
+    const hasMatch = dateConPartita.has(dateStr);
 
     let classes = 'cal-day';
+    if (hasMatch) classes += ' has-match';
     if (isToday) classes += ' is-today';
     if (isSelected) classes += ' is-selected';
     if (hasPresenze) classes += ' has-presenze';
@@ -120,7 +136,9 @@ export function renderCalendar(config, allenamenti) {
     else if (isProgrammed) classes += ' is-future-training';
 
     let dotHtml = '';
-    if (hasPresenze) {
+    if (hasMatch) {
+      dotHtml = '<span class="cal-dot match"></span>';
+    } else if (hasPresenze) {
       dotHtml = '<span class="cal-dot registered"></span>';
     } else if (hasAllenamento || isProgrammed) {
       dotHtml = '<span class="cal-dot programmed"></span>';
@@ -138,6 +156,7 @@ export function renderCalendar(config, allenamenti) {
   html += `<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:#6c757d;flex-wrap:wrap;">
     <span><span class="cal-dot registered" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span> Presenze registrate</span>
     <span><span class="cal-dot programmed" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span> Programmato</span>
+    <span><span class="cal-dot match" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span> Partita</span>
     <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border:2px solid #667eea;border-radius:4px;display:inline-block;"></span> Oggi</span>
   </div>`;
 

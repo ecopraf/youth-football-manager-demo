@@ -57,6 +57,7 @@ async function loadDemoData() {
     config,
     giocatori: tuttiGiocatori,
     allenamenti: allenamentiDemo,
+    partite: window.YFM.demoMatches || [],
     summary: summary.perGiocatore,
     settimana: summary.settimana
   };
@@ -77,6 +78,7 @@ async function loadApiData() {
       config,
       giocatori,
       allenamenti: presenze,
+      partite: window.YFM.demoMatches || [],
       summary: sumData.summary || {},
       settimana: sumData.settimana || {}
     };
@@ -140,7 +142,7 @@ function calculateSummary(allenamenti, giocatori, config) {
 // ═══════════════════════════════════════════════════════════════
 
 function renderPage(c) {
-  const { config, giocatori, allenamenti, summary, settimana } = trainingData;
+  const { config, giocatori, allenamenti, partite, summary, settimana } = trainingData;
 
   // Seleziona oggi se è giorno di allenamento
   selectTodayIfTraining(config);
@@ -154,7 +156,7 @@ function renderPage(c) {
   window._trainingRefreshCalendar = () => {
     const calEl = document.getElementById('trainingCalendar');
     if (calEl) {
-      calEl.innerHTML = renderCalendar(config, allenamenti);
+      calEl.innerHTML = renderCalendar(config, allenamenti, partite);
       attachCalendarListeners();
     }
   };
@@ -167,7 +169,7 @@ function renderPage(c) {
     <!-- Calendario Mensile -->
     <div class="card" style="margin-bottom:16px;">
       <div id="trainingCalendar">
-        ${renderCalendar(config, allenamenti)}
+        ${renderCalendar(config, allenamenti, partite)}
       </div>
     </div>
 
