@@ -363,6 +363,17 @@ class DemoManager {
     this.updateBadge();
     this.setupWelcomePopup();
     this.preloadTrainingData();
+    this._setupMobileTooltipCleanup();
+  }
+  
+  _setupMobileTooltipCleanup() {
+    // Su mobile: qualsiasi touch rimuove tooltip residui
+    if ('ontouchstart' in window || window.innerWidth <= 768) {
+      document.addEventListener('touchstart', () => {
+        document.getElementById('demo-element-tooltip')?.remove();
+        document.getElementById('demo-sidebar-tooltip')?.remove();
+      }, { passive: true });
+    }
   }
   
   preloadTrainingData() {
@@ -820,18 +831,27 @@ class DemoManager {
       padding: 16px 24px;
       border-radius: 12px;
       max-width: 400px;
+      width: calc(100% - 40px);
       box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
       z-index: 9999;
       font-family: 'Inter', -apple-system, sans-serif;
       animation: slideUp 0.3s ease;
+      cursor: pointer;
     `;
+    
+    // Click/tap ovunque sul tooltip lo chiude
+    tip.addEventListener('click', () => tip.remove());
     
     document.body.appendChild(tip);
     
-    // Auto-hide dopo 8 secondi
+    // Auto-hide dopo 4 secondi (ridotto da 8)
     setTimeout(() => {
-      if (tip.parentElement) tip.remove();
-    }, 8000);
+      if (tip.parentElement) {
+        tip.style.opacity = '0';
+        tip.style.transition = 'opacity 0.3s';
+        setTimeout(() => { if (tip.parentElement) tip.remove(); }, 300);
+      }
+    }, 4000);
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -840,6 +860,9 @@ class DemoManager {
 
   setupPageHighlights(page) {
     if (!this.isDemo) return;
+    
+    // Disabilita tooltip hover su mobile (touch devices) - troppo invasivi
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) return;
     
     // Setup tooltip sidebar su tutti i link menu
     this.setupSidebarTooltips();
@@ -854,6 +877,9 @@ class DemoManager {
   }
 
   setupSidebarTooltips() {
+    // Non aggiungere su mobile/touch
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) return;
+    
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
     sidebarLinks.forEach(link => {
       if (link._sidebarTooltipBound) return;
@@ -951,6 +977,9 @@ class DemoManager {
   }
 
   addElementTooltip(selector, title, description) {
+    // Non aggiungere su mobile/touch
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) return;
+    
     const elements = document.querySelectorAll(selector);
     if (!elements.length) return;
     

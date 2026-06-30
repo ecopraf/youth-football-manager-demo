@@ -57,10 +57,10 @@ const DEMO_PARTITE = [
   { id: 'm001', avversario: 'Roma Academy', luogo: 'Trasferta', data_ora: '2026-07-05T15:30:00', competizione: 'Campionato Primavera', stato: 'Da disputare', giornata: 16, tipo_evento: 'campionato', dettaglio_competizione: 'G.16', badge_avversario: '#8B0000' },
   { id: 'm002', avversario: 'Lazio Youth', luogo: 'Casa', data_ora: '2026-07-12T16:00:00', competizione: 'Campionato Primavera', stato: 'Da disputare', giornata: 17, tipo_evento: 'campionato', dettaglio_competizione: 'G.17', badge_avversario: '#1E90FF' },
   // Partite terminate
-  { id: 'm003', avversario: 'Inter Academy', luogo: 'Casa', data_ora: '2026-06-20T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 3, gol_trasferta: 1, giornata: 15, tipo_evento: 'campionato', dettaglio_competizione: 'G.15', badge_avversario: '#0066CC' },
-  { id: 'm004', avversario: 'Milan Youth', luogo: 'Trasferta', data_ora: '2026-06-13T15:00:00', competizione: 'Coppa Primavera', stato: 'Terminata', gol_casa: 2, gol_trasferta: 2, giornata: 1, tipo_evento: 'coppa', dettaglio_competizione: 'QF', badge_avversario: '#FF0000' },
+  { id: 'm003', avversario: 'Inter Academy', luogo: 'Casa', data_ora: '2026-06-20T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 3, gol_trasferta: 1, giornata: 15, tipo_evento: 'campionato', dettaglio_competizione: 'G.15', badge_avversario: '#0066CC', note_avversario: 'Squadra molto fisica, giocano con 3 difensori alti. Palla lunga sugli esterni. Terzino destro n.2 molto veloce, raddoppiare sempre.' },
+  { id: 'm004', avversario: 'Milan Youth', luogo: 'Trasferta', data_ora: '2026-06-13T15:00:00', competizione: 'Coppa Primavera', stato: 'Terminata', gol_casa: 2, gol_trasferta: 2, giornata: 1, tipo_evento: 'coppa', dettaglio_competizione: 'QF', badge_avversario: '#FF0000', note_avversario: 'Pressing alto nei primi 20 minuti, poi calano. Il n.10 è il regista, da marcare stretto. Calci piazzati pericolosi.' },
   { id: 'm005', avversario: 'Juventus Academy', luogo: 'Casa', data_ora: '2026-06-06T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 4, gol_trasferta: 0, giornata: 13, tipo_evento: 'campionato', dettaglio_competizione: 'G.13', badge_avversario: '#000000' },
-  { id: 'm006', avversario: 'Napoli Academy', luogo: 'Trasferta', data_ora: '2026-05-30T15:00:00', competizione: 'Torneo Infiorata', stato: 'Terminata', gol_casa: 1, gol_trasferta: 2, giornata: 1, tipo_evento: 'torneo', dettaglio_competizione: 'Torneo Infiorata G.01', badge_avversario: '#1E90FF' },
+  { id: 'm006', avversario: 'Napoli Academy', luogo: 'Trasferta', data_ora: '2026-05-30T15:00:00', competizione: 'Torneo Infiorata', stato: 'Terminata', gol_casa: 1, gol_trasferta: 2, giornata: 1, tipo_evento: 'torneo', dettaglio_competizione: 'Torneo Infiorata G.01', badge_avversario: '#1E90FF', note_avversario: 'Giocano bene a terra, possesso palla. Vulnerabili sulle ripartenze. Il portiere esce spesso: provare pallonetti da fuori area.' },
   { id: 'm007', avversario: 'Fiorentina Youth', luogo: 'Casa', data_ora: '2026-05-23T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 5, gol_trasferta: 1, giornata: 11, tipo_evento: 'campionato', dettaglio_competizione: 'G.11', badge_avversario: '#8B008B' },
 ];
 
@@ -188,6 +188,30 @@ const DEMO_FORMAZIONI_U17 = {
 
 // Statistiche U17
 const DEMO_STATISTICHE_U17 = calculateStatsFromMatches(DEMO_PARTITE_U17);
+
+// Eventi partite U17
+const DEMO_EVENTI_U17 = [
+  // u003: Green 2-1 Torino Academy
+  { match_id: 'u003', player_id: 'u007', tipo: 'GOAL', minuto: 22 },
+  { match_id: 'u003', player_id: 'u010', tipo: 'ASSIST', minuto: 22 },
+  { match_id: 'u003', player_id: 'u011', tipo: 'GOAL', minuto: 68 },
+  { match_id: 'u003', player_id: 'u005', tipo: 'ASSIST', minuto: 68 },
+  { match_id: 'u003', player_id: null, tipo: 'GOAL', minuto: 55, note: 'Torino' },
+  { match_id: 'u003', player_id: 'u008', tipo: 'YELLOW', minuto: 40 },
+  // u004: Green 1-1 Sampdoria Youth
+  { match_id: 'u004', player_id: 'u009', tipo: 'GOAL', minuto: 33 },
+  { match_id: 'u004', player_id: 'u007', tipo: 'ASSIST', minuto: 33 },
+  { match_id: 'u004', player_id: null, tipo: 'GOAL', minuto: 71, note: 'Sampdoria' },
+  { match_id: 'u004', player_id: 'u004', tipo: 'YELLOW', minuto: 58 },
+  { match_id: 'u004', player_id: 'u013', tipo: 'YELLOW', minuto: 82 },
+  // u005: Green 3-0 Genoa Academy
+  { match_id: 'u005', player_id: 'u007', tipo: 'GOAL', minuto: 14 },
+  { match_id: 'u005', player_id: 'u010', tipo: 'ASSIST', minuto: 14 },
+  { match_id: 'u005', player_id: 'u010', tipo: 'GOAL', minuto: 42 },
+  { match_id: 'u005', player_id: 'u008', tipo: 'ASSIST', minuto: 42 },
+  { match_id: 'u005', player_id: 'u009', tipo: 'GOAL', minuto: 76 },
+  { match_id: 'u005', player_id: 'u005', tipo: 'ASSIST', minuto: 76 },
+];
 
 // Top players U17
 const DEMO_TOP_PLAYERS_U17 = {
@@ -344,6 +368,7 @@ function loadSquadraData(squadraId) {
   if (isU17) {
     window.YFM.allPlayers = [...DEMO_CALCIATORI_U17, ...savedCustomPlayers];
     window.YFM.demoMatches = DEMO_PARTITE_U17;
+    window.YFM.demoEvents = DEMO_EVENTI_U17;
     window.YFM.demoFormazioni = DEMO_FORMAZIONI_U17;
     window.YFM.demoStats = DEMO_STATISTICHE_U17;
     window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS_U17;
@@ -384,6 +409,16 @@ function initDemoSession() {
   }
   if (!window.YFM.demoMatches) {
     window.YFM.demoMatches = DEMO_PARTITE;
+  } else {
+    // Merge note_avversario dai dati originali (potrebbero mancare nel localStorage vecchio)
+    DEMO_PARTITE.forEach(dp => {
+      if (dp.note_avversario) {
+        const existing = window.YFM.demoMatches.find(m => m.id === dp.id);
+        if (existing && !existing.note_avversario) {
+          existing.note_avversario = dp.note_avversario;
+        }
+      }
+    });
   }
   if (!window.YFM.demoEvents) {
     window.YFM.demoEvents = DEMO_EVENTI;

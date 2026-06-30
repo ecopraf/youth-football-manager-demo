@@ -1,10 +1,13 @@
 import { apiFetch } from '../../services/api';
 import { formatDateShort } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
+import demoPersistence from '../demo/DemoPersistence';
 
 export async function openNoteAvversario(mid) {
-  const match = window.YFM.allMatches.find(m => m.id === mid) || {};
-  const inherited = getNoteAvversario(match);
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  const allMatches = isDemo ? (window.YFM.demoMatches || []) : (window.YFM.allMatches || []);
+  const match = allMatches.find(m => m.id === mid) || {};
+  const inherited = getNoteAvversario(match, allMatches);
   const note = match.note_avversario || inherited.text || '';
 
   const info = (inherited.source && !match.note_avversario)
@@ -23,21 +26,37 @@ export async function openNoteAvversario(mid) {
     const newNote = document.getElementById('noteAvvText').value;
     showLoading();
     try {
-      await apiFetch('/partite/' + mid, {
-        method: 'PUT',
-        body: JSON.stringify({
-          dataOra: match.data_ora,
-          avversario: match.avversario,
-          luogo: match.luogo,
-          competizione: match.competizione,
-          giornata: match.giornata,
-          noteAvversario: newNote
-        })
-      });
-      match.note_avversario = newNote;
-      hideLoading();
-      modal.close();
-      alert('✅ Note salvate!');
+      if (isDemo) {
+        // Demo mode: salva in memoria sulla partita
+        match.note_avversario = newNote;
+        // Salva anche in persistenza
+        if (demoPersistence.data.matches) {
+          const pm = demoPersistence.data.matches.find(m => m.id === mid);
+          if (pm) {
+            pm.note_avversario = newNote;
+            demoPersistence._markDirty();
+          }
+        }
+        hideLoading();
+        modal.close();
+        alert('✅ Note salvate!');
+      } else {
+        await apiFetch('/partite/' + mid, {
+          method: 'PUT',
+          body: JSON.stringify({
+            dataOra: match.data_ora,
+            avversario: match.avversario,
+            luogo: match.luogo,
+            competizione: match.competizione,
+            giornata: match.giornata,
+            noteAvversario: newNote
+          })
+        });
+        match.note_avversario = newNote;
+        hideLoading();
+        modal.close();
+        alert('✅ Note salvate!');
+      }
     } catch (e) {
       hideLoading();
       alert('Errore: ' + e.message);
@@ -45,9 +64,9 @@ export async function openNoteAvversario(mid) {
   });
 }
 
-function getNoteAvversario(match) {
+function getNoteAvversario(match, allMatches) {
   if (match.note_avversario) return { text: match.note_avversario, source: '' };
-  const altre = window.YFM.allMatches.filter(
+  const altre = (allMatches || []).filter(
     m => m.id !== match.id && m.avversario === match.avversario && m.note_avversario
   );
   if (altre.length > 0) {

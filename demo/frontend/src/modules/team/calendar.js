@@ -399,7 +399,16 @@ export function renderMatchCard(m, stats, isNext = false) {
 
   // === RIGA 2: Avversario (grande) + Risultato ===
   let resultHtml = '';
-  if (hasResult && golFatti !== null && golSubiti !== null) {
+  if (!isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    // Partita futura con risultato: mostra LIVE lampeggiante
+    const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
+    resultHtml = `<span style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">`
+      + `<span class="live-dot" style="background:#E74C3C;"></span>`
+      + `<span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>`
+      + `<span style="font-size:20px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</span>`
+      + `</span>`;
+  } else if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    // Partita passata con risultato: badge statico
     let cls, icon;
     if (golFatti > golSubiti) { cls = 'result-victory'; icon = '✅'; }
     else if (golFatti < golSubiti) { cls = 'result-defeat'; icon = '❌'; }
@@ -466,6 +475,7 @@ export function renderMatchCard(m, stats, isNext = false) {
     actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
     actionsHtml += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
     actionsHtml += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
+    actionsHtml += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   } else {
     // Archiviate
     actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);

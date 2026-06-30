@@ -19,56 +19,81 @@ export async function openDistinta(mid, staffOverrides) {
     // Demo mode: usa dati dalla persistenza
     try {
       const formazioneSalvata = demoPersistence.getFormation(mid);
-      if (!formazioneSalvata || (!formazioneSalvata.portiere && (!formazioneSalvata.difensori || formazioneSalvata.difensori.length === 0))) {
-        document.getElementById('distintaInner').innerHTML = '<div class="error-box">⚠️ Salva prima la formazione per visualizzare la distinta</div>';
-        return;
-      }
-      
       const match = (window.YFM.demoMatches || []).find(m => m.id === mid);
       const giocatori = window.YFM.allPlayers || [];
       
-      // Costruisci lista titolari
-      const titolariIds = [
-        formazioneSalvata.portiere,
-        ...(formazioneSalvata.difensori || []),
-        ...(formazioneSalvata.centrocampisti || []),
-        ...(formazioneSalvata.attaccanti || [])
-      ].filter(Boolean);
+      // Prova a usare la formazione se disponibile
+      let titolari = [];
+      let riserve = [];
       
-      const titolari = titolariIds.map(id => {
-        const g = giocatori.find(p => p.id === id);
-        if (!g) return null;
-        return {
-          calciatoreId: id,
-          nome: g.nome,
-          cognome: g.cognome,
-          ruolo: g.ruolo,
-          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
-          data_nascita: g.data_nascita,
-          tipo_documento: g.tipo_documento,
-          numero_documento: g.numero_documento,
-          rilasciato_da: g.rilasciato_da,
-          matricola_figc: g.matricola_figc
-        };
-      }).filter(Boolean);
-      
-      // Riserve
-      const riserve = (formazioneSalvata.riserve || []).map(id => {
-        const g = giocatori.find(p => p.id === id);
-        if (!g) return null;
-        return {
-          calciatoreId: id,
-          nome: g.nome,
-          cognome: g.cognome,
-          ruolo: g.ruolo,
-          numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
-          data_nascita: g.data_nascita,
-          tipo_documento: g.tipo_documento,
-          numero_documento: g.numero_documento,
-          rilasciato_da: g.rilasciato_da,
-          matricola_figc: g.matricola_figc
-        };
-      }).filter(Boolean);
+      if (formazioneSalvata && (formazioneSalvata.portiere || (formazioneSalvata.difensori && formazioneSalvata.difensori.length > 0))) {
+        // Formazione definita: usa titolari + riserve
+        const titolariIds = [
+          formazioneSalvata.portiere,
+          ...(formazioneSalvata.difensori || []),
+          ...(formazioneSalvata.centrocampisti || []),
+          ...(formazioneSalvata.attaccanti || [])
+        ].filter(Boolean);
+        
+        titolari = titolariIds.map(id => {
+          const g = giocatori.find(p => p.id === id);
+          if (!g) return null;
+          return {
+            calciatoreId: id,
+            nome: g.nome,
+            cognome: g.cognome,
+            ruolo: g.ruolo,
+            numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
+            data_nascita: g.data_nascita,
+            tipo_documento: g.tipo_documento,
+            numero_documento: g.numero_documento,
+            rilasciato_da: g.rilasciato_da,
+            matricola_figc: g.matricola_figc
+          };
+        }).filter(Boolean);
+        
+        riserve = (formazioneSalvata.riserve || []).map(id => {
+          const g = giocatori.find(p => p.id === id);
+          if (!g) return null;
+          return {
+            calciatoreId: id,
+            nome: g.nome,
+            cognome: g.cognome,
+            ruolo: g.ruolo,
+            numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
+            data_nascita: g.data_nascita,
+            tipo_documento: g.tipo_documento,
+            numero_documento: g.numero_documento,
+            rilasciato_da: g.rilasciato_da,
+            matricola_figc: g.matricola_figc
+          };
+        }).filter(Boolean);
+      } else {
+        // Nessuna formazione: usa i convocati in ordine alfabetico
+        const convocatiIds = demoPersistence.getConvocation(mid) || window.YFM.demoConvocazioni?.[mid] || [];
+        
+        if (convocatiIds.length === 0) {
+          document.getElementById('distintaInner').innerHTML = '<div class="error-box">⚠️ Nessun convocato per questa partita. Salva prima le convocazioni.</div>';
+          return;
+        }
+        
+        titolari = convocatiIds.map(id => {
+          const g = giocatori.find(p => p.id === id);
+          if (!g) return null;
+          return {
+            calciatoreId: id,
+            nome: g.nome,
+            cognome: g.cognome,
+            ruolo: g.ruolo,
+            numeroMaglia: g.numero_maglia || g.numeroMaglia || 99,
+            data_nascita: g.data_nascita,
+            tipo_documento: g.tipo_documento,
+            numero_documento: g.numero_documento,
+            rilasciato_da: g.rilasciato_da,
+            matricola_figc: g.matricola_figc
+          };
+        }).filter(Boolean).sort((a, b) => (a.cognome || '').localeCompare(b.cognome || ''));
+      }
       
       const data = {
         match: match,
