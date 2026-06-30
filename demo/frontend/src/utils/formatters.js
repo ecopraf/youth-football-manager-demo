@@ -11,6 +11,19 @@ export function formatDateShort(d) {
   return new Date(d).toLocaleDateString('it-IT');
 }
 
+export function formatDateCompact(d) {
+  if (!d) return '';
+  const date = new Date(d);
+  const giorni = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+  const mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+  const giorno = giorni[date.getDay()];
+  const num = date.getDate();
+  const mese = mesi[date.getMonth()];
+  const ore = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${giorno} ${num} ${mese} · ${ore}:${min}`;
+}
+
 export function formatBirthDate(d) {
   if (!d) return '';
   return new Date(d).toLocaleDateString('it-IT', {

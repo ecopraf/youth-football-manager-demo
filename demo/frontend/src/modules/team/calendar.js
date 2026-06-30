@@ -1,5 +1,5 @@
 import { apiFetch } from '../../services/api';
-import { formatDate, formatDateShort } from '../../utils/formatters';
+import { formatDate, formatDateShort, formatDateCompact } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
 import demoPersistence from '../demo/DemoPersistence';
 
@@ -92,7 +92,7 @@ function renderCalendarPage(c, matches, stats) {
   const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null;
   const otherFutureMatches = futureMatches.slice(1);
 
-  // Stili CSS per LIVE lampeggiante
+  // Stili CSS per il calendario
   let html = `<style>
     @keyframes pulse-live {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -123,13 +123,10 @@ function renderCalendarPage(c, matches, stats) {
     }
     .badge-casa { background: #D4EDDA; color: #155724; }
     .badge-trasferta { background: #FFF3CD; color: #856404; }
-    .badge-vittoria { background: #D4EDDA; color: #155724; }
-    .badge-sconfitta { background: #F8D7DA; color: #721C24; }
-    .badge-pareggio { background: #FFF3CD; color: #856404; }
     .badge-next { background: #D1ECF1; color: #0C5460; border: 1px solid #B8DAFF; }
     .badge-section { background: #E9ECEF; color: #495057; padding: 2px 8px; border-radius: 8px; font-size: 11px; }
     
-    /* ===== RISULTATO CON ICONA ===== */
+    /* ===== RISULTATO ===== */
     .result-badge {
       display: inline-flex;
       align-items: center;
@@ -144,7 +141,79 @@ function renderCalendarPage(c, matches, stats) {
     .result-draw { background: #FFF3CD; color: #856404; }
     .result-score { font-size: 16px; font-weight: 700; }
     
-    /* ===== POSIZIONE ASSOLUTA PULSANTI MODIFICA ===== */
+    /* ===== NUOVO LAYOUT CARD ===== */
+    .match-card-inner {
+      padding: 12px 16px;
+      border-radius: 4px;
+    }
+    .match-opponent {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .match-date-compact {
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 4px;
+    }
+    .match-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    
+    /* ===== PROGRESS DOTS ===== */
+    .match-progress {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      padding: 6px 0;
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #dee2e6;
+      background: white;
+      transition: all 0.2s;
+    }
+    .progress-label {
+      font-size: 10px;
+      color: #adb5bd;
+      font-weight: 500;
+    }
+    .progress-done .progress-dot {
+      background: #28a745;
+      border-color: #28a745;
+    }
+    .progress-done .progress-label {
+      color: #28a745;
+    }
+    .progress-active .progress-dot {
+      background: #667eea;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.3);
+      animation: pulse-live 1.5s ease-in-out infinite;
+    }
+    .progress-active .progress-label {
+      color: #667eea;
+      font-weight: 700;
+    }
+    .progress-pending .progress-dot {
+      background: white;
+      border-color: #dee2e6;
+    }
+    
+    /* ===== PULSANTI AZIONE ===== */
     .match-card-actions {
       display: flex;
       gap: 4px;
@@ -157,30 +226,38 @@ function renderCalendarPage(c, matches, stats) {
     }
     .match-card { position: relative; }
     
-    /* ===== PULSANTI AZIONE - STESSA RIGA ===== */
     .match-actions-row {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
-      margin-top: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
     }
     
     /* ===== MOBILE ===== */
     @media (max-width: 640px) {
-      .mobile-short-date { display: inline !important; }
-      .mobile-full-date { display: none !important; }
-      .mobile-actions .btn { padding: 6px 4px !important; min-width: 36px; }
-      .mobile-actions .btn .btn-text { display: none; }
-      .match-badges { display: flex; flex-wrap: wrap; gap: 4px; }
-      .match-badge { font-size: 10px; padding: 2px 6px; }
-      /* Griglia 3x2 pulsanti azione */
-      .match-actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px !important; width: 100%; }
-      .match-actions-row .btn { padding: 8px 4px !important; font-size: 11px; min-height: 40px; }
-      .match-actions-row .btn .btn-text { display: block; margin-top: 2px; }
+      .match-opponent { font-size: 15px; }
+      .match-date-compact { font-size: 12px; }
+      .match-badges .match-badge { font-size: 10px; padding: 2px 6px; }
+      .match-progress { gap: 8px; }
+      .progress-label { font-size: 9px; }
+      .match-actions-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        width: 100%;
+      }
+      .match-actions-row .btn {
+        padding: 8px 4px !important;
+        font-size: 11px;
+        min-height: 38px;
+        justify-content: center;
+      }
+      .match-actions-row .btn .btn-text { display: block; font-size: 10px; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
       .result-score { font-size: 14px; }
-      /* Pulsanti azione in alto a destra */
       .match-card-actions {
         position: absolute;
         top: 6px;
@@ -248,60 +325,81 @@ export function renderMatchCard(m, stats, isNext = false) {
   const hasResult = !!(r || (m.gol_casa !== undefined && m.gol_trasferta !== undefined));
   const isPast = new Date(m.data_ora) < new Date();
   const isArchiviata = m.archiviata === true || m.archiviata === 'true';
-  
-  // Stile per partite archiviate (elegante grigio/marrone) - SOLO icona 📦
-  const archivedStyle = isArchiviata ? 'opacity:0.75;border-left:4px solid #8B7355 !important;background:#F5F5F0 !important;' : '';
-  const archivedIcon = isArchiviata ? '📦 ' : '';
 
   // Estrai gol (da stats o da dati diretti partita)
   const golFatti = r?.golFatti ?? m.gol_casa ?? null;
   const golSubiti = r?.golSubiti ?? m.gol_trasferta ?? null;
 
-  // Risultato con icona per partite passate con risultato
-  let resultIconHtml = '';
-  if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
-    let icon, label, cls;
-    if (golFatti > golSubiti) { icon = '✅'; label = 'Vittoria'; cls = 'result-victory'; }
-    else if (golFatti < golSubiti) { icon = '❌'; label = 'Sconfitta'; cls = 'result-defeat'; }
-    else { icon = '🤝'; label = 'Pareggio'; cls = 'result-draw'; }
-    resultIconHtml = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
-  }
-
-  let L = `
-  <div class="match-date mobile-date">${archivedIcon}<span class="mobile-short-date" style="display:none;">${formatDateShort(m.data_ora)}</span><span class="mobile-full-date">${formatDate(m.data_ora)}</span></div>
-  <div class="match-teams" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">${window.YFM.getSocietaName()} vs ${m.avversario}</span>
-    ${resultIconHtml}
-  </div>
-  <div class="match-info"><span class="match-badges">${m.giornata ? '<span class="match-badge badge-section">⚽ ' + m.giornata + '</span>' : ''}<span class="match-badge badge-section">${m.competizione}</span><span class="match-badge ${m.luogo === 'Casa' ? 'badge-casa' : 'badge-trasferta'}">${m.luogo === 'Casa' ? '🏠' : '✈️'} ${m.luogo}</span></span></div>`;
-
-  let R = '';
-  
-  // ===== PARTE SINISTRA: Risultato/LIVE/bottone Risultato =====
-  if (!isPast && hasResult && golFatti !== null && golSubiti !== null) {
-    // Partita futura con risultato: mostra LIVE
-    const color = golFatti > golSubiti ? '#27AE60' : golFatti === golSubiti ? '#F39C12' : '#E74C3C';
-    const resultBadge = golFatti > golSubiti ? 'badge-vittoria' : golFatti === golSubiti ? 'badge-pareggio' : 'badge-sconfitta';
-    const resultLabel = golFatti > golSubiti ? 'Vittoria' : golFatti === golSubiti ? 'Pareggio' : 'Sconfitta';
-    const liveIndicator = `
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-      <span class="live-dot" style="background:#E74C3C;"></span>
-      <span class="live-text" style="color:#E74C3C;font-size:10px;font-weight:bold;">LIVE</span>
-    </div>`;
-    R += `<div style="text-align:center;cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')" title="Dettaglio">${liveIndicator}<div style="font-size:22px;font-weight:bold;color:${color};">${golFatti} - ${golSubiti}</div></div>`;
+  // === BORDO SINISTRO COLORATO PER ESITO ===
+  let borderColor = '#dee2e6'; // default grigio
+  if (isArchiviata) {
+    borderColor = '#8B7355'; // marrone
+  } else if (isPast && hasResult && golFatti !== null && golSubiti !== null) {
+    if (golFatti > golSubiti) borderColor = '#28a745'; // verde vittoria
+    else if (golFatti < golSubiti) borderColor = '#dc3545'; // rosso sconfitta
+    else borderColor = '#ffc107'; // giallo pareggio
+  } else if (!isPast && isNext) {
+    borderColor = '#28a745'; // verde prossima
   } else if (!isPast) {
-    // Partita futura senza risultato: mostra pulsante Risultato
-    R += `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">⚽ Risultato</button>`;
-  } else {
-    // Partita passata senza risultato: mostra dettaglio
-    R += `<span style="color:var(--gray);cursor:pointer;" onclick="event.stopPropagation();window.YFM.openMatchDetail('${m.id}')">Dettaglio</span>`;
+    borderColor = '#667eea'; // viola future
   }
 
-  // ===== PULSANTI: Tutti attivi con pallino per prossimo passo =====
+  // Stile contenitore
+  const cardStyle = `border-left:4px solid ${borderColor};${isArchiviata ? 'opacity:0.7;background:#F9F8F6;' : ''}`;
+
+  // === RIGA 1: Badge luogo + competizione + giornata ===
+  const luogoBadge = m.luogo === 'Casa'
+    ? '<span class="match-badge badge-casa">🏠 Casa</span>'
+    : '<span class="match-badge badge-trasferta">✈️ Trasferta</span>';
+  const compBadge = m.competizione ? `<span class="match-badge badge-section">${m.competizione}</span>` : '';
+  const giornBadge = m.giornata ? `<span class="match-badge badge-section">⚽ G.${m.giornata}</span>` : '';
+  const archivedBadge = isArchiviata ? '<span class="match-badge" style="background:#8B7355;color:white;">📦 Archiviata</span>' : '';
+
+  // === RIGA 2: Avversario (grande) + Risultato ===
+  let resultHtml = '';
+  if (hasResult && golFatti !== null && golSubiti !== null) {
+    let cls, icon;
+    if (golFatti > golSubiti) { cls = 'result-victory'; icon = '✅'; }
+    else if (golFatti < golSubiti) { cls = 'result-defeat'; icon = '❌'; }
+    else { cls = 'result-draw'; icon = '🤝'; }
+    resultHtml = `<span class="result-badge ${cls}"><span class="result-score">${golFatti} - ${golSubiti}</span>${icon}</span>`;
+  } else if (!isPast) {
+    // Partita futura senza risultato: bottone risultato
+    resultHtml = `<button class="btn btn-primary btn-small" onclick="event.stopPropagation();window.YFM.openResultForm('${m.id}')">⚽ Risultato</button>`;
+  }
+
+  // === RIGA 3: Data compatta ===
+  const dateHtml = formatDateCompact(m.data_ora);
+
+  // === RIGA 4: Progress dots (solo partite future) ===
+  let progressHtml = '';
+  if (!isPast && !isArchiviata) {
+    const nextStep = getNextStep(m.id);
+    const steps = [
+      { key: 'convocazione', label: 'Conv', done: nextStep !== 'convocazione' && nextStep !== null || (nextStep === null) },
+      { key: 'formazione', label: 'Form', done: nextStep !== 'convocazione' && nextStep !== 'formazione' && nextStep !== null || (nextStep === null) },
+      { key: 'risultato', label: 'Ris', done: nextStep !== 'convocazione' && nextStep !== 'formazione' && nextStep !== 'risultato' && nextStep !== null || (nextStep === null) },
+      { key: 'eventi', label: 'Ev', done: nextStep === null }
+    ];
+    // Ricalcola con logica lineare
+    const stepOrder = ['convocazione', 'formazione', 'risultato', 'eventi'];
+    const currentIdx = nextStep ? stepOrder.indexOf(nextStep) : 4;
+    
+    progressHtml = '<div class="match-progress">' +
+      stepOrder.map((s, i) => {
+        const done = i < currentIdx;
+        const active = i === currentIdx;
+        const labels = { convocazione: 'Conv', formazione: 'Form', risultato: 'Ris', eventi: 'Ev' };
+        const dotClass = done ? 'progress-done' : active ? 'progress-active' : 'progress-pending';
+        return `<div class="progress-step ${dotClass}"><span class="progress-dot"></span><span class="progress-label">${labels[s]}</span></div>`;
+      }).join('') + '</div>';
+  }
+
+  // === RIGA 5: Pulsanti azione ===
+  let actionsHtml = '';
   const nextStep = getNextStep(m.id);
-  
-  // Partite future: tutti i bottoni abilitati, pallino indica prossimo passo
-  if (!isPast) {
+
+  if (!isPast && !isArchiviata) {
     // Aggiungi CSS per animazione pallino
     if (!document.getElementById('pallino-style')) {
       const style = document.createElement('style');
@@ -309,61 +407,54 @@ export function renderMatchCard(m, stats, isNext = false) {
       style.textContent = '@keyframes blink-pallino{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.8);}';
       document.head.appendChild(style);
     }
-    
-    // Convocazione
-    R += makeBtn('Convocazione', `window.YFM.openConvocation('${m.id}',false)`, nextStep === 'convocazione');
-    
-    // Formazione
-    R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, nextStep === 'formazione');
-    
-    // Distinta
-    R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, nextStep === 'risultato');
-    
-    // Note (sempre attivo, senza pallino)
-    R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
-    
-    // Eventi: solo se c'è un risultato
+    actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',false)`, nextStep === 'convocazione');
+    actionsHtml += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, nextStep === 'formazione');
+    actionsHtml += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
+    actionsHtml += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
     if (hasResult) {
-      R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, nextStep === 'eventi');
+      actionsHtml += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, nextStep === 'eventi');
     }
-    
   } else if (isPast && hasResult && !isArchiviata) {
-  // Partita passata con risultato - tutti attivi
-  R += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
-  R += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
-  R += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
-  R += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
-  R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
-  
+    actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
+    actionsHtml += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
+    actionsHtml += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
+    actionsHtml += makeBtn('Eventi', `window.YFM.openResultForm('${m.id}',true)`, false);
+    actionsHtml += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   } else if (isPast && !hasResult) {
-  // Partita passata senza risultato
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
+    actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
+    actionsHtml += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
+    actionsHtml += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
   } else {
-  // Partite archiviate: solo consultazione
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openConvocation('${m.id}',true)">📋 Conv.</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openFormazioneForm('${m.id}')">👥 Formazione</button>`;
-  R += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();window.YFM.openDistinta('${m.id}')">📄 Dist.</button>`;
-  R += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
+    // Archiviate
+    actionsHtml += makeBtn('Convoca', `window.YFM.openConvocation('${m.id}',true)`, false);
+    actionsHtml += makeBtn('Formazione', `window.YFM.openFormazioneForm('${m.id}')`, false);
+    actionsHtml += makeBtn('Distinta', `window.YFM.openDistinta('${m.id}')`, false);
+    actionsHtml += makeBtn('Note', `window.YFM.openNoteAvversario('${m.id}')`, false);
   }
-  
-  // Edit e Elimina e Archivia - in alto a destra (sempre visibili)
+
+  // === PULSANTI EDIT/DELETE/ARCHIVIA ===
   let editBtns = '';
   if (!isArchiviata) {
-    // Archivia per partite giocate, altrimenti solo Edit e Delete
     const archBtn = (isPast && hasResult) ? `<button class="btn btn-secondary btn-small" style="color:#856404;" onclick="event.stopPropagation();archiveMatch('${m.id}')" title="Archivia">📦</button>` : '';
     editBtns = `${archBtn}<button class="btn btn-secondary btn-small btn-editm" data-mid="${m.id}" title="Modifica">✏️</button><button class="btn btn-secondary btn-small btn-danger btn-del" data-mid="${m.id}" title="Elimina">🗑️</button>`;
   } else {
     editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')" title="Sblocca">🔓</button>`;
   }
 
-  return `<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;${archivedStyle}">
-  <div style="flex:1;min-width:220px;">
-    ${L}
-    <div class="match-actions-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">${R}</div>
-  </div>
-  <div class="match-card-actions">${editBtns}</div>
+  return `<div class="match-card-inner" style="${cardStyle}padding-left:12px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+      <div style="flex:1;min-width:0;">
+        <div class="match-badges" style="margin-bottom:6px;">${luogoBadge}${compBadge}${giornBadge}${archivedBadge}</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="match-opponent">${m.avversario}</span>
+          ${resultHtml}
+        </div>
+        <div class="match-date-compact">📅 ${dateHtml}</div>
+        ${progressHtml}
+      </div>
+      <div class="match-card-actions">${editBtns}</div>
+    </div>
+    <div class="match-actions-row">${actionsHtml}</div>
   </div>`;
 }
 
