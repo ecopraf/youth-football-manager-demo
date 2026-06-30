@@ -9,15 +9,25 @@ export default async function loadStats() {
   let disciplina = [];
   
   if (isDemo) {
-    // Dati demo disciplina (giocatori con cartellini)
-    disciplina = (window.YFM.allPlayers || []).map(p => ({
-      id: p.id,
-      nome: p.nome,
-      cognome: p.cognome,
-      ammonizioni: Math.floor(Math.random() * 3),
-      espulsioni: Math.random() > 0.9 ? 1 : 0,
-      squalifiche: 0
-    })).filter(p => p.ammonizioni > 0 || p.espulsioni > 0);
+    // Dati demo disciplina deterministici (basati su ID giocatore)
+    const seedFromId = (id) => {
+      let hash = 0;
+      for (let i = 0; i < (id || '').length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+      return Math.abs(hash);
+    };
+    disciplina = (window.YFM.allPlayers || []).map(p => {
+      const seed = seedFromId(p.id);
+      const amm = seed % 4; // 0-3 ammonizioni deterministiche
+      const esp = (seed % 11 === 0) ? 1 : 0; // ~1 su 11 ha un'espulsione
+      return {
+        id: p.id,
+        nome: p.nome,
+        cognome: p.cognome,
+        ammonizioni: amm,
+        espulsioni: esp,
+        squalifiche: 0
+      };
+    }).filter(p => p.ammonizioni > 0 || p.espulsioni > 0);
   } else {
     try {
       disciplina = await apiFetch('/squadre/' + window.YFM.squadraId + '/disciplina');

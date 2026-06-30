@@ -723,16 +723,19 @@ function renderSeasonalReport(report) {
                 </thead>
                 <tbody>
                   ${partite.map((p, i) => {
+                    const golCasa = p.golCasa ?? p.gol_casa;
+                    const golOspiti = p.golOspiti ?? p.gol_trasferta;
+                    const hasResult = golCasa !== undefined && golOspiti !== undefined;
                     const isCasa = p.luogo === 'Casa';
-                    const resultClass = p.golCasa > p.golOspiti ? 'color:#28a745;' : p.golCasa === p.golOspiti ? 'color:#856404;' : 'color:#dc3545;';
-                    const resultIcon = p.golCasa > p.golOspiti ? '✅' : p.golCasa === p.golOspiti ? '🤝' : '❌';
+                    const resultClass = !hasResult ? '' : golCasa > golOspiti ? 'color:#28a745;' : golCasa === golOspiti ? 'color:#856404;' : 'color:#dc3545;';
+                    const resultIcon = !hasResult ? '📅' : golCasa > golOspiti ? '✅' : golCasa === golOspiti ? '🤝' : '❌';
                     return `
                     <tr style="background:${i % 2 === 0 ? 'white' : '#f8f9fa'};">
                       <td style="padding:6px;text-align:center;font-weight:bold;color:#667eea;font-size:10px;">${p.giornata || '-'}</td>
-                      <td style="padding:6px;font-size:10px;">${formatDateShort(p.data)}</td>
+                      <td style="padding:6px;font-size:10px;">${formatDateShort(p.data_ora || p.data)}</td>
                       <td style="padding:6px;text-align:center;font-size:10px;"><span style="padding:2px 4px;background:${isCasa ? '#e6f3ff' : '#fff3cd'};border-radius:3px;color:${isCasa ? '#004085' : '#856404'};font-size:9px;">${isCasa ? 'C' : 'T'}</span></td>
                       <td style="padding:6px;font-size:10px;">${p.avversario}</td>
-                      <td style="padding:6px;text-align:center;font-size:10px;"><span style="font-weight:bold;${resultClass}">${p.golCasa} - ${p.golOspiti}</span> <span style="font-size:10px;">${resultIcon}</span></td>
+                      <td style="padding:6px;text-align:center;font-size:10px;">${hasResult ? `<span style="font-weight:bold;${resultClass}">${golCasa} - ${golOspiti}</span> <span style="font-size:10px;">${resultIcon}</span>` : `<span style="color:#888;">- - -</span> 📅`}</td>
                     </tr>`;}).join('')}
                 </tbody>
               </table>

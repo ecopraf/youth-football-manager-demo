@@ -163,6 +163,9 @@ function renderFormazioneEdit(mid, match, giocatoriConvocati, formMap, isDemo = 
   const hasExistingFormation = Object.keys(formMap).length > 0;
   
   let html = '<p style="margin-bottom:16px;"><strong>Formazione - ' + window.YFM.getSocietaName() + ' vs ' + match.avversario + '</strong></p>';
+  if (!hasExistingFormation) {
+    html += '<div style="padding:12px;background:#fff3cd;border-radius:8px;margin-bottom:16px;font-size:13px;color:#856404;">⚠️ Seleziona 11 titolari dalla colonna sinistra. I giocatori non selezionati come titolari resteranno in panchina.</div>';
+  }
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
 
   // Titolari

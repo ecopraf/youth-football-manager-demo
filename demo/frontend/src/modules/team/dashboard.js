@@ -79,7 +79,7 @@ export default async function loadDashboard() {
     const bgColor = index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : '#CD7F32';
     const bgEnd = index === 0 ? '#FFA500' : index === 1 ? '#A0A0A0' : '#8B4513';
     const playerName = giocatore.cognome + '. ' + (giocatore.nome ? giocatore.nome[0] : '');
-    return '<div class="player-box" style="background:linear-gradient(180deg,' + bgColor + ' 0%,' + bgEnd + ' 100%);border-radius:16px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;min-height:120px;" onclick="if(typeof loadPlayerDetail===\'function\') loadPlayerDetail(\'' + giocatore.id + '\',\'' + giocatore.nome + '\');">' +
+    return '<div class="player-box" style="background:linear-gradient(180deg,' + bgColor + ' 0%,' + bgEnd + ' 100%);border-radius:16px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;min-height:120px;" onclick="window.YFM.openPlayerDetail(\'' + giocatore.id + '\')">' +
       '<div style="font-size:28px;margin-bottom:8px;">' + medal + '</div>' +
       '<div style="font-size:14px;font-weight:bold;color:#fff;margin-bottom:6px;">' + playerName + '</div>' +
       '<div style="font-size:16px;font-weight:bold;color:#fff;">' + value + '</div></div>';

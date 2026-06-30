@@ -21,9 +21,21 @@ export async function openMatchDetail(mid) {
       golCasa = match.gol_casa || 0;
       golOspiti = match.gol_trasferta || 0;
       // Usa eventi dalla persistenza o dai dati demo originali
-      eventi = (demoPersistence.getEvents(mid) || []).length > 0 
-        ? demoPersistence.getEvents(mid)
+      const persistedEvents = demoPersistence.getEvents(mid) || [];
+      const rawEvents = persistedEvents.length > 0 
+        ? persistedEvents
         : (window.YFM.demoEvents || []).filter(e => e.match_id === mid && e.player_id);
+      // Risolvi i nomi giocatori dagli ID
+      const allPlayers = window.YFM.allPlayers || [];
+      eventi = rawEvents.map(e => {
+        const player = allPlayers.find(p => p.id === e.player_id);
+        const secondPlayer = e.player_id_secondario ? allPlayers.find(p => p.id === e.player_id_secondario) : null;
+        return {
+          ...e,
+          principale: e.principale || (player ? `${player.nome} ${player.cognome}` : ''),
+          secondario: e.secondario || (secondPlayer ? `${secondPlayer.nome} ${secondPlayer.cognome}` : null)
+        };
+      });
       ammonizioni = eventi.filter(e => e.tipo === 'YELLOW').length;
       espulsioni = eventi.filter(e => e.tipo === 'RED').length;
       p = {

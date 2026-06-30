@@ -73,7 +73,7 @@ export default async function loadTraining() {
       });
     });
     
-    // Converte allenamenti in presenze
+    // Converte allenamenti in presenze (usa calciatoreId per coerenza con renderPresenzeForDate)
     presenze = [];
     allenamentiDemo.forEach(a => {
       tuttiGiocatori.forEach(p => {
@@ -81,12 +81,13 @@ export default async function loadTraining() {
         const assente = a.assenti.includes(p.id);
         presenze.push({
           id: `pr_${a.id}_${p.id}`,
+          calciatoreId: p.id,
           player_id: p.id,
           nome: p.nome,
           cognome: p.cognome,
           data: a.data,
-          presente: presente,
-          assenza_giustificata: assente && Math.random() > 0.5
+          presente: presente ? true : (!assente),
+          assenza_giustificata: false
         });
       });
     });
@@ -197,7 +198,7 @@ function renderTraining(c) {
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#F8F9FA;">
             <th style="padding:8px;text-align:center;">#</th>
-            <th style="padding:8px;text-align:left;">Calcioatore</th>
+            <th style="padding:8px;text-align:left;">Calciatore</th>
             <th style="padding:8px;text-align:center;">Tot.</th>
             <th style="padding:8px;text-align:center;color:#27AE60;">Pres.</th>
             <th style="padding:8px;text-align:center;color:#E74C3C;">Ass.</th>
@@ -262,9 +263,9 @@ function attachListeners(savedDate) {
   document.querySelectorAll('.btn-del').forEach(b => {
     b.addEventListener('click', async () => {
       if (!b.dataset.tid) return;
-      
+      const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
       if (isDemo) {
-        demoPersistence.deleteTrainingConfig(b.dataset.tid);
+        demoPersistence.deleteTrainingConfig(b.dataset.tid, trainingData.config);
         loadTraining();
       } else {
         await apiFetch('/allenamenti/config/' + b.dataset.tid, { method: 'DELETE' });
@@ -541,9 +542,10 @@ function openTrainingForm(tid, g, i, f, l) {
   // Assicura che gli eventi siano aggiunti dopo il rendering
   setTimeout(() => {
     const closeBtn = document.getElementById('modalCloseX');
-    const annullaBtn = document.getElementById('currentModal')?.querySelector('.modal-close-btn');
     if (closeBtn) closeBtn.addEventListener('click', close);
-    if (annullaBtn) annullaBtn.addEventListener('click', close);
+    // Aggancia tutti i bottoni con classe modal-close-btn (incluso Annulla nel footer)
+    const closeBtns = document.querySelectorAll('#currentModal .modal-close-btn');
+    closeBtns.forEach(btn => btn.addEventListener('click', close));
     // Fallback: chiudi al click su overlay
     const modalEl = document.getElementById('currentModal');
     if (modalEl) {
@@ -564,8 +566,8 @@ function openTrainingForm(tid, g, i, f, l) {
     showLoading();
     try {
       if (isDemo) {
-        // Demo mode: gestisci localmente
-        demoPersistence.updateTrainingConfig(tid || `cfg_${Date.now()}`, data);
+        // Demo mode: gestisci localmente - passa la config attuale per non perdere le altre
+        demoPersistence.updateTrainingConfig(tid || data.id, data, trainingData.config);
         alert(tid ? '✅ Configurazione aggiornata!' : '✅ Configurazione salvata!');
       } else if (tid) {
         await apiFetch('/allenamenti/config/' + tid, { method: 'PUT', body: JSON.stringify(data) });

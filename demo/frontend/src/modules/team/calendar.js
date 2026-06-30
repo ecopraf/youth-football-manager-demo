@@ -418,12 +418,59 @@ export function openMatchForm(mid) {
     competizione: document.getElementById('mfC').value,
     giornata: parseInt(document.getElementById('mfG').value) || null
   };
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   showLoading();
   try {
-    if (m) await apiFetch('/partite/' + m.id, { method: 'PUT', body: JSON.stringify(d) });
-    else await apiFetch('/squadre/' + window.YFM.squadraId + '/partite', { method: 'POST', body: JSON.stringify(d) });
-    modal.close();
-    loadCalendar();
+    if (isDemo) {
+      // Demo mode: salva in memoria
+      if (m) {
+        // Modifica partita esistente
+        const match = window.YFM.demoMatches?.find(x => x.id === m.id);
+        if (match) {
+          match.data_ora = d.dataOra;
+          match.avversario = d.avversario;
+          match.luogo = d.luogo;
+          match.competizione = d.competizione;
+          match.giornata = d.giornata;
+        }
+        // Aggiorna anche in persistenza
+        if (demoPersistence.data.matches) {
+          const pm = demoPersistence.data.matches.find(x => x.id === m.id);
+          if (pm) {
+            pm.data_ora = d.dataOra;
+            pm.avversario = d.avversario;
+            pm.luogo = d.luogo;
+            pm.competizione = d.competizione;
+            pm.giornata = d.giornata;
+            demoPersistence._markDirty();
+          }
+        }
+      } else {
+        // Nuova partita
+        const newMatch = {
+          id: 'm_' + Date.now(),
+          data_ora: d.dataOra,
+          avversario: d.avversario,
+          luogo: d.luogo,
+          competizione: d.competizione,
+          giornata: d.giornata,
+          stato: 'Da disputare'
+        };
+        if (!window.YFM.demoMatches) window.YFM.demoMatches = [];
+        window.YFM.demoMatches.push(newMatch);
+        if (demoPersistence.data.matches) {
+          demoPersistence.data.matches.push(newMatch);
+          demoPersistence._markDirty();
+        }
+      }
+      modal.close();
+      loadCalendar();
+    } else {
+      if (m) await apiFetch('/partite/' + m.id, { method: 'PUT', body: JSON.stringify(d) });
+      else await apiFetch('/squadre/' + window.YFM.squadraId + '/partite', { method: 'POST', body: JSON.stringify(d) });
+      modal.close();
+      loadCalendar();
+    }
   } catch (e) { alert(e.message); }
   finally { hideLoading(); }
   });
@@ -431,11 +478,25 @@ export function openMatchForm(mid) {
 
 async function deleteMatch(id) {
   if (!confirm('Eliminare?')) return;
-  await apiFetch('/partite/' + id, { method: 'DELETE' });
-  loadCalendar();
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
+  if (isDemo) {
+    // Demo mode: rimuovi dalla lista in memoria
+    if (window.YFM.demoMatches) {
+      window.YFM.demoMatches = window.YFM.demoMatches.filter(m => m.id !== id);
+    }
+    if (demoPersistence.data.matches) {
+      demoPersistence.data.matches = demoPersistence.data.matches.filter(m => m.id !== id);
+      demoPersistence._markDirty();
+    }
+    loadCalendar();
+  } else {
+    await apiFetch('/partite/' + id, { method: 'DELETE' });
+    loadCalendar();
+  }
 }
 
 function openImportCSV() {
+  const isDemo = localStorage.getItem('yfm_demo_session') === 'active';
   const content = `
   <p style="margin-bottom:12px;">Incolla i dati CSV (una riga per partita):</p>
   <p style="font-size:12px;color:var(--gray);margin-bottom:8px;">Formato: <strong>Data, Ora, Avversario, Luogo, Competizione, Giornata</strong></p>
@@ -447,14 +508,44 @@ function openImportCSV() {
   if (!raw) { alert('Nessun dato.'); return; }
   const lines = raw.split('\n').filter(l => l.trim());
   const csvData = lines.map(l => l.split(',').map(c => c.trim()));
-  showLoading();
-  try {
-    const res = await apiFetch('/squadre/' + window.YFM.squadraId + '/importa-calendario', { method: 'POST', body: JSON.stringify({ csvData }) });
-    hideLoading();
+  
+  if (isDemo) {
+    // Demo mode: importa in memoria
+    let importate = 0;
+    csvData.forEach(row => {
+      if (row.length < 3) return;
+      const [data, ora, avversario, luogo, competizione, giornata] = row;
+      const dataOra = new Date(`${data}T${ora || '15:00'}:00`).toISOString();
+      const newMatch = {
+        id: 'm_' + Date.now() + '_' + importate,
+        data_ora: dataOra,
+        avversario: avversario || 'Avversario',
+        luogo: luogo || 'Casa',
+        competizione: competizione || 'Campionato',
+        giornata: parseInt(giornata) || null,
+        stato: 'Da disputare'
+      };
+      if (!window.YFM.demoMatches) window.YFM.demoMatches = [];
+      window.YFM.demoMatches.push(newMatch);
+      if (demoPersistence.data.matches) {
+        demoPersistence.data.matches.push(newMatch);
+      }
+      importate++;
+    });
+    if (importate > 0) demoPersistence._markDirty();
     modal.close();
-    alert('✅ Importate ' + res.inserite + ' partite!');
+    alert('✅ Importate ' + importate + ' partite in demo!');
     loadCalendar();
-  } catch (e) { hideLoading(); alert('Errore: ' + e.message); }
+  } else {
+    showLoading();
+    try {
+      const res = await apiFetch('/squadre/' + window.YFM.squadraId + '/importa-calendario', { method: 'POST', body: JSON.stringify({ csvData }) });
+      hideLoading();
+      modal.close();
+      alert('✅ Importate ' + res.inserite + ' partite!');
+      loadCalendar();
+    } catch (e) { hideLoading(); alert('Errore: ' + e.message); }
+  }
   });
 }
 

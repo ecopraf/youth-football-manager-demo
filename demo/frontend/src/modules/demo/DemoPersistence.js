@@ -334,10 +334,12 @@ class DemoPersistence {
 
   /**
    * Aggiorna la configurazione allenamenti
+   * Se trainingConfig non esiste ancora nella persistenza, lo inizializza con la config corrente
    */
-  updateTrainingConfig(configId, configData) {
+  updateTrainingConfig(configId, configData, currentConfig = null) {
     if (!this.data[KEYS.TRAINING_CONFIG]) {
-      this.data[KEYS.TRAINING_CONFIG] = [];
+      // Inizializza con la config corrente (passata come parametro o default)
+      this.data[KEYS.TRAINING_CONFIG] = currentConfig ? [...currentConfig] : [];
     }
     const idx = this.data[KEYS.TRAINING_CONFIG].findIndex(c => c.id === configId);
     if (idx >= 0) {
@@ -350,12 +352,15 @@ class DemoPersistence {
 
   /**
    * Elimina una configurazione allenamento
+   * Se trainingConfig non esiste nella persistenza, lo inizializza prima con la config corrente
    */
-  deleteTrainingConfig(configId) {
-    if (this.data[KEYS.TRAINING_CONFIG]) {
-      this.data[KEYS.TRAINING_CONFIG] = this.data[KEYS.TRAINING_CONFIG].filter(c => c.id !== configId);
-      this._markDirty();
+  deleteTrainingConfig(configId, currentConfig = null) {
+    if (!this.data[KEYS.TRAINING_CONFIG]) {
+      // Inizializza con la config corrente prima di eliminare
+      this.data[KEYS.TRAINING_CONFIG] = currentConfig ? [...currentConfig] : [];
     }
+    this.data[KEYS.TRAINING_CONFIG] = this.data[KEYS.TRAINING_CONFIG].filter(c => c.id !== configId);
+    this._markDirty();
   }
 
   /**
@@ -379,15 +384,16 @@ class DemoPersistence {
 
   /**
    * Inizializza dati pregressi allenamenti per demo
+   * Genera storico deterministico e coerente con la config (Mar, Gio, Sab)
    */
   initTrainingHistory(giocatori) {
     // Versione dati per forzare rigenerazione se cambiata
-    const DATA_VERSION = 2;
+    const DATA_VERSION = 3;
     
     // Reset se versione diversa o dati insufficienti
     if (this.data.trainingVersion !== DATA_VERSION || 
         !this.data[KEYS.TRAINING] || 
-        this.data[KEYS.TRAINING].length < 30) {
+        this.data[KEYS.TRAINING].length < 20) {
       delete this.data[KEYS.TRAINING];
       this.data.trainingVersion = DATA_VERSION;
     } else {
@@ -397,76 +403,82 @@ class DemoPersistence {
     const now = new Date();
     const tuttiId = giocatori.map(g => g.id);
     
-    // Schema assenze predefinito (id giocatore -> frequenza assenze)
-    // Giocatori con assenze frequenti (es. impegni scolastici, famiglia numerosa)
-    const assenzeFrequenti = {
-      2: 12,  // Marco Bianchi - impegni scolastici
-      5: 8,   // Luca Russo - motivi familiari
-      8: 6,   // Andrea Ferraro - impegni scolastici
-      11: 10, // Giovanni Conti - motivi familiari
-      14: 5,  // Matteo Fontana - infortuni
+    // Genera un seed deterministico basato su ID giocatore
+    const seedHash = (str, salt) => {
+      let hash = salt || 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return Math.abs(hash);
     };
     
-    // Giocatori sempre presenti (alta affidabilità)
-    const semprePresente = [1, 3, 6, 9, 12];
+    // Schema assenze: usa indice del giocatore nell'array per distribuzione deterministica
+    // Giocatori con alta frequenza assenza (indici 2, 5, 8, 11, 14, 18)
+    const assenzeFrequentiIdx = { 2: 0.4, 5: 0.3, 8: 0.25, 11: 0.35, 14: 0.2, 18: 0.15 };
+    // Giocatori quasi sempre presenti (indici 0, 3, 6, 9, 12)
+    const semprePresenteIdx = [0, 3, 6, 9, 12];
     
-    // Motivi assenza per giocatore
-    const motiviPerGiocatore = {
-      2: ['Impegni Scolastici', 'Studio', 'Compiti'],
-      5: ['Motivi Familiari', 'Assistenza familiare'],
-      8: ['Impegni Scolastici', 'Ripetizioni'],
-      11: ['Motivi Familiari', 'Compiti'],
-      14: ['Infortunio', 'Recupero infortunio'],
+    // Motivi assenza basati su indice
+    const motiviPerIndice = {
+      2: 'Impegni Scolastici',
+      5: 'Motivi Familiari',
+      8: 'Impegni Scolastici',
+      11: 'Motivi Familiari',
+      14: 'Infortunio',
+      18: 'Malattia'
     };
+    const motiviDefault = ['Malattia', 'Impegni Scolastici', 'Motivi Familiari', 'Infortunio'];
     
-    const motiviDefault = ['Malattia', 'Impegni Scolastici', 'Motivi Familiari'];
-    
-    // Genera 30 settimane di storico (15 settimane per le due categorie)
+    // Genera 10 settimane di storico con 3 sedute/settimana (Mar, Gio, Sab)
+    // = 30 sessioni totali, coerenti con la config default
     const allenamentiStorico = [];
     let sessionId = 1;
+    const giorniAllenamento = [2, 4, 6]; // Mar, Gio, Sab - come config default
     
-    for (let w = -30; w <= -1; w++) {
+    for (let w = -10; w <= -1; w++) {
       const lunedi = new Date(now);
       lunedi.setDate(now.getDate() - now.getDay() + 1 + (w * 7));
       
-      // Martedì e Giovedì per Under 17, Sabato per Under 19
-      const configurazioni = w % 2 === 0 
-        ? [{ giorno: 2, tipo: 'Under 17' }, { giorno: 4, tipo: 'Under 17' }]
-        : [{ giorno: 6, tipo: 'Under 19' }];
-      
-      configurazioni.forEach(cfg => {
-        const dataAllenamento = new Date(lunedi.getTime() + cfg.giorno * 24 * 60 * 60 * 1000);
+      giorniAllenamento.forEach(giorno => {
+        const dataAllenamento = new Date(lunedi);
+        dataAllenamento.setDate(lunedi.getDate() + (giorno - 1)); // lunedi = giorno 1
         const dataStr = dataAllenamento.toISOString().split('T')[0];
         
         const assenti = [];
         const motivi = {};
         
-        // Calcola assenze basate su schema predefinito
-        tuttiId.forEach(id => {
-          if (semprePresente.includes(id)) {
-            // 10% probabilità di assenza anche per i semprepresenti
-            if (Math.random() < 0.1) {
+        // Calcola assenze deterministiche per ogni giocatore
+        tuttiId.forEach((id, idx) => {
+          const hash = seedHash(id, sessionId * 17 + idx * 31);
+          
+          if (semprePresenteIdx.includes(idx)) {
+            // Solo 5% assenza per i "semprepresenti" (hash mod 20 == 0)
+            if (hash % 20 === 0) {
               assenti.push(id);
-              motivi[id] = motiviDefault[Math.floor(Math.random() * motiviDefault.length)];
+              motivi[id] = motiviDefault[hash % motiviDefault.length];
+            }
+          } else if (assenzeFrequentiIdx[idx] !== undefined) {
+            // Frequenza alta: usa threshold basato su hash
+            const threshold = Math.floor(assenzeFrequentiIdx[idx] * 100);
+            if ((hash % 100) < threshold) {
+              assenti.push(id);
+              motivi[id] = motiviPerIndice[idx] || motiviDefault[hash % motiviDefault.length];
             }
           } else {
-            // Calcola assenze basate su frequenza
-            const freq = assenzeFrequenti[id] || 2;
-            const prob = freq / 30; // 30 sessioni totali
-            if (Math.random() < prob) {
+            // Giocatori normali: ~10% assenza
+            if (hash % 10 === 0) {
               assenti.push(id);
-              const mp = motiviPerGiocatore[id];
-              motivi[id] = mp 
-                ? mp[Math.floor(Math.random() * mp.length)] 
-                : motiviDefault[Math.floor(Math.random() * motiviDefault.length)];
+              motivi[id] = motiviDefault[hash % motiviDefault.length];
             }
           }
         });
         
+        const tipiAllenamento = ['Tattico', 'Tecnico', 'Atletico', 'Partita a tema', 'Possesso palla', 'Difensivo'];
+        
         allenamentiStorico.push({
           id: `hist_tr_${sessionId}`,
           data: dataStr,
-          tipo: cfg.tipo,
+          tipo: tipiAllenamento[sessionId % tipiAllenamento.length],
           durata: 90,
           presenze: tuttiId.filter(id => !assenti.includes(id)),
           assenti: assenti,
