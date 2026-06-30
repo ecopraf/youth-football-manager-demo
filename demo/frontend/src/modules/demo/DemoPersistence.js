@@ -702,6 +702,37 @@ class DemoPersistence {
     return this.data[KEYS.PLAYERS]?.find(p => p.id === playerId);
   }
 
+  // ============ STAFF ============
+
+  /**
+   * Salva l'elenco staff completo (con matricole e tessere)
+   */
+  saveStaff(staffList) {
+    this.data.staff = staffList;
+    this._markDirty();
+  }
+
+  /**
+   * Ottiene l'elenco staff salvato
+   */
+  getStaff() {
+    return this.data.staff || [];
+  }
+
+  /**
+   * Aggiunge o aggiorna un membro dello staff
+   */
+  upsertStaffMember(member) {
+    if (!this.data.staff) this.data.staff = [];
+    const idx = this.data.staff.findIndex(m => m.id === member.id);
+    if (idx >= 0) {
+      this.data.staff[idx] = { ...this.data.staff[idx], ...member };
+    } else {
+      this.data.staff.push({ ...member, id: member.id || `staff_${Date.now()}` });
+    }
+    this._markDirty();
+  }
+
   // ============ UTILITY ============
 
   /**
