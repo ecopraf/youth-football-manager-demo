@@ -128,6 +128,37 @@ git status
 - **Deploy**: ** MANUALE** - chiedere SEMPRE conferma prima del deploy su Vercel
 - **Build ID**: `v3.14.<build-number>` (generato automaticamente)
 
+### 📊 Regole di Comunicazione Modifiche
+
+1. **Stima tempo**: Per modifiche significative, mostrare una stima del tempo necessario e una progress bar per ogni task identificato dall'analisi:
+
+```
+| # | Task | Effort | Stato |
+|---|------|--------|-------|
+| 1 | Descrizione task | ~X min | ⬜ / 🟨 In corso / ✅ |
+| 2 | ... | ... | ... |
+
+Tempo totale stimato: ~XX minuti
+```
+
+2. **Aggiornamento progressivo**: Aggiornare la tabella dopo ogni task completato.
+
+3. **Modularizzazione**: Se una modifica è troppo complessa (>200 righe in un singolo file, o logiche eterogenee nello stesso file), valutare di creare sottomoduli dedicati e differenziati. Esempio:
+
+```
+# Invece di un unico file monolitico:
+modules/coach/training.js (600+ righe)
+
+# Preferire sotto-moduli separati:
+modules/coach/
+├── training.js              → Orchestratore
+├── trainingCalendar.js      → Calendario mensile
+├── trainingSession.js       → Dettaglio seduta
+└── trainingConfig.js        → Configurazione
+```
+
+4. **Criterio split**: Ogni sotto-modulo dovrebbe avere una singola responsabilità, max ~150 righe, export chiaro.
+
 ### 🔐 Credenziali Supabase (persistenti)
 
 ```

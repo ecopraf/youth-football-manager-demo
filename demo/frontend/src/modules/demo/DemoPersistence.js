@@ -383,6 +383,61 @@ class DemoPersistence {
   }
 
   /**
+   * Salva il programma di un allenamento
+   */
+  saveTrainingProgram(trainingId, programma) {
+    if (!this.data[KEYS.TRAINING]) return;
+    const training = this.data[KEYS.TRAINING].find(t => t.id === trainingId);
+    if (training) {
+      training.programma = programma;
+      training.tipo = programma.tipo || training.tipo;
+      training.durata = programma.durata || training.durata;
+      training.note = programma.note || training.note;
+      this._markDirty();
+    }
+  }
+
+  /**
+   * Salva un template allenamento
+   */
+  saveTrainingTemplate(nome, programma) {
+    if (!this.data.trainingTemplates) {
+      this.data.trainingTemplates = [];
+    }
+    // Verifica se esiste già con lo stesso nome
+    const idx = this.data.trainingTemplates.findIndex(t => t.nome === nome);
+    const template = {
+      id: `tmpl_${Date.now()}`,
+      nome,
+      programma,
+      createdAt: new Date().toISOString()
+    };
+    if (idx >= 0) {
+      this.data.trainingTemplates[idx] = template;
+    } else {
+      this.data.trainingTemplates.push(template);
+    }
+    this._markDirty();
+  }
+
+  /**
+   * Ottiene tutti i template allenamento
+   */
+  getTrainingTemplates() {
+    return this.data.trainingTemplates || [];
+  }
+
+  /**
+   * Elimina un template allenamento
+   */
+  deleteTrainingTemplate(templateId) {
+    if (this.data.trainingTemplates) {
+      this.data.trainingTemplates = this.data.trainingTemplates.filter(t => t.id !== templateId);
+      this._markDirty();
+    }
+  }
+
+  /**
    * Inizializza dati pregressi allenamenti per demo
    * Genera storico deterministico e coerente con la config (Mar, Gio, Sab)
    */
