@@ -152,7 +152,7 @@ demo/frontend/
 |--------|----------|-------------|
 | Dashboard | `modules/team/dashboard.js` | Widget riepilogo, prossima partita, trend GF/GS/DR, top marcatori/assist/presenze |
 | Rosa | `modules/team/roster.js` | CRUD giocatori, scadenze mediche, filtri |
-| Calendario | `modules/team/calendar.js` | CRUD partite, prossima in evidenza, archiviazione |
+| Calendario | `modules/team/calendar.js` | CRUD partite, card cliccabile, progress dots, bordo colorato esito, toggle azioni mobile |
 | Convocazioni | `modules/team/convocazioni.js` | Vincoli min/max, PDF, sola lettura se archiviata |
 | Distinta | `modules/team/distinta.js` | Layout FIGC, 24 righe, staff, stampa PDF |
 | Match Detail | `modules/team/matchDetail.js` | Eventi, timeline per tempo, statistiche |
@@ -178,6 +178,8 @@ demo/frontend/
 | Auth FASE 1 | bdedf42 | Sistema ruoli, gestione utenti, link guest |
 | Dashboard Aggiornata | bdedf42 | Prossima partita in evidenza, trend, top players |
 | Accessibilità | bdedf42 | Tooltip su tutte le icone |
+| Bug Fix Multipli | 22ef850 | Match detail nomi, calendario demo mode, stats deterministiche |
+| Restyling Calendario | 74b6158 | Layout compatto, progress dots, bordo colorato, card cliccabile, toggle mobile |
 
 ### ⏸️ SOSPESI
 
@@ -287,34 +289,69 @@ location.reload()
 
 ---
 
-## 6. Logica Archiviazione Partite
+## 6. Logica Archiviazione Partite e Calendario
 
 ### Campo Database
 - Tabella: `match`
-- Campo: `archiviata` (boolean, default false) - nota: nel nuovo schema è `archiviata` (femminile) in italiano
+- Campo: `archiviata` (boolean, default false)
 
 ### Endpoint API
 - `PUT /api/partite/:id/archivia` - Archivia partita
 - `PUT /api/partite/:id/sblocca` - Sblocca partita archiviata
 
+### Layout Card Calendario (v2 - Luglio 2026)
+
+Ogni card partita ha questa struttura:
+```
+┌─ bordo colorato ──────────────────────────────────────────────┐
+│  🏠 Casa · Campionato Primavera · G.16       [✏️][🗑️]        │
+│  Roma Academy                      3 - 1 ✅                  │
+│  📅 Sab 5 Lug · 15:30                                        │
+│  ● ● ○ ○  Conv · Form · Ris · Ev  (solo future)             │
+│  ─────────────────────────────────────────────                │
+│  [📋 Convoca] [🏟️ Formazione] [📄 Distinta] [📝 Note]       │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### Bordo Sinistro Colorato per Esito
+| Colore | Significato |
+|--------|-------------|
+| `#28a745` (verde) | Vittoria |
+| `#dc3545` (rosso) | Sconfitta |
+| `#ffc107` (giallo) | Pareggio |
+| `#667eea` (viola) | Partita futura |
+| `#28a745` (verde) | Prossima partita (in evidenza) |
+| `#8B7355` (marrone) | Archiviata |
+| `#dee2e6` (grigio) | Default |
+
+### Progress Dots (solo partite future)
+Mostra lo stato di completamento degli step pre-partita:
+- `●` Verde = step completato
+- `●` Viola pulsante = step attivo (prossimo da fare)
+- `○` Grigio = step non ancora raggiunto
+
+Ordine: Convocazione → Formazione → Risultato → Eventi
+
+### Interazioni
+- **Click sulla card** → apre dettaglio partita (matchDetail)
+- **Desktop**: pulsanti azione sempre visibili con border-top
+- **Mobile (<640px)**: pulsanti nascosti, toggle "⋯ Azioni" li espande in griglia 3 colonne
+- **Edit/Delete**: in alto a destra della card
+
 ### Pulsanti Calendario per Scenario
 
 | Scenario | Pulsanti |
 |----------|----------|
-| **Futura senza risultato** | Formazione, Note, Convoca, Distinta, Edit, Elimina |
-| **Futura con risultato** | Formazione, Note, Convoca, Distinta, ✏️ Eventi, Edit, Elimina |
-| **Passata con risultato** | Formazione, Convoca, Distinta, 📦 Archivia, Edit, Elimina |
-| **Passata archiviata** | Formazione, Convoca, Distinta, 🔓 Sblocca (stile grigio) |
-
-### Gestione Moduli
-- **Non archiviata**: modal modificabile
-- **Archiviata**: modal sola lettura con badge "📦 Partita Archiviata"
+| **Futura senza risultato** | Convoca, Formazione, Distinta, Note + bottone ⚽ Risultato |
+| **Futura con risultato** | Convoca, Formazione, Distinta, Note, Eventi |
+| **Passata con risultato** | Convoca, Formazione, Distinta, Eventi, Note + 📦 Archivia |
+| **Passata archiviata** | Convoca, Formazione, Distinta, Note + 🔓 Sblocca |
 
 ### Stile Visivo Archiviate
-- Opacità: 75%
+- Opacità: 70%
 - Bordo sinistro: #8B7355 (marrone)
-- Background: #F5F5F0 (beige chiaro)
-- Icona: 📦 accanto alla data
+- Background: #F9F8F6
+- Badge: 📦 Archiviata
 
 ---
 
@@ -354,7 +391,11 @@ Navigazione: `window.YFM.navigateTo('nomePagina')`
 - `showLoading(message?)` / `hideLoading()` → loading globale
 
 ### Formatters (`src/utils/formatters.js`)
-- `formatDate`, `formatDateShort`, `formatTime`
+- `formatDate` → data estesa con giorno settimana, mese, anno, ora
+- `formatDateShort` → data breve locale (dd/mm/yyyy)
+- `formatDateCompact` → formato compatto calendario: "Sab 5 Lug · 15:30"
+- `formatBirthDate` → data nascita estesa senza ora
+- `formatTime` → ora HH:MM
 - `getAvatarColor(nome)` → colori avatar coerenti
 
 ---
@@ -471,15 +512,16 @@ unction renderModule(container, data) {
 
 | Hash | Descrizione |
 |------|------------|
+| 74b6158 | refactor: restyling calendario - card cliccabile, toggle azioni mobile |
+| 999d970 | refactor: restyling calendario - layout compatto, progress dots, bordo colorato |
+| d16b09b | fix: rimuovi 'Caricamento...' visibile durante banner benvenuto demo |
+| 22ef850 | fix: correzione bug multipli demo (match detail, calendario, training, stats) |
 | bdedf42 | FIX: Dashboard aggiornata con prossima partita, tooltip accessibilità |
 | 4b7c9e6 | FIX: Query order by id invece di created_at (colonna non esiste) |
-| 4fed908 | DEBUG: Aggiunto logging in /auth/users per diagnosticare |
-| 542f267 | FIX: Lista utenti, guest link, copy clipboard |
-| 7fc2bce | FIX: Router guest link, main.js cleanup, logout button header |
 
 ---
 
-*Ultimo aggiornamento: Giugno 2026*
+*Ultimo aggiornamento: Luglio 2026*
 
 ---
 

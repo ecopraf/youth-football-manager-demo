@@ -24,9 +24,10 @@
 
 ### Frontend
 - **Framework**: Vite 6.x + JavaScript ES Modules
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS + CSS custom inline nei moduli
 - **Routing**: Router custom in `router.js`
 - **State**: Window globals (`window.YFM.*`)
+- **Persistenza Demo**: localStorage tramite `DemoPersistence.js`
 - **Deploy**: Vercel (static hosting)
 
 ### Backend

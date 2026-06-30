@@ -9,8 +9,8 @@
 
 ## Info
 - **Versione**: v3.14
-- **Build ID**: `v3.14.<git-hash>`
-- **Deploy**: Manuale via API (NON automatico su push a main)
+- **Build ID**: `v3.14.<build-number>`
+- **Deploy**: Automatico su push a main (Vercel)
 
 ## 🔑 Credenziali Sistema
 
@@ -233,10 +233,45 @@ Ogni modulo verifica `localStorage.getItem('yfm_demo_session') === 'active'` e u
 ### Nota su Partite e Risultati
 Le partite demo hanno i campi `gol_casa` e `gol_trasferta` direttamente nell'oggetto partita (non in un oggetto stats separato). Il renderer `renderMatchCard()` cerca prima in `stats?.risultati` e poi usa i valori diretti dalla partita.
 
+### Calendario - Layout Card (v2)
+Ogni card partita mostra:
+- **Riga 1**: Badge (luogo + competizione + giornata)
+- **Riga 2**: Nome avversario (font 18px bold) + risultato badge
+- **Riga 3**: Data compatta (`formatDateCompact`: "Sab 5 Lug · 15:30")
+- **Riga 4**: Progress dots (solo future): Conv · Form · Ris · Ev
+- **Riga 5**: Pulsanti azione (separati da border-top)
+- **Bordo sinistro**: colorato per esito (verde/rosso/giallo/viola/marrone)
+- **Card cliccabile**: click apre dettaglio partita
+- **Mobile**: pulsanti nascosti dietro toggle "⋯ Azioni"
+- **Edit/Delete**: in alto a destra della card
+
+### Formatters disponibili (`src/utils/formatters.js`)
+- `formatDate(d)` → "lunedì 5 luglio 2026, 15:30"
+- `formatDateShort(d)` → "05/07/2026"
+- `formatDateCompact(d)` → "Sab 5 Lug · 15:30"
+- `formatBirthDate(d)` → "lunedì 5 luglio 2026" (senza ora)
+- `formatTime(t)` → "17:00"
+- `getAvatarColor(nome)` → colore deterministico per avatar
+
 ### ID Squadra Demo
 - **Primavera**: `00000000-0000-0000-0000-000000000010`
 - **Allievi B**: `00000000-0000-0000-0000-000000000011`
 - **Workspace Demo**: `00000000-0000-0000-0000-000000000001`
+
+### DemoPersistence - Training
+
+```javascript
+// Storico allenamenti: 30 sessioni deterministiche (10 settimane x 3 giorni: Mar/Gio/Sab)
+// DATA_VERSION = 3: forza rigenerazione se localStorage ha versione precedente
+demoPersistence.initTrainingHistory(giocatori)
+
+// Config allenamenti: passa currentConfig per non perdere le altre quando modifichi
+demoPersistence.updateTrainingConfig(configId, data, currentConfig)
+demoPersistence.deleteTrainingConfig(configId, currentConfig)
+
+// Presenze
+demoPersistence.saveTrainingPresence(trainingId, { presenti, assenti, motivi })
+```
 
 ### Persistenza Demo (`DemoPersistence.js`)
 Le modifiche in modalità demo vengono salvate in `localStorage` sotto la chiave `yfm_demo_persistence`.
