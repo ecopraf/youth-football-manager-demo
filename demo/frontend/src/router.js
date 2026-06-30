@@ -64,6 +64,22 @@ export function initRouter() {
       return;
     }
 
+    // Nascondi sidebar/header sulla login, mostra nelle altre pagine
+    const sidebar = document.getElementById('sidebar');
+    const header = document.querySelector('.header');
+    const content = document.querySelector('.content');
+    if (publicPages.includes(page)) {
+      if (sidebar) sidebar.style.display = 'none';
+      if (header) header.style.display = 'none';
+      if (content) content.style.marginLeft = '0';
+      document.querySelector('.main').style.marginLeft = '0';
+    } else {
+      if (sidebar) sidebar.style.display = '';
+      if (header) header.style.display = '';
+      if (content) content.style.marginLeft = '';
+      document.querySelector('.main').style.marginLeft = '';
+    }
+
     const container = document.getElementById('pageContent');
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Caricamento...</div>';
     
