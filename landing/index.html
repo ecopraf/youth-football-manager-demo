@@ -272,6 +272,295 @@
             line-height: 1.6;
         }
         
+        /* App Preview / Mockups */
+        .app-preview {
+            padding: 100px 40px;
+            background: linear-gradient(180deg, #f0f2ff 0%, #fff 100%);
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .mockup-window {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(102,126,234,0.12);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .mockup-window:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(102,126,234,0.2);
+        }
+        
+        .mockup-titlebar {
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mockup-titlebar .dots {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .mockup-titlebar .dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+        }
+        
+        .mockup-titlebar .title {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .mockup-body {
+            padding: 20px;
+        }
+        
+        /* Calendar Mockup */
+        .mock-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .mock-calendar .day-header {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--gray);
+            text-align: center;
+            padding: 4px 0;
+        }
+        
+        .mock-calendar .day {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--light);
+        }
+        
+        .mock-calendar .day.training {
+            background: rgba(102,126,234,0.15);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .mock-calendar .day.match {
+            background: rgba(39,174,96,0.15);
+            color: var(--success);
+            font-weight: 700;
+        }
+        
+        .mock-calendar .day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .mock-legend {
+            display: flex;
+            gap: 12px;
+            font-size: 9px;
+            color: var(--gray);
+        }
+        
+        .mock-legend span::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+        
+        .mock-legend .leg-train::before { background: var(--primary); }
+        .mock-legend .leg-match::before { background: var(--success); }
+        
+        /* Phases Mockup */
+        .mock-phase {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .mock-phase .phase-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .mock-phase .phase-info {
+            flex: 1;
+        }
+        
+        .mock-phase .phase-name {
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        .mock-phase .phase-desc {
+            font-size: 9px;
+            color: var(--gray);
+            margin-top: 1px;
+        }
+        
+        .mock-phase .phase-time {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gray);
+        }
+        
+        .phase-warm { background: rgba(243,156,18,0.1); }
+        .phase-warm .phase-icon { background: rgba(243,156,18,0.2); }
+        .phase-tech { background: rgba(102,126,234,0.1); }
+        .phase-tech .phase-icon { background: rgba(102,126,234,0.2); }
+        .phase-tact { background: rgba(155,89,182,0.1); }
+        .phase-tact .phase-icon { background: rgba(155,89,182,0.2); }
+        .phase-game { background: rgba(39,174,96,0.1); }
+        .phase-game .phase-icon { background: rgba(39,174,96,0.2); }
+        .phase-cool { background: rgba(52,152,219,0.1); }
+        .phase-cool .phase-icon { background: rgba(52,152,219,0.2); }
+        
+        .mock-total {
+            text-align: right;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Distinta Mockup */
+        .mock-distinta-header {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text);
+            padding: 8px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .mock-staff-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: var(--light);
+            font-size: 11px;
+        }
+        
+        .mock-staff-row .role {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--primary);
+            width: 70px;
+            flex-shrink: 0;
+        }
+        
+        .mock-staff-row .name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .mock-staff-row .badge {
+            font-size: 8px;
+            background: rgba(102,126,234,0.15);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .mock-formation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 12px;
+            background: linear-gradient(180deg, #2d8a4e 0%, #1a6b38 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .mock-formation .row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .mock-formation .player {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 1024px) {
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .preview-grid .mockup-window:last-child {
+                grid-column: span 2;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-grid .mockup-window:last-child {
+                grid-column: span 1;
+                max-width: none;
+            }
+            .app-preview {
+                padding: 50px 16px;
+            }
+        }
+        
         /* How it Works */
         .how-it-works {
             padding: 100px 40px;
@@ -703,6 +992,102 @@
 <div class="feature-icon">🔗</div>
 <h3>Link Ospite</h3>
 <p>Condividi risultati e statistiche con genitori e tifosi.</p>
+</div>
+</div>
+</section>
+<!-- App Preview Mockups -->
+<section class="app-preview">
+<div class="section-header">
+<h2>Vedi l'app in azione</h2>
+<p>Un'anteprima delle funzionalità principali, progettate per semplificare il lavoro quotidiano.</p>
+</div>
+<div class="preview-grid">
+<!-- Mockup 1: Calendario Allenamenti -->
+<div class="mockup-window">
+<div class="mockup-titlebar">
+<div class="dots"><span></span><span></span><span></span></div>
+<div class="title">📅 Calendario Allenamenti</div>
+</div>
+<div class="mockup-body">
+<div class="mock-calendar">
+<div class="day-header">Lun</div><div class="day-header">Mar</div><div class="day-header">Mer</div><div class="day-header">Gio</div><div class="day-header">Ven</div><div class="day-header">Sab</div><div class="day-header">Dom</div>
+<div class="day"></div><div class="day">1</div><div class="day training">2</div><div class="day">3</div><div class="day training">4</div><div class="day match">5</div><div class="day">6</div>
+<div class="day">7</div><div class="day">8</div><div class="day training">9</div><div class="day">10</div><div class="day training">11</div><div class="day">12</div><div class="day match">13</div>
+<div class="day">14</div><div class="day">15</div><div class="day today">16</div><div class="day">17</div><div class="day training">18</div><div class="day match">19</div><div class="day">20</div>
+<div class="day">21</div><div class="day">22</div><div class="day training">23</div><div class="day">24</div><div class="day training">25</div><div class="day">26</div><div class="day">27</div>
+<div class="day">28</div><div class="day">29</div><div class="day training">30</div><div class="day">31</div><div class="day"></div><div class="day"></div><div class="day"></div>
+</div>
+<div class="mock-legend">
+<span class="leg-train">Allenamento</span>
+<span class="leg-match">Partita</span>
+</div>
+</div>
+</div>
+<!-- Mockup 2: Seduta con Fasi -->
+<div class="mockup-window">
+<div class="mockup-titlebar">
+<div class="dots"><span></span><span></span><span></span></div>
+<div class="title">🏋️ Seduta — Fasi Strutturate</div>
+</div>
+<div class="mockup-body">
+<div class="mock-phase phase-warm">
+<div class="phase-icon">🔥</div>
+<div class="phase-info"><div class="phase-name">Riscaldamento</div><div class="phase-desc">Corsa + mobilità articolare</div></div>
+<div class="phase-time">10'</div>
+</div>
+<div class="mock-phase phase-tech">
+<div class="phase-icon">⚽</div>
+<div class="phase-info"><div class="phase-name">Tecnica</div><div class="phase-desc">Possesso palla 4v2</div></div>
+<div class="phase-time">20'</div>
+</div>
+<div class="mock-phase phase-tact">
+<div class="phase-icon">🧠</div>
+<div class="phase-info"><div class="phase-name">Tattica</div><div class="phase-desc">Uscita dal basso 4-3-3</div></div>
+<div class="phase-time">20'</div>
+</div>
+<div class="mock-phase phase-game">
+<div class="phase-icon">🏟️</div>
+<div class="phase-info"><div class="phase-name">Partita</div><div class="phase-desc">Partitella a tema</div></div>
+<div class="phase-time">25'</div>
+</div>
+<div class="mock-phase phase-cool">
+<div class="phase-icon">🧘</div>
+<div class="phase-info"><div class="phase-name">Defaticamento</div><div class="phase-desc">Stretching + respirazione</div></div>
+<div class="phase-time">10'</div>
+</div>
+<div class="mock-total">⏱ Durata totale: 85 min</div>
+</div>
+</div>
+<!-- Mockup 3: Distinta con Staff -->
+<div class="mockup-window">
+<div class="mockup-titlebar">
+<div class="dots"><span></span><span></span><span></span></div>
+<div class="title">📋 Distinta Gara</div>
+</div>
+<div class="mockup-body">
+<div class="mock-distinta-header">STAFF TECNICO</div>
+<div class="mock-staff-row">
+<div class="role">Allenatore</div>
+<div class="name">Urilli M.</div>
+<div class="badge">N° 12345</div>
+</div>
+<div class="mock-staff-row">
+<div class="role">2° Allen.</div>
+<div class="name">Rossi L.</div>
+<div class="badge">N° 67890</div>
+</div>
+<div class="mock-staff-row">
+<div class="role">Dirigente</div>
+<div class="name">Annese F.</div>
+<div class="badge">N° 11223</div>
+</div>
+<div class="mock-formation">
+<div class="row"><div class="player">1</div></div>
+<div class="row"><div class="player">2</div><div class="player">5</div><div class="player">6</div><div class="player">3</div></div>
+<div class="row"><div class="player">8</div><div class="player">4</div><div class="player">10</div></div>
+<div class="row"><div class="player">7</div><div class="player">9</div><div class="player">11</div></div>
+</div>
+</div>
 </div>
 </div>
 </section>
