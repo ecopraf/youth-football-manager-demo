@@ -18,6 +18,44 @@ const KEYS = {
   MATCH_RESULTS: 'matchResults'
 };
 
+/**
+ * Genera fasi demo strutturate in base al tipo di seduta
+ */
+function generateDemoFasi(tipoSeduta, seed) {
+  const base = [
+    { id: `f_${seed}_1`, tipo: 'riscaldamento', nome: 'Riscaldamento', durata: 15, descrizione: 'Corsa + mobilità articolare + stretching dinamico', materiale: ['coni'] }
+  ];
+  const variants = {
+    'Tattico': [
+      { id: `f_${seed}_2`, tipo: 'tattica', nome: 'Possesso palla', durata: 25, descrizione: 'Possesso 6v6 con sponde', materiale: ['coni', 'casacche'] },
+      { id: `f_${seed}_3`, tipo: 'partita', nome: 'Partitella a tema', durata: 20, descrizione: 'Partitella con vincoli tattici', materiale: ['casacche', 'porte_piccole'] }
+    ],
+    'Tecnico': [
+      { id: `f_${seed}_2`, tipo: 'tecnica', nome: 'Rondo', durata: 20, descrizione: 'Rondo 4v2 (3 serie)', materiale: ['coni', 'casacche'] },
+      { id: `f_${seed}_3`, tipo: 'tecnica', nome: 'Passaggi', durata: 20, descrizione: 'Esercizi di passaggio a muro', materiale: ['coni', 'palloni'] }
+    ],
+    'Atletico': [
+      { id: `f_${seed}_2`, tipo: 'atletica', nome: 'Forza', durata: 20, descrizione: 'Circuit training: skip, balzi, piegamenti', materiale: ['scala_agilita', 'over'] },
+      { id: `f_${seed}_3`, tipo: 'atletica', nome: 'Resistenza', durata: 20, descrizione: 'Navette e scatti ripetuti', materiale: ['coni', 'paletti'] }
+    ],
+    'Partita a tema': [
+      { id: `f_${seed}_2`, tipo: 'tecnica', nome: 'Tecnica', durata: 15, descrizione: 'Controllo e passaggio', materiale: ['coni'] },
+      { id: `f_${seed}_3`, tipo: 'partita', nome: 'Partita max 2 tocchi', durata: 30, descrizione: 'Partitella con vincolo 2 tocchi', materiale: ['casacche', 'porte_piccole'] }
+    ],
+    'Possesso palla': [
+      { id: `f_${seed}_2`, tipo: 'tattica', nome: 'Possesso 4v4+2', durata: 25, descrizione: 'Possesso con jolly', materiale: ['coni', 'casacche'] },
+      { id: `f_${seed}_3`, tipo: 'partita', nome: 'Partitella libera', durata: 20, descrizione: 'Partitella finale', materiale: ['casacche'] }
+    ],
+    'Difensivo': [
+      { id: `f_${seed}_2`, tipo: 'tattica', nome: 'Linea difensiva', durata: 25, descrizione: 'Movimenti linea a 4: scorrimenti e diagonali', materiale: ['coni', 'paletti'] },
+      { id: `f_${seed}_3`, tipo: 'partita', nome: 'Situazioni 3v2', durata: 20, descrizione: 'Esercitazioni difensive in inferiorità', materiale: ['coni', 'porte_piccole'] }
+    ]
+  };
+  const extra = variants[tipoSeduta] || variants['Tecnico'];
+  const defaticamento = { id: `f_${seed}_4`, tipo: 'defaticamento', nome: 'Defaticamento', durata: 10, descrizione: 'Stretching statico e corsa blanda', materiale: [] };
+  return [...base, ...extra, defaticamento];
+}
+
 class DemoPersistence {
   constructor() {
     this.data = this._load();
@@ -443,7 +481,7 @@ class DemoPersistence {
    */
   initTrainingHistory(giocatori) {
     // Versione dati per forzare rigenerazione se cambiata
-    const DATA_VERSION = 3;
+    const DATA_VERSION = 4;
     
     // Reset se versione diversa o dati insufficienti
     if (this.data.trainingVersion !== DATA_VERSION || 
@@ -530,14 +568,27 @@ class DemoPersistence {
         
         const tipiAllenamento = ['Tattico', 'Tecnico', 'Atletico', 'Partita a tema', 'Possesso palla', 'Difensivo'];
         
+        const tipoSeduta = tipiAllenamento[sessionId % tipiAllenamento.length];
+        // Genera fasi strutturate demo
+        const fasiDemo = generateDemoFasi(tipoSeduta, sessionId);
+        const durataTot = fasiDemo.reduce((s, f) => s + (f.durata || 0), 0);
+
         allenamentiStorico.push({
           id: `hist_tr_${sessionId}`,
           data: dataStr,
-          tipo: tipiAllenamento[sessionId % tipiAllenamento.length],
-          durata: 90,
+          tipo: tipoSeduta,
+          durata: durataTot,
           presenze: tuttiId.filter(id => !assenti.includes(id)),
           assenti: assenti,
           motivi_assenza: motivi,
+          programma: {
+            tipo: tipoSeduta,
+            durata: durataTot,
+            obiettivo: '',
+            fasi: fasiDemo,
+            materiale: [],
+            note: ''
+          },
           note: ''
         });
         sessionId++;
