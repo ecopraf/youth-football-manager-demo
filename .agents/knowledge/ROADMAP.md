@@ -62,7 +62,7 @@
 
 #### Report e Documenti
 - [ ] Report presenze allenamenti
-- [ ] Distinta FIGC in formato ufficiale
+- [x] Distinta FIGC in formato ufficiale con staff precompilato
 - [ ] Elenco rosa stampabile
 - [ ] Certificato trasferta
 

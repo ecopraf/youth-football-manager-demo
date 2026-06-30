@@ -60,7 +60,11 @@ youth-football-manager/
 │   │   │   ├── auth/         # Login, Register, Guest
 │   │   │   ├── admin/        # Users, Guest Links
 │   │   │   ├── team/         # Dashboard, Roster, Calendar, etc.
-│   │   │   ├── coach/        # Training
+│   │   │   ├── coach/        # Training (calendario, sedute, config)
+│   │   │   │   ├── training.js          # Orchestratore pagina
+│   │   │   │   ├── trainingCalendar.js  # Calendario mensile visuale
+│   │   │   │   ├── trainingSession.js   # Dettaglio seduta con fasi
+│   │   │   │   └── trainingConfig.js    # Settimana tipo + riepilogo
 │   │   │   ├── performance/  # Stats, Reports
 │   │   │   ├── club/         # Settings, Workspace
 │   │   │   └── demo/         # Demo mode
