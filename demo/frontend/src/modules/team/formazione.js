@@ -21,8 +21,13 @@ const PITCH_CSS = `
 .pitch-panel { flex: 1; min-width: 240px; }
 .pitch-roster { flex: 0 0 200px; max-height: 420px; overflow-y: auto; }
 @media (max-width: 768px) {
-  .pitch-container { flex-direction: column; }
-  .pitch-roster { flex: 1 1 100%; max-height: 200px; }
+  .pitch-container { flex-direction: column; align-items: stretch; }
+  .pitch-panel { display: flex; flex-direction: column; align-items: center; }
+  .pitch-roster {
+    flex: 1 1 auto; max-height: none; overflow-y: visible;
+    background: #fff; border-radius: 12px; padding: 10px;
+    border: 1px solid #eee; margin-top: 8px;
+  }
 }
 .pitch {
   width: 100%; max-width: 340px; aspect-ratio: 2/3; margin: 0 auto;
@@ -76,12 +81,15 @@ const PITCH_CSS = `
 .bench-section h5 { margin: 0 0 6px; font-size: 11px; color: #666; }
 .pitch-readonly .pitch-slot.occupied { cursor: default; }
 @media (max-width: 640px) {
-  .pitch { max-width: 280px; }
-  .pitch-slot { width: 32px; height: 32px; }
-  .pitch-slot .slot-num { font-size: 11px; }
-  .pitch-slot .slot-name { font-size: 6px; bottom: -12px; }
+  .pitch { max-width: 260px; }
+  .pitch-slot { width: 30px; height: 30px; }
+  .pitch-slot .slot-num { font-size: 10px; }
+  .pitch-slot .slot-name { font-size: 6px; bottom: -11px; }
   .roster-item { padding: 5px 6px; font-size: 10px; }
-  .roster-item .r-num { width: 20px; height: 20px; font-size: 9px; }
+  .roster-item .r-num { width: 18px; height: 18px; font-size: 8px; }
+  .pitch-roster { padding: 8px; }
+  .modulo-select { gap: 4px; }
+  .modulo-btn { padding: 4px 8px; font-size: 10px; }
 }
 `;
 
@@ -176,7 +184,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
   html += `<div class="pitch-container">`;
 
   // Campo
-  html += `<div class="pitch-panel"><div class="pitch" id="pitchField">${buildPitchSlots(savedModulo, titolariIds, allPlayers)}</div>`;
+  html += `<div class="pitch-panel"><div class="pitch" id="pitchField">${buildPitchSlots(savedModulo, titolariIds, allPlayers, formazione?.positions)}</div>`;
   html += `<div id="pitchCount" style="text-align:center;margin-top:8px;font-size:12px;font-weight:600;color:#667eea;">${titolariIds.length}/11 titolari</div>`;
   html += `</div>`;
 
@@ -205,8 +213,12 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
   let customPositions = {}; // slotIndex -> {x, y} percentuali
   // Inizializza con formazione esistente
   titolariIds.forEach((id, i) => { slotAssignments[i] = id; });
-  // Carica posizioni custom salvate
-  if (formazione?.positions) customPositions = { ...formazione.positions };
+  // Carica posizioni custom salvate (normalizza chiavi a numeri)
+  if (formazione?.positions) {
+    Object.keys(formazione.positions).forEach(k => {
+      customPositions[parseInt(k)] = formazione.positions[k];
+    });
+  }
 
   // Modulo switch
   document.querySelectorAll('#moduloSelect .modulo-btn').forEach(btn => {
@@ -287,7 +299,10 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
 function buildPitchSlots(modulo, titolariIds, allPlayers, positions) {
   const assignments = {};
   titolariIds.forEach((id, i) => { assignments[i] = id; });
-  return buildPitchSlotsFromState(modulo, assignments, allPlayers, positions || {});
+  // Normalizza chiavi positions a numeri
+  const normPos = {};
+  if (positions) Object.keys(positions).forEach(k => { normPos[parseInt(k)] = positions[k]; });
+  return buildPitchSlotsFromState(modulo, assignments, allPlayers, normPos);
 }
 
 function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositions) {
