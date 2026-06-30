@@ -33,7 +33,9 @@ Dati dei minorenni protetti, accesso controllato per ruolo (allenatore, genitore
 ### Allenatore
 - Gestisce rosa, formazioni, convocazioni
 - Inserisce risultati e statistiche partita
-- Pianifica allenamenti
+- Pianifica allenamenti con sedute strutturate in fasi
+- Crea formazioni con campo visuale drag & drop
+- Sceglie modulo tattico e posiziona giocatori liberamente
 
 ### Dirigente
 - Gestisce anagrafica giocatori e famiglie
@@ -63,6 +65,19 @@ Sistema di referral commerciale con:
 
 ### Fase Attuale (MVP)
 Piattaforma funzionante con le funzionalità core per una singola società sportiva.
+
+**Funzionalità completate:**
+- Auth multi-ruolo con JWT e guest links
+- Calendario partite con archivio e eventi
+- Convocazioni con stato confermato/in dubbio/assente
+- Formazione visuale con campo, drag & drop, moduli tattici e free-move
+- Distinta FIGC/LND con staff precompilato da registro credenziali
+- Allenamenti: calendario mensile, sedute in fasi, template, presenze
+- Calendario allenamenti con evidenza giorni partita (dettagli avversario)
+- Statistiche individuali e di squadra
+- Dashboard con top players
+- Demo interattiva con mini-missioni guidate
+- Landing page con mockup CSS-only
 
 ### Roadmap
 1. **FASE 1** ✅ - Sistema Auth/Ruoli completo

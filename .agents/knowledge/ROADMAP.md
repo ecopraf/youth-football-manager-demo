@@ -18,6 +18,20 @@
 - [x] Link guest temporanei
 - [x] Multi-workspace isolation
 
+### FASE 1.5 ✅ COMPLETATA
+**Allenamenti e Formazione**
+- [x] Calendario mensile allenamenti con navigazione
+- [x] Sedute strutturate in fasi (riscaldamento, tecnica, tattica, partita, defaticamento)
+- [x] Template sedute riutilizzabili
+- [x] Evidenza giorni partita nel calendario (con dettagli avversario/luogo/giornata)
+- [x] Blocco creazione sedute nei giorni gara
+- [x] Campo visuale formazione con drag & drop
+- [x] Selettore modulo tattico (4-3-3, 4-4-2, 3-5-2, ecc.)
+- [x] Free-move giocatori sul campo (posizioni custom)
+- [x] Salvataggio modulo e posizioni per consultazione futura
+- [x] Distinta FIGC con staff precompilato da registro credenziali
+- [x] Landing page con mockup CSS-only delle feature
+
 ### FASE 2 📋 TODO
 **Import Dati**
 - [x] Import CSV base (struttura)
@@ -59,10 +73,13 @@
 - [ ] Notifiche push per partite
 - [ ] Previsioni meteo per giorno partita
 - [ ] Statistiche testa-a-testa con avversari
+- [x] Evidenza giorni partita nel calendario allenamenti (avversario, luogo, giornata)
+- [x] Blocco creazione sedute nei giorni gara
 
 #### Report e Documenti
 - [ ] Report presenze allenamenti
 - [x] Distinta FIGC in formato ufficiale con staff precompilato
+- [x] Campo visuale formazione con drag & drop e moduli tattici
 - [ ] Elenco rosa stampabile
 - [ ] Certificato trasferta
 

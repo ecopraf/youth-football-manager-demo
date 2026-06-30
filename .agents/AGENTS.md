@@ -59,9 +59,11 @@ git status
 
 ## 🔗 Link Utili
 
-- **App**: https://youth-football-manager.vercel.app
+- **App Demo**: https://youth-football-manager-demo.vercel.app
+- **Landing**: https://yfm-landing.vercel.app
 - **Backend API**: https://youth-football-manager-backend.vercel.app/api
-- **Repo**: https://github.com/ecopraf/youth-football-manager
+- **Repo Demo**: https://github.com/ecopraf/youth-football-manager-demo
+- **Repo Principale**: https://github.com/ecopraf/youth-football-manager
 
 ---
 
@@ -87,10 +89,10 @@ git status
 | `squadra` | Squadra |
 | `calciatore` | Giocatore |
 | `rosa` | Associazione giocatore-squadra |
-| `partita` | Partita |
+| `partita` | Partita (data_ora, avversario, luogo, giornata) |
 | `evento_partita` | Eventi (GOAL, ASSIST, YELLOW, etc.) |
 | `convocazione` | Convocazioni |
-| `formazione_partita` | Formazione |
+| `formazione_partita` | Formazione (modulo, positions, titolari, riserve) |
 | `valutazione_partita` | Valutazioni |
 | `utente` | Utente sistema |
 | `guest_token` | Token guest |

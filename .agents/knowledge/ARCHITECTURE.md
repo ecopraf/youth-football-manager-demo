@@ -24,10 +24,11 @@
 
 ### Frontend
 - **Framework**: Vite 6.x + JavaScript ES Modules
-- **Styling**: Tailwind CSS + CSS custom inline nei moduli
+- **Styling**: CSS custom inline nei moduli
 - **Routing**: Router custom in `router.js`
 - **State**: Window globals (`window.YFM.*`)
 - **Persistenza Demo**: localStorage tramite `DemoPersistence.js`
+- **Interazioni**: Drag & Drop nativo + Pointer Events per touch
 - **Deploy**: Vercel (static hosting)
 
 ### Backend
@@ -59,12 +60,12 @@ youth-football-manager/
 │   │   ├── modules/          # Pagine/applicazioni
 │   │   │   ├── auth/         # Login, Register, Guest
 │   │   │   ├── admin/        # Users, Guest Links
-│   │   │   ├── team/         # Dashboard, Roster, Calendar, etc.
+│   │   │   ├── team/         # Dashboard, Roster, Calendar, Formazione, Distinta, etc.
 │   │   │   ├── coach/        # Training (calendario, sedute, config)
 │   │   │   │   ├── training.js          # Orchestratore pagina
-│   │   │   │   ├── trainingCalendar.js  # Calendario mensile visuale
-│   │   │   │   ├── trainingSession.js   # Dettaglio seduta con fasi
-│   │   │   │   └── trainingConfig.js    # Settimana tipo + riepilogo
+│   │   │   │   ├── trainingCalendar.js  # Calendario mensile con partite evidenziate
+│   │   │   │   ├── trainingSession.js   # Dettaglio seduta con fasi strutturate
+│   │   │   │   └── trainingConfig.js    # Settimana tipo + riepilogo presenze
 │   │   │   ├── performance/  # Stats, Reports
 │   │   │   ├── club/         # Settings, Workspace
 │   │   │   └── demo/         # Demo mode
