@@ -18,51 +18,71 @@ const MODULI = {
 
 const PITCH_CSS = `
 .pitch-container { display: flex; gap: 16px; flex-wrap: wrap; }
-.pitch-panel { flex: 1; min-width: 300px; }
-.pitch-roster { flex: 0 0 220px; max-height: 500px; overflow-y: auto; }
-@media (max-width: 768px) { .pitch-roster { flex: 1 1 100%; max-height: 250px; } }
+.pitch-panel { flex: 1; min-width: 240px; }
+.pitch-roster { flex: 0 0 200px; max-height: 420px; overflow-y: auto; }
+@media (max-width: 768px) {
+  .pitch-container { flex-direction: column; }
+  .pitch-roster { flex: 1 1 100%; max-height: 200px; }
+}
 .pitch {
-  width: 100%; aspect-ratio: 3/4; background: linear-gradient(180deg, #2d8a4e 0%, #1a6b38 100%);
+  width: 100%; max-width: 340px; aspect-ratio: 2/3; margin: 0 auto;
+  background: linear-gradient(180deg, #2d8a4e 0%, #1a6b38 100%);
   border-radius: 12px; position: relative; overflow: hidden; border: 3px solid #1a5c30;
+  touch-action: none;
 }
 .pitch::before {
-  content: ''; position: absolute; top: 50%; left: 10%; right: 10%; height: 1px; background: rgba(255,255,255,0.3);
+  content: ''; position: absolute; top: 50%; left: 8%; right: 8%; height: 1px; background: rgba(255,255,255,0.25);
 }
 .pitch::after {
-  content: ''; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px;
-  border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; transform: translate(-50%, -50%);
+  content: ''; position: absolute; top: 50%; left: 50%; width: 50px; height: 50px;
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; transform: translate(-50%, -50%);
 }
 .pitch-slot {
-  position: absolute; width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(255,255,255,0.15); border: 2px dashed rgba(255,255,255,0.4);
+  position: absolute; width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: 2px dashed rgba(255,255,255,0.35);
   display: flex; align-items: center; justify-content: center;
-  transform: translate(-50%, -50%); transition: all 0.2s; cursor: default;
+  transform: translate(-50%, -50%); transition: background 0.2s, border 0.2s, box-shadow 0.2s;
+  cursor: default; user-select: none;
 }
-.pitch-slot.occupied { background: white; border: 2px solid #667eea; cursor: grab; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-.pitch-slot.occupied:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.1); }
-.pitch-slot.drag-over { background: rgba(102,126,234,0.4); border-color: white; transform: translate(-50%, -50%) scale(1.15); }
-.pitch-slot .slot-num { font-size: 14px; font-weight: 700; color: #667eea; }
-.pitch-slot .slot-name { position: absolute; bottom: -16px; font-size: 8px; color: white; font-weight: 600; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-.pitch-slot.occupied .slot-name { color: #fff; }
+.pitch-slot.occupied {
+  background: white; border: 2px solid #667eea; cursor: grab;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.pitch-slot.occupied.free-move { cursor: move; }
+.pitch-slot.occupied:active { cursor: grabbing; }
+.pitch-slot.drag-over { background: rgba(102,126,234,0.4); border-color: white; transform: translate(-50%, -50%) scale(1.12); }
+.pitch-slot .slot-num { font-size: 13px; font-weight: 700; color: #667eea; pointer-events: none; }
+.pitch-slot .slot-name {
+  position: absolute; bottom: -14px; font-size: 7px; color: white;
+  font-weight: 600; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.9); pointer-events: none;
+}
 .roster-item {
-  display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px; margin-bottom: 3px;
   background: #f8f9fa; border-radius: 8px; cursor: grab; border: 1px solid #eee; transition: all 0.2s;
+  font-size: 11px;
 }
 .roster-item:active { cursor: grabbing; }
 .roster-item.dragging { opacity: 0.4; }
-.roster-item.placed { opacity: 0.35; pointer-events: none; }
-.roster-item .r-num { width: 26px; height: 26px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-.roster-item .r-name { font-size: 12px; font-weight: 500; flex: 1; }
-.roster-item .r-role { font-size: 10px; color: #888; }
+.roster-item.placed { opacity: 0.3; pointer-events: none; }
+.roster-item .r-num { width: 22px; height: 22px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.roster-item .r-name { font-weight: 500; flex: 1; }
+.roster-item .r-role { font-size: 9px; color: #888; }
 .roster-item.is-riserva .r-num { background: #999; }
-.modulo-select { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-.modulo-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid #dee2e6; background: white; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+.modulo-select { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.modulo-btn { padding: 5px 10px; border-radius: 8px; border: 1px solid #dee2e6; background: white; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.2s; }
 .modulo-btn:hover { border-color: #667eea; background: #f0f4ff; }
 .modulo-btn.active { background: #667eea; color: white; border-color: #667eea; }
-.bench-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
-.bench-section h5 { margin: 0 0 8px; font-size: 12px; color: #666; }
+.bench-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+.bench-section h5 { margin: 0 0 6px; font-size: 11px; color: #666; }
 .pitch-readonly .pitch-slot.occupied { cursor: default; }
-.pitch-readonly .pitch-slot.occupied:active { transform: translate(-50%, -50%); }
+@media (max-width: 640px) {
+  .pitch { max-width: 280px; }
+  .pitch-slot { width: 32px; height: 32px; }
+  .pitch-slot .slot-num { font-size: 11px; }
+  .pitch-slot .slot-name { font-size: 6px; bottom: -12px; }
+  .roster-item { padding: 5px 6px; font-size: 10px; }
+  .roster-item .r-num { width: 20px; height: 20px; font-size: 9px; }
+}
 `;
 
 export async function openFormazioneForm(mid) {
@@ -110,7 +130,7 @@ function renderPitchReadOnly(match, giocatoriConvocati, formazione, allPlayers) 
   html += `<div style="text-align:center;margin-bottom:12px;">`;
   html += `<span style="background:#667eea;color:white;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:600;">Modulo: ${modulo}</span>`;
   html += `</div>`;
-  html += `<div class="pitch" id="pitchField">${buildPitchSlots(modulo, titolariIds, allPlayers)}</div>`;
+  html += `<div class="pitch" id="pitchField">${buildPitchSlots(modulo, titolariIds, allPlayers, formazione?.positions)}</div>`;
 
   // Panchina
   if (riserveIds.length > 0) {
@@ -182,8 +202,11 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
   // State
   let currentModulo = savedModulo;
   let slotAssignments = {}; // slotIndex -> playerId
+  let customPositions = {}; // slotIndex -> {x, y} percentuali
   // Inizializza con formazione esistente
   titolariIds.forEach((id, i) => { slotAssignments[i] = id; });
+  // Carica posizioni custom salvate
+  if (formazione?.positions) customPositions = { ...formazione.positions };
 
   // Modulo switch
   document.querySelectorAll('#moduloSelect .modulo-btn').forEach(btn => {
@@ -198,19 +221,20 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
         if (i < totalSlots) newAssignments[i] = pid;
       });
       slotAssignments = newAssignments;
+      customPositions = {}; // Reset posizioni custom al cambio modulo
       refreshPitch();
     });
   });
 
-  // Drag & Drop
-  setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch);
+  // Drag & Drop + Free Move
+  setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch, customPositions);
 
   function refreshPitch() {
     const field = document.getElementById('pitchField');
-    if (field) field.innerHTML = buildPitchSlotsFromState(currentModulo, slotAssignments, allPlayers);
+    if (field) field.innerHTML = buildPitchSlotsFromState(currentModulo, slotAssignments, allPlayers, customPositions);
     updateRosterState(slotAssignments);
     updateCount(slotAssignments);
-    setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch);
+    setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch, customPositions);
   }
 
   function updateCount(assignments) {
@@ -237,6 +261,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
 
     const formation = {
       modulo: currentModulo,
+      positions: customPositions,
       portiere: portieri[0],
       difensori: placed.filter(id => { const g = allPlayers.find(p => p.id === id); return g?.ruolo === 'Difensore'; }),
       centrocampisti: placed.filter(id => { const g = allPlayers.find(p => p.id === id); return g?.ruolo === 'Centrocampista'; }),
@@ -259,13 +284,13 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
 }
 
 // ==================== PITCH RENDERING ====================
-function buildPitchSlots(modulo, titolariIds, allPlayers) {
+function buildPitchSlots(modulo, titolariIds, allPlayers, positions) {
   const assignments = {};
   titolariIds.forEach((id, i) => { assignments[i] = id; });
-  return buildPitchSlotsFromState(modulo, assignments, allPlayers);
+  return buildPitchSlotsFromState(modulo, assignments, allPlayers, positions || {});
 }
 
-function buildPitchSlotsFromState(modulo, assignments, allPlayers) {
+function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositions) {
   const config = MODULI[modulo] || MODULI['4-3-3'];
   const rows = config.rows;
   let html = '';
@@ -273,18 +298,22 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers) {
 
   rows.forEach((count, rowIndex) => {
     const totalRows = rows.length;
-    // Posizione Y: dal basso (portiere) all'alto (attacco)
     const yPercent = 90 - (rowIndex * (75 / (totalRows - 1)));
 
     for (let i = 0; i < count; i++) {
       const xPercent = count === 1 ? 50 : 15 + (i * (70 / (count - 1)));
+      // Usa posizione custom se disponibile
+      const custom = customPositions?.[slotIdx];
+      const finalX = custom ? custom.x : xPercent;
+      const finalY = custom ? custom.y : yPercent;
+
       const pid = assignments[slotIdx];
       const player = pid ? allPlayers.find(p => p.id === pid) : null;
       const occupied = player ? ' occupied' : '';
       const num = player ? (player.numero_maglia || player.numeroMaglia || '?') : '';
       const name = player ? player.cognome : '';
 
-      html += `<div class="pitch-slot${occupied}" data-slot="${slotIdx}" style="top:${yPercent}%;left:${xPercent}%;">`;
+      html += `<div class="pitch-slot${occupied}" data-slot="${slotIdx}" style="top:${finalY}%;left:${finalX}%;">`;
       if (player) {
         html += `<span class="slot-num">${num}</span>`;
         html += `<span class="slot-name">${name}</span>`;
@@ -297,8 +326,8 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers) {
   return html;
 }
 
-// ==================== DRAG & DROP ====================
-function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, refresh) {
+// ==================== DRAG & DROP + FREE MOVE ====================
+function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, refresh, customPositions) {
   let draggedPid = null;
   let draggedFromSlot = null;
 
@@ -316,7 +345,7 @@ function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, r
     });
   });
 
-  // Pitch slots - drag from occupied slot
+  // Pitch slots - drag from occupied slot (to swap or to roster)
   document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
     slot.setAttribute('draggable', 'true');
     slot.addEventListener('dragstart', (e) => {
@@ -338,26 +367,18 @@ function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, r
       const targetIdx = parseInt(slot.dataset.slot);
       if (!draggedPid) return;
 
-      // Se lo slot target è già occupato, scambia
       const existingPid = assignments[targetIdx];
 
-      // Rimuovi dal vecchio slot se veniva dal campo
       if (draggedFromSlot !== null) {
         delete assignments[draggedFromSlot];
         if (existingPid) assignments[draggedFromSlot] = existingPid;
       } else {
-        // Veniva dalla roster: se target occupato, libera il vecchio
-        if (existingPid) {
-          // Rimuovi il vecchio dal campo
-          delete assignments[targetIdx];
-        }
-        // Rimuovi se era già piazzato altrove
+        if (existingPid) delete assignments[targetIdx];
         Object.keys(assignments).forEach(k => {
           if (assignments[k] === draggedPid) delete assignments[k];
         });
       }
 
-      // Controlla limite 11
       if (!draggedFromSlot && Object.keys(assignments).length >= 11 && !existingPid) {
         draggedPid = null;
         return;
@@ -370,7 +391,7 @@ function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, r
     });
   });
 
-  // Drop back to roster (rimuovi dal campo)
+  // Drop back to roster
   const rosterEl = document.getElementById('rosterList');
   if (rosterEl) {
     rosterEl.addEventListener('dragover', (e) => { e.preventDefault(); });
@@ -384,6 +405,64 @@ function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, r
       }
     });
   }
+
+  // FREE MOVE: double-click/long-press to enter free-position mode on occupied slots
+  setupFreeMove(assignments, customPositions, refresh);
+}
+
+/**
+ * Free move: permette di spostare i pallini liberamente sul campo (pointer drag)
+ */
+function setupFreeMove(assignments, customPositions, refresh) {
+  const pitch = document.getElementById('pitchField');
+  if (!pitch) return;
+
+  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
+    let moving = false;
+    let startX, startY;
+
+    const onPointerDown = (e) => {
+      // Solo se è un secondo tocco (doppio tap) o tasto destro, oppure sempre su touch
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      e.preventDefault();
+      moving = true;
+      slot.classList.add('free-move');
+      slot.setPointerCapture(e.pointerId);
+      startX = e.clientX;
+      startY = e.clientY;
+    };
+
+    const onPointerMove = (e) => {
+      if (!moving) return;
+      e.preventDefault();
+      const rect = pitch.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      // Clamp
+      const cx = Math.max(5, Math.min(95, x));
+      const cy = Math.max(5, Math.min(95, y));
+      slot.style.left = cx + '%';
+      slot.style.top = cy + '%';
+    };
+
+    const onPointerUp = (e) => {
+      if (!moving) return;
+      moving = false;
+      slot.classList.remove('free-move');
+      slot.releasePointerCapture(e.pointerId);
+      // Salva posizione custom
+      const idx = parseInt(slot.dataset.slot);
+      const rect = pitch.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      customPositions[idx] = { x: Math.max(5, Math.min(95, x)), y: Math.max(5, Math.min(95, y)) };
+    };
+
+    // Usa pointer events per supporto touch + mouse
+    slot.addEventListener('pointerdown', onPointerDown);
+    slot.addEventListener('pointermove', onPointerMove);
+    slot.addEventListener('pointerup', onPointerUp);
+  });
 }
 
 function updateRosterState(assignments) {
