@@ -1,6 +1,6 @@
 /**
  * trainingCalendar.js - Calendario mensile visuale per allenamenti
- * Mostra griglia mensile con evidenza giorni allenamento e giorno corrente
+ * Mostra griglia mensile con evidenza giorni allenamento, partite e giorno corrente
  */
 
 let currentMonth = new Date().getMonth();
@@ -17,6 +17,16 @@ export function setOnDateSelect(callback) {
 }
 
 /**
+ * Converte un Date in stringa YYYY-MM-DD usando data locale (no UTC shift)
+ */
+function toLocalDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
  * Renderizza il calendario mensile
  * @param {Array} config - Configurazione settimana tipo [{giorno_settimana, ...}]
  * @param {Array} allenamenti - Lista allenamenti con date e presenze
@@ -26,7 +36,7 @@ export function setOnDateSelect(callback) {
 export function renderCalendar(config, allenamenti, partite) {
   const giorniConfigurati = (config || []).map(c => c.giorno_settimana);
   const oggi = new Date();
-  const oggiStr = oggi.toISOString().split('T')[0];
+  const oggiStr = toLocalDateStr(oggi);
 
   // Mappa date con allenamento registrato
   const dateConPresenze = new Set();
@@ -40,12 +50,12 @@ export function renderCalendar(config, allenamenti, partite) {
     }
   });
 
-  // Mappa date con partita
-  const dateConPartita = new Set();
+  // Mappa date con partita (con dettagli per tooltip)
+  const dateConPartita = new Map(); // dateStr -> partita object
   (partite || []).forEach(p => {
     if (p.data_ora) {
-      const dataPartita = new Date(p.data_ora).toISOString().split('T')[0];
-      dateConPartita.add(dataPartita);
+      const dataPartita = toLocalDateStr(new Date(p.data_ora));
+      dateConPartita.set(dataPartita, p);
     }
   });
 
@@ -78,12 +88,17 @@ export function renderCalendar(config, allenamenti, partite) {
     .cal-day.has-training:hover { background: #dcfce7; }
     .cal-day.has-presenze { cursor: pointer; background: #d1fae5; }
     .cal-day.has-presenze:hover { background: #a7f3d0; }
-    .cal-day.has-match { background: #fff3e0; border: 2px solid #F39C12; }
+    .cal-day.has-match { background: #fff3e0; border: 2px solid #F39C12; cursor: default; }
     .cal-day.has-match:hover { background: #ffe0b2; }
+    .cal-match-info {
+      font-size: 8px; line-height: 1.2; margin-top: 2px; color: #E67E22;
+      font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
     .cal-day.is-today { border: 2px solid #667eea; font-weight: 700; color: #667eea; }
     .cal-day.is-today.has-match { border: 2px solid #E74C3C; background: #fff3e0; color: #E74C3C; }
     .cal-day.is-selected { background: #667eea !important; color: white !important; border-radius: 8px; }
     .cal-day.is-selected .cal-dot { background: white !important; }
+    .cal-day.is-selected .cal-match-info { color: white !important; }
     .cal-dot {
       width: 6px; height: 6px; border-radius: 50%; margin-top: 2px;
     }
@@ -92,10 +107,15 @@ export function renderCalendar(config, allenamenti, partite) {
     .cal-dot.match { background: #F39C12; border: 1px solid #E67E22; }
     .cal-day.is-future-training { cursor: pointer; }
     .cal-day.is-future-training:hover { background: #eff6ff; }
+    @media (min-width: 641px) {
+      .cal-day.has-match { min-height: 52px; padding: 6px 2px; }
+      .cal-match-info { font-size: 9px; }
+    }
     @media (max-width: 640px) {
       .cal-day { padding: 6px 2px; font-size: 12px; min-height: 34px; }
       .cal-dot { width: 5px; height: 5px; }
       .cal-header h3 { font-size: 14px; }
+      .cal-match-info { font-size: 7px; }
     }
   </style>`;
 
@@ -118,7 +138,7 @@ export function renderCalendar(config, allenamenti, partite) {
   // Giorni del mese
   for (let day = 1; day <= giorniMese; day++) {
     const date = new Date(currentYear, currentMonth, day);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toLocalDateStr(date);
     const dayOfWeek = date.getDay(); // 0=Dom, 1=Lun, ...
     const isToday = dateStr === oggiStr;
     const isSelected = dateStr === selectedDate;
@@ -126,25 +146,34 @@ export function renderCalendar(config, allenamenti, partite) {
     const hasPresenze = dateConPresenze.has(dateStr);
     const hasAllenamento = dateConAllenamento.has(dateStr);
     const hasMatch = dateConPartita.has(dateStr);
+    const matchObj = hasMatch ? dateConPartita.get(dateStr) : null;
 
     let classes = 'cal-day';
     if (hasMatch) classes += ' has-match';
     if (isToday) classes += ' is-today';
     if (isSelected) classes += ' is-selected';
-    if (hasPresenze) classes += ' has-presenze';
-    else if (hasAllenamento) classes += ' has-training';
-    else if (isProgrammed) classes += ' is-future-training';
+    if (!hasMatch) {
+      if (hasPresenze) classes += ' has-presenze';
+      else if (hasAllenamento) classes += ' has-training';
+      else if (isProgrammed) classes += ' is-future-training';
+    }
 
     let dotHtml = '';
-    if (hasMatch) {
-      dotHtml = '<span class="cal-dot match"></span>';
+    if (hasMatch && matchObj) {
+      // Mostra dettaglio partita nel riquadro
+      const luogoIcon = matchObj.luogo === 'Casa' ? '🏠' : '✈️';
+      const avv = matchObj.avversario ? matchObj.avversario.substring(0, 10) : '';
+      const gior = matchObj.giornata ? `G${matchObj.giornata}` : '';
+      const tooltip = `${matchObj.avversario || ''} (${matchObj.luogo || ''})${matchObj.giornata ? ' - Giornata ' + matchObj.giornata : ''}`;
+      dotHtml = `<span class="cal-match-info" title="${tooltip}">${luogoIcon} ${avv}${gior ? ' ' + gior : ''}</span>`;
     } else if (hasPresenze) {
       dotHtml = '<span class="cal-dot registered"></span>';
     } else if (hasAllenamento || isProgrammed) {
       dotHtml = '<span class="cal-dot programmed"></span>';
     }
 
-    const clickable = isProgrammed || hasAllenamento || hasPresenze;
+    // Giorni partita NON sono cliccabili per creare sedute
+    const clickable = !hasMatch && (isProgrammed || hasAllenamento || hasPresenze);
     const dataAttr = clickable ? `data-date="${dateStr}"` : '';
 
     html += `<div class="${classes}" ${dataAttr}>${day}${dotHtml}</div>`;
@@ -223,7 +252,7 @@ export function navigateToDate(dateStr) {
  */
 export function selectTodayIfTraining(config) {
   const oggi = new Date();
-  const oggiStr = oggi.toISOString().split('T')[0];
+  const oggiStr = toLocalDateStr(oggi);
   const giorniConfigurati = (config || []).map(c => c.giorno_settimana);
   if (giorniConfigurati.includes(oggi.getDay())) {
     selectedDate = oggiStr;
