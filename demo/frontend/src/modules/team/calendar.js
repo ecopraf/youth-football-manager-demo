@@ -236,6 +236,34 @@ function renderCalendarPage(c, matches, stats) {
       border-top: 1px solid #f0f0f0;
     }
     
+    /* ===== CARD CLICCABILE ===== */
+    .match-card-inner {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .match-card-inner:hover {
+      background: #f8f9fa;
+    }
+    
+    /* ===== TOGGLE AZIONI MOBILE ===== */
+    .match-actions-toggle {
+      display: none;
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 8px;
+      background: #f0f4ff;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+      cursor: pointer;
+      text-align: center;
+    }
+    .match-actions-toggle:hover {
+      background: #e0e7ff;
+    }
+    
     /* ===== MOBILE ===== */
     @media (max-width: 640px) {
       .match-opponent { font-size: 15px; }
@@ -243,11 +271,15 @@ function renderCalendarPage(c, matches, stats) {
       .match-badges .match-badge { font-size: 10px; padding: 2px 6px; }
       .match-progress { gap: 8px; }
       .progress-label { font-size: 9px; }
+      /* Nasconde i pulsanti azione di default su mobile */
       .match-actions-row {
-        display: grid;
+        display: none;
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
         width: 100%;
+      }
+      .match-actions-row.expanded {
+        display: grid;
       }
       .match-actions-row .btn {
         padding: 8px 4px !important;
@@ -256,6 +288,7 @@ function renderCalendarPage(c, matches, stats) {
         justify-content: center;
       }
       .match-actions-row .btn .btn-text { display: block; font-size: 10px; }
+      .match-actions-toggle { display: block; }
       .result-badge { font-size: 11px; padding: 3px 8px; gap: 4px; }
       .result-score { font-size: 14px; }
       .match-card-actions {
@@ -312,10 +345,19 @@ function renderCalendarPage(c, matches, stats) {
 
 function attachCardListeners() {
   document.querySelectorAll('.btn-editm').forEach(b => {
-  b.addEventListener('click', (e) => { e.stopPropagation(); openMatchForm(b.dataset.mid); });
+    b.addEventListener('click', (e) => { e.stopPropagation(); openMatchForm(b.dataset.mid); });
   });
   document.querySelectorAll('.btn-del').forEach(b => {
-  b.addEventListener('click', (e) => { e.stopPropagation(); deleteMatch(b.dataset.mid); });
+    b.addEventListener('click', (e) => { e.stopPropagation(); deleteMatch(b.dataset.mid); });
+  });
+  // Card cliccabile → apre dettaglio partita
+  document.querySelectorAll('.match-card-inner[data-mid]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Non aprire se click su bottone, select, o link
+      if (e.target.closest('button, a, select, .match-card-actions, .match-actions-row, .match-actions-toggle')) return;
+      const mid = card.dataset.mid;
+      if (mid) window.YFM.openMatchDetail(mid);
+    });
   });
 }
 
@@ -441,7 +483,7 @@ export function renderMatchCard(m, stats, isNext = false) {
     editBtns = `<button class="btn btn-secondary btn-small" style="background:#6B5B4F;color:white;border-color:#6B5B4F;" onclick="event.stopPropagation();unarchiveMatch('${m.id}')" title="Sblocca">🔓</button>`;
   }
 
-  return `<div class="match-card-inner" style="${cardStyle}padding-left:12px;">
+  return `<div class="match-card-inner" data-mid="${m.id}" style="${cardStyle}padding-left:12px;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="match-badges" style="margin-bottom:6px;">${luogoBadge}${compBadge}${giornBadge}${archivedBadge}</div>
@@ -454,6 +496,7 @@ export function renderMatchCard(m, stats, isNext = false) {
       </div>
       <div class="match-card-actions">${editBtns}</div>
     </div>
+    <button class="match-actions-toggle" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('expanded');this.textContent=this.nextElementSibling.classList.contains('expanded')?'▲ Chiudi':'⋯ Azioni'">⋯ Azioni</button>
     <div class="match-actions-row">${actionsHtml}</div>
   </div>`;
 }
