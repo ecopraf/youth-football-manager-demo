@@ -188,7 +188,7 @@ export const DEMO_MISSIONS = [
     id: 'trainingPresenze',
     title: 'Allenamenti - Presenze',
     description: 'Gestisci presenze e assenze',
-    icon: '✅',
+    icon: '📋',
     page: 'trainingPresenze',
     completed: false
   },
