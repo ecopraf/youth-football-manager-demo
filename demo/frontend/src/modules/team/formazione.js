@@ -33,7 +33,7 @@ const PITCH_CSS = `
   width: 100%; max-width: 340px; aspect-ratio: 2/3; margin: 0 auto;
   background: linear-gradient(180deg, #2d8a4e 0%, #1a6b38 100%);
   border-radius: 12px; position: relative; overflow: hidden; border: 3px solid #1a5c30;
-  max-height: calc(100vh - 320px);
+  max-height: calc(100vh - 320px); user-select: none; -webkit-user-select: none;
 }
 .pitch::before {
   content: ''; position: absolute; top: 50%; left: 8%; right: 8%; height: 1px; background: rgba(255,255,255,0.25);
