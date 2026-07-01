@@ -385,6 +385,7 @@ function loadSquadraData(squadraId) {
   } else {
     window.YFM.allPlayers = [...DEMO_CALCIATORI, ...savedCustomPlayers];
     window.YFM.demoMatches = DEMO_PARTITE;
+    window.YFM.demoEvents = DEMO_EVENTI;
     window.YFM.demoFormazioni = DEMO_FORMAZIONI;
     window.YFM.demoStats = DEMO_STATISTICHE;
     window.YFM.demoTopPlayers = DEMO_TOP_PLAYERS;
