@@ -92,11 +92,11 @@ export function initRouter() {
     
     window.YFM.currentPage = page;
 
-    // Mostra tooltip demo
-    if (window.demoManager) {
-      setTimeout(() => window.demoManager.showTooltipForPage(page), 1000);
-      setTimeout(() => window.demoManager.setupPageHighlights(page), 1500);
-    }
+    // Mostra tooltip demo (disabilitati — sostituiti da PageHelp)
+    // if (window.demoManager) {
+    //   setTimeout(() => window.demoManager.showTooltipForPage(page), 1000);
+    //   setTimeout(() => window.demoManager.setupPageHighlights(page), 1500);
+    // }
     
     document.querySelectorAll('.sidebar-nav a').forEach(link => {
       link.classList.toggle('active', link.dataset.page === page);
