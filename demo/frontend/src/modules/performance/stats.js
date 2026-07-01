@@ -70,11 +70,13 @@ export default async function loadStats() {
   const statsArr = Object.values(statsMap).sort((a, b) => a.cognome.localeCompare(b.cognome));
 
   // Totali
-  const totPresenze = statsArr.reduce((s, p) => s + p.presenze, 0);
   const totGol = statsArr.reduce((s, p) => s + p.gol, 0);
   const totAssist = statsArr.reduce((s, p) => s + p.assist, 0);
   const totAmm = statsArr.reduce((s, p) => s + p.ammonizioni, 0);
   const totEsp = statsArr.reduce((s, p) => s + p.espulsioni, 0);
+
+  // Diffidati (4 ammonizioni)
+  const diffidati = statsArr.filter(p => p.ammonizioni >= 4);
 
   // Render
   let html = `<style>
@@ -97,12 +99,15 @@ export default async function loadStats() {
   <p class="page-subtitle">Riepilogo stagionale • ${minPerMatch}' a partita</p>
   <div class="widgets" style="margin-bottom:20px;">
     <div class="card widget"><div class="widget-value" style="color:#667eea;">${matches.length}</div><div class="widget-label">Partite</div></div>
-    <div class="card widget"><div class="widget-value" style="color:#667eea;">${totPresenze}</div><div class="widget-label">Presenze</div></div>
     <div class="card widget"><div class="widget-value" style="color:#27AE60;">${totGol}</div><div class="widget-label">⚽ Gol</div></div>
     <div class="card widget"><div class="widget-value" style="color:#3498DB;">${totAssist}</div><div class="widget-label">🅰️ Assist</div></div>
     <div class="card widget"><div class="widget-value" style="color:#F39C12;">${totAmm}</div><div class="widget-label">🟨 Amm.</div></div>
     <div class="card widget"><div class="widget-value" style="color:#E74C3C;">${totEsp}</div><div class="widget-label">🟥 Esp.</div></div>
   </div>
+  ${diffidati.length > 0 ? `<div class="card" style="margin-bottom:16px;border-left:4px solid #F39C12;padding:14px 16px;">
+    <h3 style="margin:0 0 8px 0;font-size:14px;color:#F39C12;">⚠️ Diffidati (4 ammonizioni)</h3>
+    ${diffidati.map(p => `<div style="font-size:13px;margin-bottom:4px;">• <strong>${p.cognome} ${p.nome}</strong> — ${p.ammonizioni} 🟨 (prossimo giallo = squalifica)</div>`).join('')}
+  </div>` : ''}
   <div class="card">
     <h3 class="section-title">📊 Statistiche Giocatori</h3>
     <div style="overflow-x:auto;">

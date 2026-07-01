@@ -22,10 +22,25 @@ export default async function loadRoster() {
   
   // Demo mode: usa i dati in memoria (sempre attivo in questo repo)
   const players = window.YFM.allPlayers || [];
-  const scadenze = [];
-  const allSquadre = window.YFM.allSquadre || [];
   allPlayers = players;
   window.YFM.allPlayers = players;
+  
+  // Calcola scadenze certificati medici
+  const scadenze = [];
+  const oggi = new Date();
+  const traUnMese = new Date(oggi.getTime() + 30 * 24 * 60 * 60 * 1000);
+  players.forEach(p => {
+    if (!p.data_visita_medica) return;
+    const scad = new Date(p.data_visita_medica);
+    if (scad <= oggi) {
+      scadenze.push({ nome: p.nome, cognome: p.cognome, scadenza: p.data_visita_medica, giorniRimanenti: Math.floor((scad - oggi) / (24*60*60*1000)), scaduto: true });
+    } else if (scad <= traUnMese) {
+      scadenze.push({ nome: p.nome, cognome: p.cognome, scadenza: p.data_visita_medica, giorniRimanenti: Math.floor((scad - oggi) / (24*60*60*1000)), scaduto: false });
+    }
+  });
+  scadenze.sort((a, b) => a.giorniRimanenti - b.giorniRimanenti);
+  
+  const allSquadre = window.YFM.allSquadre || [];
   window.YFM.allSquadreForMove = allSquadre;
   renderRoster(c, players, scadenze);
 }
@@ -52,7 +67,21 @@ function renderRoster(c, players, scadenze) {
   
   toolbarHtml += '<button class="btn btn-primary" id="btnAdd">+ Aggiungi</button></div></div>';
 
-  let scadenzeHtml = scadenze.length > 0 ? '<div class="card" style="margin-bottom:20px;border-left:4px solid #F39C12;"><h3>⚠️ Certificati in scadenza</h3>' + scadenze.map(x => '<div>' + x.nome + ' ' + x.cognome + ' - ' + formatDateShort(x.scadenza) + ' (' + x.giorniRimanenti + 'gg)</div>').join('') + '</div>' : '';
+  let scadenzeHtml = '';
+  if (scadenze.length > 0) {
+    const scaduti = scadenze.filter(x => x.scaduto);
+    const inScadenza = scadenze.filter(x => !x.scaduto);
+    scadenzeHtml = '<div class="card" style="margin-bottom:20px;border-left:4px solid ' + (scaduti.length > 0 ? '#E74C3C' : '#F39C12') + ';padding:16px;">';
+    if (scaduti.length > 0) {
+      scadenzeHtml += '<h3 style="margin:0 0 8px 0;font-size:14px;color:#E74C3C;">🚨 Certificati SCADUTI</h3>';
+      scaduti.forEach(x => { scadenzeHtml += '<div style="font-size:13px;margin-bottom:4px;">• <strong>' + x.cognome + ' ' + x.nome + '</strong> — scaduto il ' + formatDateShort(x.scadenza) + '</div>'; });
+    }
+    if (inScadenza.length > 0) {
+      scadenzeHtml += '<h3 style="margin:' + (scaduti.length > 0 ? '12px' : '0') + ' 0 8px 0;font-size:14px;color:#F39C12;">⚠️ Certificati in scadenza (entro 30gg)</h3>';
+      inScadenza.forEach(x => { scadenzeHtml += '<div style="font-size:13px;margin-bottom:4px;">• <strong>' + x.cognome + ' ' + x.nome + '</strong> — scade il ' + formatDateShort(x.scadenza) + ' (' + x.giorniRimanenti + 'gg)</div>'; });
+    }
+    scadenzeHtml += '</div>';
+  }
 
   let gridsHtml = '';
   ruoli.forEach(r => {
