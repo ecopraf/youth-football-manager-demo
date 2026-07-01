@@ -254,7 +254,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
     updateCount(slotAssignments);
     if (isTouchDevice) {
       updateSelection();
-      setupFreeMoveTouch(customPositions);
+      setupFreeMoveTouch(customPositions, refreshPitch);
     } else {
       setupDesktopDragDrop(slotAssignments, allPlayers, customPositions, refreshPitch);
     }
@@ -458,6 +458,7 @@ function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh)
 
 // ==================== MOBILE: TAP-TO-PLACE + LONG-PRESS FREE MOVE ====================
 let _selectedPid = null;
+let _freeMoveJustEnded = false;
 
 function setupTapInteraction(assignments, allPlayers, customPositions, refresh) {
   // Delegation on roster container
@@ -476,6 +477,7 @@ function setupTapInteraction(assignments, allPlayers, customPositions, refresh) 
   const pitchEl = document.getElementById('pitchField');
   if (pitchEl) {
     pitchEl.addEventListener('click', (e) => {
+      if (_freeMoveJustEnded) { _freeMoveJustEnded = false; return; }
       const slot = e.target.closest('.pitch-slot');
       if (!slot) return;
       const idx = parseInt(slot.dataset.slot);
@@ -498,10 +500,10 @@ function setupTapInteraction(assignments, allPlayers, customPositions, refresh) 
   }
 
   updateSelection();
-  setupFreeMoveTouch(customPositions);
+  setupFreeMoveTouch(customPositions, refresh);
 }
 
-function setupFreeMoveTouch(customPositions) {
+function setupFreeMoveTouch(customPositions, refresh) {
   const pitch = document.getElementById('pitchField');
   if (!pitch) return;
 
@@ -513,9 +515,8 @@ function setupFreeMoveTouch(customPositions) {
       longPressTimer = setTimeout(() => {
         moving = true;
         slot.classList.add('free-move');
-        e.preventDefault();
       }, 500);
-    }, { passive: false });
+    }, { passive: true });
 
     slot.addEventListener('touchmove', (e) => {
       if (!moving) { clearTimeout(longPressTimer); return; }
@@ -531,7 +532,9 @@ function setupFreeMoveTouch(customPositions) {
     slot.addEventListener('touchend', (e) => {
       clearTimeout(longPressTimer);
       if (!moving) return;
+      e.preventDefault();
       moving = false;
+      _freeMoveJustEnded = true;
       slot.classList.remove('free-move');
       const idx = parseInt(slot.dataset.slot);
       const rect = pitch.getBoundingClientRect();
