@@ -48,7 +48,7 @@ export default async function loadTrainingPresenze() {
 
   let html = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <h1 class="page-title">✅ Presenze - ${window.YFM.getSquadraName()}</h1>
+      <h1 class="page-title">🙋 Presenze - ${window.YFM.getSquadraName()}</h1>
     </div>
     <div class="card" style="margin-bottom:16px;">
       <div id="trainingCalendar">${renderCalendar(config, allenamenti, partite)}</div>
