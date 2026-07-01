@@ -33,7 +33,7 @@ const PITCH_CSS = `
   width: 100%; max-width: 340px; aspect-ratio: 2/3; margin: 0 auto;
   background: linear-gradient(180deg, #2d8a4e 0%, #1a6b38 100%);
   border-radius: 12px; position: relative; overflow: hidden; border: 3px solid #1a5c30;
-  touch-action: none;
+  max-height: calc(100vh - 320px);
 }
 .pitch::before {
   content: ''; position: absolute; top: 50%; left: 8%; right: 8%; height: 1px; background: rgba(255,255,255,0.25);
@@ -47,15 +47,16 @@ const PITCH_CSS = `
   background: rgba(255,255,255,0.12); border: 2px dashed rgba(255,255,255,0.35);
   display: flex; align-items: center; justify-content: center;
   transform: translate(-50%, -50%); transition: background 0.2s, border 0.2s, box-shadow 0.2s;
-  cursor: default; user-select: none; touch-action: none;
+  cursor: pointer; user-select: none;
 }
 .pitch-slot.occupied {
-  background: white; border: 2px solid #667eea; cursor: grab;
+  background: white; border: 2px solid #667eea; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-.pitch-slot.occupied.free-move { cursor: move; }
-.pitch-slot.occupied:active { cursor: grabbing; }
+.pitch-slot.target-hint { background: rgba(102,126,234,0.35); border-color: rgba(255,255,255,0.8); animation: pulse-slot 1s infinite; }
+@keyframes pulse-slot { 0%,100%{ transform: translate(-50%,-50%) scale(1); } 50%{ transform: translate(-50%,-50%) scale(1.1); } }
 .pitch-slot.drag-over { background: rgba(102,126,234,0.4); border-color: white; transform: translate(-50%, -50%) scale(1.12); }
+.pitch-slot.occupied.free-move { border-color: #F39C12; box-shadow: 0 0 12px rgba(243,156,18,0.6); }
 .pitch-slot .slot-num { font-size: 13px; font-weight: 700; color: #667eea; pointer-events: none; }
 .pitch-slot .slot-name {
   position: absolute; bottom: -14px; font-size: 7px; color: white;
@@ -63,12 +64,12 @@ const PITCH_CSS = `
 }
 .roster-item {
   display: flex; align-items: center; gap: 6px; padding: 6px 8px; margin-bottom: 3px;
-  background: #f8f9fa; border-radius: 8px; cursor: grab; border: 1px solid #eee; transition: all 0.2s;
-  font-size: 11px; touch-action: none; user-select: none;
+  background: #f8f9fa; border-radius: 8px; cursor: pointer; border: 2px solid #eee; transition: all 0.2s;
+  font-size: 11px; user-select: none;
 }
-.roster-item:active { cursor: grabbing; }
+.roster-item.selected { border-color: #667eea; background: #eef2ff; box-shadow: 0 0 0 2px rgba(102,126,234,0.3); }
+.roster-item.placed { opacity: 0.35; pointer-events: none; }
 .roster-item.dragging { opacity: 0.4; }
-.roster-item.placed { opacity: 0.3; pointer-events: none; }
 .roster-item .r-num { width: 22px; height: 22px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
 .roster-item .r-name { font-weight: 500; flex: 1; }
 .roster-item .r-role { font-size: 9px; color: #888; }
@@ -171,7 +172,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
   const riserveIds = formazione?.riserve || [];
 
   let html = `<style>${PITCH_CSS}</style>`;
-  html += `<p style="margin-bottom:8px;font-size:13px;color:#666;">Trascina i giocatori dalla lista al campo. Seleziona il modulo per posizionare gli slot.</p>`;
+  html += `<p style="margin-bottom:8px;font-size:13px;color:#666;">Tocca un giocatore dalla lista, poi tocca uno slot sul campo per posizionarlo.</p>`;
 
   // Selettore modulo
   html += `<div class="modulo-select" id="moduloSelect">`;
@@ -205,7 +206,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
   html += `</div>`;
 
   const footer = '<button class="btn btn-secondary" id="modalCancelBtn">Annulla</button><button class="btn btn-primary" id="saveFormBtn">💾 Salva Formazione</button>';
-  const modal = createModal('👥 Formazione - ' + match.avversario, html, footer, '850px');
+  const modal = createModal('👥 Formazione - ' + match.avversario, html, footer, '780px');
 
   // State
   let currentModulo = savedModulo;
@@ -238,15 +239,25 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
     });
   });
 
-  // Drag & Drop + Free Move
-  setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch, customPositions);
+  // Setup interaction based on device
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (isTouchDevice) {
+    setupTapInteraction(slotAssignments, allPlayers, customPositions, refreshPitch);
+  } else {
+    setupDesktopDragDrop(slotAssignments, allPlayers, customPositions, refreshPitch);
+  }
 
   function refreshPitch() {
     const field = document.getElementById('pitchField');
     if (field) field.innerHTML = buildPitchSlotsFromState(currentModulo, slotAssignments, allPlayers, customPositions);
     updateRosterState(slotAssignments);
     updateCount(slotAssignments);
-    setupDragDrop(slotAssignments, giocatoriConvocati, allPlayers, () => currentModulo, refreshPitch, customPositions);
+    if (isTouchDevice) {
+      updateSelection();
+      setupFreeMoveTouch(customPositions);
+    } else {
+      setupDesktopDragDrop(slotAssignments, allPlayers, customPositions, refreshPitch);
+    }
   }
 
   function updateCount(assignments) {
@@ -341,162 +352,97 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositio
   return html;
 }
 
-// ==================== POINTER-BASED DRAG (MOBILE + DESKTOP) ====================
-function setupDragDrop(assignments, giocatoriConvocati, allPlayers, getModulo, refresh, customPositions) {
-  let dragState = null; // { pid, fromSlot, ghost, pointerId }
+// ==================== DESKTOP: DRAG & DROP HTML5 ====================
+function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh) {
+  let draggedPid = null;
+  let draggedFromSlot = null;
 
-  function createGhost(text, num) {
-    const g = document.createElement('div');
-    g.className = 'drag-ghost';
-    g.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;background:#667eea;color:white;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,0.3);white-space:nowrap;transform:translate(-50%,-50%);';
-    g.textContent = `${num} ${text}`;
-    document.body.appendChild(g);
-    return g;
-  }
+  // Roster items drag
+  document.querySelectorAll('.roster-item:not(.placed)').forEach(item => {
+    item.setAttribute('draggable', 'true');
+    item.addEventListener('dragstart', (e) => {
+      draggedPid = item.dataset.pid;
+      draggedFromSlot = null;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); draggedPid = null; });
+  });
 
-  function moveGhost(e) {
-    if (!dragState?.ghost) return;
-    dragState.ghost.style.left = e.clientX + 'px';
-    dragState.ghost.style.top = e.clientY + 'px';
-  }
+  // Occupied slots draggable
+  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
+    slot.setAttribute('draggable', 'true');
+    slot.style.cursor = 'grab';
+    slot.addEventListener('dragstart', (e) => {
+      const idx = parseInt(slot.dataset.slot);
+      draggedPid = assignments[idx];
+      draggedFromSlot = idx;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    slot.addEventListener('dragend', () => { draggedPid = null; draggedFromSlot = null; });
+  });
 
-  function getSlotAtPoint(x, y) {
-    const els = document.elementsFromPoint(x, y);
-    return els.find(el => el.classList?.contains('pitch-slot')) || null;
-  }
-
-  function isOverRoster(x, y) {
-    const roster = document.getElementById('rosterList');
-    if (!roster) return false;
-    const r = roster.getBoundingClientRect();
-    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-  }
-
-  function cleanup() {
-    if (dragState?.ghost) dragState.ghost.remove();
-    document.querySelectorAll('.pitch-slot.drag-over').forEach(s => s.classList.remove('drag-over'));
-    document.querySelectorAll('.roster-item.dragging').forEach(s => s.classList.remove('dragging'));
-    dragState = null;
-  }
-
-  function startDrag(e, pid, fromSlot, name, num) {
-    e.preventDefault();
-    dragState = { pid, fromSlot, ghost: createGhost(name, num), pointerId: e.pointerId };
-    moveGhost(e);
-    if (fromSlot === null) {
-      const item = document.querySelector(`.roster-item[data-pid="${pid}"]`);
-      if (item) item.classList.add('dragging');
-    }
-  }
-
-  function onMove(e) {
-    if (!dragState) return;
-    e.preventDefault();
-    moveGhost(e);
-    // Highlight slot under pointer
-    document.querySelectorAll('.pitch-slot.drag-over').forEach(s => s.classList.remove('drag-over'));
-    const slot = getSlotAtPoint(e.clientX, e.clientY);
-    if (slot) slot.classList.add('drag-over');
-  }
-
-  function onEnd(e) {
-    if (!dragState) return;
-    const { pid, fromSlot } = dragState;
-    const targetSlot = getSlotAtPoint(e.clientX, e.clientY);
-    const overRoster = isOverRoster(e.clientX, e.clientY);
-
-    if (targetSlot) {
-      const targetIdx = parseInt(targetSlot.dataset.slot);
+  // Slots as drop targets
+  document.querySelectorAll('.pitch-slot').forEach(slot => {
+    slot.addEventListener('dragover', (e) => { e.preventDefault(); slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', () => { slot.classList.remove('drag-over'); });
+    slot.addEventListener('drop', (e) => {
+      e.preventDefault();
+      slot.classList.remove('drag-over');
+      const targetIdx = parseInt(slot.dataset.slot);
+      if (!draggedPid) return;
       const existingPid = assignments[targetIdx];
 
-      if (fromSlot !== null) {
-        // Swap: slot → slot
-        delete assignments[fromSlot];
-        if (existingPid) assignments[fromSlot] = existingPid;
+      if (draggedFromSlot !== null) {
+        delete assignments[draggedFromSlot];
+        if (existingPid) assignments[draggedFromSlot] = existingPid;
       } else {
-        // Roster → slot
-        if (Object.keys(assignments).length >= 11 && !existingPid) { cleanup(); return; }
-        Object.keys(assignments).forEach(k => { if (assignments[k] === pid) delete assignments[k]; });
+        if (Object.keys(assignments).length >= 11 && !existingPid) { draggedPid = null; return; }
+        Object.keys(assignments).forEach(k => { if (assignments[k] === draggedPid) delete assignments[k]; });
       }
-      assignments[targetIdx] = pid;
-      cleanup();
+      assignments[targetIdx] = draggedPid;
+      draggedPid = null;
+      draggedFromSlot = null;
       refresh();
-    } else if (overRoster && fromSlot !== null) {
-      // Slot → roster (rimuovi)
-      delete assignments[fromSlot];
-      cleanup();
-      refresh();
-    } else {
-      cleanup();
-    }
-  }
-
-  // Roster items: pointerdown to start drag
-  document.querySelectorAll('.roster-item:not(.placed)').forEach(item => {
-    item.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      startDrag(e, item.dataset.pid, null, item.dataset.name, item.dataset.num);
     });
   });
 
-  // Occupied slots: pointerdown to start drag/move
-  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
-    slot.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      const idx = parseInt(slot.dataset.slot);
-      const pid = assignments[idx];
-      const player = allPlayers.find(p => p.id === pid);
-      const num = player ? (player.numero_maglia || player.numeroMaglia || '?') : '?';
-      const name = player ? player.cognome : '';
-      startDrag(e, pid, idx, name, num);
-    });
-  });
-
-  // Global move/up listeners (on modal to capture all)
-  const modal = document.getElementById('currentModal');
-  if (modal) {
-    modal.addEventListener('pointermove', onMove);
-    modal.addEventListener('pointerup', onEnd);
-    modal.addEventListener('pointercancel', () => cleanup());
-  }
-
-  // FREE MOVE: long-press (500ms) on occupied slot to reposition freely
-  setupFreeMove(assignments, customPositions, refresh);
-}
-
-/**
- * Free move: long-press (500ms) su slot occupato per riposizionare liberamente sul campo
- */
-function setupFreeMove(assignments, customPositions, refresh) {
-  const pitch = document.getElementById('pitchField');
-  if (!pitch) return;
-
-  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
-    let longPressTimer = null;
-    let moving = false;
-
-    slot.addEventListener('pointerdown', (e) => {
-      if (moving) return;
-      longPressTimer = setTimeout(() => {
-        moving = true;
-        slot.classList.add('free-move');
-        slot.setPointerCapture(e.pointerId);
-      }, 500);
-    });
-
-    slot.addEventListener('pointermove', (e) => {
-      if (!moving) { clearTimeout(longPressTimer); longPressTimer = null; return; }
+  // Drop back to roster
+  const rosterEl = document.getElementById('rosterList');
+  if (rosterEl) {
+    rosterEl.addEventListener('dragover', (e) => { e.preventDefault(); });
+    rosterEl.addEventListener('drop', (e) => {
       e.preventDefault();
-      e.stopPropagation();
+      if (draggedFromSlot !== null && draggedPid) {
+        delete assignments[draggedFromSlot];
+        draggedPid = null;
+        draggedFromSlot = null;
+        refresh();
+      }
+    });
+  }
+
+  // Free move on desktop: pointer drag on occupied slots
+  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
+    let moving = false;
+    const pitch = document.getElementById('pitchField');
+    slot.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      moving = true;
+      slot.classList.add('free-move');
+      slot.setPointerCapture(e.pointerId);
+    });
+    slot.addEventListener('pointermove', (e) => {
+      if (!moving) return;
+      e.preventDefault();
       const rect = pitch.getBoundingClientRect();
       const x = Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100));
       const y = Math.max(5, Math.min(95, ((e.clientY - rect.top) / rect.height) * 100));
       slot.style.left = x + '%';
       slot.style.top = y + '%';
     });
-
     slot.addEventListener('pointerup', (e) => {
-      clearTimeout(longPressTimer);
       if (!moving) return;
       moving = false;
       slot.classList.remove('free-move');
@@ -507,8 +453,104 @@ function setupFreeMove(assignments, customPositions, refresh) {
       const y = Math.max(5, Math.min(95, ((e.clientY - rect.top) / rect.height) * 100));
       customPositions[idx] = { x, y };
     });
+  });
+}
 
-    slot.addEventListener('pointercancel', () => { clearTimeout(longPressTimer); moving = false; slot.classList.remove('free-move'); });
+// ==================== MOBILE: TAP-TO-PLACE + LONG-PRESS FREE MOVE ====================
+let _selectedPid = null;
+
+function setupTapInteraction(assignments, allPlayers, customPositions, refresh) {
+  // Delegation on roster container
+  const rosterEl = document.getElementById('rosterList');
+  if (rosterEl) {
+    rosterEl.addEventListener('click', (e) => {
+      const item = e.target.closest('.roster-item');
+      if (!item || item.classList.contains('placed')) return;
+      const pid = item.dataset.pid;
+      _selectedPid = (_selectedPid === pid) ? null : pid;
+      updateSelection();
+    });
+  }
+
+  // Delegation on pitch container
+  const pitchEl = document.getElementById('pitchField');
+  if (pitchEl) {
+    pitchEl.addEventListener('click', (e) => {
+      const slot = e.target.closest('.pitch-slot');
+      if (!slot) return;
+      const idx = parseInt(slot.dataset.slot);
+      const existingPid = assignments[idx];
+
+      if (_selectedPid) {
+        if (existingPid === _selectedPid) {
+          delete assignments[idx];
+        } else {
+          Object.keys(assignments).forEach(k => { if (assignments[k] === _selectedPid) delete assignments[k]; });
+          assignments[idx] = _selectedPid;
+        }
+        _selectedPid = null;
+        refresh();
+      } else if (existingPid) {
+        delete assignments[idx];
+        refresh();
+      }
+    });
+  }
+
+  updateSelection();
+  setupFreeMoveTouch(customPositions);
+}
+
+function setupFreeMoveTouch(customPositions) {
+  const pitch = document.getElementById('pitchField');
+  if (!pitch) return;
+
+  document.querySelectorAll('.pitch-slot.occupied').forEach(slot => {
+    let longPressTimer = null;
+    let moving = false;
+
+    slot.addEventListener('touchstart', (e) => {
+      longPressTimer = setTimeout(() => {
+        moving = true;
+        slot.classList.add('free-move');
+        e.preventDefault();
+      }, 500);
+    }, { passive: false });
+
+    slot.addEventListener('touchmove', (e) => {
+      if (!moving) { clearTimeout(longPressTimer); return; }
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = pitch.getBoundingClientRect();
+      const x = Math.max(5, Math.min(95, ((touch.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(5, Math.min(95, ((touch.clientY - rect.top) / rect.height) * 100));
+      slot.style.left = x + '%';
+      slot.style.top = y + '%';
+    }, { passive: false });
+
+    slot.addEventListener('touchend', (e) => {
+      clearTimeout(longPressTimer);
+      if (!moving) return;
+      moving = false;
+      slot.classList.remove('free-move');
+      const idx = parseInt(slot.dataset.slot);
+      const rect = pitch.getBoundingClientRect();
+      const touch = e.changedTouches[0];
+      const x = Math.max(5, Math.min(95, ((touch.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(5, Math.min(95, ((touch.clientY - rect.top) / rect.height) * 100));
+      customPositions[idx] = { x, y };
+    });
+
+    slot.addEventListener('touchcancel', () => { clearTimeout(longPressTimer); moving = false; slot.classList.remove('free-move'); });
+  });
+}
+
+function updateSelection() {
+  document.querySelectorAll('.roster-item').forEach(item => {
+    item.classList.toggle('selected', item.dataset.pid === _selectedPid);
+  });
+  document.querySelectorAll('.pitch-slot').forEach(slot => {
+    slot.classList.toggle('target-hint', !!_selectedPid && !slot.classList.contains('occupied'));
   });
 }
 
@@ -530,7 +572,7 @@ function createModal(title, content, footer, maxW = '600px') {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
   modal.id = 'currentModal';
-  modal.innerHTML = `<div class="modal-content" style="max-width:${maxW};"><div class="modal-header"><h2>${title}</h2><button class="modal-close-btn" id="modalCloseX">×</button></div><div class="modal-body">${content}</div>${footer ? '<div class="modal-footer">' + footer + '</div>' : ''}</div>`;
+  modal.innerHTML = `<div class="modal-content" style="max-width:${maxW};max-height:90vh;display:flex;flex-direction:column;"><div class="modal-header"><h2>${title}</h2><button class="modal-close-btn" id="modalCloseX">×</button></div><div class="modal-body" style="overflow-y:auto;flex:1;">${content}</div>${footer ? '<div class="modal-footer">' + footer + '</div>' : ''}</div>`;
   document.body.appendChild(modal);
   const close = () => { const m = document.getElementById('currentModal'); if (m) m.remove(); };
   document.getElementById('modalCloseX').addEventListener('click', close);
