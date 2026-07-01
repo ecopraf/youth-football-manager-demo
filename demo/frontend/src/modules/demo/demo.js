@@ -381,6 +381,7 @@ export const DEMO_HIGHLIGHTS = {
 
 const STORAGE_KEY = 'yfm_demo_progress';
 const SESSION_KEY = 'yfm_demo_session';
+const MISSIONS_VERSION = 2; // Incrementare quando si cambiano le missioni
 
 class DemoManager {
   constructor() {
@@ -407,11 +408,9 @@ class DemoManager {
     const params = new URLSearchParams(window.location.search);
     this.isDemo = params.has('demo') || localStorage.getItem(SESSION_KEY) === 'active';
     
-    console.log('[DEMO] init() called, isDemo:', this.isDemo, 'welcomeShown:', this.welcomeShown);
     
     if (this.isDemo) {
       this.loadProgress();
-      console.log('[DEMO] after loadProgress, missions:', this.completedCount, '/', this.missions.length);
       
       // Assicurati che il DOM sia pronto
       if (document.body) {
@@ -425,7 +424,6 @@ class DemoManager {
   }
   
   _createDemoUI() {
-    console.log('[DEMO] Creating UI...');
     this.injectTooltipStyles();
     this.updateBadge();
     this.setupWelcomePopup();
@@ -461,48 +459,34 @@ class DemoManager {
   loadProgress() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      console.log('[DEMO] loadProgress, saved:', saved);
       if (saved) {
         const data = JSON.parse(saved);
-        console.log('[DEMO] data.missions:', data.missions, 'length:', data.missions?.length);
-        // Verifica che le missioni siano consistenti
-        if (data.missions && Array.isArray(data.missions) && data.missions.length === DEMO_MISSIONS.length) {
-          this.missions = data.missions;
-        } else {
-          console.log('[DEMO] Missioni non consistenti, reset a default');
+        // Reset se versione missioni cambiata o numero diverso
+        if (data.version !== MISSIONS_VERSION || !data.missions || data.missions.length !== DEMO_MISSIONS.length) {
           this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
+          this.welcomeShown = false;
+        } else {
+          this.missions = data.missions;
+          this.welcomeShown = data.welcomeShown || false;
         }
-        this.welcomeShown = data.welcomeShown || false;
       } else {
-        console.log('[DEMO] Nessun dato salvato, uso default');
         this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
       }
-      console.log('[DEMO] this.missions dopo load:', this.missions.length);
       this.updateCompletedCount();
     } catch (e) {
-      console.log('Demo: errore caricamento progressi', e);
       this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
     }
   }
 
   saveProgress() {
     try {
-      // Verifica consistenza prima di salvare
-      if (this.missions.length !== DEMO_MISSIONS.length) {
-        console.log('[DEMO] Warning: numero missioni non corretto,修复');
-        this.missions = JSON.parse(JSON.stringify(DEMO_MISSIONS));
-      }
-      
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        version: MISSIONS_VERSION,
         missions: this.missions,
         welcomeShown: this.welcomeShown,
         savedAt: new Date().toISOString()
       }));
-      
-      console.log('[DEMO] Progress saved, missions:', this.missions.map(m => m.id + ':' + m.completed));
-    } catch (e) {
-      console.log('Demo: errore salvataggio progressi', e);
-    }
+    } catch (e) {}
   }
 
   updateCompletedCount() {
@@ -537,28 +521,10 @@ class DemoManager {
   // ═══════════════════════════════════════════════════════════════
 
   navigateTo(page, params = null) {
-    // Tracking missione se la pagina è una missione
-    this.trackPageVisit(page);
-    
-    // Naviga normalmente
+    // Naviga normalmente (il router chiamerà trackPageVisit)
     if (window.YFM && window.YFM.navigateTo) {
       window.YFM.navigateTo(page, params);
     }
-    
-    // Mostra tooltip se disponibile
-    setTimeout(() => {
-      this.showTooltipForPage(page);
-    }, 500);
-    
-    // Inizializza mini missioni per la pagina
-    setTimeout(() => {
-      if (window.miniMissionManager) {
-        window.miniMissionManager.init(page);
-      }
-    }, 800);
-    
-    // DISABILITATO: la missione si completa solo con tutti gli step mini mission completati
-    // this.trackPageVisit(page);
   }
 
   trackPageVisit(page) {
@@ -727,7 +693,6 @@ class DemoManager {
     // Verifica che le missioni nel DOM siano corrette
     const panelMissions = panel.querySelectorAll('.demo-mission-item');
     if (panelMissions.length !== this.missions.length) {
-      console.log('[DEMO] Panel missions count mismatch, recreating panel');
       panel.remove();
       this.showMissionPanel();
       return;
@@ -759,14 +724,11 @@ class DemoManager {
   // ═══════════════════════════════════════════════════════════════
 
   setupWelcomePopup() {
-    console.log('[DEMO] setupWelcomePopup called, welcomeShown:', this.welcomeShown);
     if (this.welcomeShown) {
-      console.log('[DEMO] skipping popup, already shown');
       return;
     }
     
     setTimeout(() => {
-      console.log('[DEMO] showing popup now');
       this.showWelcomePopup();
     }, 1000);
   }
@@ -844,6 +806,7 @@ class DemoManager {
 
   startTour() {
     this.closeWelcomePopup();
+    this.showMissionPanel();
     this.navigateTo(this.missions[0].page);
   }
 
@@ -1423,12 +1386,10 @@ class DemoManager {
   }
 
   resetDemo() {
-    console.log("[DEMO] resetDemo() called");
     
     // Rimuovi TUTTI i dati demo dal localStorage
     Object.keys(localStorage).forEach(key => {
       if (key.includes("demo") || key.includes("yfm_demo") || key.includes("mission")) {
-        console.log("[DEMO] Removing:", key);
         localStorage.removeItem(key);
       }
     });
@@ -1455,7 +1416,6 @@ class DemoManager {
     });
     
     // Imposta nuova sessione demo e ricarica la pagina (come click "Avvia Demo")
-    console.log("[DEMO] Reimpostando sessione demo e ricaricando...");
     localStorage.setItem("yfm_demo_session", "active");
     localStorage.setItem("yfm_demo_user", JSON.stringify({
       id: "00000000-0000-0000-0000-000000000099",
@@ -1471,7 +1431,6 @@ class DemoManager {
   
   // Chiude la demo e reindirizza alla landing page
   exitDemo() {
-    console.log('[DEMO] exitDemo() called');
     
     // Rimuovi TUTTI i dati demo dal localStorage
     Object.keys(localStorage).forEach(key => {
@@ -1900,7 +1859,6 @@ class MiniMissionManager {
     // Auto-complete per step immediati (page_view o auto_complete)
     this.steps.forEach(step => {
       if ((step.trigger === 'auto_complete' || step.trigger === 'page_view') && !step.completed) {
-        console.log('[MINI_MISSION] Auto-completing:', step.id);
         setTimeout(() => this.completeStep(step.id), 500);
       }
     });
