@@ -245,20 +245,20 @@ cd frontend-v2 && npm run build
 ```
 frontend-v2/src/
 ├── main.js            # Entry point
-├── router.js          # Routing
+├── router.js          # Routing (con submenu espandibili)
 ├── style.css          # Stili globali
 ├── services/
 │   └── api.js         # Chiamate API
 ├── modules/
 │   ├── auth/          # Login, guest
 │   ├── admin/         # Gestione utenti
-│   ├── team/          # Dashboard, roster, calendar, etc.
-│   ├── coach/         # Allenamenti
+│   ├── team/          # Dashboard, roster, calendar, formazione, etc.
+│   ├── coach/         # Allenamenti (sub-pages: Sedute, Presenze, Impostazioni)
 │   ├── performance/   # Stats, reports
 │   ├── demo/          # Sistema demo (tooltip, highlight)
 │   └── club/          # Impostazioni
 └── components/
-    └── layout/        # Sidebar, header
+    └── layout/        # Sidebar (con submenu), header
 ```
 
 ## 📁 Struttura Backend
@@ -335,10 +335,11 @@ Il backend sarà disponibile su **http://localhost:3001**
 
 - ✅ Gestione roster giocatori
 - ✅ Calendario partite con archivio
-- ✅ Formazioni e convocazioni
+- ✅ Formazioni con drag & drop + role hints + mobile tap
 - ✅ Statistiche individuali e di squadra
 - ✅ Report PDF partita/stagionale
 - ✅ Sistema auth con ruoli
 - ✅ Link guest temporanei
 - ✅ Demo mode interattiva con mini-missioni e tooltip guidati
 - ✅ Dashboard con top players
+- ✅ Allenamenti: Sedute, Presenze, Impostazioni (sub-pages)

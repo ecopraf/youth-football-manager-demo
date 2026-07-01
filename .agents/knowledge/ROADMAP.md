@@ -25,9 +25,14 @@
 - [x] Template sedute riutilizzabili
 - [x] Evidenza giorni partita nel calendario (con dettagli avversario/luogo/giornata)
 - [x] Blocco creazione sedute nei giorni gara
+- [x] Sezione Allenamenti split in 3 sub-pages: Sedute, Presenze, Impostazioni
+- [x] Sidebar con submenu espandibile per navigazione Coach
+- [x] Presenze allenamento con motivi assenza e riepilogo
 - [x] Campo visuale formazione con drag & drop
 - [x] Selettore modulo tattico (4-3-3, 4-4-2, 3-5-2, ecc.)
 - [x] Free-move giocatori sul campo (posizioni custom)
+- [x] Role hints: suggerimenti slot per ruolo (glow, hint, blocked)
+- [x] Mobile: tap-to-select/place + long-press free-move
 - [x] Salvataggio modulo e posizioni per consultazione futura
 - [x] Distinta FIGC con staff precompilato da registro credenziali
 - [x] Landing page con mockup CSS-only delle feature

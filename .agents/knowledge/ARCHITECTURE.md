@@ -25,10 +25,10 @@
 ### Frontend
 - **Framework**: Vite 6.x + JavaScript ES Modules
 - **Styling**: CSS custom inline nei moduli
-- **Routing**: Router custom in `router.js`
+- **Routing**: Router custom in `router.js` (con submenu espandibili)
 - **State**: Window globals (`window.YFM.*`)
 - **Persistenza Demo**: localStorage tramite `DemoPersistence.js`
-- **Interazioni**: Drag & Drop nativo + Pointer Events per touch
+- **Interazioni**: Drag & Drop nativo (desktop) + Tap-to-select/place (mobile) + Long-press free-move
 - **Deploy**: Vercel (static hosting)
 
 ### Backend
@@ -61,11 +61,14 @@ youth-football-manager/
 │   │   │   ├── auth/         # Login, Register, Guest
 │   │   │   ├── admin/        # Users, Guest Links
 │   │   │   ├── team/         # Dashboard, Roster, Calendar, Formazione, Distinta, etc.
-│   │   │   ├── coach/        # Training (calendario, sedute, config)
-│   │   │   │   ├── training.js          # Orchestratore pagina
-│   │   │   │   ├── trainingCalendar.js  # Calendario mensile con partite evidenziate
-│   │   │   │   ├── trainingSession.js   # Dettaglio seduta con fasi strutturate
-│   │   │   │   └── trainingConfig.js    # Settimana tipo + riepilogo presenze
+│   │   │   ├── coach/        # Training (sub-pages indipendenti)
+│   │   │   │   ├── trainingSessions.js   # Entry point pagina Sedute (calendario + dettaglio)
+│   │   │   │   ├── trainingPresenze.js   # Pagina Presenze (calendario + assenti + riepilogo)
+│   │   │   │   ├── trainingSettings.js   # Pagina Impostazioni (settimana tipo + template)
+│   │   │   │   ├── trainingData.js       # Modulo condiviso caricamento dati
+│   │   │   │   ├── trainingSession.js    # Dettaglio seduta (programma, fasi, template)
+│   │   │   │   ├── trainingCalendar.js   # Calendario mensile con partite evidenziate
+│   │   │   │   └── training.js           # Orchestratore legacy (non più usato dal router)
 │   │   │   ├── performance/  # Stats, Reports
 │   │   │   ├── club/         # Settings, Workspace
 │   │   │   └── demo/         # Demo mode

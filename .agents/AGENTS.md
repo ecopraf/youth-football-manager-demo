@@ -148,15 +148,15 @@ Tempo totale stimato: ~XX minuti
 3. **Modularizzazione**: Se una modifica è troppo complessa (>200 righe in un singolo file, o logiche eterogenee nello stesso file), valutare di creare sottomoduli dedicati e differenziati. Esempio:
 
 ```
-# Invece di un unico file monolitico:
-modules/coach/training.js (600+ righe)
-
-# Preferire sotto-moduli separati:
+# Struttura attuale Coach (sub-pages indipendenti):
 modules/coach/
-├── training.js              → Orchestratore
-├── trainingCalendar.js      → Calendario mensile
-├── trainingSession.js       → Dettaglio seduta
-└── trainingConfig.js        → Configurazione
+├── trainingSessions.js    → Entry point "Sedute" (calendario + dettaglio)
+├── trainingPresenze.js    → Pagina "Presenze" (calendario + assenti + riepilogo)
+├── trainingSettings.js    → Pagina "Impostazioni" (settimana tipo + template)
+├── trainingData.js        → Modulo condiviso caricamento dati
+├── trainingSession.js     → Dettaglio seduta (programma, fasi, template)
+├── trainingCalendar.js    → Calendario mensile
+└── training.js            → Orchestratore legacy (non usato)
 ```
 
 4. **Criterio split**: Ogni sotto-modulo dovrebbe avere una singola responsabilità, max ~150 righe, export chiaro.
