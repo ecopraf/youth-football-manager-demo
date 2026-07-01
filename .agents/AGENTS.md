@@ -161,6 +161,17 @@ modules/coach/
 
 4. **Criterio split**: Ogni sotto-modulo dovrebbe avere una singola responsabilità, max ~150 righe, export chiaro.
 
+5. **Help contestuale**: Ogni pagina può avere una guida help. Per aggiungere help a nuove pagine, aggiungere una entry nell'oggetto `PAGE_HELP` in `components/PageHelp.js`:
+
+```javascript
+nuovaPagina: {
+  title: '🎯 Titolo',
+  items: ['Azione 1', 'Azione 2', '...']
+}
+```
+
+Il bottone `?` appare automaticamente (integrato nel router). I vecchi tooltip marketing/highlight sono disabilitati.
+
 ### 🔐 Credenziali Supabase (persistenti)
 
 ```

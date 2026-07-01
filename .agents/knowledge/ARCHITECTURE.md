@@ -29,6 +29,7 @@
 - **State**: Window globals (`window.YFM.*`)
 - **Persistenza Demo**: localStorage tramite `DemoPersistence.js`
 - **Interazioni**: Drag & Drop nativo (desktop) + Tap-to-select/place (mobile) + Long-press free-move
+- **Help**: Componente `PageHelp.js` — bottone `?` fisso + popover guida per pagina
 - **Deploy**: Vercel (static hosting)
 
 ### Backend
@@ -73,7 +74,8 @@ youth-football-manager/
 │   │   │   ├── club/         # Settings, Workspace
 │   │   │   └── demo/         # Demo mode
 │   │   └── components/
-│   │       └── layout/        # Sidebar, Header
+│   │       ├── layout/        # Sidebar, Header
+│   │       └── PageHelp.js    # Help contestuale (bottone ? + popover guida)
 │   ├── public/
 │   │   └── assets/           # Static assets
 │   ├── dist/                 # Build output (gitignore)

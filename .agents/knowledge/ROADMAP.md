@@ -36,6 +36,11 @@
 - [x] Salvataggio modulo e posizioni per consultazione futura
 - [x] Distinta FIGC con staff precompilato da registro credenziali
 - [x] Landing page con mockup CSS-only delle feature
+- [x] Statistiche complete: presenze, minutaggio, gol, assist, cartellini per giocatore
+- [x] Alert diffidati (4 ammonizioni) nella pagina statistiche
+- [x] Alert certificati medici scaduti/in scadenza nella rosa
+- [x] Help contestuale per pagina (bottone ? + popover guida azioni)
+- [x] Template sedute arricchiti con badge tipo, pills fasi colorate, durata
 
 ### FASE 2 📋 TODO
 **Import Dati**
@@ -58,6 +63,9 @@
 **Polish e Launch**
 - [ ] Test end-to-end completi
 - [ ] Ottimizzazione performance
+- [x] Statistiche complete con presenze, minutaggio, gol, assist, cartellini
+- [x] Alert diffidati e certificati medici
+- [x] Help contestuale per pagina (bottone ? con popover)
 - [ ] Documentazione utente
 - [ ] Video tutorial
 

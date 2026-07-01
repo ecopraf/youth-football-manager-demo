@@ -258,7 +258,8 @@ frontend-v2/src/
 │   ├── demo/          # Sistema demo (tooltip, highlight)
 │   └── club/          # Impostazioni
 └── components/
-    └── layout/        # Sidebar (con submenu), header
+    ├── layout/        # Sidebar (con submenu), header
+    └── PageHelp.js    # Help contestuale (bottone ? + popover)
 ```
 
 ## 📁 Struttura Backend
@@ -343,3 +344,6 @@ Il backend sarà disponibile su **http://localhost:3001**
 - ✅ Demo mode interattiva con mini-missioni e tooltip guidati
 - ✅ Dashboard con top players
 - ✅ Allenamenti: Sedute, Presenze, Impostazioni (sub-pages)
+- ✅ Statistiche complete: presenze, minutaggio, gol, assist, cartellini
+- ✅ Alert diffidati (4 ammonizioni) e certificati medici scaduti/in scadenza
+- ✅ Help contestuale per pagina (bottone ? con popover guida)
