@@ -1,4 +1,8 @@
 export function initRouter() {
+  // Import PageHelp
+  let injectPageHelp = null;
+  import('./components/PageHelp.js').then(m => { injectPageHelp = m.injectPageHelp; });
+
   window.YFM.pages = {
     login: () => import('./modules/auth/login.js'),
     dashboard: () => import('./modules/team/dashboard.js'),
@@ -120,6 +124,8 @@ export function initRouter() {
       if (window.demoManager?.isDemo) {
         window.demoManager.trackPageVisit(page);
       }
+      // Help contestuale
+      if (injectPageHelp) injectPageHelp(page);
     } catch (error) {
       container.innerHTML = `<div class="error-box">Errore: ${error.message}</div>`;
     }
