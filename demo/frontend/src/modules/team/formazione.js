@@ -328,7 +328,6 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositio
 
     for (let i = 0; i < count; i++) {
       const xPercent = count === 1 ? 50 : 15 + (i * (70 / (count - 1)));
-      // Usa posizione custom se disponibile
       const custom = customPositions?.[slotIdx];
       const finalX = custom ? custom.x : xPercent;
       const finalY = custom ? custom.y : yPercent;
