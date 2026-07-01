@@ -9,7 +9,10 @@ export function initRouter() {
     formazione: () => import('./modules/team/formazione.js'),
     formation: () => import('./modules/team/formazione.js'),
     playerDetail: () => import('./modules/team/playerDetail.js'),
-    training: () => import('./modules/coach/training.js'),
+    training: () => import('./modules/coach/trainingSessions.js'),
+    trainingSessions: () => import('./modules/coach/trainingSessions.js'),
+    trainingPresenze: () => import('./modules/coach/trainingPresenze.js'),
+    trainingSettings: () => import('./modules/coach/trainingSettings.js'),
     stats: () => import('./modules/performance/stats.js'),
     reports: () => import('./modules/performance/reports.js'),
     settings: () => import('./modules/club/settings.js')
@@ -94,6 +97,13 @@ export function initRouter() {
     document.querySelectorAll('.sidebar-nav a').forEach(link => {
       link.classList.toggle('active', link.dataset.page === page);
     });
+    // Espandi submenu training se la pagina è una sotto-pagina
+    if (['training', 'trainingSessions', 'trainingPresenze', 'trainingSettings'].includes(page)) {
+      const items = document.getElementById('trainingItems');
+      const arrow = document.getElementById('trainingArrow');
+      if (items) items.classList.remove('collapsed');
+      if (arrow) arrow.classList.remove('collapsed');
+    }
     
     try {
       const module = await window.YFM.pages[page]();

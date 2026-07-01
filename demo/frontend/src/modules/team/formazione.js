@@ -47,20 +47,25 @@ const PITCH_CSS = `
   background: rgba(255,255,255,0.12); border: 2px dashed rgba(255,255,255,0.35);
   display: flex; align-items: center; justify-content: center;
   transform: translate(-50%, -50%); transition: background 0.2s, border 0.2s, box-shadow 0.2s;
-  cursor: pointer; user-select: none;
+  cursor: pointer; user-select: none; z-index: 1;
 }
 .pitch-slot.occupied {
   background: white; border: 2px solid #667eea; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 2;
 }
 .pitch-slot.target-hint { background: rgba(102,126,234,0.35); border-color: rgba(255,255,255,0.8); animation: pulse-slot 1s infinite; }
+.pitch-slot.slot-suggested { background: rgba(255,255,255,0.3); border: 2px solid white; box-shadow: 0 0 12px rgba(255,255,255,0.6); animation: pulse-slot 1s infinite; }
+.pitch-slot.occupied.slot-suggested { border: 2px solid white; box-shadow: 0 0 14px rgba(255,255,255,0.7); animation: pulse-slot 1s infinite; }
+.pitch-slot.occupied.target-hint { border: 2px solid rgba(255,255,255,0.6); box-shadow: 0 0 8px rgba(102,126,234,0.4); animation: pulse-slot 1.2s infinite; }
+.pitch-slot.slot-blocked { opacity: 0.3; cursor: not-allowed; }
 @keyframes pulse-slot { 0%,100%{ transform: translate(-50%,-50%) scale(1); } 50%{ transform: translate(-50%,-50%) scale(1.1); } }
 .pitch-slot.drag-over { background: rgba(102,126,234,0.4); border-color: white; transform: translate(-50%, -50%) scale(1.12); }
 .pitch-slot.occupied.free-move { border-color: #F39C12; box-shadow: 0 0 12px rgba(243,156,18,0.6); }
 .pitch-slot .slot-num { font-size: 13px; font-weight: 700; color: #667eea; pointer-events: none; }
 .pitch-slot .slot-name {
-  position: absolute; bottom: -14px; font-size: 7px; color: white;
+  position: absolute; bottom: -12px; font-size: 7px; color: white;
   font-weight: 600; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.9); pointer-events: none;
+  max-width: 50px; overflow: hidden; text-overflow: ellipsis;
 }
 .roster-item {
   display: flex; align-items: center; gap: 6px; padding: 6px 8px; margin-bottom: 3px;
@@ -196,7 +201,7 @@ function renderPitchEdit(mid, match, giocatoriConvocati, formazione, allPlayers,
     const num = g.numero_maglia || g.numeroMaglia || '?';
     const placed = titolariIds.includes(g.id) ? ' placed' : '';
     const isRiserva = riserveIds.includes(g.id) && !titolariIds.includes(g.id) ? ' is-riserva' : '';
-    html += `<div class="roster-item${placed}${isRiserva}" data-pid="${g.id}" data-num="${num}" data-name="${g.cognome}">`;
+    html += `<div class="roster-item${placed}${isRiserva}" data-pid="${g.id}" data-num="${num}" data-name="${g.cognome}" data-ruolo="${g.ruolo}">`;
     html += `<div class="r-num">${num}</div>`;
     html += `<div class="r-name">${g.cognome} ${g.nome}</div>`;
     html += `<div class="r-role">${RUOLO_ACR[g.ruolo] || ''}</div>`;
@@ -319,12 +324,14 @@ function buildPitchSlots(modulo, titolariIds, allPlayers, positions) {
 function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositions) {
   const config = MODULI[modulo] || MODULI['4-3-3'];
   const rows = config.rows;
+  const totalRows = rows.length;
   let html = '';
   let slotIdx = 0;
 
   rows.forEach((count, rowIndex) => {
-    const totalRows = rows.length;
     const yPercent = 90 - (rowIndex * (75 / (totalRows - 1)));
+    // Map row to role: row 0 = POR, row 1 = DIF, last row = ATT, middle = CEN
+    const role = getRowRole(rowIndex, totalRows);
 
     for (let i = 0; i < count; i++) {
       const xPercent = count === 1 ? 50 : 15 + (i * (70 / (count - 1)));
@@ -338,7 +345,7 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositio
       const num = player ? (player.numero_maglia || player.numeroMaglia || '?') : '';
       const name = player ? player.cognome : '';
 
-      html += `<div class="pitch-slot${occupied}" data-slot="${slotIdx}" style="top:${finalY}%;left:${finalX}%;">`;
+      html += `<div class="pitch-slot${occupied}" data-slot="${slotIdx}" data-role="${role}" style="top:${finalY}%;left:${finalX}%;z-index:${rowIndex + 2};">`;
       if (player) {
         html += `<span class="slot-num">${num}</span>`;
         html += `<span class="slot-name">${name}</span>`;
@@ -349,6 +356,17 @@ function buildPitchSlotsFromState(modulo, assignments, allPlayers, customPositio
   });
 
   return html;
+}
+
+/**
+ * Mappa riga del modulo al ruolo:
+ * Riga 0 = Portiere, Riga 1 = Difensore, Ultima riga = Attaccante, Intermedie = Centrocampista
+ */
+function getRowRole(rowIndex, totalRows) {
+  if (rowIndex === 0) return 'Portiere';
+  if (rowIndex === 1) return 'Difensore';
+  if (rowIndex === totalRows - 1) return 'Attaccante';
+  return 'Centrocampista';
 }
 
 // ==================== DESKTOP: DRAG & DROP HTML5 ====================
@@ -364,8 +382,9 @@ function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh)
       draggedFromSlot = null;
       item.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
+      showDragHints(item.dataset.ruolo);
     });
-    item.addEventListener('dragend', () => { item.classList.remove('dragging'); draggedPid = null; });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); draggedPid = null; clearDragHints(); });
   });
 
   // Occupied slots draggable
@@ -377,8 +396,10 @@ function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh)
       draggedPid = assignments[idx];
       draggedFromSlot = idx;
       e.dataTransfer.effectAllowed = 'move';
+      const player = allPlayers.find(p => p.id === draggedPid);
+      if (player) showDragHints(player.ruolo);
     });
-    slot.addEventListener('dragend', () => { draggedPid = null; draggedFromSlot = null; });
+    slot.addEventListener('dragend', () => { draggedPid = null; draggedFromSlot = null; clearDragHints(); });
   });
 
   // Slots as drop targets
@@ -389,7 +410,15 @@ function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh)
       e.preventDefault();
       slot.classList.remove('drag-over');
       const targetIdx = parseInt(slot.dataset.slot);
+      const slotRole = slot.dataset.role;
       if (!draggedPid) return;
+
+      // Enforce role restrictions
+      const player = allPlayers.find(p => p.id === draggedPid);
+      const playerRuolo = player?.ruolo;
+      if (playerRuolo === 'Portiere' && slotRole !== 'Portiere') { draggedPid = null; return; }
+      if (playerRuolo !== 'Portiere' && slotRole === 'Portiere') { draggedPid = null; return; }
+
       const existingPid = assignments[targetIdx];
 
       if (draggedFromSlot !== null) {
@@ -453,6 +482,27 @@ function setupDesktopDragDrop(assignments, allPlayers, customPositions, refresh)
       customPositions[idx] = { x, y };
     });
   });
+
+  function showDragHints(ruolo) {
+    document.querySelectorAll('.pitch-slot').forEach(slot => {
+      slot.classList.remove('target-hint', 'slot-suggested', 'slot-blocked');
+      const slotRole = slot.dataset.role;
+      if (ruolo === 'Portiere') {
+        if (slotRole === 'Portiere') slot.classList.add('slot-suggested');
+        else slot.classList.add('slot-blocked');
+      } else {
+        if (slotRole === ruolo) slot.classList.add('slot-suggested');
+        else if (slotRole !== 'Portiere') slot.classList.add('target-hint');
+        else slot.classList.add('slot-blocked');
+      }
+    });
+  }
+
+  function clearDragHints() {
+    document.querySelectorAll('.pitch-slot').forEach(slot => {
+      slot.classList.remove('target-hint', 'slot-suggested', 'slot-blocked');
+    });
+  }
 }
 
 // ==================== MOBILE: TAP-TO-PLACE + LONG-PRESS FREE MOVE ====================
@@ -479,10 +529,21 @@ function setupTapInteraction(assignments, allPlayers, customPositions, refresh) 
       if (_freeMoveJustEnded) { _freeMoveJustEnded = false; return; }
       const slot = e.target.closest('.pitch-slot');
       if (!slot) return;
+      if (slot.classList.contains('slot-blocked')) return; // Blocked slot
       const idx = parseInt(slot.dataset.slot);
+      const slotRole = slot.dataset.role;
       const existingPid = assignments[idx];
 
       if (_selectedPid) {
+        // Get selected player's role
+        const selItem = document.querySelector(`.roster-item[data-pid="${_selectedPid}"]`);
+        const selRuolo = selItem?.dataset.ruolo;
+
+        // Enforce: portiere only in portiere slot
+        if (selRuolo === 'Portiere' && slotRole !== 'Portiere') return;
+        // Enforce: non-portiere cannot go in portiere slot
+        if (selRuolo !== 'Portiere' && slotRole === 'Portiere') return;
+
         if (existingPid === _selectedPid) {
           delete assignments[idx];
         } else {
@@ -548,11 +609,35 @@ function setupFreeMoveTouch(customPositions, refresh) {
 }
 
 function updateSelection() {
+  // Get selected player's role
+  let selectedRuolo = null;
   document.querySelectorAll('.roster-item').forEach(item => {
-    item.classList.toggle('selected', item.dataset.pid === _selectedPid);
+    const isSelected = item.dataset.pid === _selectedPid;
+    item.classList.toggle('selected', isSelected);
+    if (isSelected) selectedRuolo = item.dataset.ruolo;
   });
+
+  // Update slot hints based on role (both empty AND occupied for substitution)
   document.querySelectorAll('.pitch-slot').forEach(slot => {
-    slot.classList.toggle('target-hint', !!_selectedPid && !slot.classList.contains('occupied'));
+    slot.classList.remove('target-hint', 'slot-suggested', 'slot-blocked');
+    if (!_selectedPid) return;
+
+    const slotRole = slot.dataset.role;
+    if (selectedRuolo === 'Portiere') {
+      if (slotRole === 'Portiere') {
+        slot.classList.add('slot-suggested');
+      } else {
+        slot.classList.add('slot-blocked');
+      }
+    } else {
+      if (slotRole === selectedRuolo) {
+        slot.classList.add('slot-suggested');
+      } else if (slotRole !== 'Portiere') {
+        slot.classList.add('target-hint');
+      } else {
+        slot.classList.add('slot-blocked');
+      }
+    }
   });
 }
 

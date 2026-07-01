@@ -1,9 +1,8 @@
 /**
  * trainingSession.js - Dettaglio seduta di allenamento
- * Mostra/modifica: presenze, programma (obiettivo, esercizi, materiale, note)
+ * Mostra/modifica: programma (obiettivo, esercizi, materiale, note)
  */
 
-import { getAvatarColor } from '../../utils/formatters';
 import { showLoading, hideLoading } from '../../utils/ui';
 import demoPersistence from '../demo/DemoPersistence';
 
@@ -29,13 +28,6 @@ const MATERIALE_OPTIONS = [
   { id: 'elastici', label: '🟣 Elastici', icon: '🟣' }
 ];
 
-const MOTIVI_ASSENZA = [
-  { value: '', label: 'Nessun motivo' },
-  { value: 'Impegni Scolastici', label: '📚 Impegni Scolastici' },
-  { value: 'Motivi Familiari', label: '👨‍👩‍👧 Motivi Familiari' },
-  { value: 'Infortunio', label: '🏥 Infortunio' },
-  { value: 'Malattia', label: '🤒 Malattia' }
-];
 
 /**
  * Renderizza il dettaglio di una seduta di allenamento
@@ -52,7 +44,7 @@ export function renderSession(date, trainingData, onSave) {
     </div>`;
   }
 
-  const { allenamenti, giocatori, presenze } = trainingData;
+  const { allenamenti } = trainingData;
   const allenamento = (allenamenti || []).find(a => a.data === date);
   const giorni = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
   const d = new Date(date);
@@ -67,13 +59,7 @@ export function renderSession(date, trainingData, onSave) {
   const materialeUsato = programma.materiale || [];
   const noteAllenamento = allenamento?.note || programma.note || '';
 
-  // Presenze
-  const motivi = allenamento?.motivi_assenza || {};
-  const sorted = [...(giocatori || [])].sort((a, b) => a.cognome.localeCompare(b.cognome));
-
-  const presentiCount = allenamento?.presenze?.length || 0;
-  const assentiCount = allenamento?.assenti?.length || 0;
-  const hasData = presentiCount > 0 || assentiCount > 0;
+  const hasData = (allenamento?.programma?.fasi?.length > 0) || (allenamento?.programma?.tipo);
 
   let html = `<style>
     .session-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
@@ -96,8 +82,6 @@ export function renderSession(date, trainingData, onSave) {
     .mat-chip { padding:6px 12px; border-radius:20px; font-size:12px; cursor:pointer; border:1px solid #e2e8f0; background:white; transition:all 0.15s; }
     .mat-chip:hover { border-color:#667eea; }
     .mat-chip.active { background:#667eea; color:white; border-color:#667eea; }
-    .presenze-summary { display:flex; gap:16px; margin-bottom:12px; font-size:13px; }
-    .presenze-summary span { display:flex; align-items:center; gap:4px; }
     .session-actions { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
   </style>`;
 
@@ -166,38 +150,7 @@ export function renderSession(date, trainingData, onSave) {
     </div>
   </div>`;
 
-  // === PRESENZE ===
-  html += `<div>
-    <h4 style="margin:0 0 12px 0;font-size:14px;color:#334155;display:flex;align-items:center;gap:8px;">
-      👥 Presenze
-      <span style="font-size:12px;color:#6c757d;font-weight:normal;">(${presentiCount}/${sorted.length} presenti)</span>
-    </h4>
-    <div class="presenze-summary">
-      <span style="color:#22c55e;">✅ ${presentiCount} presenti</span>
-      <span style="color:#ef4444;">❌ ${assentiCount} assenti</span>
-    </div>
-    <p style="margin-bottom:8px;font-size:12px;color:#6c757d;">Segna <span style="color:#E74C3C;font-weight:600;">ASSENTE</span>:</p>
-    <div id="sessionPresenzeList">`;
 
-  sorted.forEach(g => {
-    const isAssente = allenamento?.assenti?.includes(g.id) || false;
-    const motivoSelezionato = motivi[g.id] || '';
-
-    html += `<div class="convocation-item" style="flex-wrap:wrap;gap:8px;">
-      <div style="display:flex;align-items:center;gap:8px;min-width:200px;">
-        <input type="checkbox" ${isAssente ? 'checked' : ''} data-pid="${g.id}" class="session-pres-check" style="width:20px;height:20px;cursor:pointer;accent-color:#E74C3C;">
-        <div class="player-avatar" style="width:28px;height:28px;font-size:11px;background:${getAvatarColor(g.nome)};">${g.nome[0]}${g.cognome[0]}</div>
-        <span style="font-size:13px;">${g.nome} ${g.cognome}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:4px;">
-        <select data-pid="${g.id}" class="session-motivo-select" style="padding:4px 8px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;${isAssente ? '' : 'opacity:0.4;'}" ${isAssente ? '' : 'disabled'}>
-          ${MOTIVI_ASSENZA.map(m => `<option value="${m.value}" ${m.value === motivoSelezionato ? 'selected' : ''}>${m.label}</option>`).join('')}
-        </select>
-      </div>
-    </div>`;
-  });
-
-  html += `</div></div>`;
 
   // === AZIONI ===
   html += `<div class="session-actions">
@@ -277,18 +230,6 @@ export function attachSessionListeners(date, trainingData, onSave) {
   // Toggle materiale chips
   document.querySelectorAll('#materialeGrid .mat-chip').forEach(chip => {
     chip.addEventListener('click', () => chip.classList.toggle('active'));
-  });
-
-  // Toggle motivo assenza
-  document.querySelectorAll('.session-pres-check').forEach(cb => {
-    cb.addEventListener('change', () => {
-      const pid = cb.dataset.pid;
-      const select = document.querySelector(`.session-motivo-select[data-pid="${pid}"]`);
-      if (select) {
-        select.disabled = !cb.checked;
-        select.style.opacity = cb.checked ? '1' : '0.4';
-      }
-    });
   });
 
   // Aggiungi fase
@@ -444,20 +385,6 @@ function openFaseForm(editIdx = null) {
  * Salva la seduta (presenze + programma)
  */
 function saveSession(date, trainingData, onSave) {
-  const presenti = [];
-  const assenti = [];
-  const motiviAssenza = {};
-
-  document.querySelectorAll('.session-pres-check').forEach(cb => {
-    if (cb.checked) {
-      assenti.push(cb.dataset.pid);
-      const select = document.querySelector(`.session-motivo-select[data-pid="${cb.dataset.pid}"]`);
-      if (select && select.value) motiviAssenza[cb.dataset.pid] = select.value;
-    } else {
-      presenti.push(cb.dataset.pid);
-    }
-  });
-
   // Raccogli programma con fasi
   const durataTotale = currentFasi.reduce((s, f) => s + (f.durata || 0), 0);
   const programma = {
@@ -465,7 +392,7 @@ function saveSession(date, trainingData, onSave) {
     durata: durataTotale || 90,
     obiettivo: document.getElementById('sessionObiettivo')?.value || '',
     fasi: currentFasi.length > 0 ? [...currentFasi] : [],
-    esercizi: '', // legacy: vuoto se ci sono fasi
+    esercizi: '',
     materiale: Array.from(document.querySelectorAll('#materialeGrid .mat-chip.active')).map(c => c.dataset.mat),
     note: document.getElementById('sessionNote')?.value || ''
   };
@@ -480,23 +407,15 @@ function saveSession(date, trainingData, onSave) {
       data: date,
       tipo: programma.tipo,
       durata: programma.durata,
-      presenze: presenti,
-      assenti: assenti,
-      motivi_assenza: motiviAssenza,
       programma: programma,
       note: programma.note
     };
     demoPersistence.addTraining(allenamento);
   } else {
-    allenamento.presenze = presenti;
-    allenamento.assenti = assenti;
-    allenamento.motivi_assenza = motiviAssenza;
     allenamento.tipo = programma.tipo;
     allenamento.durata = programma.durata;
     allenamento.programma = programma;
     allenamento.note = programma.note;
-    demoPersistence.saveTrainingPresence(allenamento.id, { presenti, assenti, motivi: motiviAssenza });
-    // Salva programma separatamente
     demoPersistence.saveTrainingProgram(allenamento.id, programma);
   }
 
