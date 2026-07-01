@@ -60,6 +60,45 @@ export const MINI_MISSIONS_CONFIG = {
     ]
   },
 
+  trainingSessions: {
+    title: 'Sedute',
+    icon: '📋',
+    steps: [
+      {
+        id: 'explore_sessions',
+        title: 'Esplora le sedute',
+        description: 'Visualizza il calendario e seleziona un giorno',
+        trigger: 'page_view'
+      }
+    ]
+  },
+
+  trainingPresenze: {
+    title: 'Presenze',
+    icon: '✅',
+    steps: [
+      {
+        id: 'explore_presenze',
+        title: 'Gestisci le presenze',
+        description: 'Controlla assenze e riepilogo presenze',
+        trigger: 'page_view'
+      }
+    ]
+  },
+
+  trainingSettings: {
+    title: 'Impostazioni Allenamenti',
+    icon: '⚙️',
+    steps: [
+      {
+        id: 'explore_training_settings',
+        title: 'Esplora le impostazioni',
+        description: 'Scopri la settimana tipo e i template salvati',
+        trigger: 'page_view'
+      }
+    ]
+  },
+
   stats: {
     title: 'Statistiche',
     icon: '📈',
@@ -139,10 +178,26 @@ export const DEMO_MISSIONS = [
   },
   {
     id: 'training',
-    title: 'Allenamenti',
-    description: 'Organizza sedute e monitora presenze',
-    icon: '🏃',
-    page: 'training',
+    title: 'Allenamenti - Sedute',
+    description: 'Programma le sedute di allenamento',
+    icon: '📋',
+    page: 'trainingSessions',
+    completed: false
+  },
+  {
+    id: 'trainingPresenze',
+    title: 'Allenamenti - Presenze',
+    description: 'Gestisci presenze e assenze',
+    icon: '✅',
+    page: 'trainingPresenze',
+    completed: false
+  },
+  {
+    id: 'trainingSettings',
+    title: 'Allenamenti - Impostazioni',
+    description: 'Configura settimana tipo e template',
+    icon: '⚙️',
+    page: 'trainingSettings',
     completed: false
   },
   {
@@ -183,6 +238,18 @@ export const DEMO_TOOLTIPS = {
   training: {
     title: '💡 Allenamenti Organizzati',
     content: 'Organizza le sedute di allenamento, monitora le presenze e condividi esercizi con lo staff.'
+  },
+  trainingSessions: {
+    title: '💡 Sedute di Allenamento',
+    content: 'Programma le sedute con fasi strutturate, obiettivi e materiale. Salva template riutilizzabili.'
+  },
+  trainingPresenze: {
+    title: '💡 Presenze Allenamenti',
+    content: 'Registra presenze e assenze con motivo. Riepilogo automatico per giocatore.'
+  },
+  trainingSettings: {
+    title: '💡 Impostazioni Allenamenti',
+    content: 'Configura la settimana tipo e gestisci i template delle sedute salvate.'
   },
   stats: {
     title: '💡 Statistiche Avanzate',
@@ -861,13 +928,12 @@ class DemoManager {
   setupPageHighlights(page) {
     if (!this.isDemo) return;
     
-    // Disabilita tooltip hover su mobile (touch devices) - troppo invasivi
-    if (window.innerWidth <= 768 || 'ontouchstart' in window) return;
+    // Setup tooltip sidebar su tutti i link menu (solo desktop)
+    if (!(window.innerWidth <= 768 || 'ontouchstart' in window)) {
+      this.setupSidebarTooltips();
+    }
     
-    // Setup tooltip sidebar su tutti i link menu
-    this.setupSidebarTooltips();
-    
-    // Configurazione tooltip per pagina
+    // Configurazione tooltip per pagina (desktop: primo hover, mobile: primo tap 2.5s)
     const highlights = DEMO_HIGHLIGHTS[page];
     if (!highlights) return;
     
@@ -977,9 +1043,7 @@ class DemoManager {
   }
 
   addElementTooltip(selector, title, description) {
-    // Non aggiungere su mobile/touch
-    if (window.innerWidth <= 768 || 'ontouchstart' in window) return;
-    
+    const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
     const elements = document.querySelectorAll(selector);
     if (!elements.length) return;
     
@@ -987,13 +1051,25 @@ class DemoManager {
       if (el._demoTooltipBound) return;
       el._demoTooltipBound = true;
       
-      el.addEventListener('mouseenter', () => {
-        this.showElementTooltip(el, title, description);
-      });
-      
-      el.addEventListener('mouseleave', () => {
-        this.hideElementTooltip();
-      });
+      if (isMobile) {
+        // Mobile: mostra al primo tap, auto-hide dopo 2.5s, poi mai più
+        el.addEventListener('click', () => {
+          if (el._demoTooltipShown) return;
+          el._demoTooltipShown = true;
+          this.showElementTooltip(el, title, description);
+          setTimeout(() => this.hideElementTooltip(), 2500);
+        }, { once: true });
+      } else {
+        // Desktop: mostra solo al primo hover, poi mai più
+        el.addEventListener('mouseenter', () => {
+          if (el._demoTooltipShown) return;
+          el._demoTooltipShown = true;
+          this.showElementTooltip(el, title, description);
+        }, { once: true });
+        el.addEventListener('mouseleave', () => {
+          this.hideElementTooltip();
+        });
+      }
     });
   }
 
