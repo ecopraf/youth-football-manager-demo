@@ -210,6 +210,31 @@ curl -s 'https://csxdlxbhcnyfppojwwzy.supabase.co/rest/v1/workspace?select=*' \
 3. Dopo ogni feature: commit + push + chiedi conferma deploy
 4. Verifica con `curl https://.../api/health`
 
+### 🌐 Deploy Landing Page (yfm-landing)
+
+La landing page è in `landing/` e il progetto Vercel si chiama **yfm-landing**.
+
+⚠️ **Il deploy automatico da GitHub NON è attivo per la landing.** Serve deploy manuale via CLI.
+
+```bash
+# Deploy landing in produzione
+cd landing && vercel --prod
+```
+
+| Info | Valore |
+|------|--------|
+| Cartella | `landing/` |
+| Progetto Vercel | `yfm-landing` |
+| URL produzione | https://yfm-landing.vercel.app |
+| Deploy | **Manuale**: `cd landing && vercel --prod` |
+| Auto-deploy da GitHub | ❌ Non attivo |
+
+**Workflow dopo modifica landing:**
+1. Modifica `landing/index.html`
+2. `git add . && git commit -m "feat: ..." && git push origin main`
+3. `cd landing && vercel --prod`
+4. Verifica: `curl -s https://yfm-landing.vercel.app/ | grep -o 'feature-icon">[^<]*'`
+
 ---
 
 ## Workflow Raccomandato
@@ -301,10 +326,12 @@ git commit -m "tipo: descrizione"
 git push origin main
 
 # ⚠️ DEPLOY: Chiedere SEMPRE conferma all'utente prima di procedere!
-# Solo dopo OK: vercel --prod --yes
+# Demo app: vercel --prod --yes
+# Landing page: cd landing && vercel --prod
 
 # Verifica produzione
 curl https://youth-football-manager-backend.vercel.app/api/health
+curl -s https://yfm-landing.vercel.app/ | head -5
 ```
 
 ---
