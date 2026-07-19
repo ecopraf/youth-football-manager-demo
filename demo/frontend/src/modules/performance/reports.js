@@ -808,49 +808,18 @@ async function generatePlayerReport() {
 function generateDemoPlayerReport(playerId) {
   const player = window.YFM.allPlayers?.find(p => p.id === playerId);
   if (!player) return { giocatore: {}, stats: {}, storico: [] };
-  
-  // Calcola statistiche dagli eventi demo
-  const allEvents = demoPersistence.data.events || [];
-  let playerEvents = allEvents.filter(e => e.player_id === playerId || e.calciatorePrincipaleId === playerId);
-  
-  // Se non ci sono eventi salvati, genera dati fittizi demo
-  if (playerEvents.length === 0) {
-    const demoMatches = window.YFM.demoMatches || [];
-    const numPartite = Math.min(3, demoMatches.length);
-    playerEvents = [];
-    
-    for (let i = 0; i < numPartite; i++) {
-      const match = demoMatches[i];
-      if (!match) continue;
-      
-      // Genera eventi fittizi per ogni partita
-      const tipiEventi = ['GOAL', 'GOAL', 'GOAL', 'ASSIST', 'ASSIST', 'YELLOW'];
-      const minutiPossibili = [12, 23, 34, 45, 56, 67, 78, 89];
-      const numEventi = Math.floor(Math.random() * 3) + 1;
-      
-      for (let j = 0; j < numEventi; j++) {
-        playerEvents.push({
-          id: `de_${playerId}_${i}_${j}`,
-          match_id: match.id,
-          player_id: playerId,
-          tipo: tipiEventi[Math.floor(Math.random() * tipiEventi.length)],
-          minuto: minutiPossibili[Math.floor(Math.random() * minutiPossibili.length)],
-          autogoal: false
-        });
-      }
-    }
-  }
-  
+
+  // Fonte di verità: eventi precaricati + eventuali eventi salvati in localStorage
+  const baseEvents = window.YFM.demoEvents || [];
+  const savedEvents = demoPersistence.data.events || [];
+  const allEvents = [...baseEvents, ...savedEvents];
+  const playerEvents = allEvents.filter(e => e.player_id === playerId);
+
   const gol = playerEvents.filter(e => e.tipo === 'GOAL').length;
   const assist = playerEvents.filter(e => e.tipo === 'ASSIST').length;
   const ammonizioni = playerEvents.filter(e => e.tipo === 'YELLOW').length;
   const espulsioni = playerEvents.filter(e => e.tipo === 'RED').length;
-  
-  // Conta partite giocate
-  const partiteGiocate = Math.max(
-    new Set(playerEvents.map(e => e.match_id)).size,
-    player?.presenze || window.YFM.demoMatches?.length || 0
-  );
+  const partiteGiocate = new Set(playerEvents.map(e => e.match_id)).size;
   
   // Costruisci storico eventi per partita
   const storicoByMatch = {};
