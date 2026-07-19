@@ -987,7 +987,7 @@ function renderPlayerReport(report) {
             <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;">
               ${gruppo.eventi.map(e => `
                 <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:${e.tipo === 'GOAL' ? '#d4edda' : e.tipo === 'ASSIST' ? '#cce5ff' : e.tipo === 'YELLOW' ? '#fff3cd' : '#f8d7da'};border-radius:4px;font-size:11px;">
-                  <span style="font-weight:bold;color:#667eea;">${e.minuto}'</span>
+                  <span style="font-weight:bold;color:#667eea;">${e.minuto != null ? e.minuto + "'" : '?'}</span>
                   <span>${getEventIcon(e.tipo)}</span>
                 </span>
               `).join('')}
@@ -1000,7 +1000,7 @@ function renderPlayerReport(report) {
 }
 
 function getEventIcon(tipo) {
-  const icons = { GOAL: '⚽', ASSIST: '🅰️', YELLOW: '🟨', RED: '🟥', SUB_IN: '🔵', SUB_OUT: '🔴' };
+  const icons = { GOAL: '⚽', ASSIST: '🅰️', YELLOW: '🟨', RED: '🟥', SUB_IN: '🔵', SUB_OUT: '🔴', SUB: '🔄', IN: '🔵', OUT: '🔴', SUBITO: '🥅', AUTOGOL: '😬' };
   return icons[tipo] || '⚪';
 }
 
