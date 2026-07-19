@@ -64,45 +64,80 @@ const DEMO_PARTITE = [
   { id: 'm007', avversario: 'Fiorentina Youth', luogo: 'Casa', data_ora: '2026-05-23T15:00:00', competizione: 'Campionato Primavera', stato: 'Terminata', gol_casa: 5, gol_trasferta: 1, giornata: 11, tipo_evento: 'campionato', dettaglio_competizione: 'G.11', badge_avversario: '#8B008B' },
 ];
 
-// Eventi partite demo (gol, assist, cartellini)
+// Eventi partite demo (gol, assist, cartellini, sostituzioni)
+// Partite terminate: m003 (3-1 Inter), m004 (2-2 Milan), m005 (4-0 Juve), m006 (1-2 Napoli), m007 (5-1 Fiorentina)
 const DEMO_EVENTI = [
-  // Cartellini
-  { match_id: 'm003', player_id: 'c002', tipo: 'YELLOW', minuto: 32 },
-  { match_id: 'm005', player_id: 'c002', tipo: 'YELLOW', minuto: 44 },
-  { match_id: 'm006', player_id: 'c002', tipo: 'YELLOW', minuto: 61 },
-  { match_id: 'm007', player_id: 'c002', tipo: 'YELLOW', minuto: 27 },
-  { match_id: 'm004', player_id: 'c005', tipo: 'YELLOW', minuto: 55 },
-  { match_id: 'm005', player_id: 'c005', tipo: 'YELLOW', minuto: 38 },
-  { match_id: 'm003', player_id: 'c008', tipo: 'YELLOW', minuto: 70 },
-  { match_id: 'm006', player_id: 'c013', tipo: 'YELLOW', minuto: 18 },
-  // m003: Green 3-1 Inter
-  { match_id: 'm003', player_id: 'c007', tipo: 'GOAL', minuto: 15 },
-  { match_id: 'm003', player_id: 'c011', tipo: 'GOAL', minuto: 34 },
-  { match_id: 'm003', player_id: 'c009', tipo: 'GOAL', minuto: 67 },
-  { match_id: 'm003', player_id: 'c007', tipo: 'ASSIST', minuto: 67 },
+  // ── m003: Green 3-1 Inter Academy (G.15) ──
+  { match_id: 'm003', player_id: 'c007', tipo: 'GOAL',   minuto: 15 },
   { match_id: 'm003', player_id: 'c011', tipo: 'ASSIST', minuto: 15 },
-  // m003: Inter gol
-  { match_id: 'm003', player_id: null, tipo: 'GOAL', minuto: 52, note: 'Inter' },
-  // m004: Green 2-2 Milan
-  { match_id: 'm004', player_id: 'c005', tipo: 'GOAL', minuto: 23 },
-  { match_id: 'm004', player_id: 'c008', tipo: 'GOAL', minuto: 78 },
+  { match_id: 'm003', player_id: null,   tipo: 'GOAL',   minuto: 52, note: 'Inter' },
+  { match_id: 'm003', player_id: 'c011', tipo: 'GOAL',   minuto: 34 },
+  { match_id: 'm003', player_id: 'c008', tipo: 'ASSIST', minuto: 34 },
+  { match_id: 'm003', player_id: 'c009', tipo: 'GOAL',   minuto: 67 },
+  { match_id: 'm003', player_id: 'c007', tipo: 'ASSIST', minuto: 67 },
+  { match_id: 'm003', player_id: 'c002', tipo: 'YELLOW', minuto: 32 },
+  { match_id: 'm003', player_id: 'c008', tipo: 'YELLOW', minuto: 70 },
+  { match_id: 'm003', player_id: 'c014', tipo: 'SUB',    minuto: 60 },
+  { match_id: 'm003', player_id: 'c018', tipo: 'SUB',    minuto: 60 },
+  { match_id: 'm003', player_id: 'c020', tipo: 'SUB',    minuto: 75 },
+  { match_id: 'm003', player_id: 'c017', tipo: 'SUB',    minuto: 75 },
+  // ── m004: Green 2-2 Milan Youth (QF Coppa) ──
+  { match_id: 'm004', player_id: 'c005', tipo: 'GOAL',   minuto: 23 },
+  { match_id: 'm004', player_id: 'c010', tipo: 'ASSIST', minuto: 23 },
+  { match_id: 'm004', player_id: 'c008', tipo: 'GOAL',   minuto: 78 },
   { match_id: 'm004', player_id: 'c005', tipo: 'ASSIST', minuto: 78 },
-  // m005: Green 4-0 Juventus
-  { match_id: 'm005', player_id: 'c009', tipo: 'GOAL', minuto: 12 },
-  { match_id: 'm005', player_id: 'c011', tipo: 'GOAL', minuto: 28 },
-  { match_id: 'm005', player_id: 'c017', tipo: 'GOAL', minuto: 55 },
-  { match_id: 'm005', player_id: 'c007', tipo: 'GOAL', minuto: 72 },
+  { match_id: 'm004', player_id: null,   tipo: 'GOAL',   minuto: 38, note: 'Milan' },
+  { match_id: 'm004', player_id: null,   tipo: 'GOAL',   minuto: 61, note: 'Milan' },
+  { match_id: 'm004', player_id: 'c005', tipo: 'YELLOW', minuto: 55 },
+  { match_id: 'm004', player_id: 'c003', tipo: 'YELLOW', minuto: 44 },
+  { match_id: 'm004', player_id: 'c006', tipo: 'SUB',    minuto: 65 },
+  { match_id: 'm004', player_id: 'c018', tipo: 'SUB',    minuto: 65 },
+  { match_id: 'm004', player_id: 'c013', tipo: 'SUB',    minuto: 80 },
+  { match_id: 'm004', player_id: 'c015', tipo: 'SUB',    minuto: 80 },
+  // ── m005: Green 4-0 Juventus Academy (G.13) ──
+  { match_id: 'm005', player_id: 'c009', tipo: 'GOAL',   minuto: 12 },
+  { match_id: 'm005', player_id: 'c005', tipo: 'ASSIST', minuto: 12 },
+  { match_id: 'm005', player_id: 'c011', tipo: 'GOAL',   minuto: 28 },
+  { match_id: 'm005', player_id: 'c006', tipo: 'ASSIST', minuto: 28 },
+  { match_id: 'm005', player_id: 'c017', tipo: 'GOAL',   minuto: 55 },
+  { match_id: 'm005', player_id: 'c008', tipo: 'ASSIST', minuto: 55 },
+  { match_id: 'm005', player_id: 'c007', tipo: 'GOAL',   minuto: 72 },
   { match_id: 'm005', player_id: 'c009', tipo: 'ASSIST', minuto: 72 },
-  // m006: Green 1-2 Napoli
-  { match_id: 'm006', player_id: 'c011', tipo: 'GOAL', minuto: 41 },
-  // m007: Green 5-1 Fiorentina
-  { match_id: 'm007', player_id: 'c007', tipo: 'GOAL', minuto: 8 },
-  { match_id: 'm007', player_id: 'c011', tipo: 'GOAL', minuto: 19 },
-  { match_id: 'm007', player_id: 'c009', tipo: 'GOAL', minuto: 35 },
-  { match_id: 'm007', player_id: 'c017', tipo: 'GOAL', minuto: 58 },
-  { match_id: 'm007', player_id: 'c020', tipo: 'GOAL', minuto: 81 },
+  { match_id: 'm005', player_id: 'c002', tipo: 'YELLOW', minuto: 44 },
+  { match_id: 'm005', player_id: 'c005', tipo: 'YELLOW', minuto: 38 },
+  { match_id: 'm005', player_id: 'c020', tipo: 'SUB',    minuto: 70 },
+  { match_id: 'm005', player_id: 'c009', tipo: 'SUB',    minuto: 70 },
+  { match_id: 'm005', player_id: 'c014', tipo: 'SUB',    minuto: 78 },
+  { match_id: 'm005', player_id: 'c010', tipo: 'SUB',    minuto: 78 },
+  // ── m006: Green 1-2 Napoli Academy (Torneo Infiorata) ──
+  { match_id: 'm006', player_id: 'c011', tipo: 'GOAL',   minuto: 41 },
+  { match_id: 'm006', player_id: 'c007', tipo: 'ASSIST', minuto: 41 },
+  { match_id: 'm006', player_id: null,   tipo: 'GOAL',   minuto: 29, note: 'Napoli' },
+  { match_id: 'm006', player_id: null,   tipo: 'GOAL',   minuto: 73, note: 'Napoli' },
+  { match_id: 'm006', player_id: 'c002', tipo: 'YELLOW', minuto: 61 },
+  { match_id: 'm006', player_id: 'c013', tipo: 'YELLOW', minuto: 18 },
+  { match_id: 'm006', player_id: 'c004', tipo: 'YELLOW', minuto: 85 },
+  { match_id: 'm006', player_id: 'c018', tipo: 'SUB',    minuto: 55 },
+  { match_id: 'm006', player_id: 'c006', tipo: 'SUB',    minuto: 55 },
+  { match_id: 'm006', player_id: 'c020', tipo: 'SUB',    minuto: 68 },
+  { match_id: 'm006', player_id: 'c017', tipo: 'SUB',    minuto: 68 },
+  // ── m007: Green 5-1 Fiorentina Youth (G.11) ──
+  { match_id: 'm007', player_id: 'c007', tipo: 'GOAL',   minuto: 8  },
+  { match_id: 'm007', player_id: 'c010', tipo: 'ASSIST', minuto: 8  },
+  { match_id: 'm007', player_id: 'c011', tipo: 'GOAL',   minuto: 19 },
+  { match_id: 'm007', player_id: 'c005', tipo: 'ASSIST', minuto: 19 },
+  { match_id: 'm007', player_id: 'c009', tipo: 'GOAL',   minuto: 35 },
   { match_id: 'm007', player_id: 'c007', tipo: 'ASSIST', minuto: 35 },
+  { match_id: 'm007', player_id: null,   tipo: 'GOAL',   minuto: 50, note: 'Fiorentina' },
+  { match_id: 'm007', player_id: 'c017', tipo: 'GOAL',   minuto: 58 },
   { match_id: 'm007', player_id: 'c011', tipo: 'ASSIST', minuto: 58 },
+  { match_id: 'm007', player_id: 'c020', tipo: 'GOAL',   minuto: 81 },
+  { match_id: 'm007', player_id: 'c008', tipo: 'ASSIST', minuto: 81 },
+  { match_id: 'm007', player_id: 'c002', tipo: 'YELLOW', minuto: 27 },
+  { match_id: 'm007', player_id: 'c014', tipo: 'SUB',    minuto: 62 },
+  { match_id: 'm007', player_id: 'c006', tipo: 'SUB',    minuto: 62 },
+  { match_id: 'm007', player_id: 'c018', tipo: 'SUB',    minuto: 72 },
+  { match_id: 'm007', player_id: 'c013', tipo: 'SUB',    minuto: 72 },
 ];
 
 // Statistiche demo - calcolate dinamicamente dalle partite
