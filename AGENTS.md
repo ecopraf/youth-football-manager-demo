@@ -35,6 +35,21 @@
   3. Riabilita deploy Vercel
 - Per deploy manuale: usare l'API Vercel con commit SHA specifico (richiedere conferma)
 
+### ⚠️ Deploy Landing Page (yfm-landing) — OBBLIGATORIO
+
+Il progetto Vercel `yfm-landing` punta alla directory `landing/` di questo repo ma **NON si triggera automaticamente** dal push su `origin/main`.
+
+Dopo ogni modifica a file in `landing/`, eseguire SEMPRE il deploy manuale:
+
+```bash
+cd /Users/Raffaele/Documents/Youth-Foorball-Manager/youth-football-manager-demo/landing
+vercel --prod --yes
+```
+
+URL produzione: **https://yfm-landing.vercel.app**
+
+> Il push su GitHub è comunque necessario per il versionamento, ma non è sufficiente per il deploy della landing.
+
 ## 🔐 Credenziali Configurate
 
 > ⚠️ **NOTA**: Le credenziali sensibili sono gestite tramite le variabili d'ambiente dell'agent.
