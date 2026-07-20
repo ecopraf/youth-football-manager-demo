@@ -182,10 +182,14 @@ function generateDemoMatchReport(matchId) {
   const players = window.YFM.allPlayers || [];
   
   // Calcola statistiche
-  const golFatti = events.filter(e => e.tipo === 'GOAL' && !e.autogol).length;
-  const golSubiti = events.filter(e => e.tipo === 'SUBITO' || (e.tipo === 'GOAL' && e.autogol)).length;
+  const golFatti = events.filter(e => e.tipo === 'GOAL' && e.player_id !== null).length;
+  const golSubiti = events.filter(e => e.tipo === 'SUBITO' || (e.tipo === 'GOAL' && e.player_id === null)).length;
   const ammonizioni = events.filter(e => e.tipo === 'YELLOW').length;
   const espulsioni = events.filter(e => e.tipo === 'RED').length;
+  
+  // Punteggio: usa i dati della partita come fonte di verità
+  const scoreGolCasa = match?.gol_casa ?? golFatti;
+  const scoreGolOspiti = match?.gol_trasferta ?? golSubiti;
   
   // Costruisci eventi per timeline
   const eventi = events.map(e => {
@@ -246,8 +250,8 @@ function generateDemoMatchReport(matchId) {
       luogo: match?.luogo || 'Casa'
     },
     score: {
-      golCasa: golFatti || match?.gol_casa || 0,
-      golOspiti: golSubiti || match?.gol_trasferta || 0
+      golCasa: scoreGolCasa,
+      golOspiti: scoreGolOspiti
     },
     eventi,
     giocatori,
@@ -819,12 +823,43 @@ function generateDemoPlayerReport(playerId) {
   const assist = playerEvents.filter(e => e.tipo === 'ASSIST').length;
   const ammonizioni = playerEvents.filter(e => e.tipo === 'YELLOW').length;
   const espulsioni = playerEvents.filter(e => e.tipo === 'RED').length;
-  const partiteGiocate = new Set(playerEvents.map(e => e.match_id)).size;
+
+  // Partite giocate: partite in cui il giocatore era presente (da presenze partita)
+  // oppure aveva almeno un evento
+  const demoMatches = window.YFM.demoMatches || [];
+  const matchIdConEventi = new Set(playerEvents.map(e => e.match_id));
+  const matchIdConPresenza = new Set(
+    demoMatches
+      .filter(m => Array.isArray(m.presenze) && m.presenze.includes(playerId))
+      .map(m => m.id)
+  );
+  // Unione: presente O con eventi
+  const tutteLePartite = new Set([...matchIdConEventi, ...matchIdConPresenza]);
+  // Considera solo partite terminate
+  const partiteTerminate = demoMatches.filter(m =>
+    tutteLePartite.has(m.id) && (m.stato === 'Terminata' || m.stato === 'Archiviata')
+  );
+  const partiteGiocate = partiteTerminate.length || player.presenze || 0;
   
   // Costruisci storico eventi per partita
   const storicoByMatch = {};
+
+  // Prima aggiungi tutte le partite in cui era presente (anche senza eventi)
+  partiteTerminate.forEach(match => {
+    storicoByMatch[match.id] = {
+      match_id: match.id,
+      competizione: match.competizione || 'Campionato',
+      partita: match.avversario || 'Avversario',
+      data: match.data_ora || match.data || '',
+      giornata: match.giornata || '',
+      risultato: match.gol_casa !== undefined ? `${match.gol_casa}-${match.gol_trasferta}` : '',
+      eventi: []
+    };
+  });
+
+  // Poi aggiungi gli eventi per le partite in cui ne ha
   playerEvents.forEach(e => {
-    const match = window.YFM.demoMatches?.find(m => m.id === e.match_id);
+    const match = demoMatches.find(m => m.id === e.match_id);
     if (!storicoByMatch[e.match_id]) {
       storicoByMatch[e.match_id] = {
         match_id: e.match_id,
@@ -832,6 +867,7 @@ function generateDemoPlayerReport(playerId) {
         partita: match?.avversario || 'Avversario',
         data: match?.data_ora || match?.data || '',
         giornata: match?.giornata || '',
+        risultato: match?.gol_casa !== undefined ? `${match.gol_casa}-${match.gol_trasferta}` : '',
         eventi: []
       };
     }
@@ -869,31 +905,10 @@ function renderPlayerReport(report) {
     ? (report.stats.gol / report.stats.partiteGiocate).toFixed(2) : 0;
   const minutiTotali = report.stats.partiteGiocate * 90;
   
-  // Raggruppa storico per competizione e partita (giornata)
-  const gruppiStorico = {};
-  (report.storico || []).forEach(e => {
-    // Crea chiave univoca per partita: competizione + giornata
-    const key = (e.competizione || 'Altro') + '||' + (e.giornata || '') + '||' + (e.partita || '') + '||' + (e.data || '');
-    if (!gruppiStorico[key]) {
-      gruppiStorico[key] = {
-        competizione: e.competizione || 'Altro',
-        giornata: e.giornata,
-        partita: e.partita,
-        data: e.data,
-        eventi: []
-      };
-    }
-    gruppiStorico[key].eventi.push(e);
-  });
-  
-  // Ordina eventi per minuto e gruppi per giornata crescente
-  Object.values(gruppiStorico).forEach(g => {
-    g.eventi.sort((a, b) => a.minuto - b.minuto);
-  });
-  const gruppiOrdinati = Object.values(gruppiStorico).sort((a, b) => {
-    const gA = parseInt(a.giornata) || 0;
-    const gB = parseInt(b.giornata) || 0;
-    return gA - gB;
+  // Storico: ogni elemento è già una partita con i suoi eventi
+  // Ordina per data decrescente (più recente prima)
+  const gruppiOrdinati = (report.storico || []).sort((a, b) => {
+    return new Date(b.data || 0) - new Date(a.data || 0);
   });
   
   container.innerHTML = `
@@ -939,30 +954,30 @@ function renderPlayerReport(report) {
         @media (max-width: 450px) { .player-stats-grid { grid-template-columns: repeat(2, 1fr) !important; } }
       </style>
       
-      <!-- Storico Eventi Raggruppato per partita -->
+      <!-- Storico partite -->
       <div>
-        <h3 style="margin:0 0 8px 0;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:6px;">📋 Storico Eventi</h3>
-        ${gruppiOrdinati.length > 0 ? gruppiOrdinati.map(gruppo => `
-          <div style="margin-bottom:14px;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="background:#667eea;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;min-width:50px;text-align:center;">
-                ${gruppo.giornata ? 'G.' + String(gruppo.giornata).padStart(2, '0') : ''}
-              </span>
-              <span style="font-size:12px;font-weight:500;color:#333;">
-                vs ${gruppo.partita || 'Avversario'}
-              </span>
-              <span style="font-size:10px;color:#888;">${formatDateShort(gruppo.data)}</span>
+        <h3 style="margin:0 0 8px 0;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:6px;">📋 Storico Partite</h3>
+        ${gruppiOrdinati.length > 0 ? gruppiOrdinati.map(partita => {
+          const hasEventi = partita.eventi && partita.eventi.length > 0;
+          return `
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+              ${partita.giornata ? `<span style="background:#667eea;color:white;padding:3px 7px;border-radius:4px;font-size:11px;font-weight:600;">G.${String(partita.giornata).padStart(2,'0')}</span>` : ''}
+              <span style="font-size:12px;font-weight:600;color:#333;">vs ${partita.partita || 'Avversario'}</span>
+              ${partita.risultato ? `<span style="font-size:11px;font-weight:700;color:#004085;background:#e8f0fe;padding:2px 7px;border-radius:4px;">${partita.risultato}</span>` : ''}
+              <span style="font-size:10px;color:#888;">${formatDateShort(partita.data)}</span>
+              <span style="font-size:10px;color:#666;">${partita.competizione || ''}</span>
             </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;">
-              ${gruppo.eventi.map(e => `
-                <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:${e.tipo === 'GOAL' ? '#d4edda' : e.tipo === 'ASSIST' ? '#cce5ff' : e.tipo === 'YELLOW' ? '#fff3cd' : '#f8d7da'};border-radius:4px;font-size:11px;">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;min-height:32px;align-items:center;">
+              ${hasEventi ? partita.eventi.map(e => `
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:${e.tipo === 'GOAL' ? '#d4edda' : e.tipo === 'ASSIST' ? '#cce5ff' : e.tipo === 'YELLOW' ? '#fff3cd' : e.tipo === 'RED' ? '#f8d7da' : '#e2e3e5'};border-radius:4px;font-size:11px;">
                   <span style="font-weight:bold;color:#667eea;">${e.minuto != null ? e.minuto + "'" : '?'}</span>
                   <span>${getEventIcon(e.tipo)}</span>
                 </span>
-              `).join('')}
+              `).join('') : '<span style="color:#aaa;font-size:11px;">Presente — nessun evento registrato</span>'}
             </div>
-          </div>
-        `).join('') : '<p style="color:#666;font-size:13px;text-align:center;padding:20px;">Nessun evento registrato</p>'}
+          </div>`;
+        }).join('') : '<p style="color:#666;font-size:13px;text-align:center;padding:20px;">Nessuna partita registrata</p>'}
       </div>
     </div>
   `;
