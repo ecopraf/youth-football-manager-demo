@@ -9,6 +9,8 @@
 ```
 .agents/                    # Configurazione agenti AI
 ├── AGENTS.md              # ← Questo file (entry point)
+├── plans/                 # Piani di sviluppo
+│   └── DEVELOPMENT_PLAN.md # Epic attivi, task, stato
 ├── knowledge/             # Conoscenza del prodotto
 │   ├── VISION.md          # Missione, valori, target
 │   ├── ARCHITECTURE.md    # Stack, API, database
@@ -27,9 +29,10 @@
 
 ### 1. Leggi i documenti di contesto
 ```
-.agents/knowledge/VISION.md      → Cosa stiamo costruendo
+.agents/plans/DEVELOPMENT_PLAN.md → Epic attivi e task correnti
+.agents/knowledge/VISION.md       → Cosa stiamo costruendo
 .agents/knowledge/ARCHITECTURE.md → Come è fatto il sistema
-.agents/knowledge/ROADMAP.md     → Cosa c'è da fare
+.agents/knowledge/ROADMAP.md      → Backlog generale
 .agents/standards/CODING_STANDARDS.md → Come scrivere codice
 ```
 

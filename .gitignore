@@ -8,3 +8,4 @@ node_modules/
 # Build info generato automaticamente
 demo/frontend/src/build-info.js
 demo/frontend/.build-counter.json
+.DS_Store
