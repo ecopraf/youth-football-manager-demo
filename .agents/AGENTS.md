@@ -175,14 +175,9 @@ nuovaPagina: {
 
 Il bottone `?` appare automaticamente (integrato nel router). I vecchi tooltip marketing/highlight sono disabilitati.
 
-### 🔐 Credenziali Supabase (persistenti)
+### 🔐 Credenziali Supabase
 
-```
-SUPABASE_URL=https://csxdlxbhcnyfppojwwzy.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTEzMTMsImV4cCI6MjA5NzMyNzMxM30.KTL6Z_Mwo_QzNidWt95YLqc7ZvdbfxyQdzxCT5uNRIw
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTc1MTMxMywiZXhwIjoyMDk3MzI3MzEzfQ.HZXGk1Xfz0EvSqewAoSCcgZ6gIQYLOP-54mE3YVHgBo
-JWT_SECRET=aEj1OXdTHxSHD8iObjFov1jJ06RoyM1Ormf8KBb0uPI=
-```
+> ⚠️ Valori reali rimossi da qui — vedi `~/.kiro/secrets/yfm-credentials.md` (locale, non versionato). Usare le variabili d'ambiente `$SUPABASE_URL`, `$SUPABASE_ANON_KEY`, `$SUPABASE_SERVICE_ROLE_KEY`, `$JWT_SECRET`.
 
 ### 📡 Query Rapide Supabase
 ```bash

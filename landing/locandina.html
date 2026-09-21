@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locandina Youth Football Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1a2e;
+        }
+        
+        .locandina {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(180deg, #4a5568 0%, #2d3748 30%, #1a202c 70%, #171923 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Sfondo viola brand sfumato */
+        .bg-field {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 600px;
+            background: linear-gradient(180deg, 
+                rgba(102, 126, 234, 0.25) 0%, 
+                rgba(118, 75, 162, 0.15) 40%,
+                transparent 100%);
+            opacity: 0.8;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 40px 50px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logo-section img {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+        }
+        
+        .logo-text {
+            color: white;
+        }
+        
+        .logo-text .name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text .tagline {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        
+        .header-right {
+            text-align: right;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+        
+        .header-right .highlight {
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 20px 50px 40px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-pretitle {
+            color: #27AE60;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        .hero-title {
+            color: white;
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        
+        .hero-title .accent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        
+        .hero-subtitle strong {
+            color: #27AE60;
+            font-weight: 600;
+        }
+        
+        /* USP Pills */
+        .usp-row {
+            display: flex;
+            gap: 24px;
+            padding: 30px 50px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .usp-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .usp-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .usp-text .usp-title {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .usp-text .usp-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        
+        /* Mockups */
+        .mockups {
+            position: absolute;
+            right: 30px;
+            top: 180px;
+            z-index: 5;
+        }
+        
+        .mockup-laptop {
+            width: 480px;
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        
+        .mockup-laptop-screen {
+            background: white;
+            border-radius: 8px;
+            height: 280px;
+            overflow: hidden;
+        }
+        
+        .mockup-laptop-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top left;
+        }
+        
+        .mockup-phone {
+            position: absolute;
+            right: -30px;
+            bottom: -60px;
+            width: 140px;
+            background: #1e1e2e;
+            border-radius: 20px;
+            padding: 6px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        
+        .mockup-phone-screen {
+            background: white;
+            border-radius: 16px;
+            height: 260px;
+            overflow: hidden;
+        }
+        
+        .mockup-phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+        
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 30px 50px 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .divider-line {
+            width: 40px;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+        
+        .divider-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px 24px;
+            padding: 20px 50px 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .feature {
+            text-align: left;
+        }
+        
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .feature-title {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+        }
+        
+        .feature-desc {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        /* Footer CTA */
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 50px;
+            z-index: 10;
+        }
+        
+        .cta-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        .cta-button .arrow {
+            font-size: 20px;
+        }
+        
+        .footer-message {
+            text-align: center;
+            flex: 1;
+            padding: 0 40px;
+        }
+        
+        .footer-message .main {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .footer-message .sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .footer-logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+        }
+        
+        .footer-logo-text {
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <div class="locandina">
+        <!-- Background -->
+        <div class="bg-field"></div>
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <img src="icon.png" alt="YFM Icon">
+                <div class="logo-text">
+                    <div class="name">Youth Football Manager</div>
+                    <div class="tagline">Gestionale per società sportive</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div>Più di un gestionale.</div>
+                <div class="highlight">Il tuo alleato.</div>
+            </div>
+        </div>
+        
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-pretitle">Smetti di usare WhatsApp e Excel</div>
+            <div class="hero-title">
+                GESTISCI LA TUA<br>
+                <span class="accent">SOCIETÀ</span> CON<br>
+                SEMPLICITÀ.
+            </div>
+            <div class="hero-subtitle">
+                Semplice per il mister.<br>
+                <strong>Completa per la società.</strong>
+            </div>
+        </div>
+        
+        <!-- USP Row -->
+        <div class="usp-row">
+            <div class="usp-item">
+                <div class="usp-icon">⚡</div>
+                <div class="usp-text">
+                    <div class="usp-title">Import Intelligente</div>
+                    <div class="usp-desc">Rosa Excel + Calendario PDF/LND</div>
+                </div>
+            </div>
+            <div class="usp-item">
+                <div class="usp-icon">📊</div>
+                <div class="usp-text">
+                    <div class="usp-title">Report & Statistiche</div>
+                    <div class="usp-desc">Presenze, gol, minuti, rendimento</div>
+                </div>
+            </div>
+            <div class="usp-item">
+                <div class="usp-icon">🏆</div>
+                <div class="usp-text">
+                    <div class="usp-title">Una Sola App</div>
+                    <div class="usp-desc">Scuola Calcio + Settore Giovanile + Prima Squadra</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mockups con screenshot reali -->
+        <div class="mockups">
+            <div class="mockup-laptop">
+                <div class="mockup-laptop-screen">
+                    <img src="screenshot-desktop.png" alt="Dashboard YFM">
+                </div>
+            </div>
+            <div class="mockup-phone">
+                <div class="mockup-phone-screen">
+                    <img src="screenshot-mobile.png" alt="YFM Mobile">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-text">Tutto ciò che serve, in un'unica piattaforma</div>
+        </div>
+        
+        <!-- Features 3x2 -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🏢</div>
+                <div class="feature-title">Società</div>
+                <div class="feature-desc">Quote, kit, tesseramento, certificati, checklist stagione.</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚽</div>
+                <div class="feature-title">Partite</div>
+                <div class="feature-desc">Convocazioni, formazioni, Match Center live, valutazioni.</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏃</div>
+                <div class="feature-title">Allenamenti</div>
+                <div class="feature-desc">Presenze, programmi, test atletici, voti seduta.</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🇮🇹</div>
+                <div class="feature-title">FIGC / LND</div>
+                <div class="feature-desc">Distinta ufficiale, regole Under, import calendario.</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">👨‍👩‍👦</div>
+                <div class="feature-title">Famiglie</div>
+                <div class="feature-desc">Notifiche push, quote online, documenti, convocazioni.</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎓</div>
+                <div class="feature-title">Scuola Calcio</div>
+                <div class="feature-desc">Gruppi U6-U13, valutazioni tecniche, tornei, open day.</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="cta-button">
+                <span class="arrow">→</span>
+                <span>Prova Gratis</span>
+            </div>
+            <div class="footer-message">
+                <div class="main">Scopri Youth Football Manager</div>
+                <div class="sub">Il gestionale completo per Scuola Calcio, Settore Giovanile e Prima Squadra</div>
+                <div style="display:flex;gap:20px;margin-top:12px;">
+                    <span style="color:rgba(255,255,255,0.8);font-size:13px;"><span style="color:#27AE60;font-weight:bold;">✓</span> 30 giorni gratis</span>
+                    <span style="color:rgba(255,255,255,0.8);font-size:13px;"><span style="color:#27AE60;font-weight:bold;">✓</span> Nessun impegno</span>
+                    <span style="color:rgba(255,255,255,0.8);font-size:13px;"><span style="color:#27AE60;font-weight:bold;">✓</span> Setup assistito</span>
+                </div>
+            </div>
+            <div class="qr-section" style="display:flex;align-items:center;gap:16px;background:white;padding:16px 20px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://yfm-landing.vercel.app/index.html&bgcolor=ffffff&color=1a202c" alt="QR Code" style="width:80px;height:80px;">
+                <div style="text-align:left;">
+                    <div style="font-size:14px;font-weight:800;color:#1a202c;text-transform:uppercase;letter-spacing:0.5px;">Scansiona il QR</div>
+                    <div style="font-size:12px;color:#667eea;font-weight:600;margin-top:4px;">Youth Football Manager</div>
+                    <div style="font-size:11px;color:#27AE60;font-weight:700;margin-top:8px;text-transform:uppercase;">🎁 Prova gratuita</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

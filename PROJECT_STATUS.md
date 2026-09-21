@@ -527,17 +527,7 @@ unction renderModule(container, data) {
 
 ## 13. Utenti di Sistema
 
-### Superadmin
-| Ruolo | Email | Password | Note |
-|-------|-------|----------|------|
-| Superadmin | coppola.raffaele@gmail.com | raffaele78 | Sviluppatore/Owner |
-
-### Utenti di Test - Production
-
-| Nome | Ruolo | Email | Password | Workspace |
-|------|-------|-------|----------|-----------|
-| Matteo Urilli | Allenatore | matteo@urilli.it | mister | DF Academy |
-| Francesco Annese | Admin | francesco@annese.it | annex | ACP Annex |
+> ⚠️ Credenziali reali (superadmin, utenti test) rimosse da qui — vedi `~/.kiro/secrets/yfm-credentials.md` (locale, non versionato).
 
 ### Utenti di Test - Demo
 

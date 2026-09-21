@@ -14,16 +14,9 @@
 
 ## 🔑 Credenziali Sistema
 
-### Superadmin
-| Email | Password |
-|-------|----------|
-| coppola.raffaele@gmail.com | raffaele78 |
+### Superadmin / Utenti Production
 
-### Utenti Production
-| Nome | Ruolo | Email | Password | Workspace |
-|------|-------|-------|----------|-----------|
-| Matteo Urilli | Allenatore | matteo@urilli.it | mister | DF Academy |
-| Francesco Annese | Admin | francesco@annese.it | annex | ACP Annex |
+> ⚠️ Credenziali reali NON in questo file (era pubblico su GitHub). Vedi `~/.kiro/secrets/yfm-credentials.md` in locale.
 
 ## ⚠️ ISTRUZIONI IMPORTANTI
 
@@ -56,10 +49,7 @@ URL produzione: **https://yfm-landing.vercel.app**
 > Non inserire mai secrets hardcoded nei file. Fai riferimento alle variabili `$SUPABASE_URL`, `$SUPABASE_SERVICE_ROLE_KEY`, `$VERCEL_TOKEN`.
 
 ### Supabase
-- **URL**: `https://csxdlxbhcnyfppojwwzy.supabase.co`
-- **ANON_KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTEzMTMsImV4cCI6MjA5NzMyNzMxM30.KTL6Z_Mwo_QzNidWt95YLqc7ZvdbfxyQdzxCT5uNRIw`
-- **SERVICE_ROLE_KEY**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzeGRseGJoY255ZnBwb2p3d3p5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTc1MTMxMywiZXhwIjoyMDk3MzI3MzEzfQ.HZXGk1Xfz0EvSqewAoSCcgZ6gIQYLOP-54mE3YVHgBo`
-- **JWT_SECRET**: `aEj1OXdTHxSHD8iObjFov1jJ06RoyM1Ormf8KBb0uPI=`
+> ⚠️ Chiavi reali (ANON_KEY, SERVICE_ROLE_KEY, JWT_SECRET, URL) NON in questo file — vedi `~/.kiro/secrets/yfm-credentials.md` in locale. Usare le variabili d'ambiente `$SUPABASE_URL`, `$SUPABASE_ANON_KEY`, `$SUPABASE_SERVICE_ROLE_KEY`, `$JWT_SECRET`.
 
 ### Vercel
 - **Token**: usa variabile `$VERCEL_TOKEN`

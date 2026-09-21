@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Football Manager - Presentazione 2026/27</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4ff;
+        }
+        
+        .page {
+            width: 1920px;
+            height: 1080px;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            page-break-after: always;
+            margin-bottom: 20px;
+            border: 1px solid #e0e7ff;
+        }
+        
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            pointer-events: none;
+        }
+        
+        /* Copertina */
+        .cover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .cover::before {
+            display: none;
+        }
+        
+        .cover-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .cover-title {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+        
+        .cover-subtitle {
+            font-size: 32px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 60px;
+        }
+        
+        .cover-tagline {
+            font-size: 24px;
+            opacity: 0.7;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 16px 40px;
+            border-radius: 50px;
+        }
+        
+        .cover-year {
+            position: absolute;
+            bottom: 40px;
+            font-size: 20px;
+            opacity: 0.6;
+        }
+        
+        /* Slide standard */
+        .slide {
+            padding: 60px 80px;
+        }
+        
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .slide-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1a202c;
+            letter-spacing: -1px;
+        }
+        
+        .slide-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+        }
+        
+        .slide-content {
+            display: flex;
+            gap: 60px;
+            height: calc(100% - 150px);
+        }
+        
+        .slide-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .slide-screenshot {
+            flex: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide-screenshot img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            font-size: 26px;
+            color: #2d3748;
+            margin-bottom: 24px;
+            padding-left: 50px;
+            position: relative;
+            line-height: 1.4;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27AE60;
+            font-weight: bold;
+            font-size: 28px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 16px;
+            margin-top: 40px;
+        }
+        
+        .highlight-box h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .highlight-box p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        /* Problema slide */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .problem-card {
+            background: #fff5f5;
+            border: 2px solid #fed7d7;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .problem-card .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .problem-card h3 {
+            font-size: 28px;
+            color: #c53030;
+            margin-bottom: 16px;
+        }
+        
+        .problem-card p {
+            font-size: 20px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        /* Solution slide */
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .solution-card {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .solution-card .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .solution-card h3 {
+            font-size: 28px;
+            color: #166534;
+            margin-bottom: 16px;
+        }
+        
+        .solution-card p {
+            font-size: 20px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .pricing-card {
+            background: #f8faff;
+            border: 2px solid #e0e7ff;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+            background: rgba(102, 126, 234, 0.15);
+        }
+        
+        .pricing-card.featured::before {
+            content: "CONSIGLIATO";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #667eea;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .pricing-card h3 {
+            font-size: 32px;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 16px 0;
+        }
+        
+        .pricing-card .price span {
+            font-size: 20px;
+            font-weight: 400;
+            color: #718096;
+        }
+        
+        .pricing-card ul {
+            list-style: none;
+            text-align: left;
+            margin-top: 30px;
+        }
+        
+        .pricing-card ul li {
+            font-size: 15px;
+            color: #4a5568;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .pricing-card ul li:last-child {
+            border-bottom: none;
+        }
+        
+        /* CTA slide */
+        .cta-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .cta-slide::before {
+            display: none;
+        }
+        
+        .cta-title {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+        
+        .cta-subtitle {
+            font-size: 32px;
+            opacity: 0.9;
+            margin-bottom: 60px;
+        }
+        
+        .cta-benefits {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        
+        .cta-benefit {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .cta-benefit .check {
+            background: #27AE60;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cta-contact {
+            background: white;
+            color: #1a202c;
+            padding: 40px 80px;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+        
+        .cta-contact h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .cta-contact p {
+            font-size: 24px;
+            color: #667eea;
+        }
+        
+        @media print {
+            .page { margin: 0; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SLIDE 1: Copertina -->
+    <div class="page cover">
+        <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+            <img src="../icon.png" class="cover-logo" alt="YFM">
+            <h1 class="cover-title">Youth Football Manager</h1>
+            <p class="cover-subtitle" style="max-width:900px;">Smetti di gestire la tua società<br/><span style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">su WhatsApp e Excel.</span></p>
+            
+            <p style="font-size:28px; color:rgba(255,255,255,0.9); margin:50px 0 0; line-height:1.6;">
+                Scuola Calcio . Settore Giovanile . Prima Squadra<br/>
+                <strong style="color:white;">Tutto in una unica app.</strong>
+            </p>
+            
+            <p class="cover-tagline" style="margin-top:50px;">Semplice per il mister. Completa per la societa.</p>
+            <p class="cover-year"></p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: Il Problema -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Il problema di oggi</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="icon">📱</div>
+                <h3>WhatsApp</h3>
+                <p>Gruppi infiniti, messaggi persi, nessuno storico. Convocazioni dimenticate.</p>
+            </div>
+            <div class="problem-card">
+                <div class="icon">📊</div>
+                <h3>Excel</h3>
+                <p>File sparsi, versioni diverse, nessuna condivisione. Dati sempre da rifare.</p>
+            </div>
+            <div class="problem-card">
+                <div class="icon">📝</div>
+                <h3>Carta</h3>
+                <p>Distinte a mano, presenze su fogli, documenti introvabili. Ore di lavoro sprecate.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: La Soluzione -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">La soluzione: Youth Football Manager</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="solution-grid">
+            <div class="solution-card">
+                <div class="icon">🏆</div>
+                <h3>Una sola app</h3>
+                <p>Tutto in un unico posto: rosa, partite, allenamenti, quote, comunicazioni.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">👥</div>
+                <h3>Per tutti i ruoli</h3>
+                <p>Allenatore, DS, Segreteria, Dirigente, Famiglia. Ognuno vede ciò che serve.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">🇮🇹</div>
+                <h3>100% Italiano</h3>
+                <p>Integrazione FIGC/LND, distinta ufficiale, regole Under automatiche.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: Dashboard -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Dashboard</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Panoramica completa della squadra</li>
+                    <li>Prossime partite e allenamenti</li>
+                    <li>Statistiche rapide e alert</li>
+                    <li>Accesso veloce a tutte le funzioni</li>
+                    <li>Funziona su desktop, tablet e mobile</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>📱 PWA - Funziona Offline</h3>
+                    <p>Installa l'app sul telefono e usala anche senza connessione al campo.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot" style="flex-direction:row; gap:30px;">
+                <img src="../screenshot-desktop.png" alt="Dashboard Desktop" style="max-width:65%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+                <img src="../screenshot-mobile.png" alt="Dashboard Mobile" style="max-width:25%; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: Rosa -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Gestione Rosa</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Anagrafica completa con foto e documenti</li>
+                    <li>Ruoli, numeri maglia, taglie kit</li>
+                    <li>Scadenze certificati medici con alert</li>
+                    <li>Storico carriera e statistiche</li>
+                    <li>Import da Excel in un click</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>💡 Import Center Intelligente</h3>
+                    <p>Carica qualsiasi file Excel con i tuoi tesserati: il sistema riconosce automaticamente le colonne e mappa i dati.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Rosa.png" alt="Rosa">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: Convocazioni -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Convocazioni</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Selezione rapida dei convocati</li>
+                    <li>Notifica push automatica alle famiglie</li>
+                    <li>Conferma/rifiuto con motivazione</li>
+                    <li>Stampa lista convocati</li>
+                    <li>Storico convocazioni per giocatore</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>📲 Push Notification</h3>
+                    <p>Le famiglie ricevono la convocazione sul telefono in tempo reale.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Convocazione-Selezione.png" alt="Convocazioni">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: Distinta FIGC -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Distinta FIGC Ufficiale</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Formato ufficiale FIGC/LND</li>
+                    <li>Generazione automatica dalla formazione</li>
+                    <li>Dati società e staff precompilati</li>
+                    <li>Stampa o salva PDF</li>
+                    <li>Regole Under verificate automaticamente</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>🇮🇹 Esclusiva YFM</h3>
+                    <p>L'unico gestionale con distinta FIGC integrata e regole Under automatiche.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Distinta.png" alt="Distinta FIGC">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: Match Center -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Match Center Live</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Gestione partita in tempo reale</li>
+                    <li>Formazione con drag & drop</li>
+                    <li>Eventi: gol, assist, sostituzioni, cartellini</li>
+                    <li>Cronometro e tempi di gioco</li>
+                    <li>Risultato live visibile alle famiglie</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>⚽ Risultati Live</h3>
+                    <p>I genitori vedono il risultato in tempo reale dall'Area Famiglie.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-MatchCenter.png" alt="Match Center">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Presenze Allenamenti -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Presenze Allenamenti</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Calendario allenamenti configurabile</li>
+                    <li>Registrazione presenze rapida</li>
+                    <li>Notifica assenza automatica ai genitori</li>
+                    <li>Statistiche presenze per giocatore</li>
+                    <li>Voti seduta e note allenatore</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>📊 Report Automatici</h3>
+                    <p>Percentuali presenze sempre aggiornate, esportabili in PDF.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Presenze.png" alt="Presenze">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: Quote -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Statistiche & Performance</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Statistiche individuali per giocatore</li>
+                    <li>Gol, assist, presenze e minuti giocati</li>
+                    <li>Andamento stagionale e trend</li>
+                    <li>Confronto tra giocatori</li>
+                    <li>Report esportabili in PDF</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>📈 Dati sempre aggiornati</h3>
+                    <p>Ogni partita e allenamento alimenta automaticamente le statistiche.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Statistiche.png" alt="Statistiche">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: Quote -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Gestione Quote</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Configurazione quote e rate personalizzate</li>
+                    <li>Scadenzario automatico</li>
+                    <li>Solleciti automatici alle famiglie</li>
+                    <li>Upload ricevute da parte dei genitori</li>
+                    <li>Report incassi e situazione pagamenti</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>💰 Trasparenza Totale</h3>
+                    <p>Le famiglie vedono sempre la situazione quote dall'Area Famiglie.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Quote.png" alt="Quote">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: Calendario -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Calendario Integrato</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Vista mensile partite e allenamenti</li>
+                    <li>Import calendario da PDF LND</li>
+                    <li>Sincronizzazione automatica</li>
+                    <li>Filtri per competizione</li>
+                    <li>Classifica e risultati da LND</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>📥 Import PDF</h3>
+                    <p>Carica il calendario SGS/LND in PDF e importa tutte le partite automaticamente.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-Calendario-Partite.png" alt="Calendario">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: Kit Sportivo -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Kit Sportivo</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Magazzino kit con taglie e numeri</li>
+                    <li>Assegnazione kit ai giocatori</li>
+                    <li>Tracciamento consegne e sostituzioni</li>
+                    <li>Gestione kit portiere separata</li>
+                    <li>Report kit da ordinare</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>👕 Tutto Tracciato</h3>
+                    <p>Sai sempre chi ha quale kit, in quale taglia, e cosa manca.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-KitSportivo.png" alt="Kit Sportivo">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: Certificati -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Certificati e Scadenze</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Scadenze certificati medici</li>
+                    <li>Alert automatici in anticipo</li>
+                    <li>Notifica alle famiglie per rinnovo</li>
+                    <li>Checklist stagione personalizzabile</li>
+                    <li>Stato documenti per giocatore</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>🏥 Mai più scaduti</h3>
+                    <p>Il sistema avvisa automaticamente quando un certificato sta per scadere.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-CertificatiMedici.png" alt="Certificati">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 13: Scuola Calcio -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Scuola Calcio (U6-U13)</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="slide-content">
+            <div class="slide-text">
+                <ul class="feature-list">
+                    <li>Gestione gruppi per anno di nascita</li>
+                    <li>Vista aggregata per categoria</li>
+                    <li>Valutazioni tecniche con radar</li>
+                    <li>Tornei e Open Day dedicati</li>
+                    <li>Presenze e comunicazioni per gruppo</li>
+                </ul>
+                <div class="highlight-box">
+                    <h3>🎓 Dalla Scuola Calcio alla Prima Squadra</h3>
+                    <p>Un'unica piattaforma per tutto il settore: U6-U13, Settore Giovanile, Prima Squadra.</p>
+                </div>
+            </div>
+            <div class="slide-screenshot">
+                <img src="YFM-ScuolaCalcio.png" alt="Scuola Calcio">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 14: Altre Funzionalità -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">E molto altro ancora...</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="solution-grid" style="margin-top:40px; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+            <div class="solution-card">
+                <div class="icon">📋</div>
+                <h3>Piano Gara</h3>
+                <p>Prepara la partita con obiettivi, punti di forza avversario e indicazioni tattiche.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">🏃</div>
+                <h3>Catalogo Esercizi</h3>
+                <p>Libreria esercizi con diagrammi animati. Crea e condividi le tue sessioni.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">📊</div>
+                <h3>Test Atletici</h3>
+                <p>Monitora la crescita fisica con test standardizzati e benchmark per età.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">⚖️</div>
+                <h3>Regole Under</h3>
+                <p>Verifica automatica conformità Under per campionati adulti. Alert in tempo reale.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">👥</div>
+                <h3>7 Profili Permessi</h3>
+                <p>Allenatore, Vice, Dirigente, Preparatore, Osservatore, Segreteria e custom.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">🔍</div>
+                <h3>Scouting CRM</h3>
+                <p>Gestisci i contatti con nuovi talenti, provini e valutazioni.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">❓</div>
+                <h3>Guide e Help In-App</h3>
+                <p>Ogni pagina ha una guida contestuale. Impari mentre usi l'app.</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">💬</div>
+                <h3>Supporto Continuo</h3>
+                <p>Assistenza dedicata via ticket. Risposte rapide e setup assistito.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 15: Piani e Prezzi -->
+    <div class="page slide">
+        <div class="slide-header">
+            <h2 class="slide-title">Piani e Prezzi</h2>
+            <img src="../icon.png" class="slide-logo" alt="YFM">
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Coach</h3>
+                <p style="font-size:13px; color:#718096; margin:-5px 0 10px; font-style:italic;">Per una singola squadra</p>
+                <div class="price">€99<span>/anno</span></div>
+                <ul>
+                    <li>✓ 1 Squadra · 3 utenti</li>
+                    <li>✓ Import Center</li>
+                    <li>✓ Convocazioni + Calendario</li>
+                    <li>✓ Allenamenti + Statistiche</li>
+                    <li>✓ Match Center</li>
+                    <li>✓ Alert automatici</li>
+                    <li style="color:rgba(255,255,255,0.4);">✗ Quote e Area Famiglie</li>
+                </ul>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Club</h3>
+                <p style="font-size:13px; color:#4a5568; margin:-5px 0 10px; font-style:italic;">Settore Giovanile oppure Scuola Calcio</p>
+                <div class="price">€249<span>/anno</span></div>
+                <ul>
+                    <li>✓ Squadre illimitate · 30 utenti</li>
+                    <li>✓ Tutto di Coach</li>
+                    <li>✓ Quote e pagamenti</li>
+                    <li>✓ Area Famiglie + Push</li>
+                    <li>✓ Kit sportivo + Tesseramento</li>
+                    <li>✓ Distinta FIGC + Permessi</li>
+                    <li>✓ Scouting CRM</li>
+                </ul>
+            </div>
+            <div class="pricing-card" style="border-color: #667eea;">
+                <h3>Academy</h3>
+                <p style="font-size:13px; color:#718096; margin:-5px 0 10px; font-style:italic;">Settore Giovanile + Scuola Calcio</p>
+                <div class="price">€349<span>/anno</span></div>
+                <ul>
+                    <li>✓ Squadre illimitate · 100 utenti</li>
+                    <li>✓ Tutto di Club</li>
+                    <li>✓ Multi-settore unificato</li>
+                    <li>✓ Dashboard aggregata</li>
+                    <li>✓ Checklist per categoria</li>
+                    <li>✓ Report avanzati</li>
+                    <li>✓ Supporto dedicato</li>
+                </ul>
+            </div>
+            <div class="pricing-card" style="border-color: #27AE60;">
+                <h3 style="color: #27AE60;">Pro</h3>
+                <p style="font-size:13px; color:#718096; margin:-5px 0 10px; font-style:italic;">Società completa + Prima Squadra</p>
+                <div class="price" style="color: #27AE60;">€399<span>/anno</span></div>
+                <ul>
+                    <li>✓ Squadre illimitate · 200 utenti</li>
+                    <li>✓ Tutto di Academy</li>
+                    <li>✓ Prima Squadra inclusa</li>
+                    <li>✓ Regole Under automatiche</li>
+                    <li>✓ Gestione completa società</li>
+                    <li>✓ Report professionali</li>
+                    <li>✓ Supporto premium</li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top:30px;">
+            <p style="font-size:18px; color:#4a5568;">💡 Una società con 8 squadre pagherebbe €792/anno con Coach. Con <strong style="color:#667eea;">Club paga €249/anno</strong> — squadre e staff illimitati.</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 16: CTA -->
+    <div class="page cta-slide">
+        <h1 class="cta-title" style="position:relative; z-index:1;">Prova Youth Football Manager</h1>
+        <p class="cta-subtitle" style="position:relative; z-index:1;">La tua società merita di più.</p>
+        <div class="cta-benefits" style="position:relative; z-index:1;">
+            <div class="cta-benefit">
+                <span class="check">✓</span>
+                <span>30 giorni gratis</span>
+            </div>
+            <div class="cta-benefit">
+                <span class="check">✓</span>
+                <span>Nessun impegno</span>
+            </div>
+            <div class="cta-benefit">
+                <span class="check">✓</span>
+                <span>Setup assistito</span>
+            </div>
+        </div>
+        
+        <div style="display:flex; gap:60px; align-items:center; margin-top:40px; position:relative; z-index:1;">
+            <!-- QR Code -->
+            <div style="background:white; padding:24px; border-radius:20px; text-align:center;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://yfm-landing.vercel.app&bgcolor=ffffff&color=1a202c" alt="QR Code" style="width:150px; height:150px;">
+                <p style="color:#1a202c; font-size:14px; font-weight:700; margin-top:12px;">SCANSIONA IL QR</p>
+            </div>
+            
+            <!-- Contatti -->
+            <div style="text-align:left;">
+                <div style="margin-bottom:24px;">
+                    <p style="font-size:14px; opacity:0.6; margin-bottom:4px;">🌐 LANDING PAGE</p>
+                    <p style="font-size:22px; font-weight:600;">yfm-landing.vercel.app</p>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <p style="font-size:14px; opacity:0.6; margin-bottom:4px;">📱 APP</p>
+                    <p style="font-size:22px; font-weight:600;">youth-football-manager.vercel.app</p>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <p style="font-size:14px; opacity:0.6; margin-bottom:4px;">📸 INSTAGRAM</p>
+                    <p style="font-size:22px; font-weight:600;">@youth_football_manager</p>
+                </div>
+                <div>
+                    <p style="font-size:14px; opacity:0.6; margin-bottom:4px;">✉️ EMAIL</p>
+                    <p style="font-size:22px; font-weight:600;">youthfootballmanager@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

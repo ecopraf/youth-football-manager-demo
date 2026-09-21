@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Youth Football Manager - Gestisci la tua squadra con semplicità</title>
+<title>Youth Football Manager - Gestisci tutta la tua società con semplicità</title>
 <meta content="La piattaforma completa per la gestione delle società sportive dilettanti. Rosa, calendari, formazioni, allenamenti, catalogo esercizi, piano gara, statistiche e molto altro." name="description"/>
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <style>
@@ -129,6 +129,41 @@
         .btn-secondary:hover {
             background: var(--primary);
             color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39,174,96,0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39,174,96,0.5);
+            background: #219a52;
+        }
+        
+        .btn-outline-white {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.7);
+        }
+        
+        .btn-outline-white:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-white {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-white:hover {
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
         
         /* Hero Section */
@@ -897,9 +932,9 @@
         
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1000px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -1188,6 +1223,52 @@
             .mobile-menu-btn {
                 display: block;
             }
+            /* Nuove sezioni responsive */
+            .figc-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+            }
+            .ruoli-grid {
+                gap: 10px !important;
+            }
+            .ruoli-grid > div {
+                min-width: 45% !important;
+                flex: 1 1 45% !important;
+            }
+            .nav-pills-container {
+                gap: 8px !important;
+                padding: 0 12px !important;
+            }
+            .nav-pills-container .nav-pill {
+                padding: 8px 12px !important;
+                font-size: 0.8rem !important;
+            }
+            .diagramma-section {
+                padding: 40px 16px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .figc-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .ruoli-grid > div {
+                min-width: 100% !important;
+                flex: 1 1 100% !important;
+            }
+        }
+        
+        /* Navigation Pills hover */
+        .nav-pill {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .nav-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+        .nav-pill-active:hover {
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
         }
     </style>
 </head>
@@ -1202,36 +1283,40 @@
 <a href="#funzionalita">Funzionalità</a>
 <a href="#inizia-ora">Inizia Ora</a>
 <a href="#prezzi">Prezzi</a>
-
+<a href="https://youth-football-manager.vercel.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:8px 20px; font-size:0.9rem; color:white;">Accedi</a>
 </div>
 <button class="mobile-menu-btn">☰</button>
 </nav>
 <!-- Hero Section -->
 <section class="hero">
-<div class="hero-badge">✨ Gestione completa del settore giovanile — dalla convocazione alla distinta</div>
-<h1>Smetti di gestire la tua squadra<br/><span>su WhatsApp e Excel.</span></h1>
-<p>Convocazioni, presenze, distinta FIGC, tesseramenti e quote economiche — tutto in un'unica app.<br/>Pensata per chi allena, non per chi programma.</p>
+<div class="hero-badge">✨ Dalla Scuola Calcio al Settore Giovanile fino alla Prima Squadra — tutto in un posto</div>
+<h1>Smetti di gestire la tua società<br/><span>su WhatsApp e Excel.</span></h1>
+<p>Convocazioni, presenze, distinta FIGC, tesseramenti e quote economiche — tutto in un'unica app.<br/><strong>Semplice per il mister. Completa per la società.</strong></p>
 <div class="hero-buttons">
 <a target="_blank" rel="noopener noreferrer" class="btn btn-primary" href="https://youth-football-manager-demo.vercel.app">🚀 Esplora la Demo</a>
-<a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM&body=Ciao%2C%20vorrei%20una%20demo%20personalizzata%20per%20la%20mia%20squadra." class="btn btn-secondary">📅 Demo personalizzata con i tuoi dati →</a>
+<a href="#funzionalita" class="btn btn-secondary">📝 Scopri le funzionalità</a>
 </div>
-<p style="font-size:13px; color:#888; margin-top:14px;">La demo mostra alcune funzionalità base. Per scoprire tutte le funzionalità con i dati della tua squadra, prenota una demo personalizzata gratuita.</p>
+<div style="margin-top:24px; background:linear-gradient(135deg, rgba(39,174,96,0.1) 0%, rgba(102,126,234,0.1) 100%); border:2px solid #27AE60; border-radius:16px; padding:20px 28px; max-width:600px; margin-left:auto; margin-right:auto;">
+<p style="font-size:18px; font-weight:700; color:#27AE60; margin:0 0 8px 0;">🎁 Prova GRATIS per 30 giorni</p>
+<p style="font-size:15px; color:#333; margin:0 0 12px 0;">Attiva subito la tua demo personalizzata con i dati reali della tua società.<br/><strong>Nessuna carta di credito, nessun impegno.</strong></p>
+<a href="mailto:youthfootballmanager@gmail.com?subject=Attivazione%20Demo%2030gg%20Gratuita&body=Ciao%2C%20vorrei%20attivare%20la%20prova%20gratuita%20di%2030%20giorni%20per%20la%20mia%20societ%C3%A0.%0A%0ANome%20societ%C3%A0%3A%20%0ACategorie%2Fsquadre%3A%20%0ATelefono%3A%20" class="btn btn-success">✨ Attiva la tua prova gratuita →</a>
+</div>
 <div class="hero-stats">
 <div class="hero-stat">
-<div class="hero-stat-value">☁️</div>
-<div class="hero-stat-label">Cloud</div>
-</div>
-<div class="hero-stat">
 <div class="hero-stat-value">🏢</div>
-<div class="hero-stat-label">Multi Squadra</div>
+<div class="hero-stat-label">Tutta la società</div>
 </div>
 <div class="hero-stat">
-<div class="hero-stat-value">🔄</div>
-<div class="hero-stat-label">Aggiornamenti Continui</div>
+<div class="hero-stat-value">📋</div>
+<div class="hero-stat-label">Distinta FIGC</div>
 </div>
 <div class="hero-stat">
-<div class="hero-stat-value">🖥️📱💻</div>
-<div class="hero-stat-label">PC, Tablet e Mobile</div>
+<div class="hero-stat-value">👨‍👩‍👧</div>
+<div class="hero-stat-label">Famiglie collegate</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value">⚖️</div>
+<div class="hero-stat-label">Regole Under</div>
 </div>
 </div>
 </section>
@@ -1247,6 +1332,7 @@
 <div style="background:white; border-radius:16px; padding:32px; border:2px solid #fee2e2;">
 <div style="font-size:1.5rem; font-weight:700; color:#ef4444; margin-bottom:20px;">😩 Prima</div>
 <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px;">
+<li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#ef4444; font-size:1.2rem; flex-shrink:0;">✗</span> Rosa inserita a mano, un giocatore alla volta</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#ef4444; font-size:1.2rem; flex-shrink:0;">✗</span> Convocazioni su WhatsApp, risposte sparse</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#ef4444; font-size:1.2rem; flex-shrink:0;">✗</span> Presenze su foglio Excel o carta</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#ef4444; font-size:1.2rem; flex-shrink:0;">✗</span> Distinta FIGC compilata a mano prima della partita</li>
@@ -1258,6 +1344,7 @@
 <div style="background:white; border-radius:16px; padding:32px; border:2px solid #bbf7d0;">
 <div style="font-size:1.5rem; font-weight:700; color:#16a34a; margin-bottom:20px;">😊 Dopo</div>
 <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px;">
+<li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#16a34a; font-size:1.2rem; flex-shrink:0;">✓</span> Rosa importata da Excel FIGC o file personalizzato in 30 secondi</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#16a34a; font-size:1.2rem; flex-shrink:0;">✓</span> Convocazioni inviate in un click, risposte tracciate</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#16a34a; font-size:1.2rem; flex-shrink:0;">✓</span> Presenze registrate da app, storico sempre disponibile</li>
 <li style="display:flex; align-items:flex-start; gap:10px; color:#555;"><span style="color:#16a34a; font-size:1.2rem; flex-shrink:0;">✓</span> Distinta generata automaticamente dai convocati</li>
@@ -1272,18 +1359,177 @@
 </div>
 </div>
 </section>
+
+<!-- Diagramma Società -->
+<section style="background:white; padding:60px 40px;">
+<div style="max-width:800px; margin:0 auto; text-align:center;">
+<div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); color:#667eea; font-size:0.8rem; font-weight:700; padding:6px 16px; border-radius:20px; margin-bottom:16px; letter-spacing:0.5px; text-transform:uppercase;">🏢 Un'unica piattaforma</div>
+<h2 style="font-size:1.8rem; font-weight:700; color:#333; margin-bottom:8px;">Tutti lavorano sullo stesso dato</h2>
+<p style="color:#666; font-size:1rem; margin-bottom:40px;">Non un'app per il mister. Una piattaforma per l'intera società.</p>
+<div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+<!-- Società -->
+<div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:16px 32px; border-radius:12px; font-weight:700; font-size:1.1rem;">🏢 SOCIETÀ</div>
+<!-- Freccia -->
+<div style="color:#667eea; font-size:1.5rem;">↓</div>
+<!-- Ruoli -->
+<div class="ruoli-grid" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; max-width:700px; margin:0 auto;">
+<div style="background:#f0f4ff; border:2px solid #667eea; padding:14px 16px; border-radius:10px; text-align:center; flex:1; min-width:130px;">
+<div style="font-size:1.4rem;">💼</div>
+<div style="font-weight:600; color:#333; font-size:0.85rem;">Segreteria</div>
+<div style="color:#666; font-size:0.7rem; margin-top:2px;">Tesseramenti, quote</div>
+</div>
+<div style="background:#f0f4ff; border:2px solid #667eea; padding:14px 16px; border-radius:10px; text-align:center; flex:1; min-width:130px;">
+<div style="font-size:1.4rem;">📊</div>
+<div style="font-weight:600; color:#333; font-size:0.85rem;">DS</div>
+<div style="color:#666; font-size:0.7rem; margin-top:2px;">Scouting, valutazioni</div>
+</div>
+<div style="background:#f0f4ff; border:2px solid #667eea; padding:14px 16px; border-radius:10px; text-align:center; flex:1; min-width:130px;">
+<div style="font-size:1.4rem;">🏃</div>
+<div style="font-weight:600; color:#333; font-size:0.85rem;">Staff Tecnico</div>
+<div style="color:#666; font-size:0.7rem; margin-top:2px;">Convocazioni, presenze</div>
+</div>
+<div style="background:#f0f4ff; border:2px solid #667eea; padding:14px 16px; border-radius:10px; text-align:center; flex:1; min-width:130px;">
+<div style="font-size:1.4rem;">📋</div>
+<div style="font-weight:600; color:#333; font-size:0.85rem;">Dirigenti</div>
+<div style="color:#666; font-size:0.7rem; margin-top:2px;">Calendario, comunicazioni</div>
+</div>
+</div>
+<!-- Freccia -->
+<div style="color:#667eea; font-size:1.5rem;">↓</div>
+<!-- Squadre -->
+<div style="background:#27AE60; color:white; padding:14px 28px; border-radius:10px; font-weight:600;">⚽ SQUADRE</div>
+<!-- Freccia -->
+<div style="color:#667eea; font-size:1.5rem;">↓</div>
+<!-- Famiglie -->
+<div style="background:#f8f9ff; border:2px solid #27AE60; padding:14px 28px; border-radius:10px;">
+<span style="font-size:1.3rem;">👨‍👩‍👧</span>
+<span style="font-weight:600; color:#333; margin-left:8px;">Famiglie</span>
+</div>
+</div>
+<p style="color:#888; font-size:0.9rem; margin-top:32px;">Convocazioni, presenze, valutazioni, quote, documenti — tutto sincronizzato in tempo reale.</p>
+</div>
+</section>
+
+<!-- Sezione FIGC/LND -->
+<section style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding:60px 40px;">
+<div style="max-width:900px; margin:0 auto; text-align:center;">
+<div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.1); color:#fff; font-size:0.8rem; font-weight:700; padding:6px 16px; border-radius:20px; margin-bottom:16px; letter-spacing:0.5px; text-transform:uppercase;">🇮🇹 Integrato con il calcio italiano</div>
+<h2 style="font-size:1.8rem; font-weight:700; color:#fff; margin-bottom:8px;">Pensato per il dilettantismo italiano</h2>
+<p style="color:rgba(255,255,255,0.8); font-size:1rem; margin-bottom:40px;">Non un software generico adattato. Costruito sulle regole FIGC e LND.</p>
+<div class="figc-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; max-width:700px; margin:0 auto;">
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">📄</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">Distinta FIGC</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Generata automaticamente</div>
+</div>
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">📅</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">Import Calendario</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Da PDF SGS/LND</div>
+</div>
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">🏆</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">Classifica LND</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Sempre aggiornata</div>
+</div>
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">⚖️</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">Regole Under</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Compliance automatica</div>
+</div>
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">📝</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">Import Rosa FIGC</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Da tabulato ufficiale</div>
+</div>
+<div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:20px 16px; border-radius:12px; text-align:center;">
+<div style="font-size:1.8rem; margin-bottom:6px;">🏅</div>
+<div style="font-weight:600; color:#fff; font-size:0.9rem;">6.104 Loghi</div>
+<div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-top:2px;">Tutte le regioni</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Sicurezza Dati Section -->
+<section style="background:#f8f9ff; padding:60px 40px;">
+<div style="max-width:800px; margin:0 auto; text-align:center;">
+<div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); color:#667eea; font-size:0.8rem; font-weight:700; padding:6px 16px; border-radius:20px; margin-bottom:16px; letter-spacing:0.5px; text-transform:uppercase;">🔒 Sicurezza dei dati</div>
+<h2 style="font-size:1.8rem; font-weight:700; color:#333; margin-bottom:8px;">I dati della tua società sono al sicuro</h2>
+<p style="color:#666; font-size:1rem; margin-bottom:40px;">Gestiamo dati di atleti, famiglie e società con attenzione: infrastruttura in Europa, backup regolari, comunicazioni protette.</p>
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; max-width:700px; margin:0 auto;">
+<div style="background:white; border:1px solid #eee; padding:24px 16px; border-radius:12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+<div style="font-size:1.8rem; margin-bottom:8px;">🔄</div>
+<div style="font-weight:600; color:#333; font-size:0.95rem;">Backup automatici ogni notte</div>
+<div style="color:#888; font-size:0.8rem; margin-top:4px;">Conservati 30 giorni</div>
+</div>
+<div style="background:white; border:1px solid #eee; padding:24px 16px; border-radius:12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+<div style="font-size:1.8rem; margin-bottom:8px;">🇪🇺</div>
+<div style="font-weight:600; color:#333; font-size:0.95rem;">Hosting in Unione Europea</div>
+<div style="color:#888; font-size:0.8rem; margin-top:4px;">Dati custoditi su server UE</div>
+</div>
+<div style="background:white; border:1px solid #eee; padding:24px 16px; border-radius:12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+<div style="font-size:1.8rem; margin-bottom:8px;">🔐</div>
+<div style="font-weight:600; color:#333; font-size:0.95rem;">Comunicazioni protette</div>
+<div style="color:#888; font-size:0.8rem; margin-top:4px;">HTTPS, password mai in chiaro</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Società Affiliate Section -->
+<section style="background:#f8f9ff; padding:60px 40px;">
+<div style="max-width:800px; margin:0 auto; text-align:center;">
+<div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); color:#667eea; font-size:0.8rem; font-weight:700; padding:6px 16px; border-radius:20px; margin-bottom:16px; letter-spacing:0.5px; text-transform:uppercase;">🏆 Società Affiliate</div>
+<h2 style="font-size:1.8rem; font-weight:700; color:#333; margin-bottom:8px;">Già scelto da chi lavora sul campo</h2>
+<p style="color:#666; font-size:1rem; margin-bottom:40px;">Società che hanno scelto YFM per gestire Scuola Calcio, Settore Giovanile e Prima Squadra.</p>
+<div style="display:flex; justify-content:center; gap:48px; flex-wrap:wrap;">
+<div style="text-align:center;">
+<div style="width:80px; height:80px; border-radius:50%; background:white; box-shadow:0 4px 20px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; overflow:hidden;">
+<img src="/img/societa/pol-ciampino.png" alt="Pol. Ciampino" style="width:60px; height:60px; object-fit:contain;">
+</div>
+<div style="font-weight:600; color:#333; font-size:0.95rem;">Pol. Ciampino</div>
+<div style="font-size:0.8rem; color:#888;">Roma · Piano Pro</div>
+</div>
+<div style="text-align:center;">
+<div style="width:80px; height:80px; border-radius:50%; background:white; box-shadow:0 4px 20px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; overflow:hidden;">
+<img src="/img/societa/atl-lodigiani.png" alt="Atletico Lodigiani" style="width:60px; height:60px; object-fit:contain;">
+</div>
+<div style="font-weight:600; color:#333; font-size:0.95rem;">Atletico Lodigiani</div>
+<div style="font-size:0.8rem; color:#888;">Roma · Piano Pro</div>
+</div>
+</div>
+<p style="color:#999; font-size:0.85rem; margin-top:32px; font-style:italic;">Vuoi vedere la tua società qui? <a href="mailto:youthfootballmanager@gmail.com?subject=Attivazione%20Demo%2030gg%20Gratuita" style="color:#667eea; font-weight:600; text-decoration:none;">Attiva la prova gratuita →</a></p>
+</div>
+</section>
+
 <!-- Features Section -->
 <section class="features" id="funzionalita">
 <div class="section-header">
 <h2>Tutto ciò di cui hai bisogno</h2>
 <p>Funzionalità professionali, semplici da usare, progettate per il calcio dilettantistico.</p>
 </div>
+
+<!-- Navigation Pills -->
+<div class="nav-pills-container" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:40px; padding:0 20px;">
+<a href="#feat-partite" class="nav-pill nav-pill-active" style="background:#667eea; color:white; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem;">⚽ Partite</a>
+<a href="#feat-allenamenti" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📋 Allenamenti</a>
+<a href="#feat-societa" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">🏢 Società</a>
+<a href="#feat-performance" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📊 Performance</a>
+<a href="#feat-comunicazione" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📣 Comunicazione</a>
+<a href="#feat-app" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📱 L'app</a>
+</div>
+
 <div class="features-grid">
 <!-- GESTIONE PARTITE -->
+<div id="feat-partite" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); padding:16px 24px; border-radius:12px; margin-bottom:8px;">
+<h3 style="margin:0; color:#667eea; font-size:1.1rem;">⚽ Gestione Partite</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Match Center, convocazioni, formazioni, distinta FIGC</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">⚽</div>
 <h3>Match Center Live</h3>
-<p>Gestisci la partita dal bordo campo: eventi, sostituzioni, formazione iniziale e finale in tempo reale.</p>
+<p>Gestisci la partita dal bordo campo: eventi, sostituzioni, rigori (segnati/sbagliati/parati), formazione iniziale e finale. Squalifiche calcolate automaticamente dalle ammonizioni.</p>
 </div>
 <div class="feature-card">
 <div class="feature-icon">📝</div>
@@ -1291,11 +1537,20 @@
 <p>Scheda pre-partita con analisi avversario, modulo tattico, note e indicazioni per i giocatori. Tutto pronto prima di scendere in campo.</p>
 </div>
 <div class="feature-card">
+<div class="feature-icon">⚖️</div>
+<h3>Regole Under</h3>
+<p>Verifica automatica conformità Under per campionati adulti (Eccellenza, Promozione, Prima Categoria, Serie D). Alert in tempo reale se convocati o titolari non rispettano i vincoli regionali.</p>
+</div>
+<div class="feature-card">
 <div class="feature-icon">📄</div>
 <h3>Print Center</h3>
 <p>Hub documentale con 7 documenti stampabili: convocazione, distinta, formazione, report, presenze, rosa, scadenze. Varianti e condivisione.</p>
 </div>
 <!-- ALLENAMENTI -->
+<div id="feat-allenamenti" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(39,174,96,0.1) 0%, rgba(46,204,113,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
+<h3 style="margin:0; color:#27AE60; font-size:1.1rem;">📋 Gestione Allenamenti</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Esercizi, sessioni, presenze, gruppi Scuola Calcio</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">📚</div>
 <h3>Catalogo Esercizi</h3>
@@ -1311,11 +1566,16 @@
 <h3>Open Day e Ritiri</h3>
 <p>Gestisci sessioni speciali come open day e ritiri estivi: presenze, gruppi, orari e note. Separati dal calendario ordinario, sempre sotto controllo.</p>
 </div>
+<div class="feature-card">
+<div class="feature-icon">🎯</div>
+<h3>Gruppi Scuola Calcio</h3>
+<p>Organizza i bambini in gruppi (A, B, C) all'interno della stessa categoria. Presenze aggregate per categoria, gestione separata per gruppo. Ideale per U6-U13.</p>
+</div>
 <!-- ROSA & CONVOCAZIONI -->
 <div class="feature-card">
 <div class="feature-icon">📨</div>
 <h3>Flusso Convocazioni Guidato</h3>
-<p>Salva, pubblica, notifica atleta e genitore, formazione, distinta. Ogni passo è guidato e sequenziale.</p>
+<p>Salva, pubblica, notifica, formazione, distinta. Aggrega giocatori da categorie inferiori per singola partita. Ogni passo è guidato e sequenziale.</p>
 </div>
 <div class="feature-card">
 <div class="feature-icon">🏥</div>
@@ -1328,6 +1588,10 @@
 <p>Alert a 3 livelli (ok, in scadenza, scaduto). Warning automatico se convochi un giocatore con certificato scaduto.</p>
 </div>
 <!-- COMUNICAZIONE -->
+<div id="feat-comunicazione" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(243,156,18,0.1) 0%, rgba(241,196,15,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
+<h3 style="margin:0; color:#F39C12; font-size:1.1rem;">📣 Comunicazione</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Notifiche, accesso famiglie, push notification</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">📢</div>
 <h3>Centro Comunicazioni</h3>
@@ -1336,9 +1600,13 @@
 <div class="feature-card">
 <div class="feature-icon">👨‍👩‍👦</div>
 <h3>Accesso Famiglia e Ospite</h3>
-<p>Link dedicati senza registrazione con scadenza configurabile. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote e risultati. Accesso mobile ottimizzato.</p>
+<p>Link dedicati senza registrazione. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote, risultati e i voti del mister. Push notification per ogni convocazione.</p>
 </div>
 <!-- AMMINISTRAZIONE -->
+<div id="feat-societa" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(231,76,60,0.1) 0%, rgba(192,57,43,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
+<h3 style="margin:0; color:#E74C3C; font-size:1.1rem;">🏢 Gestione Società</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Quote, tesseramento, kit, documenti, multi-stagione</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">💶</div>
 <h3>Quote Economiche</h3>
@@ -1360,6 +1628,12 @@
 <h3>Gestione Società</h3>
 <p>Stagioni, utenti, categorie: tutto centralizzato. Crea la nuova stagione e migra la rosa in un click.</p>
 </div>
+<div class="feature-card" style="border:2px solid #667eea; position:relative;">
+<div style="position:absolute; top:-10px; right:16px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px;">NUOVO</div>
+<div class="feature-icon">📥</div>
+<h3>Import Wizard</h3>
+<p>Carica il tabulato FIGC o il tuo Excel personalizzato: il wizard riconosce automaticamente le colonne e importa tutta la rosa in 30 secondi.</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">🏢</div>
 <h3>Anagrafica Società</h3>
@@ -1376,10 +1650,19 @@
 <p>Checklist personalizzabile per ogni categoria. Item automatici e manuali, sincronizzazione tra staff. Tieni traccia di ogni adempimento stagionale.</p>
 </div>
 <!-- PERFORMANCE & VALUTAZIONI -->
+<div id="feat-performance" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(155,89,182,0.1) 0%, rgba(142,68,173,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
+<h3 style="margin:0; color:#9B59B6; font-size:1.1rem;">📊 Performance & Dati</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Statistiche, valutazioni, test atletici, scouting</p>
+</div>
 <div class="feature-card">
 <div class="feature-icon">📈</div>
 <h3>Performance Center</h3>
-<p>Vista unificata partite e allenamenti per ogni giocatore. Sparkline, progressione individuale, aree lavorate. Tutto in un colpo d'occhio.</p>
+<p>Vista unificata partite e allenamenti per ogni giocatore. Sparkline, progressione individuale, aree lavorate. Sezione dedicata portieri con gol subiti e clean sheet.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🏃</div>
+<h3>Test Atletici</h3>
+<p>Benchmark per categoria (velocità, resistenza, forza, salto). Confronta i giocatori, traccia i progressi nel tempo. Export Excel per condividere con lo staff.</p>
 </div>
 <div class="feature-card">
 <div class="feature-icon">🕸️</div>
@@ -1388,8 +1671,8 @@
 </div>
 <div class="feature-card">
 <div class="feature-icon">⭐</div>
-<h3>Valutazione Sedute</h3>
-<p>Voto da 1 a 5 stelle per ogni allenamento, area lavorata (tecnica, tattica, fisica, cognitiva) e voti individuali ai giocatori.</p>
+<h3>Valutazioni Partite e Sedute</h3>
+<p>Scala personalizzabile (1-10 o 1-5 stelle). Voto seduta, area lavorata e voti individuali ai giocatori. Condivisibili con le famiglie.</p>
 </div>
 <div class="feature-card">
 <div class="feature-icon">🎯</div>
@@ -1406,22 +1689,7 @@
 <h3>Scouting CRM</h3>
 <p>Gestisci prospetti con dossier completo: osservazioni, valutazioni radar, contatti, link video. Workflow da osservato a tesserato.</p>
 </div>
-<div class="feature-card">
-<div class="feature-icon">📴</div>
-<h3>Offline-First</h3>
-<p>L'app funziona anche senza rete. Salva presenze e eventi offline, sincronizza automaticamente quando torni online.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🎫</div>
-<h3>Supporto Integrato</h3>
-<p>Segnala bug o suggerisci idee direttamente dall'app. Screenshot, contesto automatico e risposta via email.</p>
-</div>
 <!-- STRUMENTI -->
-<div class="feature-card">
-<div class="feature-icon">📥</div>
-<h3>Import FIGC</h3>
-<p>Importa rosa e calendario dai tabulati ufficiali FIGC/SGS. Il modo più rapido per avviare la stagione.</p>
-</div>
 <div class="feature-card">
 <div class="feature-icon">📊</div>
 <h3>Dashboard Personalizzabile</h3>
@@ -1432,55 +1700,38 @@
 <h3>Report PDF</h3>
 <p>Report partita e stagionale generabili e condivisibili. Statistiche individuali e di squadra.</p>
 </div>
-<div class="feature-card">
-<div class="feature-icon">🛡️</div>
-<h3>6.104 Loghi Integrati</h3>
-<p>Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione manuale.</p>
+<!-- L'APP -->
+<div id="feat-app" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(52,73,94,0.1) 0%, rgba(44,62,80,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
+<h3 style="margin:0; color:#34495E; font-size:1.1rem;">📱 L'app</h3>
+<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Caratteristiche trasversali che semplificano il lavoro quotidiano</p>
 </div>
 <div class="feature-card">
-<div class="feature-icon">📱</div>
-<h3>PWA Installabile</h3>
-<p>Installa l'app sul telefono come un'app nativa. Funziona anche con rete instabile al campo sportivo.</p>
+<div class="feature-icon">📲</div>
+<h3>Installa sul telefono</h3>
+<p>Aggiungila alla home come un'app. Nessun App Store, sempre aggiornata automaticamente.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">📶</div>
+<h3>Funziona senza rete</h3>
+<p>Registra presenze ed eventi anche al campo senza connessione. Si sincronizza quando torni online.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🏅</div>
+<h3>6.104 Loghi Integrati</h3>
+<p>Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione.</p>
 </div>
 <div class="feature-card">
 <div class="feature-icon">🔐</div>
 <h3>7 Profili Permessi</h3>
 <p>Allenatore, vice, dirigente, preparatore, osservatore, segreteria, custom. Ogni ruolo vede solo ciò che serve.</p>
 </div>
-</div>
-</section>
-<!-- Pensato per Section -->
-<section style="background:white; padding:80px 40px;">
-<div style="max-width:1000px; margin:0 auto;">
-<div style="text-align:center; margin-bottom:48px;">
-<h2 style="font-size:2rem; font-weight:700; color:#333;">Pensato per chi lavora sul campo</h2>
-<p style="color:#666; font-size:1.1rem;">Non per chi ha tempo di imparare software complicati.</p>
-</div>
-<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:24px;">
-<div style="background:#f8f9ff; border-radius:16px; padding:28px; text-align:center;">
-<div style="font-size:3rem; margin-bottom:12px;">🏃</div>
-<h3 style="font-size:1.1rem; font-weight:700; color:#333; margin-bottom:8px;">Allenatori</h3>
-<p style="color:#666; font-size:0.9rem; line-height:1.5;">Gestisci convocazioni, formazioni e presenze agli allenamenti. Tutto in pochi tap.</p>
-</div>
-<div style="background:#f8f9ff; border-radius:16px; padding:28px; text-align:center;">
-<div style="font-size:3rem; margin-bottom:12px;">📋</div>
-<h3 style="font-size:1.1rem; font-weight:700; color:#333; margin-bottom:8px;">Dirigenti</h3>
-<p style="color:#666; font-size:0.9rem; line-height:1.5;">Tieni sotto controllo il calendario, le partite e le comunicazioni con le famiglie.</p>
-</div>
-<div style="background:#f8f9ff; border-radius:16px; padding:28px; text-align:center;">
-<div style="font-size:3rem; margin-bottom:12px;">💼</div>
-<h3 style="font-size:1.1rem; font-weight:700; color:#333; margin-bottom:8px;">Segreteria</h3>
-<p style="color:#666; font-size:0.9rem; line-height:1.5;">Gestisci tesseramenti, quote economiche e documenti senza fogli Excel.</p>
-</div>
-<div style="background:#f8f9ff; border-radius:16px; padding:28px; text-align:center;">
-<div style="font-size:3rem; margin-bottom:12px;">👨‍👩‍👧</div>
-<h3 style="font-size:1.1rem; font-weight:700; color:#333; margin-bottom:8px;">Famiglie</h3>
-<p style="color:#666; font-size:0.9rem; line-height:1.5;">Ricevono le convocazioni, confermano la disponibilità e seguono le partite del figlio.</p>
-</div>
+<div class="feature-card">
+<div class="feature-icon">🎟️</div>
+<h3>Supporto Integrato</h3>
+<p>Segnala problemi o suggerisci idee direttamente dall'app. Screenshot automatico e risposta via email.</p>
 </div>
 </div>
 </section>
-
 <!-- Push Notifications Section -->
 <section style="background: linear-gradient(180deg, #f0f2ff 0%, #fff 100%); padding: 80px 40px;">
 <div style="max-width: 1100px; margin: 0 auto;">
@@ -1639,7 +1890,7 @@
 <section class="app-preview">
 <div class="section-header">
 <h2>Vedi l'app in azione</h2>
-<p>Un'anteprima di alcune funzionalità base. L'app completa include molto di più — <a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM" style="color:#667eea; font-weight:600; text-decoration:none;">prenota una demo personalizzata</a> per vederle tutte.</p>
+<p>Un'anteprima di alcune funzionalità base. L'app completa include molto di più — <a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM" style="color:#667eea; font-weight:600; text-decoration:none;">oppure <a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM" style="color:#667eea; font-weight:600; text-decoration:none;">richiedi una demo personalizzata</a> per vederla con i tuoi dati.</p>
 </div>
 <div class="preview-grid">
 <!-- Mockup 1: Calendario Allenamenti -->
@@ -1954,11 +2205,11 @@
 <section style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:60px 40px; text-align:center;">
 <div style="max-width:700px; margin:0 auto;">
 <h2 style="color:white; font-size:1.8rem; font-weight:700; margin-bottom:16px;">Pronto a smettere con WhatsApp e Excel?</h2>
-<p style="color:rgba(255,255,255,0.9); font-size:1.1rem; margin-bottom:8px;">Esplora la demo con dati di esempio, oppure prenota una sessione gratuita con i dati della tua squadra.</p>
-<p style="color:rgba(255,255,255,0.7); font-size:0.9rem; margin-bottom:28px;">⚠️ La demo pubblica mostra solo alcune funzionalità base.</p>
+<p style="color:rgba(255,255,255,0.9); font-size:1.1rem; margin-bottom:8px;"><strong>🎁 30 giorni GRATIS</strong> — Prova tutte le funzionalità con i dati reali della tua società.</p>
+<p style="color:rgba(255,255,255,0.7); font-size:0.9rem; margin-bottom:28px;">Nessuna carta di credito richiesta. Inizia una nuova era per la tua società.</p>
 <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
-<a target="_blank" rel="noopener noreferrer" href="https://youth-football-manager-demo.vercel.app" style="display:inline-flex; align-items:center; gap:8px; background:white; color:#667eea; padding:14px 28px; border-radius:10px; font-weight:700; text-decoration:none; font-size:1rem;">🚀 Esplora la Demo</a>
-<a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM&body=Ciao%2C%20vorrei%20una%20demo%20personalizzata%20per%20la%20mia%20squadra." style="display:inline-flex; align-items:center; gap:8px; background:transparent; color:white; padding:14px 28px; border-radius:10px; font-weight:700; text-decoration:none; font-size:1rem; border:2px solid rgba(255,255,255,0.7);">📅 Demo personalizzata gratuita →</a>
+<a href="mailto:youthfootballmanager@gmail.com?subject=Attivazione%20Demo%2030gg%20Gratuita&body=Ciao%2C%20vorrei%20attivare%20la%20prova%20gratuita%20di%2030%20giorni%20per%20la%20mia%20societ%C3%A0.%0A%0ANome%20societ%C3%A0%3A%20%0ACategorie%2Fsquadre%3A%20%0ATelefono%3A%20" class="btn btn-success" style="padding:14px 28px; font-size:1rem;">✨ Attiva 30 giorni GRATIS →</a>
+<a target="_blank" rel="noopener noreferrer" href="https://youth-football-manager-demo.vercel.app" class="btn btn-outline-white" style="padding:14px 28px; font-size:1rem;">Esplora la Demo pubblica</a>
 </div>
 </div>
 </section>
@@ -2031,29 +2282,51 @@
 <div class="pricing-grid">
 <div class="pricing-card">
 <div class="pricing-name">Coach</div>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per allenatori che gestiscono una singola squadra</p>
 <div class="pricing-price">€99 <span>/anno</span></div>
 <div class="pricing-period">oppure €9,90/mese</div>
-<ul class="pricing-features"><li>1 Squadra</li><li>Tutte le funzionalità</li><li>Import Center</li><li>Convocazioni</li><li>Calendario</li><li>Allenamenti</li><li>Statistiche</li><li>Alert automatici</li><li>Backup Cloud</li><li>Aggiornamenti inclusi</li></ul>
+<ul class="pricing-features"><li>1 Squadra</li><li>Import Center</li><li>Convocazioni</li><li>Calendario</li><li>Allenamenti</li><li>Statistiche</li><li>Alert automatici</li><li>Backup Cloud</li><li>Aggiornamenti inclusi</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Coach</a>
 </div>
 <div class="pricing-card featured">
 <div class="pricing-badge">Più Popolare</div>
 <div class="pricing-name">Club</div>
+<p style="font-size:0.82rem;color:rgba(255,255,255,0.8);margin:4px 0 0;font-style:italic;">Per chi gestisce un intero settore giovanile o una scuola calcio</p>
 <div class="pricing-price">€249 <span>/anno</span></div>
 <div class="pricing-period" style="color:#fff;">oppure €24,90/mese</div>
 <p style="color:rgba(255,255,255,0.9);font-size:0.85rem;margin:0 0 12px;font-style:italic;">Scegli se dedicarlo al Settore Giovanile oppure alla Scuola Calcio</p>
-<ul class="pricing-features"><li>Squadre illimitate</li><li>Allenatori illimitati</li><li>Dirigenti illimitati</li><li>Tutte le funzionalità</li><li>Import Center avanzato</li><li>Gestione categorie</li><li>Permessi utenti</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Alert e notifiche</li><li>Report avanzati</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
-<a target="_blank" rel="noopener noreferrer" class="btn" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni" style="background:white;color:var(--primary);">Scegli Club</a>
+<ul class="pricing-features"><li>Squadre illimitate</li><li>Allenatori illimitati</li><li>Dirigenti illimitati</li><li>Import Center avanzato</li><li>Gestione categorie</li><li>Permessi utenti</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Scouting CRM</li><li>Report avanzati</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-white" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Club</a>
 </div>
 <div class="pricing-card" style="border:2px solid #667eea;">
 <div class="pricing-badge" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);">Società Completa</div>
 <div class="pricing-name">Accademia</div>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per società con Settore Giovanile e Scuola Calcio</p>
 <div class="pricing-price">€349 <span>/anno</span></div>
+<div style="display:inline-block;background:#f0f4ff;color:#667eea;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€100/anno rispetto a Club</div>
 <div class="pricing-period">oppure €34,90/mese</div>
 <p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Settore Giovanile + Scuola Calcio insieme</p>
-<ul class="pricing-features"><li>Tutto di Club</li><li>Settore Giovanile illimitato</li><li>Scuola Calcio illimitata</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Checklist per ogni categoria</li><li>Quote per tutti i livelli</li><li>Anagrafica società avanzata</li><li>Supporto dedicato</li><li>Backup Cloud</li></ul>
+<ul class="pricing-features"><li>Tutto di Club</li><li>Settore Giovanile illimitato</li><li>Scuola Calcio illimitata</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Checklist per ogni categoria</li><li>Quote per tutti i livelli</li><li>Scouting CRM</li><li>Supporto dedicato</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Accademia</a>
 </div>
+<div class="pricing-card" style="border:2px solid #27AE60;">
+<div class="pricing-badge" style="background:linear-gradient(135deg,#27AE60 0%,#1e8449 100%);">NUOVO</div>
+<div class="pricing-name">Pro</div>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per società complete con Prima Squadra</p>
+<div class="pricing-price">€399 <span>/anno</span></div>
+<div style="display:inline-block;background:#f0fff4;color:#27AE60;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€50/anno rispetto ad Accademia</div>
+<div class="pricing-period">oppure €39,90/mese</div>
+<p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Tutto + Prima Squadra</p>
+<ul class="pricing-features"><li>Tutto di Accademia</li><li>Prima Squadra inclusa</li><li>Gestione completa società</li><li>Scouting CRM avanzato</li><li>Report professionali</li><li>Supporto premium</li><li>Backup Cloud</li></ul>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni" style="border-color:#27AE60;color:#27AE60;">Scegli Pro</a>
+</div>
+</div>
+
+<div style="max-width:700px;margin:32px auto 0;background:#f8f9ff;border-radius:12px;padding:20px 24px;text-align:center;border:1px solid #e0e7ff;">
+  <p style="margin:0;font-size:0.95rem;color:#444;line-height:1.6;">
+    💡 <strong>Una società con 8 squadre pagherebbe €792/anno con Coach.</strong><br>
+    Con Club paga <strong>€249/anno</strong> — squadre e staff illimitati.
+  </p>
 </div>
 </section>
 
@@ -2077,10 +2350,10 @@
 <!-- CTA -->
 <section class="cta">
 <h2>Più tempo sul campo. Meno tempo in segreteria.</h2>
-<p>Scopri come Youth Football Manager può trasformare il lavoro quotidiano della tua società.</p>
+<p>Inizia una nuova era per la tua società — <strong>30 giorni GRATIS</strong>, nessun impegno.</p>
 <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
-<a target="_blank" rel="noopener noreferrer" class="btn" href="https://youth-football-manager-demo.vercel.app">🚀 Esplora la Demo</a>
-<a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM&body=Ciao%2C%20vorrei%20una%20demo%20personalizzata%20per%20la%20mia%20squadra." class="btn" style="background:transparent; border:2px solid white; color:white;">📅 Demo personalizzata con i tuoi dati →</a>
+<a href="mailto:youthfootballmanager@gmail.com?subject=Attivazione%20Demo%2030gg%20Gratuita&body=Ciao%2C%20vorrei%20attivare%20la%20prova%20gratuita%20di%2030%20giorni%20per%20la%20mia%20societ%C3%A0.%0A%0ANome%20societ%C3%A0%3A%20%0ACategorie%2Fsquadre%3A%20%0ATelefono%3A%20" class="btn btn-success">✨ Attiva 30 giorni GRATIS</a>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-outline-white" href="https://youth-football-manager-demo.vercel.app">Esplora la Demo pubblica</a>
 </div>
 </section>
 <!-- Footer -->
@@ -2106,13 +2379,14 @@
 <ul>
 <li><a target="_blank" rel="noopener noreferrer" href="mailto:youthfootballmanager@gmail.com">Contatti</a></li>
 <li><a target="_blank" rel="noopener noreferrer" href="mailto:youthfootballmanager@gmail.com">Partnership</a></li>
+<li><a target="_blank" rel="noopener noreferrer" href="https://instagram.com/youth_football_manager">📸 Instagram</a></li>
 </ul>
 </div>
 <div class="footer-col">
 <h4>Legale</h4>
 <ul>
-<li><a href="#">Privacy Policy</a></li>
-<li><a href="#">Termini di Servizio</a></li>
+<li><a href="privacy.html">Privacy Policy</a></li>
+<li><a href="terms.html">Termini di Servizio</a></li>
 </ul>
 </div>
 </div>
