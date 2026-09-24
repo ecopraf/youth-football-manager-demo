@@ -307,7 +307,233 @@
             font-size: 15px;
             line-height: 1.6;
         }
-        
+
+        /* Feature Carousel */
+        .feat-section-header {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 24px 0 8px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-carousel {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 0;
+            overflow: hidden;
+        }
+
+        .feature-carousel-track {
+            display: flex;
+            align-items: stretch;
+            gap: 24px;
+            will-change: transform;
+            transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .feature-carousel .feature-card {
+            flex: 0 0 calc((100% - 48px) / 3);
+            max-width: calc((100% - 48px) / 3);
+            opacity: 0.45;
+            transform: scale(0.92);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        .feature-carousel .feature-card.is-active {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.15);
+        }
+
+        .feature-carousel-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .feature-carousel-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--light);
+            color: var(--primary);
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .feature-carousel-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: scale(1.08);
+        }
+
+        .feature-carousel-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .feature-carousel-btn:disabled:hover {
+            background: var(--light);
+            color: var(--primary);
+            transform: none;
+        }
+
+        .feature-carousel-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .feature-carousel-dots button {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: none;
+            background: #d8dcf0;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.2s;
+        }
+
+        .feature-carousel-dots button.is-active {
+            background: var(--primary);
+            width: 22px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 1024px) {
+            .feature-carousel .feature-card {
+                flex: 0 0 calc((100% - 24px) / 2);
+                max-width: calc((100% - 24px) / 2);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .feature-carousel-track {
+                gap: 16px;
+            }
+            .feature-carousel .feature-card {
+                flex: 0 0 82%;
+                max-width: 82%;
+            }
+        }
+
+        /* Parent Carousel — titoli sezione, centrati, navigabili */
+        .parent-carousel {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto 8px;
+            overflow: hidden;
+        }
+
+        .parent-carousel-track {
+            display: flex;
+            align-items: stretch;
+            gap: 16px;
+            transition: transform 0.4s ease;
+        }
+
+        .parent-title-card {
+            flex: 0 0 auto;
+            padding: 14px 26px;
+            border-radius: 14px;
+            background: #fff;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-align: center;
+            opacity: 0.5;
+            transform: scale(0.94);
+            transition: opacity 0.3s, transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+
+        .parent-title-card .parent-title-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .parent-title-card .parent-title-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .parent-title-card.is-active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.25);
+        }
+
+        .parent-title-card.is-active .parent-title-label {
+            color: var(--primary);
+        }
+
+        .parent-carousel-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .child-section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 28px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 640px) {
+            .parent-title-card {
+                padding: 12px 18px;
+            }
+        }
+
+        /* Mockup Carousel — 2 card visibili su desktop (mockup più densi delle feature card) */
+        .mockup-carousel .feature-carousel-track {
+            align-items: stretch;
+        }
+
+        .mockup-carousel .mockup-window {
+            flex: 0 0 calc((100% - 30px) / 2);
+            max-width: calc((100% - 30px) / 2);
+            opacity: 0.45;
+            transform: scale(0.94);
+            transition: opacity 0.35s, transform 0.35s;
+        }
+
+        .mockup-carousel .mockup-window.is-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @media (max-width: 900px) {
+            .mockup-carousel .mockup-window {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .mockup-carousel .mockup-window {
+                flex: 0 0 90%;
+                max-width: 90%;
+            }
+        }
+
         /* App Preview / Mockups */
         .app-preview {
             padding: 100px 40px;
@@ -1510,226 +1736,25 @@
 <p>Funzionalità professionali, semplici da usare, progettate per il calcio dilettantistico.</p>
 </div>
 
-<!-- Navigation Pills -->
-<div class="nav-pills-container" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:40px; padding:0 20px;">
-<a href="#feat-partite" class="nav-pill nav-pill-active" style="background:#667eea; color:white; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem;">⚽ Partite</a>
-<a href="#feat-allenamenti" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📋 Allenamenti</a>
-<a href="#feat-societa" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">🏢 Società</a>
-<a href="#feat-performance" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📊 Performance</a>
-<a href="#feat-comunicazione" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📣 Comunicazione</a>
-<a href="#feat-app" class="nav-pill" style="background:#f0f4ff; color:#667eea; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:600; font-size:0.9rem; border:1px solid #667eea;">📱 L'app</a>
+<!-- Parent Carousel: titoli sezione -->
+<div class="parent-carousel" data-parent-carousel>
+<div class="parent-carousel-track" id="parentCarouselTrack"></div>
+</div>
+<div class="parent-carousel-nav">
+<button class="feature-carousel-btn" data-parent-dir="-1" aria-label="Sezione precedente">‹</button>
+<div class="feature-carousel-dots" data-parent-dots></div>
+<button class="feature-carousel-btn" data-parent-dir="1" aria-label="Sezione successiva">›</button>
 </div>
 
-<div class="features-grid">
-<!-- GESTIONE PARTITE -->
-<div id="feat-partite" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); padding:16px 24px; border-radius:12px; margin-bottom:8px;">
-<h3 style="margin:0; color:#667eea; font-size:1.1rem;">⚽ Gestione Partite</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Match Center, convocazioni, formazioni, distinta FIGC</p>
+<!-- Child Carousel: card della sezione attiva -->
+<div class="child-section-header" id="childSectionHeader"></div>
+<div class="feature-carousel" data-child-carousel>
+<div class="feature-carousel-track" id="childCarouselTrack"></div>
 </div>
-<div class="feature-card">
-<div class="feature-icon">⚽</div>
-<h3>Match Center Live</h3>
-<p>Gestisci la partita dal bordo campo: eventi, sostituzioni, rigori (segnati/sbagliati/parati), formazione iniziale e finale. Squalifiche calcolate automaticamente dalle ammonizioni.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📝</div>
-<h3>Piano Gara</h3>
-<p>Scheda pre-partita con analisi avversario, modulo tattico, note e indicazioni per i giocatori. Tutto pronto prima di scendere in campo.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">⚖️</div>
-<h3>Regole Under</h3>
-<p>Verifica automatica conformità Under per campionati adulti (Eccellenza, Promozione, Prima Categoria, Serie D). Alert in tempo reale se convocati o titolari non rispettano i vincoli regionali.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📄</div>
-<h3>Print Center</h3>
-<p>Hub documentale con 7 documenti stampabili: convocazione, distinta, formazione, report, presenze, rosa, scadenze. Varianti e condivisione.</p>
-</div>
-<!-- ALLENAMENTI -->
-<div id="feat-allenamenti" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(39,174,96,0.1) 0%, rgba(46,204,113,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
-<h3 style="margin:0; color:#27AE60; font-size:1.1rem;">📋 Gestione Allenamenti</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Esercizi, sessioni, presenze, gruppi Scuola Calcio</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📚</div>
-<h3>Catalogo Esercizi</h3>
-<p>Libreria personale di esercizi con diagrammi tattici interattivi. Filtra per obiettivo, intensità e categoria. Costruisci il tuo archivio tecnico nel tempo.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🗂️</div>
-<h3>Sessioni Pronte</h3>
-<p>Crea template di allenamento con esercizi, durata e carico. Riutilizza le sessioni migliori, adattale alla settimana e pianifica il lavoro con anticipo.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏕️</div>
-<h3>Open Day e Ritiri</h3>
-<p>Gestisci sessioni speciali come open day e ritiri estivi: presenze, gruppi, orari e note. Separati dal calendario ordinario, sempre sotto controllo.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🎯</div>
-<h3>Gruppi Scuola Calcio</h3>
-<p>Organizza i bambini in gruppi (A, B, C) all'interno della stessa categoria. Presenze aggregate per categoria, gestione separata per gruppo. Ideale per U6-U13.</p>
-</div>
-<!-- ROSA & CONVOCAZIONI -->
-<div class="feature-card">
-<div class="feature-icon">📨</div>
-<h3>Flusso Convocazioni Guidato</h3>
-<p>Salva, pubblica, notifica, formazione, distinta. Aggrega giocatori da categorie inferiori per singola partita. Ogni passo è guidato e sequenziale.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏥</div>
-<h3>Gestione Infortuni</h3>
-<p>Tracciamento con date, tipo e gravità. Cambio automatico stato giocatore e badge nelle convocazioni.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🩺</div>
-<h3>Certificati Medici</h3>
-<p>Alert a 3 livelli (ok, in scadenza, scaduto). Warning automatico se convochi un giocatore con certificato scaduto.</p>
-</div>
-<!-- COMUNICAZIONE -->
-<div id="feat-comunicazione" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(243,156,18,0.1) 0%, rgba(241,196,15,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
-<h3 style="margin:0; color:#F39C12; font-size:1.1rem;">📣 Comunicazione</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Notifiche, accesso famiglie, push notification</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📢</div>
-<h3>Centro Comunicazioni</h3>
-<p>Notifiche in-app con priorità (info, importante, urgente). Destinatari per tipo: atleta, genitore, staff.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">👨‍👩‍👦</div>
-<h3>Accesso Famiglia e Ospite</h3>
-<p>Link dedicati senza registrazione. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote, risultati e i voti del mister. Push notification per ogni convocazione.</p>
-</div>
-<!-- AMMINISTRAZIONE -->
-<div id="feat-societa" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(231,76,60,0.1) 0%, rgba(192,57,43,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
-<h3 style="margin:0; color:#E74C3C; font-size:1.1rem;">🏢 Gestione Società</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Quote, tesseramento, kit, documenti, multi-stagione</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">💶</div>
-<h3>Quote Economiche</h3>
-<p>Configurazione rate, pagamento rateale, rigenera quote, notifiche scadenze. Gestione completa delle quote societarie con storico pagamenti.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📋</div>
-<h3>Tesseramento Completo</h3>
-<p>Documenti, certificati medici con alert scadenza, stato tesseramento per ogni atleta. Solleciti automatici e visione d'insieme per la segreteria.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">👕</div>
-<h3>Magazzino Kit</h3>
-<p>Gestione completa del materiale tecnico: bundle, assegnazioni a giocatori e staff, ordini, kit portiere, numerazione maglie. Stato inventario sempre aggiornato.</p>
-</div>
-<!-- SOCIETÀ & SETUP -->
-<div class="feature-card">
-<div class="feature-icon">⚙️</div>
-<h3>Gestione Società</h3>
-<p>Stagioni, utenti, categorie: tutto centralizzato. Crea la nuova stagione e migra la rosa in un click.</p>
-</div>
-<div class="feature-card" style="border:2px solid #667eea; position:relative;">
-<div style="position:absolute; top:-10px; right:16px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px;">NUOVO</div>
-<div class="feature-icon">📥</div>
-<h3>Import Wizard</h3>
-<p>Carica il tabulato FIGC o il tuo Excel personalizzato: il wizard riconosce automaticamente le colonne e importa tutta la rosa in 30 secondi.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏢</div>
-<h3>Anagrafica Società</h3>
-<p>Dati societari completi: forma giuridica, FIGC, P.IVA, IBAN, sponsor, colori sociali. Sempre aggiornata e condivisa tra tutto lo staff.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🔄</div>
-<h3>Gestione Multi-Stagione</h3>
-<p>Migrazione rosa automatica, carriera giocatore cross-season, staff per stagione.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">✅</div>
-<h3>Checklist Stagione</h3>
-<p>Checklist personalizzabile per ogni categoria. Item automatici e manuali, sincronizzazione tra staff. Tieni traccia di ogni adempimento stagionale.</p>
-</div>
-<!-- PERFORMANCE & VALUTAZIONI -->
-<div id="feat-performance" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(155,89,182,0.1) 0%, rgba(142,68,173,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
-<h3 style="margin:0; color:#9B59B6; font-size:1.1rem;">📊 Performance & Dati</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Statistiche, valutazioni, test atletici, scouting</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📈</div>
-<h3>Performance Center</h3>
-<p>Vista unificata partite e allenamenti per ogni giocatore. Sparkline, progressione individuale, aree lavorate. Sezione dedicata portieri con gol subiti e clean sheet.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏃</div>
-<h3>Test Atletici</h3>
-<p>Benchmark per categoria (velocità, resistenza, forza, salto). Confronta i giocatori, traccia i progressi nel tempo. Export Excel per condividere con lo staff.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🕸️</div>
-<h3>Valutazione Tecnica</h3>
-<p>Radar chart a 6 assi per ogni giocatore: Tecnica, Velocità, Tattica, Fisico, Mentalità, Personalità. Storico e confronto nel tempo.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">⭐</div>
-<h3>Valutazioni Partite e Sedute</h3>
-<p>Scala personalizzabile (1-10 o 1-5 stelle). Voto seduta, area lavorata e voti individuali ai giocatori. Condivisibili con le famiglie.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🎯</div>
-<h3>Obiettivo Settimana</h3>
-<p>Definisci l'obiettivo settimanale per il gruppo. Storico delle ultime 8 settimane sempre consultabile.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏆</div>
-<h3>Classifica LND</h3>
-<p>Classifica e calendario dal Portale Regionale integrati automaticamente. Sempre aggiornati, senza inserimenti manuali.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🔍</div>
-<h3>Scouting CRM</h3>
-<p>Gestisci prospetti con dossier completo: osservazioni, valutazioni radar, contatti, link video. Workflow da osservato a tesserato.</p>
-</div>
-<!-- STRUMENTI -->
-<div class="feature-card">
-<div class="feature-icon">📊</div>
-<h3>Dashboard Personalizzabile</h3>
-<p>Widget riordinabili e nascondibili. Classifica e calendario dal Portale Regionale integrati automaticamente.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📑</div>
-<h3>Report PDF</h3>
-<p>Report partita e stagionale generabili e condivisibili. Statistiche individuali e di squadra.</p>
-</div>
-<!-- L'APP -->
-<div id="feat-app" style="grid-column:1/-1; background:linear-gradient(135deg, rgba(52,73,94,0.1) 0%, rgba(44,62,80,0.1) 100%); padding:16px 24px; border-radius:12px; margin:24px 0 8px;">
-<h3 style="margin:0; color:#34495E; font-size:1.1rem;">📱 L'app</h3>
-<p style="margin:4px 0 0; color:#666; font-size:0.85rem;">Caratteristiche trasversali che semplificano il lavoro quotidiano</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📲</div>
-<h3>Installa sul telefono</h3>
-<p>Aggiungila alla home come un'app. Nessun App Store, sempre aggiornata automaticamente.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">📶</div>
-<h3>Funziona senza rete</h3>
-<p>Registra presenze ed eventi anche al campo senza connessione. Si sincronizza quando torni online.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🏅</div>
-<h3>6.104 Loghi Integrati</h3>
-<p>Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🔐</div>
-<h3>7 Profili Permessi</h3>
-<p>Allenatore, vice, dirigente, preparatore, osservatore, segreteria, custom. Ogni ruolo vede solo ciò che serve.</p>
-</div>
-<div class="feature-card">
-<div class="feature-icon">🎟️</div>
-<h3>Supporto Integrato</h3>
-<p>Segnala problemi o suggerisci idee direttamente dall'app. Screenshot automatico e risposta via email.</p>
-</div>
+<div class="feature-carousel-nav">
+<button class="feature-carousel-btn" data-child-dir="-1" aria-label="Precedente">‹</button>
+<div class="feature-carousel-dots" data-child-dots></div>
+<button class="feature-carousel-btn" data-child-dir="1" aria-label="Successiva">›</button>
 </div>
 </section>
 <!-- Push Notifications Section -->
@@ -1892,7 +1917,8 @@
 <h2>Vedi l'app in azione</h2>
 <p>Un'anteprima di alcune funzionalità base. L'app completa include molto di più — <a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM" style="color:#667eea; font-weight:600; text-decoration:none;">oppure <a href="mailto:youthfootballmanager@gmail.com?subject=Demo%20personalizzata%20YFM" style="color:#667eea; font-weight:600; text-decoration:none;">richiedi una demo personalizzata</a> per vederla con i tuoi dati.</p>
 </div>
-<div class="preview-grid">
+<div class="feature-carousel mockup-carousel" data-carousel data-per-view-desktop="2">
+<div class="feature-carousel-track">
 <!-- Mockup 1: Calendario Allenamenti -->
 <div class="mockup-window">
 <div class="mockup-titlebar">
@@ -2200,6 +2226,12 @@
 </div>
 </div>
 </div>
+</div>
+<div class="feature-carousel-nav">
+<button class="feature-carousel-btn" data-dir="-1" aria-label="Precedente">‹</button>
+<div class="feature-carousel-dots" data-dots></div>
+<button class="feature-carousel-btn" data-dir="1" aria-label="Successiva">›</button>
+</div>
 </section>
 <!-- CTA intermedia -->
 <section style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:60px 40px; text-align:center;">
@@ -2436,6 +2468,382 @@
                 menuBtn.textContent = '☰';
             }
         });
+
+        // Feature Carousel — card centrale in evidenza, scorrimento con freccine/dots/swipe
+        document.querySelectorAll('[data-carousel]').forEach(carousel => {
+            const track = carousel.querySelector('.feature-carousel-track');
+            const cards = Array.from(track.children);
+            const nav = carousel.nextElementSibling;
+            const prevBtn = nav.querySelector('[data-dir="-1"]');
+            const nextBtn = nav.querySelector('[data-dir="1"]');
+            const dotsWrap = nav.querySelector('[data-dots]');
+            let index = 0;
+            const desktopPerView = parseInt(carousel.dataset.perViewDesktop, 10) || 3;
+
+            function cardsPerView() {
+                if (desktopPerView === 2) {
+                    if (window.innerWidth <= 640) return 1;
+                    if (window.innerWidth <= 900) return 1;
+                    return 2;
+                }
+                if (window.innerWidth <= 640) return 1;
+                if (window.innerWidth <= 1024) return 2;
+                return 3;
+            }
+
+            function maxIndex() {
+                return Math.max(0, cards.length - cardsPerView());
+            }
+
+            function renderDots() {
+                dotsWrap.innerHTML = '';
+                const total = maxIndex() + 1;
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', 'Vai a slide ' + (i + 1));
+                    dot.addEventListener('click', () => goTo(i));
+                    dotsWrap.appendChild(dot);
+                }
+            }
+
+            function update() {
+                const perView = cardsPerView();
+                const cardWidth = cards[0].getBoundingClientRect().width;
+                const gap = parseFloat(getComputedStyle(track).gap) || 24;
+                const offset = index * (cardWidth + gap);
+                track.style.transform = `translateX(-${offset}px)`;
+
+                cards.forEach((card, i) => {
+                    card.classList.toggle('is-active', i >= index && i < index + perView);
+                });
+
+                const dots = Array.from(dotsWrap.children);
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index >= maxIndex();
+            }
+
+            function goTo(i) {
+                index = Math.min(Math.max(0, i), maxIndex());
+                update();
+            }
+
+            prevBtn.addEventListener('click', () => goTo(index - 1));
+            nextBtn.addEventListener('click', () => goTo(index + 1));
+
+            // Swipe touch
+            let touchStartX = 0;
+            track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+            track.addEventListener('touchend', e => {
+                const delta = e.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(delta) > 40) goTo(index + (delta < 0 ? 1 : -1));
+            }, { passive: true });
+
+            renderDots();
+            update();
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    renderDots();
+                    goTo(Math.min(index, maxIndex()));
+                }, 150);
+            });
+        });
+
+        // Parent/Child Carousel — sezioni Features con navigazione a due livelli
+        (function () {
+            const FEATURE_SECTIONS = [
+                {
+                    id: 'feat-partite', icon: '⚽', title: 'Gestione Partite',
+                    desc: 'Match Center, convocazioni, formazioni, distinta FIGC',
+                    cards: [
+                        { icon: '⚽', title: 'Match Center Live', desc: 'Gestisci la partita dal bordo campo: eventi, sostituzioni, rigori (segnati/sbagliati/parati), formazione iniziale e finale. Squalifiche calcolate automaticamente dalle ammonizioni.' },
+                        { icon: '📝', title: 'Piano Gara', desc: 'Scheda pre-partita con analisi avversario, modulo tattico, note e indicazioni per i giocatori. Tutto pronto prima di scendere in campo.' },
+                        { icon: '⚖️', title: 'Regole Under', desc: 'Verifica automatica conformità Under per campionati adulti (Eccellenza, Promozione, Prima Categoria, Serie D). Alert in tempo reale se convocati o titolari non rispettano i vincoli regionali.' },
+                        { icon: '📄', title: 'Print Center', desc: 'Hub documentale con 7 documenti stampabili: convocazione, distinta, formazione, report, presenze, rosa, scadenze. Varianti e condivisione.' }
+                    ]
+                },
+                {
+                    id: 'feat-convocazioni', icon: '📨', title: 'Rosa & Convocazioni',
+                    desc: 'Flusso guidato, infortuni, certificati medici',
+                    cards: [
+                        { icon: '📨', title: 'Flusso Convocazioni Guidato', desc: 'Salva, pubblica, notifica, formazione, distinta. Aggrega giocatori da categorie inferiori per singola partita. Ogni passo è guidato e sequenziale.' },
+                        { icon: '🏥', title: 'Gestione Infortuni', desc: 'Tracciamento con date, tipo e gravità. Cambio automatico stato giocatore e badge nelle convocazioni.' },
+                        { icon: '🩺', title: 'Certificati Medici', desc: 'Alert a 3 livelli (ok, in scadenza, scaduto). Warning automatico se convochi un giocatore con certificato scaduto.' }
+                    ]
+                },
+                {
+                    id: 'feat-allenamenti', icon: '📋', title: 'Gestione Allenamenti',
+                    desc: 'Esercizi, sessioni, presenze, gruppi Scuola Calcio',
+                    cards: [
+                        { icon: '📚', title: 'Catalogo Esercizi', desc: 'Libreria personale di esercizi con diagrammi tattici interattivi. Filtra per obiettivo, intensità e categoria. Costruisci il tuo archivio tecnico nel tempo.' },
+                        { icon: '🗂️', title: 'Sessioni Pronte', desc: 'Crea template di allenamento con esercizi, durata e carico. Riutilizza le sessioni migliori, adattale alla settimana e pianifica il lavoro con anticipo.' },
+                        { icon: '🏕️', title: 'Open Day e Ritiri', desc: 'Gestisci sessioni speciali come open day e ritiri estivi: presenze, gruppi, orari e note. Separati dal calendario ordinario, sempre sotto controllo.' },
+                        { icon: '🎯', title: 'Gruppi Scuola Calcio', desc: "Organizza i bambini in gruppi (A, B, C) all'interno della stessa categoria. Presenze aggregate per categoria, gestione separata per gruppo. Ideale per U6-U13." }
+                    ]
+                },
+                {
+                    id: 'feat-comunicazione', icon: '📣', title: 'Comunicazione',
+                    desc: 'Notifiche, accesso famiglie, push notification',
+                    cards: [
+                        { icon: '📢', title: 'Centro Comunicazioni', desc: 'Notifiche in-app con priorità (info, importante, urgente). Destinatari per tipo: atleta, genitore, staff.' },
+                        { icon: '👨‍👩‍👦', title: 'Accesso Famiglia e Ospite', desc: "Link dedicati senza registrazione. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote, risultati e i voti del mister. Push notification per ogni convocazione." }
+                    ]
+                },
+                {
+                    id: 'feat-societa', icon: '🏢', title: 'Gestione Società',
+                    desc: 'Quote, tesseramento, kit, documenti, multi-stagione',
+                    cards: [
+                        { icon: '💶', title: 'Quote Economiche', desc: 'Configurazione rate, pagamento rateale, rigenera quote, notifiche scadenze. Gestione completa delle quote societarie con storico pagamenti.' },
+                        { icon: '📋', title: 'Tesseramento Completo', desc: "Documenti, certificati medici con alert scadenza, stato tesseramento per ogni atleta. Solleciti automatici e visione d'insieme per la segreteria." },
+                        { icon: '👕', title: 'Magazzino Kit', desc: 'Gestione completa del materiale tecnico: bundle, assegnazioni a giocatori e staff, ordini, kit portiere, numerazione maglie. Stato inventario sempre aggiornato.' }
+                    ]
+                },
+                {
+                    id: 'feat-setup', icon: '⚙️', title: 'Società & Setup',
+                    desc: 'Stagioni, import, anagrafica, checklist',
+                    cards: [
+                        { icon: '⚙️', title: 'Gestione Società', desc: 'Stagioni, utenti, categorie: tutto centralizzato. Crea la nuova stagione e migra la rosa in un click.' },
+                        { icon: '📥', title: 'Import Wizard', desc: 'Carica il tabulato FIGC o il tuo Excel personalizzato: il wizard riconosce automaticamente le colonne e importa tutta la rosa in 30 secondi.', badge: 'NUOVO' },
+                        { icon: '🏢', title: 'Anagrafica Società', desc: 'Dati societari completi: forma giuridica, FIGC, P.IVA, IBAN, sponsor, colori sociali. Sempre aggiornata e condivisa tra tutto lo staff.' },
+                        { icon: '🔄', title: 'Gestione Multi-Stagione', desc: 'Migrazione rosa automatica, carriera giocatore cross-season, staff per stagione.' },
+                        { icon: '✅', title: 'Checklist Stagione', desc: 'Checklist personalizzabile per ogni categoria. Item automatici e manuali, sincronizzazione tra staff. Tieni traccia di ogni adempimento stagionale.' }
+                    ]
+                },
+                {
+                    id: 'feat-performance', icon: '📊', title: 'Performance & Dati',
+                    desc: 'Statistiche, valutazioni, test atletici, scouting',
+                    cards: [
+                        { icon: '📈', title: 'Performance Center', desc: 'Vista unificata partite e allenamenti per ogni giocatore. Sparkline, progressione individuale, aree lavorate. Sezione dedicata portieri con gol subiti e clean sheet.' },
+                        { icon: '🏃', title: 'Test Atletici', desc: 'Benchmark per categoria (velocità, resistenza, forza, salto). Confronta i giocatori, traccia i progressi nel tempo. Export Excel per condividere con lo staff.' },
+                        { icon: '🕸️', title: 'Valutazione Tecnica', desc: 'Radar chart a 6 assi per ogni giocatore: Tecnica, Velocità, Tattica, Fisico, Mentalità, Personalità. Storico e confronto nel tempo.' },
+                        { icon: '⭐', title: 'Valutazioni Partite e Sedute', desc: 'Scala personalizzabile (1-10 o 1-5 stelle). Voto seduta, area lavorata e voti individuali ai giocatori. Condivisibili con le famiglie.' },
+                        { icon: '🎯', title: 'Obiettivo Settimana', desc: "Definisci l'obiettivo settimanale per il gruppo. Storico delle ultime 8 settimane sempre consultabile." },
+                        { icon: '🏆', title: 'Classifica LND', desc: 'Classifica e calendario dal Portale Regionale integrati automaticamente. Sempre aggiornati, senza inserimenti manuali.' },
+                        { icon: '🔍', title: 'Scouting CRM', desc: 'Gestisci prospetti con dossier completo: osservazioni, valutazioni radar, contatti, link video. Workflow da osservato a tesserato.' }
+                    ]
+                },
+                {
+                    id: 'feat-strumenti', icon: '📊', title: 'Strumenti',
+                    desc: 'Dashboard e report',
+                    cards: [
+                        { icon: '📊', title: 'Dashboard Personalizzabile', desc: 'Widget riordinabili e nascondibili. Classifica e calendario dal Portale Regionale integrati automaticamente.' },
+                        { icon: '📑', title: 'Report PDF', desc: 'Report partita e stagionale generabili e condivisibili. Statistiche individuali e di squadra.' }
+                    ]
+                },
+                {
+                    id: 'feat-app', icon: '📱', title: "L'app",
+                    desc: 'Caratteristiche trasversali che semplificano il lavoro quotidiano',
+                    cards: [
+                        { icon: '📲', title: 'Installa sul telefono', desc: "Aggiungila alla home come un'app. Nessun App Store, sempre aggiornata automaticamente." },
+                        { icon: '📶', title: 'Funziona senza rete', desc: 'Registra presenze ed eventi anche al campo senza connessione. Si sincronizza quando torni online.' },
+                        { icon: '🏅', title: '6.104 Loghi Integrati', desc: 'Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione.' },
+                        { icon: '🔐', title: '7 Profili Permessi', desc: 'Allenatore, vice, dirigente, preparatore, osservatore, segreteria, custom. Ogni ruolo vede solo ciò che serve.' },
+                        { icon: '🎟️', title: 'Supporto Integrato', desc: "Segnala problemi o suggerisci idee direttamente dall'app. Screenshot automatico e risposta via email." }
+                    ]
+                }
+            ];
+
+            const parentCarousel = document.querySelector('[data-parent-carousel]');
+            if (!parentCarousel) return;
+
+            const parentTrack = document.getElementById('parentCarouselTrack');
+            const parentNav = parentCarousel.nextElementSibling;
+            const parentPrevBtn = parentNav.querySelector('[data-parent-dir="-1"]');
+            const parentNextBtn = parentNav.querySelector('[data-parent-dir="1"]');
+            const parentDotsWrap = parentNav.querySelector('[data-parent-dots]');
+
+            const childSectionHeader = document.getElementById('childSectionHeader');
+            const childCarousel = document.querySelector('[data-child-carousel]');
+            const childTrack = document.getElementById('childCarouselTrack');
+            const childNav = childCarousel.nextElementSibling;
+            const childPrevBtn = childNav.querySelector('[data-child-dir="-1"]');
+            const childNextBtn = childNav.querySelector('[data-child-dir="1"]');
+            const childDotsWrap = childNav.querySelector('[data-child-dots]');
+
+            // Popola i titoli del carousel padre
+            parentTrack.innerHTML = FEATURE_SECTIONS.map((sec, i) => `
+                <div class="parent-title-card" data-section-index="${i}">
+                    <div class="parent-title-icon">${sec.icon}</div>
+                    <div class="parent-title-label">${sec.title}</div>
+                </div>
+            `).join('');
+            const parentCards = Array.from(parentTrack.children);
+
+            let activeSection = 0;
+            let parentIndex = 0;
+
+            function parentPerView() {
+                if (window.innerWidth <= 640) return 1;
+                if (window.innerWidth <= 900) return 2;
+                return 3;
+            }
+
+            function parentMaxIndex() {
+                return Math.max(0, parentCards.length - parentPerView());
+            }
+
+            function renderParentDots() {
+                parentDotsWrap.innerHTML = '';
+                const total = parentMaxIndex() + 1;
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', 'Vai a gruppo sezioni ' + (i + 1));
+                    dot.addEventListener('click', () => goToParent(i));
+                    parentDotsWrap.appendChild(dot);
+                }
+            }
+
+            function updateParent() {
+                const perView = parentPerView();
+                const cardWidth = parentCards[0].getBoundingClientRect().width;
+                const gap = parseFloat(getComputedStyle(parentTrack).gap) || 16;
+                const offset = parentIndex * (cardWidth + gap);
+                parentTrack.style.transform = `translateX(-${offset}px)`;
+
+                parentCards.forEach((card, i) => {
+                    card.classList.toggle('is-active', i === activeSection);
+                });
+
+                const dots = Array.from(parentDotsWrap.children);
+                const dotIndex = Math.min(parentIndex, parentMaxIndex());
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === dotIndex));
+
+                parentPrevBtn.disabled = parentIndex === 0;
+                parentNextBtn.disabled = parentIndex >= parentMaxIndex();
+            }
+
+            function goToParent(i) {
+                parentIndex = Math.min(Math.max(0, i), parentMaxIndex());
+                updateParent();
+            }
+
+            function selectSection(i) {
+                activeSection = i;
+                // Assicura che la card selezionata sia visibile nella finestra corrente
+                const perView = parentPerView();
+                if (i < parentIndex) {
+                    parentIndex = i;
+                } else if (i >= parentIndex + perView) {
+                    parentIndex = Math.min(i - perView + 1, parentMaxIndex());
+                }
+                updateParent();
+                renderChild();
+            }
+
+            parentCards.forEach((card, i) => {
+                card.addEventListener('click', () => selectSection(i));
+            });
+
+            parentPrevBtn.addEventListener('click', () => goToParent(parentIndex - 1));
+            parentNextBtn.addEventListener('click', () => goToParent(parentIndex + 1));
+
+            // Swipe touch sul parent
+            let parentTouchStartX = 0;
+            parentTrack.addEventListener('touchstart', e => { parentTouchStartX = e.touches[0].clientX; }, { passive: true });
+            parentTrack.addEventListener('touchend', e => {
+                const delta = e.changedTouches[0].clientX - parentTouchStartX;
+                if (Math.abs(delta) > 40) goToParent(parentIndex + (delta < 0 ? 1 : -1));
+            }, { passive: true });
+
+            // ---- Child carousel (card della sezione attiva) ----
+            let childIndex = 0;
+
+            function childPerView() {
+                if (window.innerWidth <= 640) return 1;
+                if (window.innerWidth <= 1024) return 2;
+                return 3;
+            }
+
+            function childCards() {
+                return Array.from(childTrack.children);
+            }
+
+            function childMaxIndex() {
+                return Math.max(0, childCards().length - childPerView());
+            }
+
+            function renderChildDots() {
+                childDotsWrap.innerHTML = '';
+                const total = childMaxIndex() + 1;
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', 'Vai a slide ' + (i + 1));
+                    dot.addEventListener('click', () => goToChild(i));
+                    childDotsWrap.appendChild(dot);
+                }
+            }
+
+            function updateChild() {
+                const cards = childCards();
+                if (!cards.length) return;
+                const perView = childPerView();
+                const cardWidth = cards[0].getBoundingClientRect().width;
+                const gap = parseFloat(getComputedStyle(childTrack).gap) || 24;
+                const offset = childIndex * (cardWidth + gap);
+                childTrack.style.transform = `translateX(-${offset}px)`;
+
+                cards.forEach((card, i) => {
+                    card.classList.toggle('is-active', i >= childIndex && i < childIndex + perView);
+                });
+
+                const dots = Array.from(childDotsWrap.children);
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === childIndex));
+
+                childPrevBtn.disabled = childIndex === 0;
+                childNextBtn.disabled = childIndex >= childMaxIndex();
+            }
+
+            function goToChild(i) {
+                childIndex = Math.min(Math.max(0, i), childMaxIndex());
+                updateChild();
+            }
+
+            function renderChild() {
+                const sec = FEATURE_SECTIONS[activeSection];
+                childSectionHeader.textContent = sec.desc;
+                childTrack.innerHTML = sec.cards.map(c => `
+                    <div class="feature-card"${c.badge ? ' style="border:2px solid #667eea; position:relative;"' : ''}>
+                        ${c.badge ? `<div style="position:absolute; top:-10px; right:16px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px;">${c.badge}</div>` : ''}
+                        <div class="feature-icon">${c.icon}</div>
+                        <h3>${c.title}</h3>
+                        <p>${c.desc}</p>
+                    </div>
+                `).join('');
+                childIndex = 0;
+                renderChildDots();
+                updateChild();
+            }
+
+            childPrevBtn.addEventListener('click', () => goToChild(childIndex - 1));
+            childNextBtn.addEventListener('click', () => goToChild(childIndex + 1));
+
+            let childTouchStartX = 0;
+            childTrack.addEventListener('touchstart', e => { childTouchStartX = e.touches[0].clientX; }, { passive: true });
+            childTrack.addEventListener('touchend', e => {
+                const delta = e.changedTouches[0].clientX - childTouchStartX;
+                if (Math.abs(delta) > 40) goToChild(childIndex + (delta < 0 ? 1 : -1));
+            }, { passive: true });
+
+            // Init
+            selectSection(0);
+
+            let parentChildResizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(parentChildResizeTimer);
+                parentChildResizeTimer = setTimeout(() => {
+                    renderParentDots();
+                    goToParent(Math.min(parentIndex, parentMaxIndex()));
+                    renderChildDots();
+                    goToChild(Math.min(childIndex, childMaxIndex()));
+                }, 150);
+            });
+
+            renderParentDots();
+        })();
     </script>
 </body>
 </html>
