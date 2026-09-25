@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locandina Società Affiliate — Youth Football Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1a2e;
+        }
+
+        .locandina {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(180deg, #4a5568 0%, #2d3748 30%, #1a202c 70%, #171923 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sfondo viola brand sfumato */
+        .bg-field {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 620px;
+            background: linear-gradient(180deg,
+                rgba(102, 126, 234, 0.28) 0%,
+                rgba(118, 75, 162, 0.16) 40%,
+                transparent 100%);
+            opacity: 0.85;
+        }
+
+        /* decorazione: cerchi sfocati */
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+        }
+        .glow-1 { width: 420px; height: 420px; background: rgba(102,126,234,0.35); top: -120px; right: -80px; }
+        .glow-2 { width: 360px; height: 360px; background: rgba(39,174,96,0.18); bottom: -100px; left: -60px; }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 48px 60px 0;
+            position: relative;
+            z-index: 10;
+        }
+        .header img { width: 56px; height: 56px; border-radius: 12px; }
+        .header .name { color: white; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .header .tagline { font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+        /* Hero */
+        .hero {
+            padding: 60px 60px 0;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        .hero-title {
+            color: white;
+            font-size: 62px;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-bottom: 24px;
+        }
+        .hero-title .accent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.4;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* Società cards */
+        .societa-row {
+            display: flex;
+            justify-content: center;
+            gap: 44px;
+            padding: 80px 60px 0;
+            position: relative;
+            z-index: 10;
+        }
+        .societa-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .societa-logo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .societa-logo img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+        }
+        .societa-nome {
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+            max-width: 260px;
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .societa-meta {
+            color: rgba(255,255,255,0.55);
+            font-size: 16px;
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 56px;
+            left: 0; right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            z-index: 10;
+        }
+        .footer-message .main {
+            color: white;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .footer-message .sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+            margin-top: 6px;
+        }
+        .footer-message .badges {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+        }
+        .footer-message .badges span {
+            color: rgba(255,255,255,0.85);
+            font-size: 15px;
+        }
+        .footer-message .badges .check { color: #27AE60; font-weight: bold; }
+
+        .qr-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: white;
+            padding: 20px 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+        }
+        .qr-section img { width: 96px; height: 96px; }
+        .qr-section .qr-title { font-size: 16px; font-weight: 800; color: #1a202c; text-transform: uppercase; letter-spacing: 0.5px; }
+        .qr-section .qr-brand { font-size: 14px; color: #667eea; font-weight: 600; margin-top: 4px; }
+        .qr-section .qr-cta { font-size: 13px; color: #27AE60; font-weight: 700; margin-top: 10px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="locandina">
+        <div class="bg-field"></div>
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <img src="icon.png" alt="YFM Icon">
+            <div>
+                <div class="name">Youth Football Manager</div>
+                <div class="tagline">Gestionale per società sportive</div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-badge">🏆 Società Affiliate</div>
+            <div class="hero-title">
+                Hanno già scelto<br><span class="accent">YFM</span>
+            </div>
+            <div class="hero-subtitle">
+                Società che gestiscono Scuola Calcio, Settore Giovanile e Prima Squadra con un'unica piattaforma.
+            </div>
+        </div>
+
+        <!-- Società -->
+        <div class="societa-row">
+            <div class="societa-card">
+                <div class="societa-logo"><img src="/img/societa/pol-ciampino.png" alt="Polisportiva Ciampino"></div>
+                <div class="societa-nome">Polisportiva Ciampino</div>
+                <div class="societa-meta">Roma</div>
+            </div>
+            <div class="societa-card">
+                <div class="societa-logo"><img src="/img/societa/atl-lodigiani.png" alt="Accademia Atletico Lodigiani"></div>
+                <div class="societa-nome">Accademia Atletico Lodigiani</div>
+                <div class="societa-meta">Roma</div>
+            </div>
+            <div class="societa-card">
+                <div class="societa-logo"><img src="/img/societa/alba-roma.png" alt="Alba Roma"></div>
+                <div class="societa-nome">Alba Roma</div>
+                <div class="societa-meta">Roma</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-message">
+                <div class="main">Unisciti a loro</div>
+                <div class="sub">Il gestionale completo per il calcio giovanile italiano</div>
+                <div class="badges">
+                    <span><span class="check">✓</span> 30 giorni gratis</span>
+                    <span><span class="check">✓</span> Nessun impegno</span>
+                    <span><span class="check">✓</span> Setup assistito</span>
+                </div>
+            </div>
+            <div class="qr-section">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://yfm-landing.vercel.app/index.html&bgcolor=ffffff&color=1a202c" alt="QR Code">
+                <div>
+                    <div class="qr-title">Scansiona il QR</div>
+                    <div class="qr-brand">Youth Football Manager</div>
+                    <div class="qr-cta">🎁 Prova gratuita</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
