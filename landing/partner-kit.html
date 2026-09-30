@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit Banner Partner — Youth Football Manager</title>
+<meta name="description" content="Banner ufficiali di Youth Football Manager da inserire sul tuo sito. Copia il codice o scarica l'immagine.">
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A1C3A; --grad-a:#667eea; --grad-b:#764ba2; --green:#2ECC71;
+    --gray:#6C757D; --light:#F8F9FA; --border:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--navy);background:var(--light);line-height:1.5}
+  a{color:var(--grad-a)}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+  header.page{text-align:center;margin-bottom:8px}
+  header.page h1{font-size:28px;font-weight:700}
+  header.page p{color:var(--gray);font-size:15px;margin-top:6px}
+  .intro{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin:24px 0;font-size:14px}
+  .intro strong{color:var(--navy)}
+  .intro code{background:var(--light);padding:1px 6px;border-radius:5px;font-size:12px}
+  h2.sec{font-size:19px;font-weight:700;margin:40px 0 4px}
+  .sub{color:var(--gray);font-size:13px;margin-bottom:16px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+  .preview{display:flex;justify-content:center;align-items:center;background:#eef0f4;border-radius:10px;padding:20px;overflow:auto}
+  .preview img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 10px rgba(10,28,58,.12)}
+  .snippet{position:relative;margin-top:14px}
+  .snippet textarea{width:100%;height:110px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;
+    border:1px solid var(--border);border-radius:8px;padding:12px;background:#0f1729;color:#c9d5f0;resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .btn{border:none;border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+  .btn-primary{background:var(--green);color:#fff}
+  .btn-primary:hover{background:#27AE60}
+  .btn-ghost{background:transparent;border:1.5px solid var(--navy);color:var(--navy)}
+  .btn-ghost:hover{background:var(--navy);color:#fff}
+  .dl{font-size:13px}
+  .field{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .field label{font-size:13px;font-weight:600}
+  .field input{border:1px solid var(--border);border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;min-width:220px}
+  .hint{font-size:12px;color:var(--gray)}
+  .steps{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:28px}
+  .steps ol{margin-left:18px}
+  .steps li{margin:6px 0;font-size:14px}
+  footer{text-align:center;color:var(--gray);font-size:12px;margin-top:40px}
+
+  /* ===== BANNER FLUIDO (stesso markup dello snippet dato ai partner) ===== */
+  .yfm-fluid{container-type:inline-size;display:block;text-decoration:none;max-width:728px}
+  .yfm-fluid .yfmf{
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:14px;
+    color:#fff;font-family:'Inter',system-ui,sans-serif;padding:16px 18px;
+    display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;
+  }
+  .yfm-fluid .yfmf-badge{width:56px;height:56px;background:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .yfm-fluid .yfmf-badge img{width:82%;height:82%;object-fit:contain}
+  .yfm-fluid .yfmf-body{flex:1;min-width:0}
+  .yfm-fluid .yfmf-name{font-weight:700;font-size:18px;line-height:1.1}
+  .yfm-fluid .yfmf-title{font-size:13px;font-weight:600;opacity:.95;margin-top:2px}
+  .yfm-fluid .yfmf-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .yfm-fluid .yfmf-pill{background:rgba(255,255,255,.16);border-radius:20px;font-size:11px;font-weight:600;padding:4px 11px;white-space:nowrap}
+  .yfm-fluid .yfmf-cta{background:#2ECC71;color:#fff;font-weight:700;font-size:14px;
+    border-radius:10px;padding:12px 20px;white-space:nowrap;flex-shrink:0}
+  /* Larghezze intermedie: nascondi le pill se poco spazio */
+  @container (max-width:560px){ .yfm-fluid .yfmf-pills{display:none} }
+  /* Molto stretto (mobile): compatta, titolo breve, niente sottotitolo lungo */
+  @container (max-width:380px){
+    .yfm-fluid .yfmf{padding:12px 14px;gap:12px}
+    .yfm-fluid .yfmf-badge{width:46px;height:46px}
+    .yfm-fluid .yfmf-name{font-size:15px}
+    .yfm-fluid .yfmf-title{font-size:11px}
+    .yfm-fluid .yfmf-cta{padding:10px 14px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <h1>🎯 Kit Banner Partner</h1>
+    <p>Inserisci il banner di Youth Football Manager sul tuo sito. Copia il codice o scarica l'immagine.</p>
+  </header>
+
+  <div class="intro">
+    Ogni banner rimanda a <strong>youth-football-manager.app</strong> ed è tracciato: personalizza il campo
+    <code>utm_source</code> qui sotto con il <strong>nome del tuo sito</strong>, così sappiamo che i visitatori
+    arrivano da te. Puoi <strong>copiare il codice</strong> (nitido su ogni schermo) oppure
+    <strong>scaricare l'immagine</strong> PNG.
+  </div>
+
+  <!-- Personalizzazione UTM -->
+  <div class="card">
+    <div class="field">
+      <label for="utm">Nome del tuo sito (per il tracciamento):</label>
+      <input id="utm" type="text" value="partner" oninput="updateSnippets()">
+    </div>
+    <p class="hint">Es. se il tuo sito è "asdrossi.it" scrivi <code>asdrossi</code>. Il codice qui sotto si aggiorna da solo.</p>
+  </div>
+
+  <!-- ===== FLUIDO ===== -->
+  <h2 class="sec">⭐ Banner adattivo (consigliato)</h2>
+  <p class="sub">Un solo codice che si adatta automaticamente allo spazio del tuo sito. Ridimensiona la finestra per vedere l'effetto.</p>
+  <div class="card">
+    <div class="preview" style="display:block">
+      <a class="yfm-fluid" href="https://youth-football-manager.app/?utm_source=partner&utm_medium=banner&utm_campaign=partner-kit" target="_blank" rel="noopener sponsored" style="max-width:100%">
+        <div class="yfmf">
+          <div class="yfmf-badge"><img src="img/partner-kit/icona-yfm.png" alt="YFM"></div>
+          <div class="yfmf-body">
+            <div class="yfmf-name">Youth Football Manager</div>
+            <div class="yfmf-title">Il gestionale completo per società sportive</div>
+            <div class="yfmf-pills">
+              <span class="yfmf-pill">Scuola Calcio</span>
+              <span class="yfmf-pill">Settore Giovanile</span>
+              <span class="yfmf-pill">Prima Squadra</span>
+            </div>
+          </div>
+          <div class="yfmf-cta">Prova 30 giorni gratis</div>
+        </div>
+      </a>
+    </div>
+    <div class="snippet">
+      <textarea id="snip-fluid" readonly></textarea>
+      <div class="row"><button class="btn btn-primary" onclick="copySnippet('snip-fluid',this)">📋 Copia codice</button></div>
+    </div>
+  </div>
+
+  <!-- ===== FORMATI FISSI ===== -->
+  <h2 class="sec">Formati a dimensione fissa</h2>
+  <p class="sub">Scegli il formato che si adatta allo spazio pubblicitario del tuo sito.</p>
+
+  <!-- 728x90 -->
+  <div class="card">
+    <strong>Leaderboard — 728 × 90</strong> <span class="hint">(header/footer desktop)</span>
+    <div class="preview"><img src="img/partner-kit/banner-728x90.png" alt="Banner 728x90" width="728"></div>
+    <div class="snippet">
+      <textarea id="snip-728" readonly></textarea>
+      <div class="row">
+        <button class="btn btn-primary" onclick="copySnippet('snip-728',this)">📋 Copia codice</button>
+        <a class="btn btn-ghost dl" href="img/partner-kit/banner-728x90.png" download>⬇ Scarica PNG</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 300x250 -->
+  <div class="card">
+    <strong>Rectangle — 300 × 250</strong> <span class="hint">(sidebar, il più diffuso)</span>
+    <div class="preview"><img src="img/partner-kit/banner-300x250.png" alt="Banner 300x250" width="300"></div>
+    <div class="snippet">
+      <textarea id="snip-300" readonly></textarea>
+      <div class="row">
+        <button class="btn btn-primary" onclick="copySnippet('snip-300',this)">📋 Copia codice</button>
+        <a class="btn btn-ghost dl" href="img/partner-kit/banner-300x250.png" download>⬇ Scarica PNG</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 320x100 -->
+  <div class="card">
+    <strong>Mobile — 320 × 100</strong> <span class="hint">(dispositivi mobili)</span>
+    <div class="preview"><img src="img/partner-kit/banner-320x100.png" alt="Banner 320x100" width="320"></div>
+    <div class="snippet">
+      <textarea id="snip-320" readonly></textarea>
+      <div class="row">
+        <button class="btn btn-primary" onclick="copySnippet('snip-320',this)">📋 Copia codice</button>
+        <a class="btn btn-ghost dl" href="img/partner-kit/banner-320x100.png" download>⬇ Scarica PNG</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1080x1080 -->
+  <div class="card">
+    <strong>Quadrato — 1080 × 1080</strong> <span class="hint">(social e stampa: locandine, bordocampo)</span>
+    <div class="preview"><img src="img/partner-kit/banner-1080x1080.png" alt="Banner 1080x1080" width="360"></div>
+    <div class="row">
+      <a class="btn btn-ghost dl" href="img/partner-kit/banner-1080x1080.png" download>⬇ Scarica PNG (1080×1080)</a>
+    </div>
+    <p class="hint" style="margin-top:8px">Questo formato è pensato per social e stampa: scarica l'immagine e usala dove ti serve.</p>
+  </div>
+
+  <!-- ISTRUZIONI -->
+  <div class="steps">
+    <strong>Come inserire il banner sul tuo sito</strong>
+    <ol>
+      <li>Scrivi il nome del tuo sito nel campo in alto (per il tracciamento).</li>
+      <li>Clicca <strong>Copia codice</strong> sul formato che preferisci.</li>
+      <li>Incolla il codice nell'HTML del tuo sito, dove vuoi che appaia il banner.</li>
+      <li>Non usi codice HTML? <strong>Scarica il PNG</strong> e caricalo come immagine, collegandola a <code>https://youth-football-manager.app</code>.</li>
+    </ol>
+  </div>
+
+  <footer>
+    Youth Football Manager · <a href="https://youth-football-manager.app" target="_blank">youth-football-manager.app</a>
+  </footer>
+</div>
+
+<script>
+  var ORIGIN = 'https://youth-football-manager.app';
+  var ASSET = ORIGIN + '/img/partner-kit/';
+
+  function link(utm){
+    return ORIGIN + '/?utm_source=' + encodeURIComponent(utm||'partner') + '&utm_medium=banner&utm_campaign=partner-kit';
+  }
+
+  // Snippet immagine semplice (per i formati fissi): <a><img></a>
+  function imgSnippet(file, w, h, utm){
+    return '<a href="'+link(utm)+'" target="_blank" rel="noopener sponsored">\n'+
+           '  <img src="'+ASSET+file+'" width="'+w+'" height="'+h+'" alt="Youth Football Manager" style="border:0;max-width:100%;height:auto;">\n'+
+           '</a>';
+  }
+
+  // Snippet fluido: markup + CSS inline in <style scoped> (self-contained)
+  function fluidSnippet(utm){
+    return '<a class="yfm-fluid" href="'+link(utm)+'" target="_blank" rel="noopener sponsored" style="display:block;text-decoration:none;max-width:728px;container-type:inline-size;">\n'+
+'  <span style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;color:#fff;font-family:Inter,system-ui,sans-serif;padding:16px 18px;">\n'+
+'    <span style="width:56px;height:56px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">\n'+
+'      <img src="'+ASSET+'icona-yfm.png" alt="YFM" style="width:82%;height:82%;object-fit:contain;">\n'+
+'    </span>\n'+
+'    <span style="flex:1;min-width:0;">\n'+
+'      <span style="display:block;font-weight:700;font-size:18px;line-height:1.1;">Youth Football Manager</span>\n'+
+'      <span style="display:block;font-size:13px;font-weight:600;opacity:.95;margin-top:2px;">Il gestionale completo per società sportive</span>\n'+
+'    </span>\n'+
+'    <span style="background:#2ECC71;color:#fff;font-weight:700;font-size:14px;border-radius:10px;padding:12px 20px;white-space:nowrap;flex-shrink:0;">Prova 30 giorni gratis</span>\n'+
+'  </span>\n'+
+'</a>';
+  }
+
+  function updateSnippets(){
+    var utm = document.getElementById('utm').value.trim() || 'partner';
+    document.getElementById('snip-fluid').value = fluidSnippet(utm);
+    document.getElementById('snip-728').value = imgSnippet('banner-728x90.png', 728, 90, utm);
+    document.getElementById('snip-300').value = imgSnippet('banner-300x250.png', 300, 250, utm);
+    document.getElementById('snip-320').value = imgSnippet('banner-320x100.png', 320, 100, utm);
+  }
+
+  function copySnippet(id, btn){
+    var ta = document.getElementById(id);
+    ta.select(); ta.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(ta.value).then(function(){
+      var old = btn.textContent; btn.textContent = '✅ Copiato!';
+      setTimeout(function(){ btn.textContent = old; }, 1800);
+    });
+  }
+
+  updateSnippets();
+</script>
+</body>
+</html>
