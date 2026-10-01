@@ -2,5 +2,8 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": null,
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/_vercel/insights/:path*", "destination": "https://va.vercel-scripts.com/v1/:path*" }
+  ]
 }
