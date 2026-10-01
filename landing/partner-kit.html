@@ -93,10 +93,11 @@
   <!-- Personalizzazione UTM -->
   <div class="card">
     <div class="field">
-      <label for="utm">Nome del tuo sito (per il tracciamento):</label>
+      <label for="utm">Codice partner (per il tracciamento):</label>
       <input id="utm" type="text" value="partner" oninput="updateSnippets()">
+      <span id="utm-assigned" style="display:none;background:#E8F8F0;color:#27AE60;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;">✓ codice assegnato</span>
     </div>
-    <p class="hint">Es. se il tuo sito è "asdrossi.it" scrivi <code>asdrossi</code>. Il codice qui sotto si aggiorna da solo.</p>
+    <p class="hint">Se hai ricevuto un link personalizzato, il codice è già compilato. Altrimenti scrivi il nome del tuo sito (es. <code>asdrossi</code>). Il codice qui sotto si aggiorna da solo.</p>
   </div>
 
   <!-- ===== FLUIDO ===== -->
@@ -226,6 +227,22 @@
 '</a>';
   }
 
+  // Codice partner da URL (?p=codice): se presente, pre-compila il campo e lo
+  // segnala come "assegnato". Il link personalizzato lo mandi tu a ogni partner:
+  // es. youth-football-manager.app/partner-kit.html?p=asdrossi
+  (function presetPartner(){
+    var p = new URLSearchParams(location.search).get('p');
+    if (p) {
+      var clean = p.toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);
+      if (clean) {
+        var f = document.getElementById('utm');
+        f.value = clean;
+        var badge = document.getElementById('utm-assigned');
+        if (badge) badge.style.display = 'inline';
+      }
+    }
+  })();
+
   function updateSnippets(){
     var utm = document.getElementById('utm').value.trim() || 'partner';
     document.getElementById('snip-fluid').value = fluidSnippet(utm);
@@ -245,5 +262,8 @@
 
   updateSnippets();
 </script>
+<!-- Vercel Web Analytics (privacy-first, no cookie) -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
