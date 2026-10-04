@@ -1,0 +1,1512 @@
+{
+  "generatedAt": "2026-10-04T11:25:07.885Z",
+  "count": 26,
+  "flows": [
+    {
+      "id": "nuova_stagione",
+      "titolo": "Nuova Stagione",
+      "descrizione": "Crea la stagione, le categorie, migra la rosa dalla stagione precedente e attiva.",
+      "icon": "send",
+      "durata": "~15 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Crea Stagione",
+          "description": "Vai in Club → Stagioni & Categorie e crea la nuova stagione (es. 2026-2027) con le sue categorie.",
+          "tips": [
+            "Puoi duplicare la struttura categorie dalla stagione precedente",
+            "Le categorie restano, i team sono stagionali"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Migra Rosa",
+          "description": "Copia i giocatori dalla stagione precedente alla nuova. Puoi scegliere quali migrare e in quale categoria.",
+          "tips": [
+            "I giocatori vengono copiati, non spostati — la stagione precedente resta intatta",
+            "Gli infortunati vengono migrati con il loro stato",
+            "In alternativa usa Import Rosa da Excel per una rosa completamente nuova"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Attiva Stagione",
+          "description": "Imposta la nuova stagione come attiva. Da questo momento tutte le operazioni faranno riferimento ad essa.",
+          "tips": [
+            "Solo una stagione può essere attiva alla volta",
+            "Puoi sempre tornare a consultare le stagioni passate"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Configura le Squadre",
+          "description": "Per ogni squadra, segui la guida \"⚙️ Configura la Stagione\" per impostare allenamenti, calendario, quote e link famiglie.",
+          "tips": [
+            "Seleziona ogni squadra dal selettore in alto prima di configurare",
+            "Puoi configurare le squadre in parallelo con il tuo staff"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "inizio_stagione",
+      "titolo": "Configura la Stagione",
+      "descrizione": "Imposta allenamenti, calendario, quote e link famiglie per una stagione già creata.",
+      "icon": "settings",
+      "durata": "~20 min",
+      "target": [
+        "Admin",
+        "Segreteria"
+      ],
+      "steps": [
+        {
+          "label": "Nuova Stagione",
+          "description": "Crea la nuova stagione (es. 2025/26) e le categorie.",
+          "tips": [
+            "Puoi migrare i giocatori dalla stagione precedente",
+            "Le categorie restano, i team sono stagionali"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Allenamenti",
+          "description": "Configura la settimana tipo: giorni, orari e luoghi degli allenamenti.",
+          "tips": [
+            "Le sessioni vengono generate automaticamente",
+            "Puoi impostare data inizio e fine stagione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Calendario",
+          "description": "Importa il calendario partite da PDF SGS/LND o dal portale regionale.",
+          "tips": [
+            "I loghi avversari vengono cercati automaticamente",
+            "Puoi aggiungere partite amichevoli manualmente"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Quote",
+          "description": "Crea la configurazione quote e genera le rate per ogni giocatore.",
+          "tips": [
+            "Puoi avere quote diverse per categoria",
+            "Le scadenze generano promemoria automatici"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Link Famiglie",
+          "description": "Genera i link di accesso per le famiglie dei giocatori.",
+          "tips": [
+            "Ogni famiglia ha un link personale",
+            "Possono vedere partite, quote e segnalare assenze"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "aggiungi_squadra",
+      "titolo": "Aggiungi Squadra alla Stagione",
+      "descrizione": "Come aggiungere una nuova categoria o squadra a una stagione già in corso.",
+      "icon": "add",
+      "durata": "~10 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Stagioni & Categorie",
+          "description": "Vai in Club → Stagioni & Categorie. Assicurati di essere sulla stagione attiva.",
+          "tips": [
+            "La stagione attiva è quella con il badge verde",
+            "Puoi aggiungere categorie a qualsiasi stagione, non solo quella attiva"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Nuova Categoria",
+          "description": "Clicca \"+ Nuova Categoria\" e compila: nome (es. U16), tipo campionato, girone. La categoria è il contenitore stagionale della squadra.",
+          "tips": [
+            "Il nome categoria determina se è Scuola Calcio (U6-U13) o Settore Giovanile (U14+)",
+            "Tipo campionato e girone appaiono nella distinta e nelle statistiche"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Aggiungi Squadra",
+          "description": "Dentro la categoria, clicca \"+ Aggiungi Squadra\". Per la Scuola Calcio puoi aggiungere più gruppi (es. Gruppo A, Gruppo B) alla stessa categoria.",
+          "tips": [
+            "Settore Giovanile: di solito 1 squadra per categoria",
+            "Scuola Calcio: puoi avere più gruppi per la stessa fascia d'età",
+            "Il nome squadra appare nel selettore in alto a sinistra"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Popola la Rosa",
+          "description": "Aggiungi i giocatori alla nuova squadra: importa da Excel, recupera svincolati dalla stagione precedente, o aggiungi manualmente dalla rosa.",
+          "tips": [
+            "Import Center → Import Rosa per caricare da file Excel",
+            "Rosa → Recupera per riprendere giocatori svincolati del workspace",
+            "Rosa → + Giocatore per aggiungere manualmente"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Configura Allenamenti",
+          "description": "Imposta la settimana tipo per la nuova squadra: giorni, orari e luogo degli allenamenti.",
+          "tips": [
+            "Seleziona la nuova squadra dal selettore in alto prima di configurare",
+            "Le sessioni vengono generate automaticamente dalla data di inizio"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Importa Calendario",
+          "description": "Importa il calendario partite per la nuova squadra da PDF SGS/LND o manualmente.",
+          "tips": [
+            "Seleziona la categoria corretta durante l'import",
+            "Puoi aggiungere partite amichevoli manualmente dal calendario"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "gestione_societa",
+      "titolo": "Gestione Società",
+      "descrizione": "Organigramma, anagrafica e riferimenti della società.",
+      "icon": "building",
+      "durata": "~5 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Anagrafica Società",
+          "description": "Compila i dati della società: nome, indirizzo, P.IVA, contatti.",
+          "tips": [
+            "Questi dati appaiono nei documenti ufficiali",
+            "Carica il logo della società"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Organigramma",
+          "description": "Definisci i ruoli istituzionali: Presidente, DS, DG, ecc.",
+          "tips": [
+            "Questi ruoli sono cross-categoria",
+            "Diversi dallo staff tecnico delle singole squadre"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Impianti Sportivi",
+          "description": "Configura il campo di casa predefinito.",
+          "tips": [
+            "L'indirizzo appare nelle convocazioni",
+            "Puoi avere più impianti per categoria"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "gestione_staff",
+      "titolo": "Gestione Staff",
+      "descrizione": "Aggiungi lo staff tecnico, assegna ruoli e categorie.",
+      "icon": "staff",
+      "durata": "~10 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Aggiungi Staff",
+          "description": "Inserisci i membri dello staff: nome, cognome, ruolo e qualifiche federali.",
+          "tips": [
+            "Tecnici (Allenatore, Vice, Preparatore) appaiono nella pagina Staff",
+            "Ruoli istituzionali (Presidente, DS) appaiono nell'organigramma"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Qualifiche",
+          "description": "Compila matricola, tessera FIGC e tessera LND per ogni membro.",
+          "tips": [
+            "Le qualifiche appaiono nella distinta ufficiale",
+            "La taglia kit serve per l'assegnazione automatica"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Assegna Categorie",
+          "description": "Assegna ogni membro dello staff alle categorie di competenza.",
+          "tips": [
+            "Uno staff può seguire più categorie",
+            "L'assegnazione determina la visibilità nelle distinte"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Organigramma",
+          "description": "Visualizza l'organigramma societario con tutti i ruoli istituzionali.",
+          "tips": [
+            "Visibile nella pagina Società",
+            "I ruoli istituzionali non hanno categoria assegnata"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "gestione_utenti",
+      "titolo": "Gestione Utenti",
+      "descrizione": "Come creare utenti e assegnare permessi.",
+      "icon": "users",
+      "durata": "~5 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Crea Utente",
+          "description": "Aggiungi un nuovo utente: email, nome e ruolo.",
+          "tips": [
+            "L'utente riceverà le credenziali via email",
+            "Scegli il ruolo: Allenatore, Staff o Admin"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Assegna Profilo",
+          "description": "Scegli un profilo predefinito o personalizza i permessi.",
+          "tips": [
+            "Profili: Allenatore, Vice, Preparatore, Dirigente, Segreteria",
+            "Ogni profilo ha permessi diversi sulle funzionalità"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Assegna Categorie",
+          "description": "Scegli a quali categorie e stagioni l'utente ha accesso, usando le pill selezionabili.",
+          "tips": [
+            "Pill viola = categoria selezionata, pill verde = stagione selezionata",
+            "Nessuna pill selezionata = accesso a tutte le categorie"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Gestisci Utenti",
+          "description": "Modifica, disattiva o elimina utenti esistenti.",
+          "tips": [
+            "Disattivare è meglio che eliminare",
+            "L'utente disattivato non può accedere ma i dati restano"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "import_calendario",
+      "titolo": "Import Calendario",
+      "descrizione": "Importa il calendario partite da fonti ufficiali.",
+      "icon": "calendar",
+      "durata": "~10 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Scegli Fonte",
+          "description": "Seleziona la fonte: PDF SGS/LND, testo copiato o portale regionale.",
+          "tips": [
+            "PDF: carica il file del calendario federale",
+            "Testo: copia-incolla dal sito SGS",
+            "Portale: configura l'URL del girone"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Carica Dati",
+          "description": "Carica il file PDF o incolla il testo. Il parser estrae automaticamente le partite.",
+          "tips": [
+            "Inserisci il nome squadra come appare nel documento",
+            "Seleziona le categorie da importare"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Verifica Anteprima",
+          "description": "Controlla le partite estratte prima di confermare.",
+          "tips": [
+            "Verifica date, avversari e luoghi",
+            "Puoi escludere singole partite"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Conferma Import",
+          "description": "Conferma l'import. Le partite vengono create nel calendario.",
+          "tips": [
+            "I loghi avversari vengono cercati automaticamente",
+            "Lo storico import è visibile in basso"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "tesseramento",
+      "titolo": "Tesseramento",
+      "descrizione": "Gestisci il processo di tesseramento: template, documenti e conferma.",
+      "icon": "clipboard",
+      "durata": "~20 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Configura Template",
+          "description": "Imposta intestazione, documenti richiesti e clausole del modulo società.",
+          "tips": [
+            "Scegli quali documenti sono obbligatori (atleta e/o genitore)",
+            "Personalizza le clausole da far firmare"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Genera per Rosa",
+          "description": "Crea i tesseramenti per tutti i giocatori della rosa in un click.",
+          "tips": [
+            "I giocatori già tesserati vengono saltati",
+            "Puoi generare anche singolarmente"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Monitora Situazione",
+          "description": "Visualizza lo stato documenti per ogni atleta: completi, incompleti, tesserati.",
+          "tips": [
+            "Il certificato medico si smarca automaticamente se la data è valida",
+            "Filtra per stato per vedere chi manca"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Valida Certificato Medico",
+          "description": "La famiglia può caricare il certificato medico direttamente dalla home guest, indicando la data della visita. Il documento resta \"in verifica\" finché non lo confermi dalla card Certificati Medici nella pagina Rosa.",
+          "tips": [
+            "Badge \"🕓 in verifica\" sulla riga del giocatore che ha caricato un documento",
+            "\"📄 Vedi documento\" apre il file caricato senza uscire dalla pagina",
+            "\"✅ Valida\" confirma (o corregge) la data dichiarata e aggiorna lo stato ufficiale con un click",
+            "Riceverai una notifica in-app e push quando un documento viene caricato"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Solleciti",
+          "description": "Invia notifica alla famiglia per documenti mancanti.",
+          "tips": [
+            "La famiglia può compilare i dati dal proprio link",
+            "Riceveranno una notifica push"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Conferma Tesserato",
+          "description": "Chiudi il tesseramento e notifica la famiglia. Il modulo diventa read-only.",
+          "tips": [
+            "Dopo la conferma la famiglia non può più modificare",
+            "Puoi scaricare il PDF compilato"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "checklist_stagione",
+      "titolo": "Checklist Stagione",
+      "descrizione": "Traccia gli adempimenti di inizio stagione per ogni giocatore.",
+      "icon": "check",
+      "durata": "~10 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Configura Template",
+          "description": "Personalizza gli item manuali della checklist. Gli automatici sono gestiti dal sistema.",
+          "tips": [
+            "Item automatici: certificato, kit, tesseramento, quote",
+            "Aggiungi item manuali per esigenze specifiche"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Genera per Rosa",
+          "description": "Crea la checklist per tutti i giocatori della rosa.",
+          "tips": [
+            "Gli item automatici si aggiornano in tempo reale",
+            "Le quote si spuntano quando risultano pagate"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Monitora Progresso",
+          "description": "Visualizza la barra progresso e filtra per item specifico.",
+          "tips": [
+            "La barra mostra la media di completamento",
+            "Filtra per vedere chi ha completato un item"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Completa Manuali",
+          "description": "Spunta gli item manuali quando verificati (es. tesseramento FIGC confermato).",
+          "tips": [
+            "Gli item automatici non si possono spuntare manualmente",
+            "Il link diretto porta alla pagina dedicata"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "gestione_quote",
+      "titolo": "Gestione Quote",
+      "descrizione": "Dalla configurazione al monitoraggio dei pagamenti, con applicazione massiva multi-categoria.",
+      "icon": "wallet",
+      "durata": "~10 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Configurazione",
+          "description": "Crea la configurazione quote: nome, importo totale, rate con scadenze e modalità di pagamento. Puoi associarla a una categoria specifica o lasciarla globale (🌐 tutte le categorie).",
+          "tips": [
+            "I badge [€ importo] e [N rate] sulla card mostrano subito i dettagli principali",
+            "Importo e modalità di pagamento sono affiancati nel form per una compilazione più rapida",
+            "Se una rata ha scadenza già passata, l'app ti avvisa prima di salvare",
+            "Config globale (🌐) = nessuna categoria selezionata, vale per tutto il workspace"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Applica a più categorie",
+          "description": "Usa il bottone ⋮ accanto a \"▶ Applica\" per aprire il wizard multi-categoria. Seleziona tutte le squadre a cui vuoi applicare la quota in un colpo solo.",
+          "tips": [
+            "Le squadre sono divise per settore: ⚽ Settore Giovanile e 🎓 Scuola Calcio",
+            "Le categorie con config dedicata sono pre-selezionate automaticamente",
+            "Badge 🌐 = la categoria non ha config dedicata, userà quella globale",
+            "Usa ☑ Tutte / ☐ Nessuna per selezione rapida",
+            "I giocatori che hanno già la quota vengono saltati automaticamente (nessun duplicato)"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Monitoraggio",
+          "description": "Visualizza lo stato pagamenti per ogni giocatore: chi ha pagato, chi è in ritardo, chi ha rate in scadenza.",
+          "tips": [
+            "Filtri per stato: Da pagare, Parziale, Pagata, Scadute, In scadenza",
+            "Badge ⚠️ scaduta, ⏳ in scadenza (7gg), 📅 prossima",
+            "Click su un giocatore per espandere il dettaglio rate"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Segna Pagate in Blocco",
+          "description": "Attiva la modalità selezione con \"☑️ Seleziona\", spunta i giocatori e usa \"💰 Segna pagate\" per registrare i pagamenti in blocco.",
+          "tips": [
+            "La toolbar si espande su due righe: riga 1 sempre visibile, riga 2 solo in modalità selezione",
+            "Se ci sono più rate: scegli \"Solo prossima rata\" o \"Tutte le rate non pagate\"",
+            "Con una sola rata rimasta va diretto senza chiedere",
+            "Usa Tutti/Nessuno per selezione rapida"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Solleciti",
+          "description": "Invia promemoria alle famiglie con rate scadute o in scadenza. Puoi personalizzare il messaggio prima dell'invio.",
+          "tips": [
+            "\"📩 Notifica scaduti\" nella toolbar invia a tutti i giocatori con rate scadute in un click",
+            "Il bottone singolo 📩 sulla riga del giocatore invia solo a quella famiglia",
+            "I solleciti arrivano come notifica push e in-app",
+            "Badge 📩 Sollecitato appare sulla riga dopo l'invio"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Conferma Pagamenti",
+          "description": "Conferma i pagamenti quando ricevi le ricevute dai genitori. Le famiglie possono caricare la ricevuta direttamente dall'app.",
+          "tips": [
+            "Le ricevute caricate appaiono nel Centro Notifiche (tab Ricevute)",
+            "✅ Conferma segna la rata come pagata, ❌ Rifiuta notifica la famiglia di ricaricare",
+            "👁 Vedi permette di vedere l'anteprima PDF/immagine prima di confermare"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Modifica & Rigenera",
+          "description": "Se devi cambiare importo o rate di una config già applicata, usa Modifica + Rigenera per aggiornare le quote esistenti senza perdere i pagamenti già registrati.",
+          "tips": [
+            "Modifica aggiorna la config (nome, importo, rate, categoria)",
+            "Rigenera applica le modifiche alle quote già assegnate ai giocatori",
+            "I pagamenti già registrati vengono preservati",
+            "Duplica crea una copia della config come base per una variante"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Archiviazione Stagionale",
+          "description": "A fine stagione, archivia tutte le ricevute della squadra corrente in un unico file ZIP con CSV riepilogativo.",
+          "tips": [
+            "Clicca \"Archivio Ricevute\" nel menu azioni",
+            "Scarichi ZIP con tutte le ricevute + CSV riepilogativo",
+            "Opzionale: dopo il download puoi eliminare i file dallo storage",
+            "Per un backup più ampio (più categorie o tutto il workspace, incluso i certificati medici) usa Backup Documenti"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Backup Documenti (workspace)",
+          "description": "Per liberare spazio in modo più ampio, usa la pagina dedicata Backup Documenti: esporta certificati medici e ricevute quote per una o più categorie, o per tutto il workspace in un colpo.",
+          "tips": [
+            "Scegli tra \"Backup completo\" (certificati + quote in un unico ZIP con sottocartelle) oppure solo una delle due categorie",
+            "Le quote esportate sono sempre quelle della stagione corrente",
+            "I certificati includono anche i giocatori svincolati (finché il documento non viene eliminato)",
+            "Il bottone \"Elimina dallo Storage\" si attiva solo dopo aver scaricato lo ZIP",
+            "Riservato ad admin e segreteria"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "gestione_kit",
+      "titolo": "Gestione Kit",
+      "descrizione": "Dalla creazione del template all'assegnazione ai giocatori.",
+      "icon": "shirt",
+      "durata": "~15 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Crea Template",
+          "description": "Definisci il template kit: articoli inclusi, taglie disponibili, numerazione.",
+          "tips": [
+            "Puoi creare template diversi (squadra, allenamento, portiere)",
+            "Scegli se la numerazione è libera o sequenziale"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Genera Stock",
+          "description": "Genera i kit fisici in magazzino: scegli quantità per taglia.",
+          "tips": [
+            "Lo stock rappresenta i kit reali disponibili",
+            "Puoi aggiungere stock in qualsiasi momento"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Assegna Kit",
+          "description": "Assegna i kit ai giocatori in base alla loro taglia.",
+          "tips": [
+            "L'assegnazione automatica usa la taglia del giocatore",
+            "Puoi assegnare anche allo staff"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Sostituzioni",
+          "description": "Gestisci le sostituzioni di articoli persi o danneggiati.",
+          "tips": [
+            "Puoi tracciare il costo della sostituzione",
+            "Lo stato del kit si aggiorna automaticamente"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Magazzino",
+          "description": "Monitora lo stato del magazzino: disponibili, assegnati, da riordinare.",
+          "tips": [
+            "Filtra per template, taglia o stato",
+            "Vedi subito cosa manca"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "link_famiglie",
+      "titolo": "Link Famiglie",
+      "descrizione": "Genera e gestisci i link di accesso per le famiglie dei giocatori.",
+      "icon": "link",
+      "durata": "~10 min",
+      "target": [
+        "Admin",
+        "Segreteria"
+      ],
+      "steps": [
+        {
+          "label": "Genera Link",
+          "description": "Genera i link di accesso per ogni famiglia. Puoi farlo singolarmente o in batch.",
+          "tips": [
+            "Ogni link è personale e collegato al giocatore",
+            "Puoi generare link per tutta la rosa in un click"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Tipi di Link",
+          "description": "Scegli il tipo: Famiglia (accesso completo) o Ospite (solo partite).",
+          "tips": [
+            "Famiglia: vede quote, tesseramento, può segnalare assenze",
+            "Ospite: vede solo calendario e risultati"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Condividi",
+          "description": "Copia il link e invialo via WhatsApp o email alla famiglia.",
+          "tips": [
+            "Il link funziona su qualsiasi dispositivo",
+            "Non serve installare nulla"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Rinnova/Revoca",
+          "description": "Rinnova i link in scadenza o revoca quelli non più necessari.",
+          "tips": [
+            "I link scaduti smettono di funzionare",
+            "Puoi rinnovare in batch tutti i link"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "gestione_rosa",
+      "titolo": "Gestione Rosa",
+      "descrizione": "Costruisci e gestisci la rosa: aggiungi giocatori, compila le schede, importa da Excel e gestisci svincoli, recuperi e aggregazioni.",
+      "icon": "usersGroup",
+      "durata": "~15 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Aggiungi Giocatore",
+          "description": "Dalla pagina Rosa clicca \"+ Giocatore\" per inserire manualmente un atleta: dati anagrafici, ruolo e categoria.",
+          "tips": [
+            "Il ruolo determina il raggruppamento nella rosa (Portieri, Difensori, Centrocampisti, Attaccanti)",
+            "Il giocatore viene aggiunto alla squadra selezionata nel selettore in alto"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Importa da Excel",
+          "description": "Per popolare una rosa completa in un colpo solo, usa Import Center → Import Rosa: carica il file Excel e mappa le colonne.",
+          "tips": [
+            "Il parser riconosce automaticamente nome, cognome, data di nascita e ruolo",
+            "Puoi scegliere la squadra di destinazione nel wizard",
+            "Verifica l'anteprima prima di confermare l'import"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Scheda Giocatore",
+          "description": "Clicca su un giocatore per aprirne la scheda completa: anagrafica, contatti, numero di maglia, stato, dati medici e di tesseramento.",
+          "tips": [
+            "Imposta il numero di maglia direttamente dalla scheda",
+            "Lo stato (Attivo, Infortunato, Squalificato) si riflette in convocazione e formazione",
+            "La scheda mostra anche radar valutazione, test atletici e statistiche del giocatore"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Filtri e Ricerca",
+          "description": "Usa la barra di ricerca e i filtri per ruolo e stato per trovare rapidamente i giocatori nella rosa.",
+          "tips": [
+            "Filtra per stato per vedere subito infortunati o squalificati",
+            "La ricerca funziona su nome e cognome",
+            "I contatori accanto a ogni ruolo mostrano quanti giocatori ci sono"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Svincola e Riattiva",
+          "description": "Attiva la modalità selezione, scegli i giocatori e usa \"Svincola\" per toglierli dalla rosa attiva. Gli svincolati finiscono nella sezione dedicata, da cui puoi riattivarli.",
+          "tips": [
+            "Lo svincolo non elimina il giocatore: resta negli Svincolati della stagione",
+            "Usa \"↩ Riattiva\" per riportarlo nella rosa attiva",
+            "I dati storici (statistiche, documenti) restano sempre collegati"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Recupera Svincolati",
+          "description": "Nella sezione Svincolati usa \"Recupera\" per riprendere giocatori svincolati da altre squadre del workspace (es. saliti di categoria dalla stagione precedente).",
+          "tips": [
+            "\"Recupera\" pesca dagli svincolati di tutto il workspace, non solo di questa squadra",
+            "Utile per far salire i giocatori di fascia d'età a inizio stagione",
+            "In alternativa usa la migrazione rosa dalla stagione precedente"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Aggrega da Altre Squadre",
+          "description": "Usa \"Aggrega\" per inserire in modo permanente nella rosa un giocatore proveniente da un'altra categoria (es. un U15 che si allena stabilmente con l'U17).",
+          "tips": [
+            "L'aggregazione dalla Rosa è permanente, diversa dagli \"Aggregati per questa partita\" nelle Convocazioni",
+            "Il giocatore aggregato appare con stato \"Aggregato\"",
+            "Puoi disaggregarlo per riportarlo alla categoria di origine"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "preparazione_settimanale",
+      "titolo": "Preparazione Settimanale",
+      "descrizione": "Organizza la settimana di allenamento: presenze, obiettivi e voti.",
+      "icon": "clipboard",
+      "durata": "~10 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Obiettivo Settimana",
+          "description": "Definisci l'obiettivo della settimana e l'area di lavoro prevalente.",
+          "tips": [
+            "Scegli tra tecnica, tattica, fisica o cognitiva",
+            "L'obiettivo appare nel riepilogo settimanale"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Registra Presenze",
+          "description": "Dopo ogni allenamento, registra chi era presente e chi assente.",
+          "tips": [
+            "Puoi indicare il motivo dell'assenza",
+            "Le famiglie possono segnalare assenze in anticipo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Voto Seduta",
+          "description": "Assegna un voto alla qualità della seduta e indica l'area lavorata.",
+          "tips": [
+            "Il voto va da 1 a 5 stelle",
+            "Puoi aggiungere note sulla seduta"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Voti Giocatori",
+          "description": "Assegna voti individuali ai giocatori presenti.",
+          "tips": [
+            "I voti alimentano il Performance Center",
+            "Puoi aggiungere note per ogni giocatore"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Riepilogo",
+          "description": "Visualizza il riepilogo presenze stagionale e i trend.",
+          "tips": [
+            "Vedi chi ha più assenze",
+            "Confronta le presenze tra giocatori"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "catalogo_esercizi",
+      "titolo": "Catalogo Esercizi",
+      "descrizione": "Trova esercizi, aggiungili alle sedute e crea i tuoi personalizzati.",
+      "icon": "catalog",
+      "durata": "~10 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Sfoglia Catalogo",
+          "description": "Accedi agli esercizi YFM: filtra per fase, obiettivo, intensità e fascia d'età.",
+          "tips": [
+            "Tab Globali: 881 esercizi disponibili per tutti",
+            "Tab Miei: esercizi personalizzati del tuo workspace"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Aggiungi alla Seduta",
+          "description": "Dalla seduta, apri il drawer Catalogo e aggiungi esercizi direttamente alle fasi.",
+          "tips": [
+            "Il materiale si attiva automaticamente nei chip della seduta",
+            "Puoi aggiungere più esercizi in sequenza"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Sessioni Pronte",
+          "description": "Carica una delle 90 sessioni preimpostate divise per fascia e obiettivo.",
+          "tips": [
+            "Scuola Calcio, Agonistica o Comuni",
+            "Caricabile con un click nella seduta"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Crea Esercizio",
+          "description": "Crea esercizi personalizzati per il tuo workspace con diagramma animato.",
+          "tips": [
+            "Usa 'Usa come base' per clonare un esercizio globale",
+            "Il diagramma SVG mostra i giocatori in movimento"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "gestione_comunicazioni",
+      "titolo": "Comunicazioni",
+      "descrizione": "Gestisci inbox, notifiche assenze e conferma pagamenti.",
+      "icon": "inbox",
+      "durata": "~10 min",
+      "target": [
+        "Allenatore",
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Inbox",
+          "description": "L'inbox aggrega tutte le comunicazioni in entrata: assenze, convocazioni, bonifici e avvisi.",
+          "tips": [
+            "I messaggi non letti hanno il bordo blu e il badge Nuovo",
+            "Usa 'Segna tutti letti' per azzerare i badge in un click"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Gestisci Assenze",
+          "description": "Le assenze segnalate dalle famiglie appaiono nell'inbox. Clicca per andare all'allenamento.",
+          "tips": [
+            "Le assenze influenzano la disponibilità in convocazione",
+            "Puoi vedere il motivo indicato dalla famiglia"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Conferma Bonifici",
+          "description": "Quando una famiglia carica una ricevuta, appare nell'inbox. Conferma o rifiuta.",
+          "tips": [
+            "✅ Conferma: la rata passa a pagata",
+            "❌ Rifiuta: la famiglia riceve notifica di ricaricare"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Invia Avviso",
+          "description": "Invia comunicazioni a tutto lo staff o alle famiglie dalla sezione Notifiche.",
+          "tips": [
+            "Gli avvisi rimangono visibili tutta la settimana",
+            "Puoi scegliere il destinatario: staff o famiglie"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "prima_partita",
+      "titolo": "Gestire una Partita",
+      "descrizione": "Dalla convocazione al risultato finale: tutti i passaggi per gestire una partita.",
+      "icon": "ball",
+      "durata": "~15 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Convocazioni",
+          "description": "Seleziona i giocatori da convocare e pubblica la lista. Le famiglie riceveranno la notifica.",
+          "tips": [
+            "I giocatori infortunati sono evidenziati in rosso",
+            "Dopo la pubblicazione si sblocca la formazione",
+            "Apri la partita dal Calendario, poi usa il bottone Convocazioni"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Aggregati",
+          "description": "Se serve un giocatore di un'altra categoria solo per questa partita, aggiungilo dalla sezione \"🔄 Aggregati per questa partita\" senza aggregarlo permanentemente alla rosa.",
+          "tips": [
+            "Il giocatore resta nella sua squadra di origine: l'aggregazione vale solo per questa gara",
+            "Compare automaticamente tra i convocati, in formazione e nel Match Center",
+            "Massimo 5 aggregati temporanei per partita",
+            "Diverso da \"Aggrega\" nella pagina Rosa, che è permanente",
+            "La sezione è nella pagina Convocazioni della partita scelta dal Calendario"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Formazione",
+          "description": "Scegli modulo, titolari e panchina. Assegna i numeri di maglia.",
+          "tips": [
+            "Desktop: trascina i giocatori sul campo",
+            "Mobile: tap giocatore → tap posizione sul campo",
+            "Servono esattamente 11 titolari con almeno 1 portiere",
+            "Numeri di maglia duplicati vengono evidenziati e bloccano il salvataggio",
+            "Usa \"📋 Ultima\" per richiamare la formazione dell'ultima partita terminata",
+            "Apri la partita dal Calendario, poi usa il bottone Formazione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Distinta",
+          "description": "Stampa la distinta ufficiale per l'arbitro con tutti i dati FIGC.",
+          "tips": [
+            "Verifica che le tessere FIGC siano compilate",
+            "Puoi stampare direttamente o salvare come PDF"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Match Center",
+          "description": "Durante la partita: registra gol, sostituzioni, ammonizioni in tempo reale. Per amichevoli puoi configurare N tempi e rientri con ⚙️ prima di iniziare.",
+          "tips": [
+            "Usa le Azioni Rapide per gli eventi più comuni",
+            "Il badge 🔴 LIVE mostra il tempo corrente (es. 1T 23' o +2' in extra time)",
+            "Panchina: ogni giocatore mostra ⬆/⬇ con minuto e minuti totali giocati",
+            "Con rientri consentiti un giocatore può uscire e rientrare più volte",
+            "Sostituzioni libere per amichevoli e sempre per la Scuola Calcio; in Campionato/Coppa/Torneo max 7 per il Settore Giovanile, max 5 per la Prima Squadra",
+            "Tab Piano: prepara tattica, palle inattive e note sui giocatori prima della gara",
+            "Tab Formazione mostra Iniziale/Finale se ci sono state sostituzioni",
+            "Apri la partita dal Calendario, poi usa il bottone Match Center"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Chiudi Partita",
+          "description": "Chiudi la partita confermando il risultato. Le statistiche si aggiornano automaticamente.",
+          "tips": [
+            "Dopo la chiusura puoi ancora modificare gli eventi",
+            "Il risultato appare subito in dashboard"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Valutazioni",
+          "description": "Assegna i voti ai giocatori e aggiungi note sulla prestazione.",
+          "tips": [
+            "I voti alimentano il Performance Center",
+            "Puoi lasciare SV per chi ha giocato poco"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "piano_gara",
+      "titolo": "Prepara il Piano Gara",
+      "descrizione": "Imposta palle inattive, tattica e consegne individuali prima della partita, poi stampa tutto per lo spogliatoio. Pensato soprattutto per il Settore Giovanile e la Prima Squadra.",
+      "icon": "clipboard",
+      "durata": "~15 min",
+      "target": [
+        "Admin",
+        "Allenatore"
+      ],
+      "steps": [
+        {
+          "label": "Apri Match Center",
+          "description": "Dal Calendario apri la partita, poi entra nel Match Center e seleziona il tab Piano.",
+          "tips": [
+            "Il piano gara è legato alla singola partita",
+            "Puoi prepararlo con calma nei giorni prima del match"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Palle inattive offensive",
+          "description": "Imposta angoli, punizioni e ordine dei rigoristi. Per gli angoli scegli battitore, schema (1°/2° palo, corto, lungo) e posiziona gli uomini sulla lavagna.",
+          "tips": [
+            "Usa \"Copia specularmente\" per replicare lo schema sul lato opposto",
+            "Attiva \"Mostra numeri\" per vedere i numeri di maglia al posto dei nomi"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Palle inattive difensive",
+          "description": "Imposta la difesa sugli angoli avversari: marcatura a zona, a uomo o mista, chi marca il battitore e chi presidia i pali.",
+          "tips": [
+            "La difesa a uomo assegna un marcatore per ogni avversario pericoloso"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Tattica",
+          "description": "Definisci linea difensiva (alta/media/bassa), pressing, trappola del fuorigioco e le note offensive, difensive e generali.",
+          "tips": [
+            "Le note generali sono il posto giusto per il messaggio chiave della partita"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Consegne individuali",
+          "description": "Scrivi una nota per i singoli giocatori: compito specifico, avversario da marcare, cosa curare.",
+          "tips": [
+            "Utile per i ruoli chiave o per chi recupera da un infortunio"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Stampa per lo spogliatoio",
+          "description": "Genera il PDF del Piano Gara e portalo in campo: la partita nero su bianco davanti alla squadra.",
+          "tips": [
+            "Riusa \"Eredita da partita precedente\" per ripartire da uno schema che ha funzionato e adattarlo al nuovo avversario"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "partite_settimana",
+      "titolo": "Partite della Settimana",
+      "descrizione": "Genera e stampa la locandina riepilogativa con tutte le partite del weekend, divise per settore e categoria.",
+      "icon": "calendarWeek",
+      "durata": "~5 min",
+      "target": [
+        "Admin",
+        "Segreteria"
+      ],
+      "steps": [
+        {
+          "label": "Apri la Pagina",
+          "description": "Vai in Club → Partite della Settimana. La pagina raccoglie automaticamente tutte le partite in programma, divise per Prima Squadra, Settore Giovanile e Scuola Calcio.",
+          "tips": [
+            "Le partite vengono prese dal calendario di tutte le squadre del workspace",
+            "La settimana predefinita è quella corrente",
+            "Serve avere il calendario già importato per vedere le partite"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Scegli il Periodo",
+          "description": "Seleziona la settimana (o l'intervallo di date) che vuoi visualizzare. La lista si aggiorna mostrando le partite in quel periodo.",
+          "tips": [
+            "Usa le frecce per spostarti alla settimana precedente o successiva",
+            "Il raggruppamento per settore e categoria è automatico"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Genera la Locandina",
+          "description": "Clicca per aprire la versione stampabile: una locandina pulita con tutte le partite organizzate per settore, pronta da appendere o condividere.",
+          "tips": [
+            "La locandina abbrevia i tipi di campionato per le categorie giovanili e la Scuola Calcio",
+            "Per la Scuola Calcio la lettera del gruppo appare solo se ci sono più gruppi nella stessa categoria",
+            "Il FAB e i toast non compaiono nella stampa"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Stampa o Salva PDF",
+          "description": "Dalla locandina usa Stampa del browser per stamparla su carta o salvarla come PDF da inviare su WhatsApp o email.",
+          "tips": [
+            "Scegli \"Salva come PDF\" nella finestra di stampa per il file digitale",
+            "Ideale da pubblicare sui canali social o appendere in sede"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "consultare_classifica",
+      "titolo": "Classifica e Calendario LND",
+      "descrizione": "Come consultare classifica e risultati del campionato.",
+      "icon": "trophy",
+      "durata": "~2 min",
+      "target": [
+        "Allenatore",
+        "Staff",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Accedi alla Classifica",
+          "description": "Vai alla sezione Classifica per vedere la posizione della tua squadra.",
+          "tips": [
+            "Al primo accesso ti chiede di configurare il girone",
+            "I dati sono aggiornati automaticamente dalla LND"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Calendario Partite",
+          "description": "Scorri per vedere il calendario completo con risultati e prossime giornate.",
+          "tips": [
+            "Le partite giocate mostrano il risultato",
+            "Le prossime mostrano data e avversario"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "statistiche_squadra",
+      "titolo": "Statistiche Squadra",
+      "descrizione": "Come leggere e interpretare le statistiche della squadra.",
+      "icon": "chartInfographic",
+      "durata": "~5 min",
+      "target": [
+        "Allenatore",
+        "Staff",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Dati & Statistiche",
+          "description": "La pagina statistiche mostra i dati aggregati della stagione.",
+          "tips": [
+            "Filtra per competizione: tutte, campionato, amichevoli",
+            "I dati si aggiornano dopo ogni partita"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Classifica Marcatori",
+          "description": "Vedi chi ha segnato di più: gol, assist, partecipazioni.",
+          "tips": [
+            "Ordina per gol, assist o totale",
+            "Clicca sul giocatore per il dettaglio"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Disciplina",
+          "description": "Monitora ammonizioni ed espulsioni.",
+          "tips": [
+            "Utile per gestire diffidati e squalificati",
+            "Vedi lo storico cartellini per giocatore"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Presenze e Minutaggio",
+          "description": "Controlla chi ha giocato di più e chi meno.",
+          "tips": [
+            "Utile per bilanciare i minutaggi",
+            "Vedi titolare vs subentrato"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "stampa_report",
+      "titolo": "Stampa e Report",
+      "descrizione": "Genera documenti ufficiali e report dal Print Center.",
+      "icon": "print",
+      "durata": "~5 min",
+      "target": [
+        "Allenatore",
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Print Center",
+          "description": "Hub centralizzato per tutti i documenti. Seleziona una partita e genera in 2 tap.",
+          "tips": [
+            "Le card colorate indicano disponibilità: ✔ pronto, ⏳ non compilato",
+            "Sezione Recenti per accesso rapido agli ultimi documenti"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Distinta",
+          "description": "Genera la distinta ufficiale FIGC da consegnare all'arbitro prima della partita.",
+          "tips": [
+            "Richiede convocazioni e tessere FIGC compilate",
+            "Puoi stampare o salvare come PDF"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Report Partita",
+          "description": "PDF con formazione, eventi, statistiche individuali e valutazioni.",
+          "tips": [
+            "Disponibile solo dopo aver inserito il risultato",
+            "Include marcatori, assist e cartellini"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Report Stagionale",
+          "description": "Riepilogo completo della stagione: risultati, top marcatori, presenze.",
+          "tips": [
+            "Puoi filtrare per tipo competizione",
+            "Utile per la relazione di fine stagione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Registro Presenze",
+          "description": "Stampa il registro presenze allenamenti per il periodo selezionato.",
+          "tips": [
+            "Utile per la documentazione federale",
+            "Mostra percentuale presenze per giocatore"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "test_atletici",
+      "titolo": "Test Atletici",
+      "descrizione": "Registra e monitora i test atletici dei giocatori.",
+      "icon": "runSprint",
+      "durata": "~15 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Scegli Test",
+          "description": "Vai al Performance Center, tab 🏋️ Test Atletici. Scegli il tipo di test da registrare.",
+          "tips": [
+            "Ci sono 25 test predefiniti (velocità, forza, resistenza...)",
+            "Puoi creare tipi di test personalizzati con ⚙️ Tipi Test"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Registra Risultati",
+          "description": "Inserisci i risultati per ogni giocatore. Puoi registrare in batch per tutta la squadra.",
+          "tips": [
+            "Usa \"Registra Test\" per inserire più giocatori in una volta",
+            "Indica sempre la data del test"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Confronta Benchmark",
+          "description": "Confronta i risultati con i benchmark di riferimento per categoria età.",
+          "tips": [
+            "I semafori indicano: ⭐ Top, 🟢 Nella norma, 🔴 Attenzione",
+            "Usa 📏 Benchmark per personalizzare i valori del tuo workspace"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Storico e Trend",
+          "description": "Visualizza l'evoluzione nel tempo e confronta i giocatori per tipo di test.",
+          "tips": [
+            "📈 miglioramento, 📉 peggioramento rispetto al test precedente",
+            "Filtra per ruolo per confronti omogenei"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "valutazione_tecnica",
+      "titolo": "Valutazione Tecnica",
+      "descrizione": "Valuta i giocatori con il radar a 6 assi.",
+      "icon": "chart",
+      "durata": "~10 min",
+      "target": [
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Performance Center",
+          "description": "Vai al Performance Center e seleziona il tab Valutazione.",
+          "tips": [
+            "Il radar mostra 6 dimensioni",
+            "Tecnica, Velocità, Tattica, Fisico, Mentalità, Personalità"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Valuta Giocatori",
+          "description": "Clicca ✏️ per modificare le valutazioni direttamente dalla tabella.",
+          "tips": [
+            "Ogni asse va da 1 a 10",
+            "Puoi valutare più giocatori in sequenza"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Confronta",
+          "description": "Visualizza il Top 3 per ogni dimensione e confronta i radar.",
+          "tips": [
+            "Filtra per ruolo per confronti omogenei",
+            "Il radar medio della squadra è visibile"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Scheda Giocatore",
+          "description": "Dalla scheda giocatore vedi il radar individuale e lo storico.",
+          "tips": [
+            "Il radar appare nella sezione Valutazione",
+            "Puoi vedere l'evoluzione nel tempo"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "scouting",
+      "titolo": "Scouting",
+      "descrizione": "Gestisci i prospetti: dalla segnalazione alla firma.",
+      "icon": "search",
+      "durata": "~15 min",
+      "target": [
+        "Admin",
+        "Osservatore"
+      ],
+      "steps": [
+        {
+          "label": "Nuovo Prospetto",
+          "description": "Inserisci un nuovo prospetto con dati anagrafici, ruolo e società di provenienza.",
+          "tips": [
+            "Indica la priorità (alta, media, bassa)",
+            "Aggiungi i contatti (genitore, agente)"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Aggiungi Osservazioni",
+          "description": "Registra le osservazioni dopo ogni visione: voto, note, punti di forza e aree di miglioramento.",
+          "tips": [
+            "Puoi allegare link video",
+            "Ogni osservazione ha data e voto"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Valutazione Radar",
+          "description": "Compila il radar a 6 assi: tecnica, velocità, tattica, fisico, mentalità, personalità.",
+          "tips": [
+            "La media delle valutazioni appare nel dossier",
+            "Confronta i prospetti per ruolo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Avanza Workflow",
+          "description": "Sposta il prospetto tra gli stati: segnalato → da osservare → osservato → molto interessante → da contattare → in trattativa.",
+          "tips": [
+            "I contatori in dashboard mostrano quanti per stato",
+            "Puoi anche scartare un prospetto"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Converti in Giocatore",
+          "description": "Quando lo stato è \"acquistato\", converti il prospetto in giocatore della rosa.",
+          "tips": [
+            "Scegli la squadra di destinazione",
+            "I dati anagrafici vengono copiati"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "scuola_calcio",
+      "titolo": "Scuola Calcio",
+      "descrizione": "Gestisci i gruppi SC (U6-U13): valutazioni qualitative, passaggi tra gruppi, tornei e link per le famiglie.",
+      "icon": "kid",
+      "durata": "~15 min",
+      "target": [
+        "Admin",
+        "Allenatore"
+      ],
+      "steps": [
+        {
+          "label": "Crea i Gruppi",
+          "description": "Vai in Club → Stagioni & Categorie. Seleziona la categoria SC (es. U10) e clicca \"+ Aggiungi Squadra\" per ogni gruppo che vuoi creare (es. Gruppo A, Gruppo B, Aquile...).",
+          "tips": [
+            "Ogni gruppo è una squadra indipendente con la propria rosa e allenamenti",
+            "Il nome del gruppo appare nel selettore in alto e nelle valutazioni",
+            "Puoi aggiungere nuovi gruppi in qualsiasi momento durante la stagione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Popola i Gruppi",
+          "description": "Aggiungi i giocatori a ciascun gruppo. Puoi importare da Excel selezionando il gruppo di destinazione, oppure usare la vista aggregata per spostare giocatori tra gruppi.",
+          "tips": [
+            "Import Center → Import Rosa: seleziona il gruppo di destinazione nel wizard",
+            "Vista aggregata categoria: trascina o sposta giocatori tra gruppi con un click",
+            "I giocatori possono essere aggregati temporaneamente da altri gruppi per una partita"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Vista Aggregata",
+          "description": "Seleziona una categoria SC (es. U12) per vedere tutti i gruppi insieme. Puoi spostare giocatori tra gruppi con un click.",
+          "tips": [
+            "I badge 🔼/🔽 indicano i giocatori suggeriti per promozione o retrocessione",
+            "Seleziona più giocatori con la modalità selezione per spostamenti batch"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Valutazioni",
+          "description": "Valuta ogni giocatore con stelle (1-3) per area motoria e sociale. Tre periodi: Inizio, Metà e Fine Stagione.",
+          "tips": [
+            "Il sistema suggerisce automaticamente i passaggi di gruppo in base alle valutazioni",
+            "Clicca 🖨️ per generare la scheda sviluppo da condividere con la famiglia"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Tornei",
+          "description": "Crea tornei e manifestazioni multi-partita. Ogni torneo può coinvolgere uno o più gruppi della categoria.",
+          "tips": [
+            "Il wizard guidato crea il torneo in 3 passi",
+            "Puoi registrare i risultati di ogni partita del torneo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Link Famiglie",
+          "description": "Genera i link per le famiglie. In vista aggregata categoria puoi generare i link per tutti i gruppi in un colpo solo.",
+          "tips": [
+            "Le famiglie SC vedono le valutazioni del figlio e la scheda sviluppo",
+            "I link senza scadenza rimangono validi per tutta la stagione"
+          ],
+          "optional": false
+        }
+      ]
+    }
+  ]
+}

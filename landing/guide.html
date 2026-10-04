@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Centro Guide — Youth Football Manager</title>
+<meta name="description" content="Guide passo-passo per gestire la tua società calcistica con Youth Football Manager: stagione, convocazioni, piano gara, quote, tesseramenti e molto altro."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --accent: #764ba2;
+    --success: #27AE60;
+    --text: #333333;
+    --gray: #666666;
+    --light: #f8f9fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text); line-height: 1.6; background: #fff;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Nav (coerente con index.html) */
+  nav {
+    position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px); border-bottom: 1px solid #eee;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 5%;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--primary); }
+  .nav-logo img { height: 48px; }
+  .nav-links { display: flex; align-items: center; gap: 24px; }
+  .nav-links a { font-weight: 500; color: var(--gray); }
+  .nav-links a:hover { color: var(--primary); }
+  .btn {
+    display: inline-block; border-radius: 10px; font-weight: 600; cursor: pointer;
+    transition: all .2s; border: none;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(102,126,234,.35); }
+
+  /* Hero */
+  .guide-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff; padding: 56px 5% 48px; text-align: center;
+  }
+  .guide-hero .badge {
+    display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+    padding: 6px 16px; border-radius: 20px; font-size: .85rem; font-weight: 600; margin-bottom: 18px;
+  }
+  .guide-hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 12px; }
+  .guide-hero p { font-size: 1.1rem; max-width: 640px; margin: 0 auto; opacity: .95; }
+
+  /* Toolbar */
+  .guide-wrap { max-width: 1100px; margin: 0 auto; padding: 36px 5% 64px; }
+  .guide-search {
+    width: 100%; max-width: 460px; margin: 0 auto 28px; display: block;
+    padding: 12px 16px; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; font-family: inherit;
+  }
+  .guide-search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,.15); }
+
+  /* Grid */
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  .guide-card {
+    border: 1px solid #eee; border-radius: 16px; padding: 22px; background: #fff;
+    transition: all .2s; cursor: pointer; display: flex; flex-direction: column;
+  }
+  .guide-card:hover { border-color: var(--primary); box-shadow: 0 10px 28px rgba(102,126,234,.14); transform: translateY(-2px); }
+  .guide-card .gc-icon {
+    width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%); font-size: 1.4rem; margin-bottom: 14px;
+  }
+  .guide-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: #1f2937; }
+  .guide-card p { font-size: .92rem; color: var(--gray); flex: 1; }
+  .gc-meta { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .gc-chip { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: #f1f5f9; color: #475569; }
+  .gc-steps { font-size: .78rem; color: var(--primary); font-weight: 600; margin-left: auto; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 200;
+    display: none; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px; max-width: 760px; width: 100%; padding: 0; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.3);
+  }
+  .modal-head {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff;
+    padding: 26px 28px; display: flex; align-items: flex-start; gap: 16px; position: relative;
+  }
+  .modal-head .mh-icon { font-size: 2rem; line-height: 1; }
+  .modal-head h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+  .modal-head p { opacity: .95; font-size: .95rem; }
+  .modal-head .mh-meta { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .modal-head .mh-meta span { background: rgba(255,255,255,.18); padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+  .modal-close {
+    position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,.2); border: none; color: #fff;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { background: rgba(255,255,255,.35); }
+  .modal-body { padding: 24px 28px 28px; max-height: 60vh; overflow-y: auto; }
+
+  .step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f1f5f9; }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem;
+  }
+  .step-body h4 { font-size: 1rem; font-weight: 700; color: #1f2937; margin-bottom: 2px; }
+  .step-body h4 .opt { font-size: .68rem; font-weight: 600; color: #94a3b8; margin-left: 8px; }
+  .step-body > p { font-size: .9rem; color: var(--gray); margin-bottom: 8px; }
+  .step-tips { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; }
+  .step-tips li { font-size: .83rem; color: #166534; margin-left: 16px; margin-bottom: 3px; }
+  .step-tips li:last-child { margin-bottom: 0; }
+
+  /* CTA */
+  .guide-cta {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff;
+    text-align: center; padding: 56px 5%;
+  }
+  .guide-cta h2 { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+  .guide-cta p { opacity: .95; margin-bottom: 24px; font-size: 1.05rem; }
+  .btn-white { background: #fff; color: var(--primary); padding: 14px 30px; font-size: 1rem; }
+  .btn-white:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.2); }
+
+  /* Footer */
+  footer { background: #1f2937; color: #cbd5e1; padding: 40px 5% 24px; }
+  .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 28px; }
+  .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: 700; color: #fff; }
+  .footer-brand img { height: 44px; }
+  .footer-col h4 { color: #fff; font-size: .95rem; margin-bottom: 12px; }
+  .footer-col li { list-style: none; margin-bottom: 8px; font-size: .9rem; }
+  .footer-col a:hover { color: #fff; }
+  .footer-bottom { max-width: 1100px; margin: 28px auto 0; padding-top: 20px; border-top: 1px solid #374151; font-size: .82rem; text-align: center; }
+
+  .loading, .empty { text-align: center; color: var(--gray); padding: 40px; }
+
+  @media (max-width: 768px) {
+    .nav-links { gap: 14px; }
+    .nav-links a:not(.btn) { display: none; }
+    .guide-hero h1 { font-size: 1.8rem; }
+    .footer-content { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img alt="YFM Logo" src="logo.png"/>
+    Youth Football Manager
+  </a>
+  <div class="nav-links">
+    <a href="/#funzionalita">Funzionalità</a>
+    <a href="/#prezzi">Prezzi</a>
+    <a href="https://app.youth-football-manager.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:8px 20px; font-size:.9rem;">Accedi</a>
+  </div>
+</nav>
+
+<section class="guide-hero">
+  <div class="badge">📚 Centro Guide</div>
+  <h1>Impara a gestire la tua società passo-passo</h1>
+  <p>Le stesse guide che trovi dentro l'app, raccolte qui per te. Dalla configurazione della stagione alla preparazione della partita: tutto spiegato in pochi minuti.</p>
+</section>
+
+<div class="guide-wrap">
+  <input type="search" class="guide-search" id="search" placeholder="Cerca una guida… (es. convocazioni, piano gara, quote)" aria-label="Cerca guida"/>
+  <div class="guide-grid" id="grid"><p class="loading">Caricamento guide…</p></div>
+</div>
+
+<section class="guide-cta">
+  <h2>Pronto a provarla sul campo?</h2>
+  <p>🎁 30 giorni gratis, nessuna carta di credito richiesta.</p>
+  <a class="btn btn-white" href="https://youth-football-manager-demo.vercel.app" target="_blank" rel="noopener noreferrer">Esplora la Demo pubblica</a>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <div class="footer-brand"><img alt="YFM Logo" src="logo.png"/><span>YFM</span></div>
+      <p>La piattaforma completa per la gestione delle società sportive dilettanti.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Prodotto</h4>
+      <ul>
+        <li><a href="/#funzionalita">Funzionalità</a></li>
+        <li><a href="/#prezzi">Prezzi</a></li>
+        <li><a href="https://youth-football-manager-demo.vercel.app" target="_blank" rel="noopener">Demo</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legale</h4>
+      <ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Termini di Servizio</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Youth Football Manager. Tutti i diritti riservati.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="mh-icon" id="m-icon">📘</span>
+      <div style="flex:1;">
+        <h2 id="m-title"></h2>
+        <p id="m-desc"></p>
+        <div class="mh-meta" id="m-meta"></div>
+      </div>
+      <button class="modal-close" id="m-close" aria-label="Chiudi">×</button>
+    </div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<script>
+// Icone: mappa i nomi "logici" dei flussi (set Tabler nell'app) a emoji
+// equivalenti per la pagina pubblica statica. Fallback: 📘.
+const ICONS = {
+  settings: '⚙️', staff: '👥', calendar: '📅', clipboard: '📋', wallet: '💰',
+  kit: '👕', link: '🔗', fitness: '🏃', book: '📚', inbox: '📥', print: '🖨️',
+  chart: '📊', club: '🏛️', users: '👤', ball: '⚽', send: '🚀', trophy: '🏆',
+  scouting: '🔍', star: '⭐', tactics: '📐', shield: '🛡️',
+}
+const icon = name => ICONS[name] || '📘'
+
+let FLOWS = []
+
+function card(f) {
+  const el = document.createElement('div')
+  el.className = 'guide-card'
+  el.innerHTML = `
+    <div class="gc-icon">${icon(f.icon)}</div>
+    <h3>${esc(f.titolo)}</h3>
+    <p>${esc(f.descrizione)}</p>
+    <div class="gc-meta">
+      ${(f.target||[]).map(t => `<span class="gc-chip">${esc(t)}</span>`).join('')}
+      <span class="gc-chip">⏱ ${esc(f.durata||'')}</span>
+      <span class="gc-steps">${f.steps.length} passi →</span>
+    </div>`
+  el.addEventListener('click', () => openModal(f))
+  return el
+}
+
+function openModal(f) {
+  document.getElementById('m-icon').textContent = icon(f.icon)
+  document.getElementById('m-title').textContent = f.titolo
+  document.getElementById('m-desc').textContent = f.descrizione
+  document.getElementById('m-meta').innerHTML =
+    (f.target||[]).map(t => `<span>${esc(t)}</span>`).join('') +
+    `<span>⏱ ${esc(f.durata||'')}</span>`
+  document.getElementById('m-body').innerHTML = f.steps.map((s, i) => `
+    <div class="step">
+      <div class="step-num">${i+1}</div>
+      <div class="step-body">
+        <h4>${esc(s.label)}${s.optional ? '<span class="opt">OPZIONALE</span>' : ''}</h4>
+        <p>${esc(s.description)}</p>
+        ${s.tips && s.tips.length ? `<ul class="step-tips">${s.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+      </div>
+    </div>`).join('')
+  document.getElementById('modal').classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open')
+  document.body.style.overflow = ''
+}
+
+function render(list) {
+  const grid = document.getElementById('grid')
+  grid.innerHTML = ''
+  if (!list.length) { grid.innerHTML = '<p class="empty">Nessuna guida trovata.</p>'; return }
+  list.forEach(f => grid.appendChild(card(f)))
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+document.getElementById('m-close').addEventListener('click', closeModal)
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() })
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
+
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase()
+  if (!q) return render(FLOWS)
+  render(FLOWS.filter(f => {
+    const hay = (f.titolo + ' ' + f.descrizione + ' ' + f.steps.map(s => s.label + ' ' + s.description).join(' ')).toLowerCase()
+    return hay.includes(q)
+  }))
+})
+
+fetch('guide.json', { cache: 'no-cache' })
+  .then(r => r.json())
+  .then(data => { FLOWS = data.flows || []; render(FLOWS) })
+  .catch(() => { document.getElementById('grid').innerHTML = '<p class="empty">Impossibile caricare le guide. Riprova più tardi.</p>' })
+</script>
+
+</body>
+</html>
