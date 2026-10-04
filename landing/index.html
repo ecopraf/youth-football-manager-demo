@@ -1158,15 +1158,15 @@
         
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            max-width: 1200px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            max-width: 1320px;
             margin: 0 auto;
         }
         
         .pricing-card {
             background: var(--light);
-            padding: 40px;
+            padding: 28px 24px;
             border-radius: 24px;
             text-align: center;
             position: relative;
@@ -1344,6 +1344,12 @@
         }
         
         /* Responsive */
+        @media (max-width: 1280px) {
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 820px;
+            }
+        }
         @media (max-width: 1024px) {
             .features-grid,
             .pricing-grid {
@@ -2326,6 +2332,17 @@
 <div class="pricing-period">oppure €9,90/mese</div>
 <ul class="pricing-features"><li>1 Squadra</li><li>Import Center</li><li>Convocazioni</li><li>Calendario</li><li>Allenamenti</li><li>Statistiche</li><li>Alert automatici</li><li>Backup Cloud</li><li>Aggiornamenti inclusi</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Coach</a>
+</div>
+<div class="pricing-card" style="border:2px solid #667eea;">
+<div class="pricing-badge" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">NUOVO</div>
+<div class="pricing-name">Coach+</div>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per allenatori di una singola squadra, con tutte le funzioni</p>
+<div class="pricing-price">€159 <span>/anno</span></div>
+<div style="display:inline-block;background:#f0f4ff;color:#667eea;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€60/anno rispetto a Coach</div>
+<div class="pricing-period">oppure €15,90/mese</div>
+<p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">1 squadra, ma tutte le funzioni sbloccate</p>
+<ul class="pricing-features"><li>1 Squadra (anche Prima Squadra)</li><li>Tutto di Coach</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Kit sportivo</li><li>Scouting CRM</li><li>Report avanzati</li><li>Inbox comunicazioni</li><li>Fino a 10 utenti</li><li>Backup Cloud</li></ul>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni" style="border-color:#667eea;color:#667eea;">Scegli Coach+</a>
 </div>
 <div class="pricing-card featured">
 <div class="pricing-badge">Più Popolare</div>
