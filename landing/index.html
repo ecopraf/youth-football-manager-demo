@@ -1158,19 +1158,65 @@
         
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 18px;
-            max-width: 1320px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            max-width: 1040px;
             margin: 0 auto;
+            row-gap: 40px;
         }
         
+        /* Configuratore piano */
+        .plan-wizard {
+            max-width: 680px; margin: 0 auto 44px; background: #f8f9ff;
+            border: 1px solid #e0e7ff; border-radius: 20px; padding: 24px 28px;
+        }
+        .pw-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .pw-icon { font-size: 32px; }
+        .pw-title { font-size: 1.15rem; font-weight: 700; color: #1a1a2e; }
+        .pw-sub { font-size: 0.9rem; color: #666; }
+        .pw-q { font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 14px; }
+        .pw-opts { display: flex; flex-direction: column; gap: 10px; }
+        .pw-opt {
+            text-align: left; padding: 14px 18px; border: 2px solid #e0e7ff; background: white;
+            border-radius: 12px; font-size: 0.95rem; color: #333; cursor: pointer; transition: all .15s; font-family: inherit;
+        }
+        .pw-opt:hover { border-color: var(--primary); background: #f0f4ff; transform: translateY(-1px); }
+        .pw-opts-multi { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .pw-check { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 2px solid #e0e7ff; background: white; border-radius: 12px; font-size: 0.95rem; cursor: pointer; }
+        .pw-check input { width: 18px; height: 18px; accent-color: var(--primary); }
+        .pw-cta {
+            width: 100%; padding: 14px; border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%); color: white; font-weight: 700; font-size: 0.95rem;
+        }
+        .pw-cta:hover { opacity: .92; }
+        .pw-back { margin-top: 14px; background: none; border: none; color: #888; font-size: 0.85rem; cursor: pointer; font-family: inherit; }
+        .pw-back:hover { color: var(--primary); }
+        .pw-result { text-align: center; }
+        .pw-result-label { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .pw-result-plan { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .pw-result-price { font-size: 1.1rem; font-weight: 700; color: #333; margin-top: 4px; }
+        .pw-result-desc { font-size: 0.95rem; color: #555; margin: 10px auto 18px; max-width: 440px; }
+        .pw-result-cta {
+            display: inline-block; padding: 12px 28px; border-radius: 12px; text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%); color: white; font-weight: 700; font-size: 0.95rem;
+        }
+        .pw-result-cta:hover { opacity: .92; }
+        .pw-result .pw-back { display: block; margin: 16px auto 0; }
+
         .pricing-card {
             background: var(--light);
             padding: 28px 24px;
             border-radius: 24px;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e5e7eb;
         }
+        /* La lista feature si espande per spingere il bottone in fondo: così i
+           pulsanti restano allineati per riga anche con card di altezza diversa. */
+        .pricing-card .pricing-features { flex: 1 0 auto; }
+        .pricing-card > a.btn { margin-top: auto; align-self: center; justify-content: center; }
         
         .pricing-card.featured {
             background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
@@ -2324,6 +2370,59 @@
 <h2>Scegli il piano giusto per te</h2>
 <p>Dalla singola squadra alla società completa con Scuola Calcio e Settore Giovanile.</p>
 </div>
+
+<!-- Configuratore piano: 2-3 domande → piano consigliato (JS vanilla, nessuna dipendenza) -->
+<div class="plan-wizard" id="planWizard">
+  <div class="pw-head">
+    <span class="pw-icon">🧭</span>
+    <div>
+      <div class="pw-title">Non sai quale piano fa per te?</div>
+      <div class="pw-sub">Rispondi a due domande, ti suggeriamo il piano su misura.</div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="pw-step" data-step="1">
+    <div class="pw-q">Quante squadre gestisci?</div>
+    <div class="pw-opts">
+      <button class="pw-opt" data-sq="una">Una sola squadra</button>
+      <button class="pw-opt" data-sq="piu">Più squadre / una società</button>
+    </div>
+  </div>
+
+  <!-- Step 2a: una squadra -->
+  <div class="pw-step" data-step="2a" hidden>
+    <div class="pw-q">Ti bastano le funzioni essenziali o le vuoi tutte?</div>
+    <div class="pw-opts">
+      <button class="pw-opt" data-one="coach">Essenziali (rosa, partite, allenamenti)</button>
+      <button class="pw-opt" data-one="coachplus">Tutte (quote, kit, tesseramento, scouting…)</button>
+    </div>
+    <button class="pw-back" data-back="1">← Indietro</button>
+  </div>
+
+  <!-- Step 2b: più squadre → quali settori -->
+  <div class="pw-step" data-step="2b" hidden>
+    <div class="pw-q">Quali settori gestisci? (seleziona quelli che hai)</div>
+    <div class="pw-opts pw-opts-multi">
+      <label class="pw-check"><input type="checkbox" value="sg"> Settore Giovanile</label>
+      <label class="pw-check"><input type="checkbox" value="sc"> Scuola Calcio</label>
+      <label class="pw-check"><input type="checkbox" value="ps"> Prima Squadra</label>
+    </div>
+    <button class="pw-cta" id="pwCalc">Vedi il piano consigliato →</button>
+    <button class="pw-back" data-back="1">← Indietro</button>
+  </div>
+
+  <!-- Risultato -->
+  <div class="pw-step pw-result" data-step="result" hidden>
+    <div class="pw-result-label">Il piano su misura per te</div>
+    <div class="pw-result-plan" id="pwPlanName">—</div>
+    <div class="pw-result-price" id="pwPlanPrice"></div>
+    <div class="pw-result-desc" id="pwPlanDesc"></div>
+    <a class="pw-result-cta" id="pwPlanCta" href="#prezzi">Vedi il piano qui sotto ↓</a>
+    <button class="pw-back" id="pwRestart">↺ Ricomincia</button>
+  </div>
+</div>
+
 <div class="pricing-grid">
 <div class="pricing-card">
 <div class="pricing-name">Coach</div>
@@ -2338,39 +2437,46 @@
 <div class="pricing-name">Coach+</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per allenatori e società con una sola squadra, anche solo la Prima Squadra — con tutte le funzioni</p>
 <div class="pricing-price">€159 <span>/anno</span></div>
-<div style="display:inline-block;background:#f0f4ff;color:#667eea;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€60/anno rispetto a Coach</div>
 <div class="pricing-period">oppure €15,90/mese</div>
 <p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Una squadra, tutte le funzioni di una società</p>
 <ul class="pricing-features"><li>1 Squadra (ideale per la Prima Squadra)</li><li>Tutto di Coach</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Kit sportivo</li><li>Scouting CRM</li><li>Report avanzati</li><li>Inbox comunicazioni</li><li>Fino a 10 utenti</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni" style="border-color:#667eea;color:#667eea;">Scegli Coach+</a>
 </div>
-<div class="pricing-card featured">
-<div class="pricing-badge">Più Popolare</div>
+<div class="pricing-card">
 <div class="pricing-name">Club</div>
-<p style="font-size:0.82rem;color:rgba(255,255,255,0.8);margin:4px 0 0;font-style:italic;">Per chi gestisce un intero settore giovanile o una scuola calcio</p>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per chi gestisce un intero settore giovanile o una scuola calcio</p>
 <div class="pricing-price">€249 <span>/anno</span></div>
-<div class="pricing-period" style="color:#fff;">oppure €24,90/mese</div>
-<p style="color:rgba(255,255,255,0.9);font-size:0.85rem;margin:0 0 12px;font-style:italic;">Scegli se dedicarlo al Settore Giovanile oppure alla Scuola Calcio</p>
+<div class="pricing-period">oppure €24,90/mese</div>
+<p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Scegli se dedicarlo al Settore Giovanile oppure alla Scuola Calcio</p>
 <ul class="pricing-features"><li>Squadre illimitate</li><li>Allenatori illimitati</li><li>Dirigenti illimitati</li><li>Import Center avanzato</li><li>Gestione categorie</li><li>Permessi utenti</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Scouting CRM</li><li>Report avanzati</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-white" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Club</a>
 </div>
 <div class="pricing-card" style="border:2px solid #667eea;">
-<div class="pricing-badge" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);white-space:nowrap;">Scuola Calcio + Settore Giovanile</div>
+<div class="pricing-badge" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);white-space:nowrap;">1 Settore + Prima Squadra</div>
+<div class="pricing-name">Club+</div>
+<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per chi gestisce un settore (Giovanile o Scuola Calcio) insieme alla Prima Squadra</p>
+<div class="pricing-price">€299 <span>/anno</span></div>
+<div class="pricing-period">oppure €29,90/mese</div>
+<p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Un settore giovanile + la Prima Squadra</p>
+<ul class="pricing-features"><li>Tutto di Club</li><li>Prima Squadra inclusa</li><li>Squadre e staff illimitati</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Report e statistiche avanzate</li><li>Scouting CRM</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni%20Club%2B" style="border-color:#667eea;color:#667eea;">Scegli Club+</a>
+</div>
+<div class="pricing-card featured">
+<div class="pricing-badge">Più Popolare</div>
 <div class="pricing-name">Accademia</div>
-<p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per società con Settore Giovanile e Scuola Calcio</p>
+<p style="font-size:0.82rem;color:rgba(255,255,255,0.8);margin:4px 0 0;font-style:italic;">Per società con Settore Giovanile e Scuola Calcio</p>
 <div class="pricing-price">€349 <span>/anno</span></div>
-<div style="display:inline-block;background:#f0f4ff;color:#667eea;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€100/anno rispetto a Club</div>
-<div class="pricing-period">oppure €34,90/mese</div>
-<p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Settore Giovanile + Scuola Calcio insieme</p>
+<div class="pricing-period" style="color:#fff;">oppure €34,90/mese</div>
+<p style="color:rgba(255,255,255,0.9);font-size:0.85rem;margin:0 0 12px;font-style:italic;">Settore Giovanile + Scuola Calcio insieme</p>
 <ul class="pricing-features"><li>Tutto di Club</li><li>Settore Giovanile illimitato</li><li>Scuola Calcio illimitata</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Checklist per ogni categoria</li><li>Quote per tutti i livelli</li><li>Scouting CRM</li><li>Supporto dedicato</li><li>Backup Cloud</li></ul>
-<a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Accademia</a>
+<a target="_blank" rel="noopener noreferrer" class="btn btn-white" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Accademia</a>
 </div>
 <div class="pricing-card" style="border:2px solid #27AE60;">
 <div class="pricing-badge" style="background:linear-gradient(135deg,#27AE60 0%,#1e8449 100%);white-space:nowrap;">Società Completa</div>
 <div class="pricing-name">Pro</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per società complete con Prima Squadra</p>
 <div class="pricing-price">€399 <span>/anno</span></div>
-<div style="display:inline-block;background:#f0fff4;color:#27AE60;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">+€50/anno rispetto ad Accademia</div>
+<div style="display:inline-block;background:#f0fff4;color:#27AE60;font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;margin:6px 0 0;">solo +€50/anno rispetto ad Accademia</div>
 <div class="pricing-period">oppure €39,90/mese</div>
 <p style="color:#555;font-size:0.85rem;margin:0 0 12px;font-style:italic;">Tutto + Prima Squadra</p>
 <ul class="pricing-features"><li>Tutto di Accademia</li><li>Prima Squadra inclusa</li><li>Gestione completa società</li><li>Scouting CRM avanzato</li><li>Report professionali</li><li>Supporto premium</li><li>Backup Cloud</li></ul>
@@ -2380,8 +2486,9 @@
 
 <div style="max-width:700px;margin:32px auto 0;background:#f8f9ff;border-radius:12px;padding:20px 24px;text-align:center;border:1px solid #e0e7ff;">
   <p style="margin:0;font-size:0.95rem;color:#444;line-height:1.6;">
-    💡 <strong>Una sola squadra — o una società con solo la Prima Squadra?</strong> Scegli <strong>Coach</strong> (essenziale) o <strong>Coach+</strong> (tutte le funzioni).<br>
-    <strong>Gestisci un'intera società con più squadre?</strong> Con <strong>Club</strong> hai squadre e staff illimitati a una cifra fissa — €249/anno, qualunque sia il numero di squadre.
+    💡 <strong>Una sola squadra?</strong> Scegli <strong style="color:var(--primary);">Coach</strong> (essenziale) o <strong style="color:var(--primary);">Coach+</strong> (tutte le funzioni).<br>
+    <strong>Un intero settore</strong> (Settore Giovanile <em>o</em> Scuola Calcio), squadre illimitate? <strong style="color:var(--primary);">Club</strong>. Con anche la <strong>Prima Squadra</strong>? <strong style="color:var(--primary);">Club+</strong>.<br>
+    <strong>Settore Giovanile <em>e</em> Scuola Calcio insieme?</strong> <strong style="color:var(--primary);">Accademia</strong>. <strong>L'intera società, Prima Squadra inclusa?</strong> <strong style="color:var(--primary);">Pro</strong>.
   </p>
 </div>
 </section>
@@ -2869,6 +2976,71 @@
             });
 
             renderParentDots();
+        })();
+
+        // ── Configuratore piano ──────────────────────────────────────────────
+        (function () {
+            var wiz = document.getElementById('planWizard');
+            if (!wiz) return;
+            var steps = {
+                '1':  wiz.querySelector('[data-step="1"]'),
+                '2a': wiz.querySelector('[data-step="2a"]'),
+                '2b': wiz.querySelector('[data-step="2b"]'),
+                'result': wiz.querySelector('[data-step="result"]')
+            };
+            function show(key) {
+                Object.keys(steps).forEach(function (k) { steps[k].hidden = (k !== key); });
+            }
+            // Dati piani per il risultato
+            var PLANS = {
+                coach:     { nome: 'Coach',     prezzo: '€99/anno',  desc: 'Una squadra, le funzioni essenziali per allenare e organizzare.', anchor: '#prezzi' },
+                coachplus: { nome: 'Coach+',    prezzo: '€159/anno', desc: 'Una squadra con tutte le funzioni: quote, kit, tesseramento, scouting.', anchor: '#prezzi' },
+                club:      { nome: 'Club',      prezzo: '€249/anno', desc: 'Un intero settore (Giovanile o Scuola Calcio), squadre e staff illimitati.', anchor: '#prezzi' },
+                clubplus:  { nome: 'Club+',     prezzo: '€299/anno', desc: 'Un settore giovanile insieme alla Prima Squadra, squadre illimitate.', anchor: '#prezzi' },
+                accademia: { nome: 'Accademia', prezzo: '€349/anno', desc: 'Settore Giovanile e Scuola Calcio insieme, con dashboard unificata.', anchor: '#prezzi' },
+                pro:       { nome: 'Pro',       prezzo: '€399/anno', desc: 'La società completa: Giovanile, Scuola Calcio e Prima Squadra.', anchor: '#prezzi' }
+            };
+            function result(key) {
+                var p = PLANS[key];
+                wiz.querySelector('#pwPlanName').textContent = p.nome;
+                wiz.querySelector('#pwPlanPrice').textContent = p.prezzo;
+                wiz.querySelector('#pwPlanDesc').textContent = p.desc;
+                wiz.querySelector('#pwPlanCta').setAttribute('href', p.anchor);
+                show('result');
+            }
+            // Step 1
+            steps['1'].querySelectorAll('.pw-opt').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    show(b.getAttribute('data-sq') === 'una' ? '2a' : '2b');
+                });
+            });
+            // Step 2a — una squadra
+            steps['2a'].querySelectorAll('.pw-opt').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    result(b.getAttribute('data-one') === 'coach' ? 'coach' : 'coachplus');
+                });
+            });
+            // Step 2b — settori
+            wiz.querySelector('#pwCalc').addEventListener('click', function () {
+                var checked = [].slice.call(steps['2b'].querySelectorAll('input:checked')).map(function (i) { return i.value; });
+                if (!checked.length) { alert('Seleziona almeno un settore'); return; }
+                var sg = checked.indexOf('sg') > -1, sc = checked.indexOf('sc') > -1, ps = checked.indexOf('ps') > -1;
+                var key;
+                if (sg && sc && ps) key = 'pro';
+                else if (sg && sc) key = 'accademia';
+                else if (ps && (sg || sc)) key = 'clubplus';
+                else if (ps && !sg && !sc) key = 'coachplus'; // solo prima squadra → una squadra, tutte le funzioni
+                else key = 'club'; // un solo settore giovanile/SC
+                result(key);
+            });
+            // Indietro / ricomincia
+            wiz.querySelectorAll('.pw-back[data-back]').forEach(function (b) {
+                b.addEventListener('click', function () { show(b.getAttribute('data-back')); });
+            });
+            wiz.querySelector('#pwRestart').addEventListener('click', function () {
+                steps['2b'].querySelectorAll('input:checked').forEach(function (i) { i.checked = false; });
+                show('1');
+            });
         })();
     </script>
     <!-- Vercel Web Analytics (privacy-first, no cookie) — script da CDN per sito statico -->
