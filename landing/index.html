@@ -1199,8 +1199,18 @@
         .pw-result-cta {
             display: inline-block; padding: 12px 28px; border-radius: 12px; text-decoration: none;
             background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%); color: white; font-weight: 700; font-size: 0.95rem;
+            animation: ctaGlow 2.2s ease-in-out infinite;
         }
-        .pw-result-cta:hover { opacity: .92; }
+        .pw-result-cta:hover { opacity: .92; animation: none; }
+        /* Glow pulsante leggero: invita al clic senza essere aggressivo */
+        @keyframes ctaGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(102,126,234,0.0); }
+            50%      { box-shadow: 0 0 0 6px rgba(102,126,234,0.18); }
+        }
+        /* Rispetta chi preferisce ridurre le animazioni (accessibilità) */
+        @media (prefers-reduced-motion: reduce) {
+            .pw-result-cta { animation: none; }
+        }
         .pw-result .pw-back { display: block; margin: 16px auto 0; }
 
         .pricing-card {
@@ -1217,6 +1227,33 @@
            pulsanti restano allineati per riga anche con card di altezza diversa. */
         .pricing-card .pricing-features { flex: 1 0 auto; }
         .pricing-card > a.btn { margin-top: auto; align-self: center; justify-content: center; }
+        /* Card consigliata dal configuratore: bordo viola bold + glow + badge */
+        .pricing-card.recommended {
+            border: 3px solid var(--primary) !important;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.18), 0 12px 32px rgba(102,126,234,0.28);
+            animation: recommendPulse 1.2s ease-out 1;
+        }
+        .pricing-card.recommended::after {
+            content: '👉 Consigliato per te';
+            position: absolute; bottom: -13px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%); color: #fff;
+            font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 20px; white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+        @keyframes recommendPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(102,126,234,0.5), 0 12px 32px rgba(102,126,234,0.28); }
+            100% { box-shadow: 0 0 0 4px rgba(102,126,234,0.18), 0 12px 32px rgba(102,126,234,0.28); }
+        }
+        /* Effetto spotlight: quando una card è consigliata, le altre si attenuano
+           (meno opacità, bordo neutro, niente scale) così la scelta risalta. */
+        .pricing-card { transition: opacity .3s ease, transform .3s ease, box-shadow .3s ease; }
+        .pricing-grid:has(.recommended) .pricing-card:not(.recommended) {
+            opacity: 0.5;
+            border-color: #e5e7eb !important;
+        }
+        .pricing-grid:has(.recommended) .pricing-card.featured:not(.recommended) {
+            transform: none;
+        }
         
         .pricing-card.featured {
             background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
@@ -2418,13 +2455,13 @@
     <div class="pw-result-plan" id="pwPlanName">—</div>
     <div class="pw-result-price" id="pwPlanPrice"></div>
     <div class="pw-result-desc" id="pwPlanDesc"></div>
-    <a class="pw-result-cta" id="pwPlanCta" href="#prezzi">Vedi il piano qui sotto ↓</a>
+    <a class="pw-result-cta" id="pwPlanCta" href="#prezzi" role="button">Vedi il piano qui sotto ↓</a>
     <button class="pw-back" id="pwRestart">↺ Ricomincia</button>
   </div>
 </div>
 
 <div class="pricing-grid">
-<div class="pricing-card">
+<div class="pricing-card" id="card-coach">
 <div class="pricing-name">Coach</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per allenatori che gestiscono una singola squadra</p>
 <div class="pricing-price">€99 <span>/anno</span></div>
@@ -2432,7 +2469,7 @@
 <ul class="pricing-features"><li>1 Squadra</li><li>Import Center</li><li>Convocazioni</li><li>Calendario</li><li>Allenamenti</li><li>Statistiche</li><li>Alert automatici</li><li>Backup Cloud</li><li>Aggiornamenti inclusi</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Coach</a>
 </div>
-<div class="pricing-card" style="border:2px solid #667eea;">
+<div class="pricing-card" id="card-coachplus" style="border:2px solid #667eea;">
 <div class="pricing-badge" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">NUOVO</div>
 <div class="pricing-name">Coach+</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per allenatori e società con una sola squadra, anche solo la Prima Squadra — con tutte le funzioni</p>
@@ -2442,7 +2479,7 @@
 <ul class="pricing-features"><li>1 Squadra (ideale per la Prima Squadra)</li><li>Tutto di Coach</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Kit sportivo</li><li>Scouting CRM</li><li>Report avanzati</li><li>Inbox comunicazioni</li><li>Fino a 10 utenti</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni" style="border-color:#667eea;color:#667eea;">Scegli Coach+</a>
 </div>
-<div class="pricing-card">
+<div class="pricing-card" id="card-club">
 <div class="pricing-name">Club</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per chi gestisce un intero settore giovanile o una scuola calcio</p>
 <div class="pricing-price">€249 <span>/anno</span></div>
@@ -2451,7 +2488,7 @@
 <ul class="pricing-features"><li>Squadre illimitate</li><li>Allenatori illimitati</li><li>Dirigenti illimitati</li><li>Import Center avanzato</li><li>Gestione categorie</li><li>Permessi utenti</li><li>Tesseramento completo</li><li>Quote economiche</li><li>Scouting CRM</li><li>Report avanzati</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-white" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Club</a>
 </div>
-<div class="pricing-card" style="border:2px solid #667eea;">
+<div class="pricing-card" id="card-clubplus" style="border:2px solid #667eea;">
 <div class="pricing-badge" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);white-space:nowrap;">1 Settore + Prima Squadra</div>
 <div class="pricing-name">Club+</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per chi gestisce un settore (Giovanile o Scuola Calcio) insieme alla Prima Squadra</p>
@@ -2461,7 +2498,7 @@
 <ul class="pricing-features"><li>Tutto di Club</li><li>Prima Squadra inclusa</li><li>Squadre e staff illimitati</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Report e statistiche avanzate</li><li>Scouting CRM</li><li>Supporto prioritario</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-secondary" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni%20Club%2B" style="border-color:#667eea;color:#667eea;">Scegli Club+</a>
 </div>
-<div class="pricing-card featured">
+<div class="pricing-card featured" id="card-accademia">
 <div class="pricing-badge">Più Popolare</div>
 <div class="pricing-name">Accademia</div>
 <p style="font-size:0.82rem;color:rgba(255,255,255,0.8);margin:4px 0 0;font-style:italic;">Per società con Settore Giovanile e Scuola Calcio</p>
@@ -2471,7 +2508,7 @@
 <ul class="pricing-features"><li>Tutto di Club</li><li>Settore Giovanile illimitato</li><li>Scuola Calcio illimitata</li><li>Gestione multi-settore</li><li>Dashboard unificata</li><li>Checklist per ogni categoria</li><li>Quote per tutti i livelli</li><li>Scouting CRM</li><li>Supporto dedicato</li><li>Backup Cloud</li></ul>
 <a target="_blank" rel="noopener noreferrer" class="btn btn-white" href="mailto:info@youthfootballmanager.it?subject=Richiesta%20informazioni">Scegli Accademia</a>
 </div>
-<div class="pricing-card" style="border:2px solid #27AE60;">
+<div class="pricing-card" id="card-pro" style="border:2px solid #27AE60;">
 <div class="pricing-badge" style="background:linear-gradient(135deg,#27AE60 0%,#1e8449 100%);white-space:nowrap;">Società Completa</div>
 <div class="pricing-name">Pro</div>
 <p style="font-size:0.82rem;color:#888;margin:4px 0 0;font-style:italic;">Per società complete con Prima Squadra</p>
@@ -2991,21 +3028,32 @@
             function show(key) {
                 Object.keys(steps).forEach(function (k) { steps[k].hidden = (k !== key); });
             }
-            // Dati piani per il risultato
+            // Dati piani per il risultato (cardId = id della card nella griglia sotto)
             var PLANS = {
-                coach:     { nome: 'Coach',     prezzo: '€99/anno',  desc: 'Una squadra, le funzioni essenziali per allenare e organizzare.', anchor: '#prezzi' },
-                coachplus: { nome: 'Coach+',    prezzo: '€159/anno', desc: 'Una squadra con tutte le funzioni: quote, kit, tesseramento, scouting.', anchor: '#prezzi' },
-                club:      { nome: 'Club',      prezzo: '€249/anno', desc: 'Un intero settore (Giovanile o Scuola Calcio), squadre e staff illimitati.', anchor: '#prezzi' },
-                clubplus:  { nome: 'Club+',     prezzo: '€299/anno', desc: 'Un settore giovanile insieme alla Prima Squadra, squadre illimitate.', anchor: '#prezzi' },
-                accademia: { nome: 'Accademia', prezzo: '€349/anno', desc: 'Settore Giovanile e Scuola Calcio insieme, con dashboard unificata.', anchor: '#prezzi' },
-                pro:       { nome: 'Pro',       prezzo: '€399/anno', desc: 'La società completa: Giovanile, Scuola Calcio e Prima Squadra.', anchor: '#prezzi' }
+                coach:     { nome: 'Coach',     prezzo: '€99/anno',  desc: 'Una squadra, le funzioni essenziali per allenare e organizzare.', cardId: 'card-coach' },
+                coachplus: { nome: 'Coach+',    prezzo: '€159/anno', desc: 'Una squadra con tutte le funzioni: quote, kit, tesseramento, scouting.', cardId: 'card-coachplus' },
+                club:      { nome: 'Club',      prezzo: '€249/anno', desc: 'Un intero settore (Giovanile o Scuola Calcio), squadre e staff illimitati.', cardId: 'card-club' },
+                clubplus:  { nome: 'Club+',     prezzo: '€299/anno', desc: 'Un settore giovanile insieme alla Prima Squadra, squadre illimitate.', cardId: 'card-clubplus' },
+                accademia: { nome: 'Accademia', prezzo: '€349/anno', desc: 'Settore Giovanile e Scuola Calcio insieme, con dashboard unificata.', cardId: 'card-accademia' },
+                pro:       { nome: 'Pro',       prezzo: '€399/anno', desc: 'La società completa: Giovanile, Scuola Calcio e Prima Squadra.', cardId: 'card-pro' }
             };
+            var currentCardId = null;
+            function clearHighlight() {
+                document.querySelectorAll('.pricing-card.recommended').forEach(function (c) { c.classList.remove('recommended'); });
+            }
+            function highlightCard(cardId) {
+                clearHighlight();
+                var card = document.getElementById(cardId);
+                if (!card) return;
+                card.classList.add('recommended');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             function result(key) {
                 var p = PLANS[key];
+                currentCardId = p.cardId;
                 wiz.querySelector('#pwPlanName').textContent = p.nome;
                 wiz.querySelector('#pwPlanPrice').textContent = p.prezzo;
                 wiz.querySelector('#pwPlanDesc').textContent = p.desc;
-                wiz.querySelector('#pwPlanCta').setAttribute('href', p.anchor);
                 show('result');
             }
             // Step 1
@@ -3033,12 +3081,19 @@
                 else key = 'club'; // un solo settore giovanile/SC
                 result(key);
             });
+            // CTA "Vedi il piano qui sotto" → scrolla ed evidenzia la card consigliata
+            wiz.querySelector('#pwPlanCta').addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentCardId) highlightCard(currentCardId);
+            });
             // Indietro / ricomincia
             wiz.querySelectorAll('.pw-back[data-back]').forEach(function (b) {
                 b.addEventListener('click', function () { show(b.getAttribute('data-back')); });
             });
             wiz.querySelector('#pwRestart').addEventListener('click', function () {
                 steps['2b'].querySelectorAll('input:checked').forEach(function (i) { i.checked = false; });
+                currentCardId = null;
+                clearHighlight();
                 show('1');
             });
         })();
