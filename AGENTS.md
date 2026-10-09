@@ -36,11 +36,15 @@ Dopo ogni modifica a file in `landing/`, eseguire SEMPRE il deploy manuale:
 
 ```bash
 cd /Users/Raffaele/Documents/Youth-Foorball-Manager/youth-football-manager-demo/landing
-vercel --prod --yes
+vercel --prod --yes --scope ecoprafs-projects
 ```
 
-URL produzione: **https://yfm-landing.vercel.app**
+URL produzione: **https://yfm-landing.vercel.app** (alias: https://youth-football-manager.app)
 
+> ⚠️ Il flag `--scope ecoprafs-projects` è **obbligatorio**: senza, il deploy fallisce con
+> `Error: Not authorized` anche se `vercel whoami` risponde correttamente `ecopraf` (la sessione
+> CLI è autenticata ma lo scope del team non viene dedotto da solo). Verificato 8 Ott 2026.
+>
 > Il push su GitHub è comunque necessario per il versionamento, ma non è sufficiente per il deploy della landing.
 
 ## 🔐 Credenziali Configurate

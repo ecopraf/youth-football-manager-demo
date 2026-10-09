@@ -216,21 +216,24 @@ La landing page è in `landing/` e il progetto Vercel si chiama **yfm-landing**.
 
 ```bash
 # Deploy landing in produzione
-cd landing && vercel --prod
+cd landing && vercel --prod --yes --scope ecoprafs-projects
 ```
+
+> ⚠️ Il flag `--scope ecoprafs-projects` è **obbligatorio**: senza, il deploy fallisce con
+> `Error: Not authorized` anche se `vercel whoami` risponde `ecopraf`. Verificato 8 Ott 2026.
 
 | Info | Valore |
 |------|--------|
 | Cartella | `landing/` |
 | Progetto Vercel | `yfm-landing` |
-| URL produzione | https://yfm-landing.vercel.app |
-| Deploy | **Manuale**: `cd landing && vercel --prod` |
+| URL produzione | https://yfm-landing.vercel.app (alias: https://youth-football-manager.app) |
+| Deploy | **Manuale**: `cd landing && vercel --prod --yes --scope ecoprafs-projects` |
 | Auto-deploy da GitHub | ❌ Non attivo |
 
 **Workflow dopo modifica landing:**
 1. Modifica `landing/index.html`
 2. `git add . && git commit -m "feat: ..." && git push origin main`
-3. `cd landing && vercel --prod`
+3. `cd landing && vercel --prod --yes --scope ecoprafs-projects`
 4. Verifica: `curl -s https://yfm-landing.vercel.app/ | grep -o 'feature-icon">[^<]*'`
 
 ---
@@ -325,7 +328,7 @@ git push origin main
 
 # ⚠️ DEPLOY: Chiedere SEMPRE conferma all'utente prima di procedere!
 # Demo app: vercel --prod --yes
-# Landing page: cd landing && vercel --prod
+# Landing page: cd landing && vercel --prod --yes --scope ecoprafs-projects   (lo --scope è obbligatorio, vedi sezione Deploy Landing)
 
 # Verifica produzione
 curl https://youth-football-manager-backend.vercel.app/api/health
