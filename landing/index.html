@@ -2760,7 +2760,8 @@
                     desc: 'Notifiche, accesso famiglie, push notification',
                     cards: [
                         { icon: '📢', title: 'Centro Comunicazioni', desc: 'Notifiche in-app con priorità (info, importante, urgente). Destinatari per tipo: atleta, genitore, staff.' },
-                        { icon: '👨‍👩‍👦', title: 'Accesso Famiglia e Ospite', desc: "Link dedicati senza registrazione. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote, risultati e i voti del mister. Push notification per ogni convocazione." }
+                        { icon: '👨‍👩‍👦', title: 'Accesso Famiglia e Ospite', desc: "Link dedicati senza registrazione. L'atleta comunica indisponibilità, il genitore vede convocazioni, quote, risultati e i voti del mister. Push notification per ogni convocazione." },
+                        { icon: '📥', title: 'Inbox Segreteria', desc: 'Un unico posto dove la segreteria valida le ricevute di pagamento e i certificati medici caricati dalle famiglie: visualizza, approva o rifiuta (con notifica push automatica se serve ricaricare).' }
                     ]
                 },
                 {
@@ -2769,7 +2770,8 @@
                     cards: [
                         { icon: '💶', title: 'Quote Economiche', desc: 'Configurazione rate, pagamento rateale, rigenera quote, notifiche scadenze. Gestione completa delle quote societarie con storico pagamenti.' },
                         { icon: '📋', title: 'Tesseramento Completo', desc: "Documenti, certificati medici con alert scadenza, stato tesseramento per ogni atleta. Solleciti automatici e visione d'insieme per la segreteria." },
-                        { icon: '👕', title: 'Magazzino Kit', desc: 'Gestione completa del materiale tecnico: bundle, assegnazioni a giocatori e staff, ordini, kit portiere, numerazione maglie. Stato inventario sempre aggiornato.' }
+                        { icon: '👕', title: 'Magazzino Kit', desc: 'Gestione completa del materiale tecnico: bundle, assegnazioni a giocatori e staff, ordini, kit portiere, numerazione maglie. Stato inventario sempre aggiornato.' },
+                        { icon: '🤝', title: 'Gestione Sponsor', desc: 'Anagrafica e scadenzario degli sponsor del club: valore in denaro o materiale, periodo, contratto allegato e stato di incasso. Il quadro delle sponsorizzazioni sempre aggiornato.' }
                     ]
                 },
                 {
@@ -2777,10 +2779,11 @@
                     desc: 'Stagioni, import, anagrafica, checklist',
                     cards: [
                         { icon: '⚙️', title: 'Gestione Società', desc: 'Stagioni, utenti, categorie: tutto centralizzato. Crea la nuova stagione e migra la rosa in un click.' },
-                        { icon: '📥', title: 'Import Wizard', desc: 'Carica il tabulato FIGC o il tuo Excel personalizzato: il wizard riconosce automaticamente le colonne e importa tutta la rosa in 30 secondi.', badge: 'NUOVO' },
+                        { icon: '📥', title: 'Import Wizard', desc: 'Carica il tabulato FIGC o il tuo Excel personalizzato: il wizard riconosce automaticamente le colonne e importa tutta la rosa in 30 secondi.' },
                         { icon: '🏢', title: 'Anagrafica Società', desc: 'Dati societari completi: forma giuridica, FIGC, P.IVA, IBAN, sponsor, colori sociali. Sempre aggiornata e condivisa tra tutto lo staff.' },
                         { icon: '🔄', title: 'Gestione Multi-Stagione', desc: 'Migrazione rosa automatica, carriera giocatore cross-season, staff per stagione.' },
-                        { icon: '✅', title: 'Checklist Stagione', desc: 'Checklist personalizzabile per ogni categoria. Item automatici e manuali, sincronizzazione tra staff. Tieni traccia di ogni adempimento stagionale.' }
+                        { icon: '✅', title: 'Checklist Stagione', desc: 'Checklist personalizzabile per ogni categoria. Item automatici e manuali, sincronizzazione tra staff. Tieni traccia di ogni adempimento stagionale.' },
+                        { icon: '🗓️', title: 'Locandina Partite', desc: 'Genera una locandina social con il programma delle partite della settimana e i risultati di quelle giocate. Scegli i settori da includere (Prima Squadra, Settore Giovanile, Scuola Calcio) e condividila.' }
                     ]
                 },
                 {
@@ -2788,12 +2791,23 @@
                     desc: 'Statistiche, valutazioni, test atletici, scouting',
                     cards: [
                         { icon: '📈', title: 'Performance Center', desc: 'Vista unificata partite e allenamenti per ogni giocatore. Sparkline, progressione individuale, aree lavorate. Sezione dedicata portieri con gol subiti e clean sheet.' },
+                        { icon: '📊', title: 'Statistiche Gol Avanzate', desc: 'Analisi dei gol fatti e subiti per situazione di gioco (azione, rigore, corner, punizione diretta/indiretta) e per tempo (1°/2°). Capisci dove la squadra è forte e dove lavorare.', badge: 'NUOVO' },
                         { icon: '🏃', title: 'Test Atletici', desc: 'Benchmark per categoria (velocità, resistenza, forza, salto). Confronta i giocatori, traccia i progressi nel tempo. Export Excel per condividere con lo staff.' },
                         { icon: '🕸️', title: 'Valutazione Tecnica', desc: 'Radar chart a 6 assi per ogni giocatore: Tecnica, Velocità, Tattica, Fisico, Mentalità, Personalità. Storico e confronto nel tempo.' },
                         { icon: '⭐', title: 'Valutazioni Partite e Sedute', desc: 'Scala personalizzabile (1-10 o 1-5 stelle). Voto seduta, area lavorata e voti individuali ai giocatori. Condivisibili con le famiglie.' },
                         { icon: '🎯', title: 'Obiettivo Settimana', desc: "Definisci l'obiettivo settimanale per il gruppo. Storico delle ultime 8 settimane sempre consultabile." },
                         { icon: '🏆', title: 'Classifica LND', desc: 'Classifica e calendario dal Portale Regionale integrati automaticamente. Sempre aggiornati, senza inserimenti manuali.' },
                         { icon: '🔍', title: 'Scouting CRM', desc: 'Gestisci prospetti con dossier completo: osservazioni, valutazioni radar, contatti, link video. Workflow da osservato a tesserato.' }
+                    ]
+                },
+                {
+                    id: 'feat-direzione', icon: '💼', title: 'Direzione Sportiva',
+                    desc: 'Mercato, contratti, rimborsi, sponsor — per la Prima Squadra',
+                    cards: [
+                        { icon: '🔁', title: 'Registro Mercato', desc: 'Storico entrate e uscite: trasferimenti, prestiti, rientri, svincoli (con motivo a norma NOIF). Provenienza/destinazione, data e documento allegato. Visibilità completa sul mercato della società.' },
+                        { icon: '📑', title: 'Contratti & Compensi', desc: 'Compensi contrattuali di giocatori e staff: importo, periodo, scadenze e documento. Tutto tracciato e sotto controllo per direttore sportivo e segreteria.' },
+                        { icon: '🧾', title: 'Rimborsi Spese', desc: 'Note spese con causale, importo, data e giustificativo allegato. Registro ordinato dei rimborsi a giocatori, staff e collaboratori.' },
+                        { icon: '📊', title: 'Dashboard DS', desc: 'Vista aggregata di mercato, compensi e rimborsi per direttore sportivo, segreteria e presidenza. Il quadro economico-sportivo della Prima Squadra in un colpo d\'occhio.', badge: 'NUOVO' }
                     ]
                 },
                 {
@@ -2810,7 +2824,7 @@
                     cards: [
                         { icon: '📲', title: 'Installa sul telefono', desc: "Aggiungila alla home come un'app. Nessun App Store, sempre aggiornata automaticamente." },
                         { icon: '📶', title: 'Funziona senza rete', desc: 'Registra presenze ed eventi anche al campo senza connessione. Si sincronizza quando torni online.' },
-                        { icon: '🏅', title: '6.104 Loghi Integrati', desc: 'Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione.' },
+                        { icon: '🏅', title: '6.173 Loghi Integrati', desc: 'Riconoscimento automatico degli avversari con logo da tutte le regioni italiane. Nessuna configurazione.' },
                         { icon: '🔐', title: '7 Profili Permessi', desc: 'Allenatore, vice, dirigente, preparatore, osservatore, segreteria, custom. Ogni ruolo vede solo ciò che serve.' },
                         { icon: '🎟️', title: 'Supporto Integrato', desc: "Segnala problemi o suggerisci idee direttamente dall'app. Screenshot automatico e risposta via email." }
                     ]
