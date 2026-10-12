@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',-apple-system,sans-serif; }
+  .post {
+    width:1080px; height:1080px;
+    background:linear-gradient(180deg,#1a1a2e 0%,#16213e 55%,#0f0f23 100%);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    padding:70px 70px 60px;
+  }
+  .glow { position:absolute; border-radius:50%; filter:blur(120px); }
+  .glow-1 { width:520px; height:520px; background:rgba(102,126,234,0.30); top:-160px; right:-120px; }
+  .glow-2 { width:420px; height:420px; background:rgba(118,75,162,0.22); bottom:-140px; left:-120px; }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16);
+    color:#fff; font-size:22px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    padding:12px 28px; border-radius:40px; position:relative; z-index:2;
+    align-self:flex-start;
+  }
+  .title {
+    color:#fff; font-size:62px; font-weight:900; line-height:1.04; letter-spacing:-1.5px;
+    margin-top:26px; position:relative; z-index:2; align-self:flex-start; text-align:left;
+  }
+  .title .accent {
+    background:linear-gradient(135deg,#8b9cf0 0%,#a77bd6 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .subtitle {
+    color:rgba(255,255,255,0.72); font-size:26px; font-weight:400; line-height:1.4;
+    margin-top:18px; position:relative; z-index:2; align-self:flex-start; text-align:left; max-width:900px;
+  }
+  .card {
+    background:#fff; border-radius:18px; padding:12px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5);
+    margin-top:40px; position:relative; z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    max-width:940px;
+  }
+  .card img { max-width:916px; width:100%; height:auto; border-radius:10px; display:block; }
+
+  .footer {
+    position:absolute; bottom:46px; left:70px; right:70px;
+    display:flex; align-items:center; justify-content:space-between; z-index:3;
+  }
+  .footer-left { display:flex; align-items:center; gap:20px; }
+  .qr { background:#fff; padding:8px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.35); }
+  .qr img { width:96px; height:96px; display:block; }
+  .cta { display:flex; flex-direction:column; }
+  .cta .main { color:#fff; font-size:26px; font-weight:800; }
+  .cta .sub { color:#27AE60; font-size:19px; font-weight:700; margin-top:4px; }
+  .watermark { display:flex; align-items:center; gap:12px; }
+  .watermark img { width:52px; height:52px; border-radius:12px; opacity:0.95; }
+  .watermark .wm-text { color:rgba(255,255,255,0.9); font-size:24px; font-weight:800; letter-spacing:0.5px; }
+</style>
+</head>
+<body>
+  <div class="post">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="badge" id="badge">📊 PERFORMANCE</div>
+    <div class="title" id="title">Statistiche <span class="accent">Avanzate</span></div>
+    <div class="subtitle" id="subtitle">I gol della tua squadra, analizzati per situazione e tempo</div>
+
+    <div class="card"><img id="screenshot" src="" alt=""></div>
+
+    <div class="footer">
+      <div class="footer-left">
+        <div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fyouth-football-manager.app&bgcolor=ffffff&color=1a202c" alt="QR"></div>
+        <div class="cta">
+          <div class="main">Prova gratis — 30 giorni</div>
+          <div class="sub">youth-football-manager.app</div>
+        </div>
+      </div>
+      <div class="watermark">
+        <img src="icon.png" alt="YFM">
+        <span class="wm-text">YFM</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
