@@ -2605,8 +2605,9 @@
 </div>
 </footer>
 <script>
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Smooth scroll (solo ancore verso una sezione: i link con href="#" nudo, come le CTA data-lead
+        // che aprono il modal, hanno un loro handler e farebbero fallire querySelector('#'))
+        document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
@@ -3196,6 +3197,32 @@
         if (urlPartner) {
           try { localStorage.setItem(LS_KEY, JSON.stringify({ slug: urlPartner.toLowerCase().trim(), ts: Date.now() })); } catch (e) {}
         }
+
+        // 1b) EPIC 79 — conta la visita da link partner. Al massimo UNA volta al giorno per browser e per
+        // slug; "nuovo" = primo arrivo di questo browser con quello slug. Nessun cookie, nessun IP: il
+        // server somma solo contatori per (slug, giorno). Il giorno viene segnato come "contato" SOLO
+        // dopo una risposta OK del server: se il backend non risponde la visita verrà ritentata al
+        // prossimo caricamento invece di andare persa. Se il salvataggio locale non è disponibile
+        // (navigazione privata) la visita non viene contata, per non gonfiare i numeri.
+        function trackPartnerVisit(rawSlug) {
+          try {
+            var slug = String(rawSlug || '').toLowerCase().trim();
+            if (!/^[a-z0-9][a-z0-9_-]{0,59}$/.test(slug)) return;
+            var key = 'yfm_pv_' + slug;
+            var today = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD, data locale del visitatore
+            var last = localStorage.getItem(key);
+            if (last === today) return; // già contata oggi
+            fetch(BACKEND + '/partner-visit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ slug: slug, nuovo: !last }),
+              keepalive: true
+            }).then(function (r) {
+              if (r.ok) { try { localStorage.setItem(key, today); } catch (e) {} }
+            }).catch(function () {});
+          } catch (e) {}
+        }
+        if (urlPartner) trackPartnerVisit(urlPartner);
         // 2) Recupera partner salvato se ancora valido
         function getPartner() {
           try {
