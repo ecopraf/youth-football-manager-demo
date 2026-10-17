@@ -3183,6 +3183,14 @@
           <button type="submit" id="leadSubmit" style="background:#27AE60;color:#fff;border:none;padding:14px;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;">Invia richiesta</button>
           <div id="leadMsg" style="display:none;text-align:center;font-size:14px;padding:10px;border-radius:9px;"></div>
         </form>
+        <!-- Conferma dopo l'invio: sostituisce il modulo e si chiude da sola -->
+        <div id="leadDone" role="status" aria-live="polite" tabindex="-1" style="display:none;padding:36px 28px 30px;text-align:center;outline:none;">
+          <div aria-hidden="true" style="width:68px;height:68px;margin:0 auto 18px;border-radius:50%;background:#e8f5e9;color:#27AE60;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;">✓</div>
+          <h4 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#1a202c;">Richiesta inviata!</h4>
+          <p style="margin:0 0 22px;font-size:15px;line-height:1.5;color:#555;">Grazie, ti contatteremo a breve all'indirizzo email che ci hai indicato.</p>
+          <button type="button" id="leadDoneClose" style="background:#27AE60;color:#fff;border:none;padding:13px 34px;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;">Chiudi</button>
+          <p style="margin:14px 0 0;font-size:12px;color:#888;">Questa finestra si chiude da sola tra pochi secondi.</p>
+        </div>
       </div>
     </div>
     <script>
@@ -3256,18 +3264,33 @@
 
         // 4) Apertura/chiusura modal — qualsiasi elemento con [data-lead] apre il form
         var modal = document.getElementById('leadModal');
-        function openModal() { modal.style.display = 'flex'; }
-        function closeModal() { modal.style.display = 'none'; }
+        var form = document.getElementById('leadForm');
+        var msg = document.getElementById('leadMsg');
+        var btn = document.getElementById('leadSubmit');
+        var doneBox = document.getElementById('leadDone');
+        var closeTimer = null;
+        var AUTOCLOSE_MS = 7000; // dopo l'invio la conferma resta visibile qualche secondo, poi la finestra si chiude
+        function clearCloseTimer() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
+        // Riporta il modal allo stato iniziale: modulo visibile, nessuna conferma/errore, pulsante attivo.
+        // I campi NON vengono svuotati qui (se un invio fallisce, chi riapre ritrova ciò che ha scritto).
+        function resetLeadModal() {
+          clearCloseTimer();
+          form.style.display = 'flex';
+          doneBox.style.display = 'none';
+          msg.style.display = 'none';
+          btn.style.display = ''; btn.disabled = false; btn.textContent = 'Invia richiesta';
+        }
+        function openModal() { resetLeadModal(); modal.style.display = 'flex'; }
+        function closeModal() { clearCloseTimer(); modal.style.display = 'none'; }
         document.querySelectorAll('[data-lead]').forEach(function (el) {
           el.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
         });
         document.getElementById('leadClose').addEventListener('click', closeModal);
+        document.getElementById('leadDoneClose').addEventListener('click', closeModal);
         modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.style.display !== 'none') closeModal(); });
 
         // 5) Submit → POST /partner-lead
-        var form = document.getElementById('leadForm');
-        var msg = document.getElementById('leadMsg');
-        var btn = document.getElementById('leadSubmit');
         form.addEventListener('submit', function (e) {
           e.preventDefault();
           btn.disabled = true; btn.textContent = 'Invio…';
@@ -3287,11 +3310,16 @@
           }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
             .then(function (res) {
               if (res.ok && res.d.success) {
-                msg.textContent = '✅ Richiesta inviata! Ti contatteremo a breve.';
-                msg.style.cssText = 'display:block;text-align:center;font-size:14px;padding:10px;border-radius:9px;background:#e8f5e9;color:#1b5e20;';
                 form.querySelectorAll('input,textarea').forEach(function (i) { if (i.type !== 'hidden') i.value = ''; });
                 document.querySelectorAll('#leadSettori .lead-pill.active').forEach(function (el) { el.classList.remove('active'); });
-                btn.style.display = 'none';
+                msg.style.display = 'none';
+                // il modulo lascia il posto alla conferma, in cima alla finestra (visibile anche da telefono)
+                form.style.display = 'none';
+                doneBox.style.display = 'block';
+                if (doneBox.parentNode) doneBox.parentNode.scrollTop = 0;
+                try { doneBox.focus({ preventScroll: true }); } catch (e) {}
+                clearCloseTimer();
+                closeTimer = setTimeout(closeModal, AUTOCLOSE_MS);
               } else {
                 throw new Error(res.d.error || 'Errore');
               }
