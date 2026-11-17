@@ -11,7 +11,7 @@ landing/
 ├── locandina-allenamenti-sg-template.html  — Template Programma Allenamenti SG (U14→U19)
 ├── caption-ciampino.txt                    — Caption Instagram per il post Ciampino
 ├── presentazione/          — Presentazione commerciale PDF
-│   ├── presentazione.html  — Sorgente HTML (17 slide 1920x1080)
+│   ├── presentazione-slide.html  — Sorgente HTML slideshow (slide 1920x1080)
 │   ├── YFM-Presentazione.pdf — PDF generato (evergreen, senza anno)
 │   └── YFM-*.png           — Screenshot per le slide (17 file)
 ├── img/instagram/          — Asset per post Instagram
@@ -97,7 +97,7 @@ cd backend && node generate-allenamenti-sg-template.js
 ## Presentazione Commerciale
 
 ### File
-- `presentazione/presentazione.html` — Sorgente HTML
+- `presentazione/presentazione-slide.html` — Sorgente HTML
 - `presentazione/YFM-Presentazione.pdf` — PDF generato (evergreen)
 
 ### Dimensioni Slide
@@ -226,7 +226,7 @@ Tutti usano **Puppeteer** — viewport 1080x1080 + `deviceScaleFactor:2` → out
 Quando modifichi piani/prezzi:
 - [ ] `piano_config` nel DB
 - [ ] `landing/index.html` sezione pricing
-- [ ] `landing/presentazione/presentazione.html` slide 15
+- [ ] `landing/presentazione/presentazione-slide.html` slide prezzi
 - [ ] Rigenerare PDF: `node generate-presentazione.js`
 - [ ] `frontend-v2/src/utils/planGuard.js` (se cambiano capabilities)
 - [ ] `backend/api/helpers/planGuard.js` (mirror)

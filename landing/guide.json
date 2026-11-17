@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-04T11:25:07.885Z",
-  "count": 26,
+  "generatedAt": "2026-11-17T10:09:34.739Z",
+  "count": 39,
   "flows": [
     {
       "id": "nuova_stagione",
       "titolo": "Nuova Stagione",
-      "descrizione": "Crea la stagione, le categorie, migra la rosa dalla stagione precedente e attiva.",
-      "icon": "send",
+      "descrizione": "Crea la stagione, le categorie, migra la rosa dalla stagione precedente e verifica che sia la più recente.",
+      "icon": "sunrise",
       "durata": "~15 min",
       "target": [
         "Admin"
@@ -32,10 +32,10 @@
           "optional": false
         },
         {
-          "label": "Attiva Stagione",
-          "description": "Imposta la nuova stagione come attiva. Da questo momento tutte le operazioni faranno riferimento ad essa.",
+          "label": "Verifica la Stagione Corrente",
+          "description": "Non c'è nulla da attivare: la stagione corrente è sempre la più recente, quella con il badge «★ Più recente». Controlla che sia la nuova: da questo momento le operazioni faranno riferimento ad essa.",
           "tips": [
-            "Solo una stagione può essere attiva alla volta",
+            "La più recente è quella con il nome più alto, per esempio 2026/27",
             "Puoi sempre tornare a consultare le stagioni passate"
           ],
           "optional": false
@@ -178,6 +178,44 @@
       ]
     },
     {
+      "id": "regole_under",
+      "titolo": "Regole Under",
+      "descrizione": "Configura i vincoli di età e schieramento per i campionati, così l'app ti avvisa quando una formazione non li rispetta.",
+      "icon": "scale",
+      "durata": "~5 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Apri Regole Under",
+          "description": "La pagina elenca le regole per i campionati della tua regione, divise per tipo campionato e stagione.",
+          "tips": [
+            "Le regole guidano gli avvisi su formazione e distinta",
+            "La riga del campionato attivo è evidenziata"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Scegli la Stagione",
+          "description": "Filtra per stagione in alto a destra per vedere le regole valide nel periodo che ti interessa.",
+          "tips": [
+            "I vincoli possono cambiare da una stagione all'altra"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Personalizza una Regola",
+          "description": "Per un campionato attivo usa \"Personalizza\" per adattare i vincoli alle esigenze del tuo club; \"Ripristina\" riporta alla regola regionale.",
+          "tips": [
+            "Personalizzi solo i campionati che stai realmente giocando",
+            "Ripristina quando vuoi tornare alla regola standard della regione"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
       "id": "gestione_societa",
       "titolo": "Gestione Società",
       "descrizione": "Organigramma, anagrafica e riferimenti della società.",
@@ -211,6 +249,65 @@
           "tips": [
             "L'indirizzo appare nelle convocazioni",
             "Puoi avere più impianti per categoria"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "sponsor",
+      "titolo": "Gestione Sponsor",
+      "descrizione": "Registra gli sponsor del club con valore, periodo e stato di incasso, e tieni allegato il contratto. Carica il logo, scrivi un testo breve e scegli l'ordine con cui compaiono nelle locandine. Riservato ad admin e segreteria.",
+      "icon": "ad2",
+      "durata": "~5 min",
+      "target": [
+        "Admin",
+        "Segreteria"
+      ],
+      "steps": [
+        {
+          "label": "Nuovo sponsor",
+          "description": "Inserisci nome, tipo (main/secondario/tecnico/fornitore) e come eroga la sponsorizzazione (denaro, materiale o misto).",
+          "tips": [
+            "Per gli sponsor tecnici che danno kit/attrezzatura scegli \"materiale\" o \"misto\"",
+            "Il valore è facoltativo: per il materiale puoi indicare una stima"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Periodo e contatti",
+          "description": "Indica periodo della sponsorizzazione, referente e contatti e allega il contratto firmato.",
+          "tips": [
+            "Puoi collegare lo sponsor a una squadra (es. Prima Squadra) in modo opzionale",
+            "Telefono ed email del referente restano interni: non compaiono mai nelle locandine"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Logo e testo per le locandine",
+          "description": "Carica il logo (PNG, JPEG o WebP): vedi l'anteprima con e senza sfondo bianco e scegli quale tenere. Aggiungi un testo breve, un contatto pubblico e, se vuoi, il profilo Instagram.",
+          "tips": [
+            "Il logo si carica da un file, incollando un'immagine (Ctrl/Cmd+V o pulsante «Incolla immagine») o trascinandola: un logo caricato non scade",
+            "Il contatto per le locandine è pubblico ed è diverso da telefono ed email del referente",
+            "Per il profilo Instagram basta @nomeprofilo o il link al profilo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Ordine nelle locandine",
+          "description": "Con \"Ordine nelle locandine\" scegli la posizione di ogni sponsor con le frecce e decidi con \"Mostra\" chi compare. Il primo sponsor principale è quello che può avere il banner.",
+          "tips": [
+            "Funziona anche solo con tastiera o touch: niente trascinamento",
+            "Gli sponsor scaduti o non ancora attivi stanno in fondo e non si riordinano",
+            "Uno sponsor nascosto resta in anagrafica ma non compare nelle locandine"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Stato di incasso",
+          "description": "Aggiorna lo stato (da incassare / parziale / incassato). Il riepilogo in alto somma valore totale, incassato e da incassare.",
+          "tips": [
+            "Filtra per stato per vedere subito cosa resta da incassare"
           ],
           "optional": false
         }
@@ -265,6 +362,58 @@
       ]
     },
     {
+      "id": "gestione_portieri",
+      "titolo": "Gestione Portieri",
+      "descrizione": "Imposta la settimana tipo degli allenamenti dei portieri e tieni il registro mensile delle presenze, anche tra categorie diverse.",
+      "icon": "shield",
+      "durata": "~10 min",
+      "target": [
+        "Admin",
+        "Preparatore Portieri"
+      ],
+      "steps": [
+        {
+          "label": "Imposta la Settimana Tipo",
+          "description": "Vai in Club → Gestione Portieri → Settimana tipo e aggiungi una riga per ogni allenamento: giorno, orario di inizio e fine, campo o luogo, spogliatoio, preparatore e le categorie coinvolte.",
+          "tips": [
+            "Puoi scegliere un'area del Planner oppure scrivere il luogo a mano",
+            "Le categorie coinvolte determinano quali portieri compaiono nel registro",
+            "Le sessioni del mese si generano dalla settimana tipo",
+            "Le sedute programmate compaiono nel Calendario della squadra con un piccolo guanto (tratteggiato se previste, pieno se registrate); toccandolo si vedono orario ed eventuale campo. Si vedono solo le sedute della categoria di quella squadra",
+            "Le famiglie dei portieri della categoria vedono le sedute dalla loro pagina e possono comunicare un'assenza",
+            "Se annulli, ripristini o sposti una seduta dei prossimi 14 giorni, le famiglie con le notifiche attive ricevono un avviso senza il nome del figlio",
+            "«Locandina orari» prepara la locandina degli orari da stampare o condividere"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Segna le Presenze",
+          "description": "Nella scheda Registro presenze scegli il mese: le righe sono i portieri delle categorie coinvolte, le colonne le sedute del mese. In ogni casella scegli Presente, Assente o Giustificato e premi «Salva presenze».",
+          "tips": [
+            "Naviga tra i mesi con le frecce, anche verso le stagioni precedenti; nel Riepilogo il menu «Mese» elenca i soli mesi con presenze",
+            "Con «Ordina per» metti i portieri per Cognome o per Categoria",
+            "Una casella grigia con il trattino dice che quel giorno la categoria non si allena: non va compilata",
+            "Con «—» riporti una casella a vuoto, anche se la presenza era già stata salvata",
+            "Puoi aggiungere a mano un portiere di un'altra categoria con «Aggiungi un portiere extra»",
+            "In «Avvisi di assenza» trovi le assenze comunicate dalle famiglie (da oggi fino all'inizio della seduta, al massimo 4 settimane prima): un pallino blu sulla casella le segnala, ma non scrive Giustificato al posto tuo. «Segna come letti» le archivia",
+            "Il preparatore portieri riceve una notifica quando arriva un avviso",
+            "Con «Annulla» sopra la colonna annulli una seduta; in «Sedute annullate» «Ripristina» la riattiva e le presenze già salvate tornano",
+            "«Salva presenze» salva insieme tutte le modifiche di tutti i giorni in un solo passaggio"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Consulta il Riepilogo",
+          "description": "Con «Riepilogo» vedi il mese in due viste: «Sintesi» con presenze, assenze e giustificati di ogni portiere, e «Dettaglio giorni» con la griglia giorno per giorno. Da lì puoi copiarlo come immagine o stamparlo.",
+          "tips": [
+            "Il riepilogo segue l'ordine scelto nel registro",
+            "Mostra solo nome, cognome, numero, categoria e i conteggi"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
       "id": "gestione_utenti",
       "titolo": "Gestione Utenti",
       "descrizione": "Come creare utenti e assegnare permessi.",
@@ -276,10 +425,23 @@
       "steps": [
         {
           "label": "Crea Utente",
-          "description": "Aggiungi un nuovo utente: email, nome e ruolo.",
+          "description": "Aggiungi un nuovo utente: email, nome e ruolo. Lascia attiva la casella «Invia email di invito»: la password non serve.",
           "tips": [
-            "L'utente riceverà le credenziali via email",
+            "L'utente riceve un'email con il link per scegliere la propria password (valido 72 ore)",
+            "Tu non conosci mai la password: la sceglie lui dal link",
+            "Se togli la spunta «Invia email di invito» devi impostare tu una password (almeno 6 caratteri)",
             "Scegli il ruolo: Allenatore, Staff o Admin"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Invito e password",
+          "description": "Finché l'utente non ha scelto la password, nell'elenco vedi il badge «Invito in attesa». Da lì puoi reinviare l'invito se l'email non è arrivata o il link è scaduto.",
+          "tips": [
+            "«Reinvia invito» è nella scheda dell'utente: puoi usarlo una volta al minuto e c'è un numero massimo di invii al giorno",
+            "Se l'email non parte, dopo la creazione compare un avviso con il pulsante «Reinvia invito»",
+            "Se l'utente perde il link o la password può usare «Password dimenticata?» dalla pagina di accesso",
+            "Controlla anche la cartella spam: le email di invito a volte finiscono lì"
           ],
           "optional": false
         },
@@ -287,8 +449,9 @@
           "label": "Assegna Profilo",
           "description": "Scegli un profilo predefinito o personalizza i permessi.",
           "tips": [
-            "Profili: Allenatore, Vice, Preparatore, Dirigente, Segreteria",
-            "Ogni profilo ha permessi diversi sulle funzionalità"
+            "Profili: Allenatore, Vice Allenatore, Preparatore Atletico, Dirigente, Osservatore, Match Analyst, Preparatore Portieri, Segreteria, Direttore Sportivo, Direttore Tecnico, Direttore Generale, Presidente e «Personalizzato»",
+            "Ogni profilo ha permessi diversi sulle funzionalità",
+            "«Profilo trasversale»: per chi segue più categorie senza una squadra sua, con una dashboard dedicata. Il testo completo, con le avvertenze per direttori e Planner, è nell'aiuto della pagina Utenti e nel pulsante «Come funziona»"
           ],
           "optional": false
         },
@@ -297,7 +460,8 @@
           "description": "Scegli a quali categorie e stagioni l'utente ha accesso, usando le pill selezionabili.",
           "tips": [
             "Pill viola = categoria selezionata, pill verde = stagione selezionata",
-            "Nessuna pill selezionata = accesso a tutte le categorie"
+            "Nessuna pill selezionata = accesso a tutte le categorie",
+            "Con «Profilo trasversale» attivo le categorie diventano «Categorie di competenza»"
           ],
           "optional": false
         },
@@ -366,7 +530,7 @@
       "id": "tesseramento",
       "titolo": "Tesseramento",
       "descrizione": "Gestisci il processo di tesseramento: template, documenti e conferma.",
-      "icon": "clipboard",
+      "icon": "idBadge",
       "durata": "~20 min",
       "target": [
         "Segreteria",
@@ -387,7 +551,8 @@
           "description": "Crea i tesseramenti per tutti i giocatori della rosa in un click.",
           "tips": [
             "I giocatori già tesserati vengono saltati",
-            "Puoi generare anche singolarmente"
+            "Puoi generare anche singolarmente",
+            "Scuola Calcio: il tesseramento è della categoria e non cambia se il bambino passa di gruppo; il pulsante diventa \"Genera per tutta la categoria\" e agisce sempre su tutta la categoria, anche con un gruppo scelto nel menu"
           ],
           "optional": false
         },
@@ -435,7 +600,7 @@
       "id": "checklist_stagione",
       "titolo": "Checklist Stagione",
       "descrizione": "Traccia gli adempimenti di inizio stagione per ogni giocatore.",
-      "icon": "check",
+      "icon": "checklist",
       "durata": "~10 min",
       "target": [
         "Segreteria",
@@ -456,7 +621,8 @@
           "description": "Crea la checklist per tutti i giocatori della rosa.",
           "tips": [
             "Gli item automatici si aggiornano in tempo reale",
-            "Le quote si spuntano quando risultano pagate"
+            "Le quote si spuntano quando risultano pagate",
+            "Scuola Calcio: la checklist è della categoria; il pulsante diventa \"Genera per tutta la categoria\" e agisce sempre su tutta la categoria, mentre il menu di gruppo serve solo a filtrare la vista"
           ],
           "optional": false
         },
@@ -509,6 +675,7 @@
             "Le squadre sono divise per settore: ⚽ Settore Giovanile e 🎓 Scuola Calcio",
             "Le categorie con config dedicata sono pre-selezionate automaticamente",
             "Badge 🌐 = la categoria non ha config dedicata, userà quella globale",
+            "Scuola Calcio: c'è una sola scelta per categoria (non una per gruppo) e la quota vale per tutta la categoria",
             "Usa ☑ Tutte / ☐ Nessuna per selezione rapida",
             "I giocatori che hanno già la quota vengono saltati automaticamente (nessun duplicato)"
           ],
@@ -519,6 +686,7 @@
           "description": "Visualizza lo stato pagamenti per ogni giocatore: chi ha pagato, chi è in ritardo, chi ha rate in scadenza.",
           "tips": [
             "Filtri per stato: Da pagare, Parziale, Pagata, Scadute, In scadenza",
+            "Scuola Calcio: vedi tutta la categoria; se ha più gruppi, il menu \"Tutta la categoria\" filtra per gruppo (totali ed elenco seguono il gruppo scelto)",
             "Badge ⚠️ scaduta, ⏳ in scadenza (7gg), 📅 prossima",
             "Click su un giocatore per espandere il dettaglio rate"
           ],
@@ -734,6 +902,7 @@
           "description": "Clicca su un giocatore per aprirne la scheda completa: anagrafica, contatti, numero di maglia, stato, dati medici e di tesseramento.",
           "tips": [
             "Imposta il numero di maglia direttamente dalla scheda",
+            "Infortuni: il pulsante «Modifica» accanto a ogni infortunio (aperto o chiuso) permette di correggere tipo, date e note",
             "Lo stato (Attivo, Infortunato, Squalificato) si riflette in convocazione e formazione",
             "La scheda mostra anche radar valutazione, test atletici e statistiche del giocatore"
           ],
@@ -782,10 +951,146 @@
       ]
     },
     {
+      "id": "mercato",
+      "titolo": "Movimenti Mercato (Prima Squadra)",
+      "descrizione": "Registra entrate e uscite dei giocatori: trasferimenti, prestiti e svincoli. Solo per squadre di Prima Squadra / Senior.",
+      "icon": "swap",
+      "durata": "~5 min",
+      "target": [
+        "Segreteria",
+        "Admin",
+        "Allenatore"
+      ],
+      "steps": [
+        {
+          "label": "Registra un'uscita",
+          "description": "Per un giocatore in rosa, registra un trasferimento in uscita o uno svincolo (con il motivo: rinuncia, inattività o rescissione).",
+          "tips": [
+            "Lo svincolo richiede il motivo (Art. 107/109/117 NOIF)",
+            "Puoi allegare il modulo firmato in PDF o immagine",
+            "Dopo lo svincolo ti viene proposto di aggiornare lo stato del giocatore nella rosa"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Registra un'entrata",
+          "description": "Per un acquisto o un prestito in arrivo, aggiungi prima il giocatore alla rosa, poi registra il movimento in entrata indicando la società di provenienza.",
+          "tips": [
+            "Il movimento si collega sempre a un giocatore già in rosa",
+            "La società di provenienza è un testo libero (non deve essere un cliente YFM)"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Svincolo dalla Rosa",
+          "description": "Svincolando un giocatore Senior dalla pagina Rosa, ti viene proposto di registrare automaticamente il movimento di mercato corrispondente.",
+          "tips": [
+            "Il movimento creato ha motivo \"rinuncia\" e data odierna: completalo con i dettagli dalla pagina Mercato"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Backup documenti",
+          "description": "I moduli allegati ai movimenti si esportano e si svecchiano dal wizard Backup Documenti, insieme a certificati e ricevute.",
+          "tips": [
+            "Scarica lo ZIP prima di eliminare i file dallo storage",
+            "Lo storico dei movimenti resta nel gestionale, viene rimosso solo il documento allegato"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "contratti",
+      "titolo": "Contratti e Compensi (Prima Squadra)",
+      "descrizione": "Registra l'accordo economico stagionale di giocatori e staff e tieni traccia dei pagamenti mensili. Solo per squadre di Prima Squadra / Senior.",
+      "icon": "document",
+      "durata": "~5 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Nuovo contratto",
+          "description": "Scegli se il contratto è per un giocatore (dalla rosa) o un membro dello staff, poi indica importo totale della stagione e numero di mensilità.",
+          "tips": [
+            "Puoi allegare il contratto firmato in PDF o immagine",
+            "Il numero di mensilità è configurabile (default 12)"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Piano pagamenti",
+          "description": "Alla creazione, YFM genera automaticamente una rata per ogni mese. Apri il contratto per vedere il piano e segnare le rate pagate.",
+          "tips": [
+            "L'ultima rata assorbe l'eventuale arrotondamento, così la somma torna esatta",
+            "Il contatore in alto mostra quante rate sono già state pagate"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Segna una rata pagata",
+          "description": "Con un tap su \"Segna pagato\" registri la rata come pagata alla data odierna; puoi annullare se serve.",
+          "tips": [
+            "Lo stato di ogni rata è indipendente",
+            "Annullando una rata, la data di pagamento viene azzerata"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Cosa fa (e non fa) YFM",
+          "description": "YFM registra il pattuito e i pagamenti effettivi. Non calcola soglie fiscali o contributive, non genera la Certificazione Unica e non determina l'inquadramento giuridico.",
+          "tips": [
+            "Verifica sempre adempimenti e inquadramento con il consulente della società"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "rimborsi",
+      "titolo": "Rimborsi Spese (Prima Squadra)",
+      "descrizione": "Registra le spese di giocatori e staff a carico della squadra (trasferte, vitto, alloggio) e segna quando sono state pagate. Solo per squadre di Prima Squadra / Senior.",
+      "icon": "receipt",
+      "durata": "~3 min",
+      "target": [
+        "Segreteria",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Nuovo rimborso",
+          "description": "Scegli la persona (giocatore o staff), indica data, importo e una descrizione libera della spesa. Puoi allegare la ricevuta.",
+          "tips": [
+            "La descrizione è libera: nessuna classificazione fiscale obbligatoria",
+            "Inserimento diretto, senza iter di approvazione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Segna pagato",
+          "description": "Quando il rimborso viene liquidato, segnalo come pagato con un tap: registra la data di pagamento.",
+          "tips": [
+            "Il filtro per stato ti mostra al volo cosa resta da pagare"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Riepilogo spese",
+          "description": "In cima alla pagina vedi il totale dei rimborsi, quanto è già stato pagato e quanto resta, in base ai filtri attivi.",
+          "tips": [
+            "Combina i filtri persona e stato per analizzare una singola categoria di spesa"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
       "id": "preparazione_settimanale",
       "titolo": "Preparazione Settimanale",
       "descrizione": "Organizza la settimana di allenamento: presenze, obiettivi e voti.",
-      "icon": "clipboard",
+      "icon": "fitness",
       "durata": "~10 min",
       "target": [
         "Allenatore",
@@ -892,7 +1197,7 @@
       "id": "gestione_comunicazioni",
       "titolo": "Comunicazioni",
       "descrizione": "Gestisci inbox, notifiche assenze e conferma pagamenti.",
-      "icon": "inbox",
+      "icon": "message",
       "durata": "~10 min",
       "target": [
         "Allenatore",
@@ -955,7 +1260,10 @@
           "tips": [
             "I giocatori infortunati sono evidenziati in rosso",
             "Dopo la pubblicazione si sblocca la formazione",
-            "Apri la partita dal Calendario, poi usa il bottone Convocazioni"
+            "Apri la partita dal Calendario, poi usa il bottone Convocazioni",
+            "Scuola Calcio: se hai attivato la regola presenze minime (Allenamenti → Impostazioni), accanto a chi non ha ancora raggiunto il minimo settimanale compare un badge \"Con riserva\" (può ancora recuperare) o \"Sotto soglia\" — è solo informativo, non blocca la convocazione",
+            "Nell'anteprima la spunta «Mostra numero di maglia» (spenta di default, ricordata sul dispositivo) aggiunge la colonna Maglia a stampa, PDF e WhatsApp",
+            "Nel badge delle assenze settimanali i pallini mostrano la presenza agli allenamenti della settimana"
           ],
           "optional": false
         },
@@ -965,6 +1273,7 @@
           "tips": [
             "Il giocatore resta nella sua squadra di origine: l'aggregazione vale solo per questa gara",
             "Compare automaticamente tra i convocati, in formazione e nel Match Center",
+            "Mantiene il suo ruolo e la data di nascita: un portiere aggregato può occupare lo slot Portiere in formazione",
             "Massimo 5 aggregati temporanei per partita",
             "Diverso da \"Aggrega\" nella pagina Rosa, che è permanente",
             "La sezione è nella pagina Convocazioni della partita scelta dal Calendario"
@@ -980,6 +1289,7 @@
             "Servono esattamente 11 titolari con almeno 1 portiere",
             "Numeri di maglia duplicati vengono evidenziati e bloccano il salvataggio",
             "Usa \"📋 Ultima\" per richiamare la formazione dell'ultima partita terminata",
+            "Dopo l'inizio della partita la formazione non è più modificabile: l'app te lo segnala invece di dire \"salvata\"",
             "Apri la partita dal Calendario, poi usa il bottone Formazione"
           ],
           "optional": false
@@ -997,13 +1307,21 @@
           "label": "Match Center",
           "description": "Durante la partita: registra gol, sostituzioni, ammonizioni in tempo reale. Per amichevoli puoi configurare N tempi e rientri con ⚙️ prima di iniziare.",
           "tips": [
+            "La partita non parte da sola: premi «Inizio 1°T» quando si inizia (chi la apre dopo l'orario non la avvia)",
+            "Se la partita non è stata seguita dal vivo, dopo 1 ora dall'orario compare anche «Registra Risultato» accanto a «Inizio 1°T»",
             "Usa le Azioni Rapide per gli eventi più comuni",
+            "Recupero: durante il tempo, o nella pausa tra i tempi dal pulsante «Recupero», segna con − e + i minuti di recupero del tempo (il pannello «Recupero» resta com'è). A partita terminata, o prima di «Registra Risultato», compare il campo «Recupero 1°T / 2°T». Di base è solo una nota; se in Calendario › Impostazioni è acceso l'interruttore «Conta il recupero» (card «Recupero nei minuti giocati»), salvarlo ricalcola minuti, statistiche e carico RPE di quella partita (recupero a zero = minuti regolamentari). Nel calcio a 5 a tempo effettivo il recupero non esiste",
+            "Cambi ed espulsioni portano anche il tempo (1°T/2°T): serve al ricalcolo dei minuti col recupero",
+            "Facoltativo: con «Traccia i tiri» (in alto a destra nelle Azioni rapide) compare la riga «Tiri» per registrare con un tocco i tiri fatti e subiti, nello specchio o fuori",
+            "Rigore parato: «Gol Subito» › Rigore › Parato (senza numero avversario il titolo in cronologia è «Rigore parato»)",
             "Il badge 🔴 LIVE mostra il tempo corrente (es. 1T 23' o +2' in extra time)",
             "Panchina: ogni giocatore mostra ⬆/⬇ con minuto e minuti totali giocati",
             "Con rientri consentiti un giocatore può uscire e rientrare più volte",
             "Sostituzioni libere per amichevoli e sempre per la Scuola Calcio; in Campionato/Coppa/Torneo max 7 per il Settore Giovanile, max 5 per la Prima Squadra",
             "Tab Piano: prepara tattica, palle inattive e note sui giocatori prima della gara",
             "Tab Formazione mostra Iniziale/Finale se ci sono state sostituzioni",
+            "Per correggere un cambio (minuto, chi esce, chi entra) usa «Modifica cambi» nella tab Formazione: a partita terminata ricalcola i minuti giocati e il carico RPE di quella partita",
+            "Per cambiare modulo mentre si gioca usa «Cambia modulo» nella tab Formazione: puoi farlo quante volte vuoi, restano registrati il modulo iniziale e quello con cui finisci (la Finale li mostra come «iniziale → finale»), minuti e statistiche non cambiano e Distinta, Starting XI e PDF restano con la formazione iniziale",
             "Apri la partita dal Calendario, poi usa il bottone Match Center"
           ],
           "optional": false
@@ -1018,11 +1336,130 @@
           "optional": false
         },
         {
+          "label": "Allega distinte e rapportino",
+          "description": "Dalla card della partita nel Calendario, tocca Documenti: allega come foto o PDF la distinta nostra, la distinta avversaria e il rapportino gara, così restano con la partita per tutta la stagione. Li rileggi anche dal Print Center, con il pulsante Documenti.",
+          "tips": [
+            "Non compare per la Scuola Calcio",
+            "Fotografa il foglio dritto da sopra, con luce frontale e senza ombre: più pagine = più foto nello stesso riquadro",
+            "Le foto si riducono da sole; i PDF possono pesare al massimo 2 MB",
+            "Se a gara finita di Campionato o Coppa manca un documento atteso, la card mostra un triangolo di avviso con il suggerimento di cosa manca: è solo un promemoria",
+            "Ogni documento si apre in una finestra dell app, con zoom e pagine; i PDF su telefono si aprono in una scheda",
+            "L osservatore può consultare solo le due distinte",
+            "Per ritrovare i documenti di tutta la stagione usa «Segreteria» › «Archivio gare» nel menu: è solo consultazione e ha i filtri «Da completare» e «Incompleti» (promemoria, mai obbligatori)"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Backup di fine stagione dei documenti di gara",
+          "description": "Distinte e rapportini restano nel cloud solo per la stagione corrente. A fine stagione, da Backup Documenti (sezione Documenti di gara), scarica un file ZIP con tutte le gare della stagione; solo dopo, se vuoi, elimina i documenti dal cloud per liberare spazio.",
+          "tips": [
+            "Da 30 giorni prima della fine della stagione compare un promemoria in Dashboard (solo admin e segreteria)",
+            "Il file ZIP si crea nel tuo browser: prima dello scarico vedi la dimensione stimata; sul telefono un file molto grande potrebbe non entrare, meglio un computer",
+            "Puoi annullare lo scarico e riprovare i file che non sono arrivati",
+            "Elimina dopo il backup è sempre una tua scelta e chiede conferma: non succede mai da solo",
+            "Riservato ad admin e segreteria"
+          ],
+          "optional": true
+        },
+        {
           "label": "Valutazioni",
           "description": "Assegna i voti ai giocatori e aggiungi note sulla prestazione.",
           "tips": [
             "I voti alimentano il Performance Center",
-            "Puoi lasciare SV per chi ha giocato poco"
+            "Puoi lasciare SV per chi ha giocato poco",
+            "Se cambi la scala dei voti (1–10 o stelle 1–5) i voti già dati restano salvati e sono mostrati convertiti, con asterisco e dato originale; ripristinando la scala tornano come prima",
+            "Le famiglie vedono i voti del proprio figlio solo se abiliti la condivisione"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Carico / RPE",
+          "description": "A partita terminata, se la categoria ha la Scala di Borg attiva (dalla U14 in su), nel Match Center compare la tab «Carico/RPE»: vedi lo sforzo della partita (da 0 a 10) inserito dai ragazzi, i minuti giocati e il carico, con quante risposte sono arrivate. Chi non ha ancora risposto lo puoi sollecitare con un promemoria manuale.",
+          "tips": [
+            "Lo sforzo lo inseriscono solo i ragazzi dal proprio link famiglia, nella card «Ultima Partita» (pulsante «Com'è andata?»), fino a mezzanotte del giorno della partita",
+            "Lo staff legge soltanto: non compila al posto dei ragazzi",
+            "Compaiono solo i giocatori che hanno giocato (titolari e subentrati); i panchinari mai entrati no",
+            "Sono dati descrittivi sulla salute dei ragazzi: niente soglie, semafori o classifiche, visibili al solo staff autorizzato",
+            "Richiede il permesso Partite in lettura"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "documenti_gara",
+      "titolo": "Documenti di gara e archivio",
+      "descrizione": "Allega distinte e referti alla partita, consulta l'archivio della stagione e scarica il backup di fine stagione.",
+      "icon": "folder",
+      "durata": "~10 min",
+      "target": [
+        "Admin",
+        "Segreteria",
+        "Allenatore",
+        "Staff"
+      ],
+      "steps": [
+        {
+          "label": "Allega distinte e referti",
+          "description": "Dalla card della partita nel Calendario apri i documenti e allega distinta nostra, distinta avversario, referto e rapportino. Un documento per tipo, sostituibile.",
+          "tips": [
+            "Puoi allegare fino a 20 file per partita, foto o PDF",
+            "Immagini fino a 1 MB, PDF fino a 2 MB",
+            "Visibili solo allo staff con permesso, mai ai guest"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Consulta l'Archivio gare",
+          "description": "L'Archivio gare raccoglie i documenti di tutte le partite della stagione, per consultarli quando serve.",
+          "tips": [],
+          "optional": false
+        },
+        {
+          "label": "Scarica il backup di fine stagione",
+          "description": "Scarichi tutti i documenti della stagione in un unico file ZIP da conservare.",
+          "tips": [
+            "Conserva lo ZIP: dopo il backup i documenti possono essere rimossi dalla piattaforma"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "disciplina",
+      "titolo": "Disciplina",
+      "descrizione": "Carica il riepilogo disciplinare ufficiale della tua società e di quelle avversarie, per vedere chi è squalificato, diffidato o inibito.",
+      "icon": "ban",
+      "durata": "~8 min",
+      "target": [
+        "Admin",
+        "Segreteria",
+        "Allenatore"
+      ],
+      "steps": [
+        {
+          "label": "Carica il riepilogo ufficiale",
+          "description": "Scarica dal portale della società il riepilogo disciplinare, cioè il PDF del Comunicato Ufficiale, e caricalo nella pagina Disciplina. Conviene farlo dopo ogni Comunicato.",
+          "tips": [
+            "Il Comunicato Ufficiale fa fede: l'app segnala, non corregge da sola",
+            "La pagina riporta la data di estrazione del file",
+            "Il caricamento spetta ad amministratori e segreteria: l'allenatore vede la pagina Disciplina in sola lettura, solo per la sua squadra"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Controlla chi è squalificato",
+          "description": "Per ogni persona vedi le squalifiche in corso, le diffide e le inibizioni, con la prossima gara utile.",
+          "tips": [
+            "Nelle convocazioni le indicazioni sono solo segnalazioni: puoi convocare comunque"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Verifica le avversarie",
+          "description": "Nella scheda Avversari carica il riepilogo di ciascuna squadra, un file per squadra, per vedere le squalifiche dei prossimi avversari.",
+          "tips": [
+            "La scheda è riservata ad amministratori e segreteria, perché contiene nomi di minorenni di altre società"
           ],
           "optional": true
         }
@@ -1032,7 +1469,7 @@
       "id": "piano_gara",
       "titolo": "Prepara il Piano Gara",
       "descrizione": "Imposta palle inattive, tattica e consegne individuali prima della partita, poi stampa tutto per lo spogliatoio. Pensato soprattutto per il Settore Giovanile e la Prima Squadra.",
-      "icon": "clipboard",
+      "icon": "chalkboardTeacher",
       "durata": "~15 min",
       "target": [
         "Admin",
@@ -1094,12 +1531,15 @@
     {
       "id": "partite_settimana",
       "titolo": "Partite della Settimana",
-      "descrizione": "Genera e stampa la locandina riepilogativa con tutte le partite del weekend, divise per settore e categoria.",
+      "descrizione": "Consulta le partite del weekend di tutta la società e seguile dal vivo, con le notifiche se la tua società le ha attivate; genera la locandina riepilogativa, divisa per settore e categoria. La pagina è aperta a tutto lo staff.",
       "icon": "calendarWeek",
       "durata": "~5 min",
       "target": [
         "Admin",
-        "Segreteria"
+        "Allenatore",
+        "Segreteria",
+        "Staff",
+        "Osservatore"
       ],
       "steps": [
         {
@@ -1139,6 +1579,291 @@
             "Ideale da pubblicare sui canali social o appendere in sede"
           ],
           "optional": true
+        },
+        {
+          "label": "Notifiche delle partite live",
+          "description": "Per gli amministratori, se la società le usa: con «Notifiche live» accendi l'interruttore generale e un settore (Prima Squadra o Settore Giovanile), scegli eventi e categorie e, in «Chi riceve», il gruppo, i ruoli e le persone da escludere o aggiungere. Controlla «Chi riceverebbe», guarda l'«Anteprima del testo», prova la notifica sul tuo telefono e premi «Salva».",
+          "tips": [
+            "Di partenza è tutto spento: a nessuno arriva niente finché non salvi",
+            "Partono solo per le partite seguite in diretta dal Match Center, e non arrivano a chi registra la partita",
+            "La Scuola Calcio non è compresa",
+            "«Avvisa se un gol viene annullato» è acceso di partenza; «Mostra il marcatore nel testo del gol» è spento di partenza, a tutela dei minori",
+            "La notifica di prova arriva solo a te e le prove giornaliere sono limitate: il pannello dice quante ne restano",
+            "Ogni persona deve attivare le notifiche sul proprio telefono, dal Profilo o dall'invito «Attiva le notifiche» (con «Più tardi» ricompare dopo 7 giorni, con «Non mostrare più» non ricompare)",
+            "Su iPhone ogni persona deve prima aggiungere l'app alla Home: in Safari tocca Condividi, poi Aggiungi alla schermata Home",
+            "Lo storico mostra per ogni partita quante notifiche sono partite e a quanti dispositivi sono arrivate: solo numeri"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "planning_societario",
+      "titolo": "Planner Settimanale",
+      "descrizione": "Descrivi campi e spogliatoi, imposta orari e squadre, crea la bozza, controlla Tutti insieme e stampa il foglio della settimana. È una versione Beta: ancora in prova, segnala ciò che non torna.",
+      "icon": "soccerField",
+      "durata": "~20 min",
+      "target": [
+        "Admin",
+        "Segreteria",
+        "Direttore Sportivo",
+        "direttore_generale"
+      ],
+      "steps": [
+        {
+          "label": "Inserisci i Campi",
+          "description": "Vai in Club → Planner Settimanale → Campi e aggiungi i campi della società. Scegli un modello rapido (intero, metà e quarti è il consigliato) e indica quando il campo è disponibile.",
+          "tips": [
+            "La scorciatoia «Lun-Ven 15:00-22:00» precompila le fasce: devi comunque premere Salva",
+            "Un campo senza fasce risulta «incompleto»",
+            "Il nome del campo e delle parti di campo diventa il testo che puoi collegare ai luoghi delle settimane tipo",
+            "Con più impianti usa «Aggiungi un impianto»; con due o più parti di campo puoi creare «Campi usati insieme» come «B – C»"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Collega i Luoghi",
+          "description": "Nelle settimane tipo il luogo è un testo libero e resta come lo hai scritto. Da «Collega i luoghi» dici al Planner a quale campo corrisponde ogni testo: scegli il campo e spunta «Conferma» solo sulle voci che vuoi salvare.",
+          "tips": [
+            "Nella finestra restano in primo piano solo i luoghi ancora da collegare; quelli già collegati sono nella sezione chiusa «Già collegati» e li puoi riaprire per cambiarli",
+            "Nessuna casella è preselezionata",
+            "Rifiutare una proposta non modifica nulla",
+            "Non cambia nessuna settimana tipo: il collegamento vale solo per la pianificazione"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Inserisci gli Spogliatoi",
+          "description": "Nella scheda Spogliatoi aggiungi gli spogliatoi con la capacità (quante squadre insieme, da 1 a 6) e scegli se sono «Libero» o «Solo abituale». In fondo assegni a ogni squadra il suo spogliatoio abituale.",
+          "tips": [
+            "Senza spogliatoi la loro capacità non viene verificata e nessuna altra scheda si blocca",
+            "Uno spogliatoio in uso non si elimina: disattivalo",
+            "L'assegnazione abituale salva solo lo spogliatoio della squadra"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Imposta Orari e Regole",
+          "description": "Nella scheda Orari e regole scegli il campo delle partite in casa a 11 (U14–U19 e prima squadra) e guarda gli orari consentiti per gli allenamenti: settore giovanile e scuola calcio iniziano tra le 14:30 e le 20:00, mai di mattina.",
+          "tips": [
+            "In cima alla pagina «Il Planner è pronto al N%» ti accompagna passo per passo: «Vai» ti porta al punto esatto, puoi saltare i passi e riprenderli più tardi",
+            "Per scuola calcio e categorie a 8 o a 5 il campo delle partite in casa si imposta per settore, per categoria o per la singola gara",
+            "Una seduta che inizia fuori fascia è un avviso, non un blocco",
+            "Nel gruppo «Staff: sedute insieme e pausa per ruolo» la casella «Solo gli allenatori bloccano le sedute» (spenta di partenza) lascia ai preparatori atletici e dei portieri la libertà di seguire più squadre: compare solo un'informazione",
+            "Gli avvisi «Da guardare» e i consigli sotto la prontezza si chiudono con la X"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Imposta le Squadre",
+          "description": "Nella scheda Squadre indica per ogni squadra quante sedute fa a settimana, quanto durano, il formato e le preferenze. I valori «suggeriti» sono solo una proposta: premi «Conferma» sulla riga per salvarli.",
+          "tips": [
+            "Settore giovanile: 3 sedute da 90′; scuola calcio: 3 sedute da 75-90′",
+            "Per la scuola calcio conferma il formato dall'apposito pannello",
+            "Il riposo preferito «0» significa nessuna preferenza",
+            "L'ordine delle parti di campo si cambia anche da tastiera con le frecce su e giù"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Allenatori e Disponibilità",
+          "description": "Nella scheda Allenatori scegli, per ogni persona, giorno per giorno e in tre fasce (fino alle 12, 12-17, dalle 17), quando non può esserci o preferisce allenare. Una seduta su una fascia «non disponibile» diventa un conflitto.",
+          "tips": [
+            "Vincolo = non disponibile o solo in una fascia; preferenza = sgradita o preferita",
+            "«Copia da…» riempie solo la bozza: salvi tu, una persona alla volta",
+            "Per orari precisi usa «Fasce precise»",
+            "Fasce e note le vede solo chi gestisce la pianificazione"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Segna le Altre Società",
+          "description": "Nella scheda Altre società aggiungi gli allenamenti e le gare di altre società sui tuoi campi: ogni settimana (con validità facoltativa) o in una data, con orari, parti di campo e spogliatoi occupati.",
+          "tips": [
+            "Le gare di altre società sono sempre in una data precisa",
+            "Puoi occupare fino a 4 parti di campo, anche di campi diversi",
+            "Accanto al nome compare «(altra società)»"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Controlla la Settimana",
+          "description": "Nella scheda Controllo della settimana scegli il settore e la settimana: vedi sedute, gare in casa e occupazioni esterne per giorno o per campo (per staff le sole sedute). Il pannello conflitti dice cosa non torna, quanto puoi fidarti del controllo (affidabilità Alta, Media o Bassa) e cosa fare, in ordine, per fidarti di più.",
+          "tips": [
+            "Un clic su un conflitto evidenzia le sedute coinvolte",
+            "Il preparatore atletico con due squadre insieme è solo un'informazione",
+            "Ogni cosa che il controllo non ha potuto verificare ha il suo pulsante, per esempio «Collega i luoghi»",
+            "Qui stai solo guardando: le settimane tipo non cambiano"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Crea la Bozza",
+          "description": "Nella scheda Bozza scegli il settore e premi «Crea bozza vuota» oppure «Parti da quanto già configurato». Aggiungi e modifica le sedute (giorno, ora, campo, spogliatoio) e guarda i conflitti a ogni salvataggio.",
+          "tips": [
+            "Nulla cambia finché non applichi: la bozza non tocca le settimane tipo",
+            "Una sistemazione dei gruppi della scuola calcio entra in bozza solo dopo la tua conferma esplicita",
+            "«Annulla l'ultima modifica» riporta la seduta com'era",
+            "«Tieni conto anche degli altri settori» mostra in grigio le sedute degli altri settori",
+            "Non sai da dove partire? «Suggerisci programma» ti propone una bozza completa"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Suggerisci programma",
+          "description": "Nella Bozza premi «Suggerisci programma», scegli le opzioni e premi «Calcola»: ottieni fino a tre alternative con punteggio e spiegazioni. Scegline una, premi «Usa questa proposta» e poi «Carica nella bozza», quindi controlla i conflitti. Con «Parti da zero» il calcolo ignora le sedute messe in bozza da una proposta precedente, ma non scioglie le settimane tipo; per le sedute già importate usa «Fissata» o «Elimina». Per portare la bozza nelle settimane tipo usa poi «Applica alla settimana tipo» (anteprima obbligatoria, poi «Conferma e applica»).",
+          "tips": [
+            "Non applica nulla e non cambia le settimane tipo: lavora solo sulla bozza",
+            "«Applica alla settimana tipo» SOVRASCRIVE la settimana tipo delle categorie coinvolte: leggi l'anteprima, in particolare le sedute che verranno rimosse",
+            "I valori «suggeriti, da confermare» non vengono salvati: confermali nelle schede indicate con «Vai»",
+            "Le sedute già definite nelle settimane tipo restano dove sono, salvo che attivi «Ottimizza anche le sedute già definite»",
+            "Una sistemazione dei gruppi della scuola calcio entra solo se spunti la casella di conferma",
+            "I gruppi di una categoria si allenano sempre agli stessi giorni e orari: se non c'è posto per tutti insieme la categoria resta senza posto e ti dico cosa cambiare",
+            "Quando i gruppi di una categoria non entrano su un solo campo, li sistemo sullo stesso orario su più campi o su più metà dello stesso campo, e ti chiedo di confermare la sistemazione prima di scriverla in bozza.",
+            "La sistemazione può dividere i gruppi in 2-4 parti alla stessa ora: si prova prima lo stesso campo, poi un campo per ogni gruppo. In «Altre opzioni», «Tieni insieme i gruppi di alcune categorie» li lascia in una sola seduta; nella finestra «Sistema i gruppi» gli orari delle parti partono uguali e, se compare la casella «Orari diversi per le parti», puoi cambiarli",
+            "Se compare «Risultato parziale» escludi alcune squadre o lavora un settore alla volta"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Controlla Tutti insieme",
+          "description": "Scegli «Tutti insieme» tra i settori: vedi tutti i settori nella stessa settimana, tipo o datata, con i conflitti tra settori evidenziati. Qui assegni a mano campo e spogliatoi delle gare in casa.",
+          "tips": [
+            "È di sola lettura, tranne l'assegnazione delle gare",
+            "La settimana datata vale «Solo questa settimana»: le eccezioni per data non sono ancora salvabili",
+            "L'assegnazione di una gara non modifica la partita nel calendario"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Stampa il Foglio",
+          "description": "Dal pulsante Stampa della pagina o dal Print Center apri il foglio «Settimana»: per ogni giorno Ora, Squadra, Campo e Spogliatoi (con la spunta «Mostra staff» aggiungi la colonna Staff, solo per gli allenamenti, e trovi nel menu «Vista» anche «Per staff»), con gare in casa e occupazioni esterne, pronto da stampare o salvare in PDF.",
+          "tips": [
+            "Il foglio sta in un solo A4 e dice se comprende bozze non ancora applicate",
+            "Le righe sono in ordine di giorno, di orario e, a parità di orario, dalla categoria più alta alla più bassa",
+            "Con un settore scelto compaiono solo le gare in casa di quel settore; con «Tutti i planner» le vedi tutte",
+            "Nei giorni con sole gare la colonna Staff non compare",
+            "Accanto a Stampa, «Copia planner» copia di default il programma come immagine (PNG fino a 2160 px di larghezza, layout da telefono), pronta da incollare in WhatsApp; «Copia come testo» è l'alternativa. Scegli se copiare tutta la settimana, un giorno o una squadra",
+            "Le squadre sono indicate con categoria e tipo di campionato, per esempio «U14 Reg.»",
+            "«Mostra staff» è una sola spunta, spenta di default e ricordata sul dispositivo: spenta, la vista «Per staff» non c'è",
+            "In stampa non compaiono mai fasce o note di disponibilità"
+          ],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "locandine",
+      "titolo": "Locandine per social e stampa",
+      "descrizione": "Crea locandine pronte da condividere o stampare: Open Day, allenamenti, iscrizioni, tornei ed eventi.",
+      "icon": "megaphone",
+      "durata": "~5 min",
+      "target": [
+        "Admin",
+        "Segreteria"
+      ],
+      "steps": [
+        {
+          "label": "Scegli la Locandina",
+          "description": "Apri Print Center e, nella sezione Società, scegli: Open Day, Allenamenti, Iscrizione (quote) oppure Evento (tornei e eventi). Partite della settimana (per la bacheca) e Compleanni hanno la loro locandina nella stessa sezione, e «Locandina Settimana (social)» crea Weekend Preview e Recap per Instagram e WhatsApp. La Locandina Partita (Match Day e Full Time) è nella sezione Match Day, legata alla partita selezionata.",
+          "tips": [
+            "Open Day e Allenamenti prendono i dati da quello che hai già inserito",
+            "Iscrizione parte dalle quote configurate in Gestione Quote",
+            "Evento si scrive a mano partendo da un modello",
+            "Partita parte dalla gara scelta nel Print Center"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Controlla e Completa i Testi",
+          "description": "Nel pannello a lato trovi i campi della locandina. Ogni testo ha la spunta «Mostra»: spento non compare, ma resta scritto e lo riattivi quando vuoi.",
+          "tips": [
+            "Un blocco senza testo non compare",
+            "Le modifiche valgono solo per la locandina: le anagrafiche e le quote non cambiano",
+            "Su computer l'anteprima resta ferma mentre scorri le opzioni"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Iscrizione: Quote e Pagamento",
+          "description": "Le quote configurate sono proposte in automatico. Con «Modifica» ne fai una copia da ritoccare (titolo, importi, righe delle rate) solo per la locandina. Aggiungi offerte in evidenza e documentazione.",
+          "tips": [
+            "IBAN, banca e sede arrivano dall'anagrafica e si possono nascondere con la spunta",
+            "Le quote di stagioni passate restano spente",
+            "Parte in A4; per i social passa al formato quadrato"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Evento: Torneo o Giornata",
+          "description": "Scegli il modello (partecipiamo a un torneo, organizziamo un torneo, evento di una giornata) e compila i blocchi che ti servono: quando e dove, programma, quota, scadenza adesioni, squadre, premi.",
+          "tips": [
+            "Se organizzi tu, le squadre partecipanti si mostrano con i loghi: solo nomi, solo loghi o loghi e nomi",
+            "I loghi si cercano nel catalogo dell'app: se è sbagliato lo cambi dal menu, e senza logo compare il nome",
+            "Se un logo ha lo sfondo bianco, l'app lo toglie da sola (spunta «Togli lo sfondo bianco» per annullare)",
+            "Cambiando modello i testi già scritti vengono sostituiti (l'app chiede conferma)"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Partita: Match Day e Full Time",
+          "description": "Dalla scheda di una partita (nel calendario o nella dashboard), oppure dalla finestra «Dettaglio Partita», premi «Locandina» (oppure, dal Print Center, «Locandina Partita» nella sezione Match Day): parte da quella partita. Con l'interruttore passi da Match Day (prima della gara) a Full Time (col risultato). Avversario, data, campo, risultato, loghi, marcatori e sponsor arrivano dall'app e li puoi cambiare o integrare.",
+          "tips": [
+            "La riga sopra il titolo parte dal tipo di campionato (es. 1ª Categoria, Under 15 · Elite) e dalla giornata, oppure da «Amichevole» o dal nome del torneo: puoi cambiarla o integrarla",
+            "Nelle giovanili i marcatori sono spenti di partenza, nella Scuola Calcio anche il risultato: li accendi con la spunta",
+            "Accanto ai marcatori compare il minuto del gol (es. «Rossi 12' 55'»): lo spegni con la spunta «Mostra il minuto dei gol» o lo scrivi tu dopo il nome, con l'apostrofo",
+            "Se il risultato non è ancora registrato lo scrivi a mano; puoi caricare uno sfondo tuo, solo per questa locandina",
+            "I nomi di squadra lunghi vengono accorciati da soli, ma nel pannello «Squadre» scrivi tu il nome che vuoi",
+            "Se vuoi, il nome della tua società può stare dentro una pillola semitrasparente per distinguerlo dall'avversario: la accendi con la spunta «Evidenzia la nostra squadra» (spenta di partenza)",
+            "Formato verticale 4:5 per Instagram e WhatsApp, oppure quadrato e A4"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Starting XI: la Formazione Titolare",
+          "description": "Quando la formazione è salvata con gli 11 titolari, premi «Starting XI» dal Match Center, dalla pagina Formazione, dal calendario o dal Print Center: ottieni la locandina per storie e feed con numero di maglia e nome («V. COGNOME») di ogni titolare e i cognomi dei convocati a disposizione, con il loro numero di maglia.",
+          "tips": [
+            "I numeri sono quelli della tab Formazioni: se ne manca uno si usa quello della rosa e l'app dice quanti e di chi; se manca anche lì compare «–» e l'app ti avvisa prima di generare; puoi scriverlo nel pannello (vale solo per la locandina)",
+            "I giovani aggregati da categorie senza consenso attivo sono inclusi: compare un avviso che puoi ignorare",
+            "Per giovanile e Scuola Calcio serve abilitarla (admin o segreteria) perché compaiono nomi di minorenni: chiedi prima il consenso dei genitori",
+            "Solo nomi, nessuna foto; formato storia 9:16 oppure feed 4:5, PNG"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Settimana: Weekend Preview e Recap",
+          "description": "Dal Print Center (sezione Società, «Locandina Settimana (social)») oppure dal pulsante «Social» in Partite della Settimana: le partite della settimana in un'unica immagine, una riga per partita. Weekend Preview prima delle gare (giorno, ora e campo), Weekend Recap dopo (con il risultato). La stampa per la bacheca resta nella voce «Locandina Partite».",
+          "tips": [
+            "Con le spunte scegli i settori: l'immagine è sempre una sola, con una riga per partita",
+            "Con le frecce cambi settimana: la pagina propone da sola Preview o Recap",
+            "Nella Scuola Calcio i risultati sono spenti di partenza: li accendi tu con la spunta",
+            "Il nome della tua società sta dentro una pillola semitrasparente per distinguerlo dall'avversario (spunta «Evidenzia la nostra squadra»)",
+            "Stagione, sottotitolo e date si calcolano dalle partite e si possono scrivere a mano"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Personalizza l'Aspetto",
+          "description": "Dal pannello «Aspetto» scegli tema (colorato, scuro, chiaro), colori, linee del campo, contatti, carattere e texture. I colori di partenza sono quelli sociali. Dal pannello «Sfondo» puoi caricare una foto o una grafica al posto dei colori.",
+          "tips": [
+            "Carattere: scegli separatamente lo stile dei titoli e quello del testo tra Moderno, Sportivo, Atletico ed Elegante; vale per tutte le locandine, Compleanni compresa (lì il pannello «Aspetto» ha anche la spunta «Mostra la categoria», che aggiunge tra parentesi la categoria accanto al nome)",
+            "Texture «carta antica»: spunta in «Aspetto» per un effetto vintage sullo sfondo, con intensità regolabile; vale per tutte le locandine e in stampa usa più inchiostro",
+            "«Salva come predefinito» (admin o segreteria) tiene le scelte per tutta la società, carattere e texture compresi",
+            "«Ripristina» torna ai colori sociali",
+            "Lo sfondo vale solo per la locandina che stai facendo e non viene salvato; il cursore «Velo scuro» regola la leggibilità dei testi sulla foto"
+          ],
+          "optional": true
+        },
+        {
+          "label": "Condividi o Stampa",
+          "description": "Scegli il formato: verticale 4:5 (Instagram e WhatsApp), quadrato o A4 da stampare. Poi «Copia immagine» per incollarla su WhatsApp, «Scarica PNG» oppure «Stampa».",
+          "tips": [
+            "Da telefono «Scarica PNG» apre la condivisione per salvare in Foto o inviare",
+            "Open Day e Allenamenti hanno «Una per settore»: un'immagine per Scuola Calcio, Giovanile e Prima Squadra",
+            "Se nel formato scelto c'è troppo contenuto, un avviso suggerisce l'A4 o meno blocchi",
+            "Una foto di sfondo a tutta pagina in A4 consuma molto inchiostro"
+          ],
+          "optional": false
         }
       ]
     },
@@ -1159,7 +1884,9 @@
           "description": "Vai alla sezione Classifica per vedere la posizione della tua squadra.",
           "tips": [
             "Al primo accesso ti chiede di configurare il girone",
-            "I dati sono aggiornati automaticamente dalla LND"
+            "I dati si aggiornano con il pulsante Sync, non da soli: se compare «Dati al» controlla la data dell'ultimo aggiornamento",
+            "Se compare «non ufficiale» la classifica è calcolata dai risultati perché la federazione non la pubblica, e può non tenere conto di penalizzazioni o vittorie a tavolino",
+            "Con la classifica ufficiale presente, «Calcola dai risultati» ne mostra una calcolata a confronto"
           ],
           "optional": false
         },
@@ -1171,6 +1898,27 @@
             "Le prossime mostrano data e avversario"
           ],
           "optional": false
+        },
+        {
+          "label": "Classifica a fine giornata",
+          "description": "Spunta «Classifica a fine giornata» per vedere come era la classifica dopo ogni giornata e come si è mossa la tua squadra.",
+          "tips": [
+            "Le frecce sono quelle della card Giornate; «Torna all'ultima» riporta alla giornata più recente",
+            "È una ricostruzione dai risultati, non ufficiale: spareggi e penalizzazioni possono differire dalla classifica LND",
+            "Conta solo i risultati omologati dal Giudice sportivo: l'asterisco accanto a G segnala le partite non ancora omologate e non conteggiate",
+            "Sotto la tabella compare il grafico dell'andamento: tocca un punto per saltare a quella giornata"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Squadre fuori classifica",
+          "description": "Le seconde squadre che giocano nello stesso girone non danno punti: stanno in fondo alla tabella, nella riga «Fuori classifica». Solo gli admin le impostano, dal pulsante «Impostazioni classifica» del riquadro Classifica.",
+          "tips": [
+            "In «Impostazioni classifica», nel blocco «Fuori classifica e ritirate», scegli «Fuori classifica» o «Ritirata» per ogni squadra e premi «Salva fuori classifica»",
+            "Le gare contro una squadra fuori classifica non contano per la classifica; i risultati di una squadra ritirata sono annullati, salvo «Mantieni i risultati già giocati»",
+            "«Suggerita dal nome» è solo un suggerimento: non cambia nulla finché non confermi e salvi"
+          ],
+          "optional": true
         }
       ]
     },
@@ -1218,7 +1966,7 @@
           "description": "Controlla chi ha giocato di più e chi meno.",
           "tips": [
             "Utile per bilanciare i minutaggi",
-            "Vedi titolare vs subentrato"
+            "Vedi titolare vs subentrato: in «Pres.» il numero tra parentesi sono le partite da titolare, es. «8 (6)» = 8 presenze di cui 6 da titolare"
           ],
           "optional": false
         }
@@ -1284,6 +2032,48 @@
       ]
     },
     {
+      "id": "carico_settimana",
+      "titolo": "Carico della Settimana",
+      "descrizione": "Come leggere il carico di allenamento della squadra nel Cruscotto di Preparazione atletica.",
+      "icon": "gauge",
+      "durata": "~3 min",
+      "target": [
+        "Preparatore Atletico",
+        "Allenatore",
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Scegli Squadra e Settimana",
+          "description": "In Preparazione atletica, scheda Cruscotto, scegli la squadra dal menu e sfoglia le settimane con le frecce. Ogni settimana parte di lunedì.",
+          "tips": [
+            "Sono disponibili Settore Giovanile e Prima Squadra",
+            "«Questa settimana» ti riporta alla settimana in corso"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Leggi il Carico in AU",
+          "description": "Nel riquadro «Carico della settimana» il numero in AU è lo sforzo percepito (da 0 a 10) moltiplicato per i minuti. Accanto leggi «RPE compilati»: quanti ragazzi hanno risposto, su quanti.",
+          "tips": [
+            "Con meno del 60% di risposte compare «Dati incompleti» e i confronti non vengono mostrati",
+            "I confronti sono con la settimana precedente e con la media delle 4 precedenti, con frecce neutre: salire o scendere non è un giudizio",
+            "Se compare «RPE non attivo per questa categoria» la raccolta dello sforzo percepito non è attiva per quella squadra"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Sollecita Chi Manca",
+          "description": "Nella barra avvisi vedi quante «RPE mancanti» ci sono. Se puoi modificare gli allenamenti, «Sollecita» manda un promemoria ai ragazzi che non hanno ancora risposto per le sedute di oggi.",
+          "tips": [
+            "Il promemoria arriva solo a chi non ha ancora risposto",
+            "Il carico delle partite si vede solo con il permesso Partite"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
       "id": "test_atletici",
       "titolo": "Test Atletici",
       "descrizione": "Registra e monitora i test atletici dei giocatori.",
@@ -1336,7 +2126,7 @@
       "id": "valutazione_tecnica",
       "titolo": "Valutazione Tecnica",
       "descrizione": "Valuta i giocatori con il radar a 6 assi.",
-      "icon": "chart",
+      "icon": "star",
       "durata": "~10 min",
       "target": [
         "Allenatore",
@@ -1356,7 +2146,9 @@
           "label": "Valuta Giocatori",
           "description": "Clicca ✏️ per modificare le valutazioni direttamente dalla tabella.",
           "tips": [
-            "Ogni asse va da 1 a 10",
+            "Ogni asse segue la scala scelta per la squadra (stelle da 1 a 5 oppure da 1 a 10)",
+            "Se cambi scala, le schede già compilate non vengono toccate: le vedi nella scala nuova con un asterisco e il valore dato in origine, ad esempio «dato: 8/10»",
+            "Se modifichi una scheda convertita ti avvisiamo prima di salvarla nella scala attuale",
             "Puoi valutare più giocatori in sequenza"
           ],
           "optional": false
@@ -1389,7 +2181,8 @@
       "durata": "~15 min",
       "target": [
         "Admin",
-        "Osservatore"
+        "Osservatore",
+        "Direttore Sportivo"
       ],
       "steps": [
         {
@@ -1430,10 +2223,47 @@
         },
         {
           "label": "Converti in Giocatore",
-          "description": "Quando lo stato è \"acquistato\", converti il prospetto in giocatore della rosa.",
+          "description": "Quando lo stato è \"firmato\", converti il prospetto in giocatore della rosa.",
           "tips": [
             "Scegli la squadra di destinazione",
             "I dati anagrafici vengono copiati"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Richiesta di ricerca per ruolo",
+          "description": "Dalla scheda «Richieste» crea una richiesta per trovare un ruolo in una categoria: indica ruolo, piede, anno di nascita, caratteristiche, priorità e scadenza.",
+          "tips": [
+            "Solo amministratore e Direttore Sportivo possono crearla",
+            "Il Direttore Sportivo deve avere il profilo «Direttore Sportivo»"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Richiesta di visione partita",
+          "description": "Scegli la gara dal calendario: i prossimi avversari (è preselezionato quello da vedere con un turno di anticipo) o una qualsiasi partita del girone. Data, ora, squadre e campo si compilano da soli.",
+          "tips": [
+            "Se il torneo non è nel calendario usa «Inserisci a mano»",
+            "Se il calendario non è aggiornato ti avvisiamo di controllare data e campo",
+            "Per il prossimo avversario trovi anche «Ultima gara giocata» (lo scout la vede in video o chiede il referto) e la «Scheda avversario» con ultime 5 gare, serie, gol e campo di casa"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Assegna la richiesta agli scout",
+          "description": "Assegna la richiesta a uno o più scout, oppure a tutti. Gli scout ricevono una notifica; chiudi a mano la richiesta quando non serve più.",
+          "tips": [
+            "Una richiesta di ricerca si chiude da sola quando un candidato passa a «firmato»",
+            "Puoi anche annullarla"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Le mie richieste (scout)",
+          "description": "Nella scheda «Le mie richieste» trovi solo quelle assegnate a te e quelle per tutti. Segnala un prospetto collegato alla richiesta oppure registra l'esito della partita vista.",
+          "tips": [
+            "Le richieste sono in sola lettura",
+            "Per segnalare serve il permesso di scrittura sullo scouting"
           ],
           "optional": false
         }
@@ -1483,10 +2313,37 @@
           "label": "Valutazioni",
           "description": "Valuta ogni giocatore con stelle (1-3) per area motoria e sociale. Tre periodi: Inizio, Metà e Fine Stagione.",
           "tips": [
-            "Il sistema suggerisce automaticamente i passaggi di gruppo in base alle valutazioni",
-            "Clicca 🖨️ per generare la scheda sviluppo da condividere con la famiglia"
+            "Il sistema suggerisce i passaggi di gruppo confrontando l'ultima valutazione di ogni bambino con la media dei gruppi, senza sbilanciare inutilmente i numeri",
+            "Puoi usare anche le mezze stelle",
+            "Clicca 🖨️ per generare la scheda sviluppo da condividere con la famiglia",
+            "Sotto il titolo trovi l'interruttore «Condividi con le famiglie»: è spento finché non lo accendi e vale per la categoria scelta. Da acceso, ogni famiglia vede le stelle del proprio figlio e la data dell'ultimo aggiornamento, mai le note, il livello, il gruppo o i confronti"
           ],
           "optional": false
+        },
+        {
+          "label": "Bilancia Gruppi",
+          "description": "Dopo il periodo di osservazione riorganizza i gruppi della categoria in un'unica schermata. In Valutazioni Scuola Calcio scegli la modalità «Bilancia gruppi»: vedi i gruppi affiancati, con numero di bambini, livello medio e, per ogni bambino, stelle, andamento e data dell'ultima valutazione. Il gruppo A è sempre quello con il livello più alto. Sposta i bambini dove servono, controlla l'anteprima e conferma.",
+          "tips": [
+            "Su telefono e su computer: tocca il bambino, poi «Sposta qui» sul gruppo di destinazione. Sul telefono scorri di lato per passare da un gruppo all'altro; sul computer puoi anche trascinare il bambino sul gruppo",
+            "I suggerimenti automatici sono solo proposte: per ognuna leggi il motivo e scegli «Accetta» o «Ignora». Un bambino è proposto per un altro gruppo solo se il suo livello è più vicino alla media di quel gruppo (serve almeno 3 bambini valutati) e se i numeri dei gruppi restano equilibrati; se non lo sono, compare l'avviso «Sbilancia i numeri». Con «Accetta tutte» vedi prima l'elenco e confermi",
+            "Gli spostamenti sono una bozza: la puoi annullare passo passo o azzerare, e non si perde se chiudi la pagina. Cambia davvero solo quando premi «Rivedi e conferma»",
+            "L'anteprima mostra come cambiano numero di bambini e livello medio di ogni gruppo, con gli avvisi; puoi scrivere una nota facoltativa",
+            "Con i bambini seguono il nuovo gruppo tesseramento, quote, kit e infortunio in corso; vengono portate anche tessera FIGC, taglia e squalifiche. Maglia e capitano non vengono portati",
+            "In fondo alla pagina trovi lo storico: chi ha riorganizzato, quando e come sono cambiate le medie. Per tornare indietro fai una nuova riorganizzazione",
+            "La modalità è visibile solo a amministratori, a chi può modificare la rosa e al responsabile Scuola Calcio, e serve una categoria con almeno due gruppi"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Regola Presenze Convocazione",
+          "description": "Opzionale: in Allenamenti → Impostazioni puoi richiedere un minimo di allenamenti settimanali per convocare un bambino. Non blocca la convocazione, segnala all'allenatore chi non ha ancora raggiunto il minimo.",
+          "tips": [
+            "Vale per tutte le squadre della Scuola Calcio del workspace",
+            "In convocazione: badge \"Con riserva · N/M\" (può ancora recuperare con gli allenamenti in programma) o \"Sotto soglia · N/M\" (non più recuperabile)",
+            "Un allenamento annullato conta come presenza per tutti",
+            "Il badge è visibile solo all'allenatore, mai nel messaggio inviato alle famiglie"
+          ],
+          "optional": true
         },
         {
           "label": "Tornei",
@@ -1501,10 +2358,149 @@
           "label": "Link Famiglie",
           "description": "Genera i link per le famiglie. In vista aggregata categoria puoi generare i link per tutti i gruppi in un colpo solo.",
           "tips": [
-            "Le famiglie SC vedono le valutazioni del figlio e la scheda sviluppo",
+            "Le famiglie SC vedono le valutazioni del figlio solo se hai acceso «Condividi con le famiglie» per la categoria (in Valutazioni Scuola Calcio)",
             "I link senza scadenza rimangono validi per tutta la stagione"
           ],
           "optional": false
+        }
+      ]
+    },
+    {
+      "id": "profilo",
+      "titolo": "Profilo e Notifiche",
+      "descrizione": "Gestisci il tuo account: aspetto, password e quali notifiche push ricevere sul dispositivo.",
+      "icon": "user",
+      "durata": "~3 min",
+      "target": [
+        "Admin",
+        "Allenatore",
+        "Segreteria",
+        "Staff",
+        "Osservatore"
+      ],
+      "steps": [
+        {
+          "label": "Informazioni Account",
+          "description": "In alto trovi email e ruolo del tuo account. Sono i dati con cui accedi all'app.",
+          "tips": [
+            "Il ruolo determina cosa puoi vedere e modificare",
+            "Per cambiare email contatta un amministratore"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Aspetto e Accessibilità",
+          "description": "Regola la dimensione dei caratteri (ingrandisce testo e interfaccia su tutta l'app) e attiva la modalità colori ad alta distinguibilità.",
+          "tips": [
+            "Le preferenze sono salvate sul dispositivo e sul profilo, quindi ti seguono anche da un altro device",
+            "La modalità alta distinguibilità aiuta chi fatica a distinguere verde/rosso/giallo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Cambia Password",
+          "description": "Aggiorna la password inserendo quella attuale e la nuova due volte.",
+          "tips": [
+            "Usa una password che non riutilizzi su altri siti",
+            "Se l'hai dimenticata, nella pagina di accesso scegli «Password dimenticata?»: ti arriva un'email con il link per sceglierne una nuova"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Esci da tutti i dispositivi",
+          "description": "Chiude gli accessi su tutti i dispositivi in cui sei entrato, compreso questo. Ti chiede una conferma e poi ti porta alla pagina di accesso.",
+          "tips": [
+            "Gli altri dispositivi escono entro pochi minuti",
+            "Usalo se hai perso un telefono o hai usato un computer non tuo",
+            "Anche il cambio della password chiude gli accessi precedenti: su questo dispositivo resti collegato"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Preferenze Notifiche Push",
+          "description": "Scegli con gli interruttori quali tipi di notifica push ricevere. Admin e segreteria possono anche filtrare le push per squadra.",
+          "tips": [
+            "Spegnere una push NON la toglie dall'inbox: lì le comunicazioni restano sempre visibili",
+            "Il filtro per squadra è utile se segui solo alcune categorie"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Problemi con l'app?",
+          "description": "Se l'app non si apre, non si aggiorna o non ti fa entrare, usa «Ripristina l'app»: pulisce la memoria dell'app e la ricarica. I tuoi dati non vengono toccati. Lo trovi anche nella pagina di accesso, sotto «Problemi ad accedere?».",
+          "tips": [
+            "«Esci e ripulisci tutto» esce dall'account e toglie i dati di accesso e il collegamento alle notifiche: su questo dispositivo smetti di riceverle e «Notifiche» riparte spento (il permesso del browser resta, riattivarle è un tocco). Restano dimensione caratteri, colori, preferenze di stampa e Planner e diagnostica. Sul server si toglie solo la sottoscrizione push di questo dispositivo",
+            "«Informazioni di sistema» mostra versione, browser e stato dell'app: con «Copia» le mandi all'assistenza su WhatsApp. Non contengono password, email o codici di accesso"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Notifiche partite live",
+          "description": "Se un amministratore ha attivato le notifiche delle partite live per la società, qui compare la scheda «Notifiche partite live»: premi «Attiva su questo dispositivo» e conferma nella richiesta del browser. Poi scegli con un interruttore se ricevere gli avvisi e silenzia le categorie che non ti interessano.",
+          "tips": [
+            "Se la scheda non c'è, la funzione non è attiva per la tua società",
+            "La tua scelta vale su tutti i tuoi dispositivi e prevale sempre, anche se l'amministratore ti ha incluso; l'attivazione invece va fatta su ogni dispositivo",
+            "Non esiste un silenzio notturno: le partite si giocano di giorno",
+            "Su iPhone serve prima aggiungere l'app alla Home (in Safari: Condividi, poi Aggiungi alla schermata Home) e aprirla dall'icona",
+            "Se le notifiche risultano bloccate, riabilitale dalle impostazioni del sito e ricarica la pagina",
+            "Dopo «Esci» il dispositivo si scollega dalle notifiche: al prossimo accesso riattivale con un tocco"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "piano",
+      "titolo": "Il mio Piano",
+      "descrizione": "Leggi il piano attivo, controlla l'utilizzo e la scadenza dell'abbonamento, confronta i piani e richiedi un upgrade.",
+      "icon": "award",
+      "durata": "~3 min",
+      "target": [
+        "Admin"
+      ],
+      "steps": [
+        {
+          "label": "Piano Attuale",
+          "description": "La card in alto mostra il piano attivo del workspace e il relativo prezzo annuale (ed eventuale mensile).",
+          "tips": [
+            "Il badge indica se sei in prova (trial) o pagante",
+            "I piani vanno da Coach fino a Pro"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Utilizzo",
+          "description": "Vedi quante categorie e utenti stai usando rispetto ai limiti del piano. Per il piano Club conta il settore abilitato.",
+          "tips": [
+            "Se sei vicino al limite di categorie o utenti, valuta un upgrade",
+            "Le barre diventano piene man mano che ti avvicini al massimo"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Validità Abbonamento",
+          "description": "Per gli account paganti è indicata la scadenza dell'abbonamento, così sai entro quando rinnovare.",
+          "tips": [
+            "La scadenza compare solo per gli account paganti, non in trial"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Confronta Piani",
+          "description": "La tabella mette a confronto funzionalità e prezzi di tutti i piani. Su mobile scorri tra i piani con le frecce.",
+          "tips": [
+            "SC = Scuola Calcio, SG = Settore Giovanile",
+            "Il piano attuale è evidenziato nella tabella"
+          ],
+          "optional": false
+        },
+        {
+          "label": "Richiedi Upgrade",
+          "description": "Dal fondo pagina avvii la richiesta di passaggio a un piano superiore via email o WhatsApp.",
+          "tips": [
+            "L'upgrade non è automatico: parte una richiesta che gestiamo insieme a te"
+          ],
+          "optional": true
         }
       ]
     }

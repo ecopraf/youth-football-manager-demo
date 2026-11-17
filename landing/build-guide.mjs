@@ -15,7 +15,10 @@
  * NB: getAllFlows() già esclude i flussi con target 'guest' (guida_famiglia),
  * che riguardano l'area famiglie e non lo staff.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, unlinkSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
@@ -28,7 +31,34 @@ const FLOWS_PATH = resolve(
   '../../youth-football-manager/frontend-v3/src/modules/help/flowsData.js'
 )
 
-const mod = await import(pathToFileURL(FLOWS_PATH).href)
+// Il file usa l'alias '@/' di Vite: lo risolviamo con esbuild (già nel progetto app),
+// così lo script gira con `node build-guide.mjs`, senza vite-node.
+const APP_FRONTEND = resolve(__dirname, '../../youth-football-manager/frontend-v3')
+const APP_SRC = join(APP_FRONTEND, 'src')
+const requireApp = createRequire(join(APP_FRONTEND, 'package.json'))
+const esbuild = requireApp('esbuild')
+const bundle = await esbuild.build({
+  entryPoints: [FLOWS_PATH],
+  bundle: true,
+  format: 'esm',
+  platform: 'node',
+  write: false,
+  logLevel: 'silent',
+  plugins: [{
+    name: 'alias-at',
+    setup(build) {
+      build.onResolve({ filter: /^@\// }, args => ({ path: join(APP_SRC, args.path.slice(2)) }))
+    },
+  }],
+})
+const tmpFile = join(tmpdir(), `yfm-flows-${process.pid}.mjs`)
+writeFileSync(tmpFile, bundle.outputFiles[0].text, 'utf8')
+let mod
+try {
+  mod = await import(pathToFileURL(tmpFile).href)
+} finally {
+  unlinkSync(tmpFile)
+}
 const { getAllFlows, TARGET_LABELS } = mod
 
 // Ripulisce un flusso per la vista pubblica: via i campi interni UI.
