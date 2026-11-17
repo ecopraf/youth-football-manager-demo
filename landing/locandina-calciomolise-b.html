@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locandina Partnership Calcio Molise B — Youth Football Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1a2e;
+        }
+
+        .locandina {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(180deg, #4a5568 0%, #2d3748 30%, #1a202c 70%, #171923 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sfondo viola brand sfumato */
+        .bg-field {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 560px;
+            background: linear-gradient(180deg,
+                rgba(102, 126, 234, 0.28) 0%,
+                rgba(118, 75, 162, 0.16) 40%,
+                transparent 100%);
+            opacity: 0.85;
+        }
+
+        /* Linee di campo accennate */
+        .pitch {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        /* decorazione: cerchi sfocati */
+        .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+        .glow-1 { width: 420px; height: 420px; background: rgba(102,126,234,0.35); top: -120px; right: -80px; }
+        .glow-2 { width: 360px; height: 360px; background: rgba(201,162,39,0.16); bottom: -60px; left: -60px; }
+
+        /* Header co-branding compatto */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 44px 60px 0;
+            position: relative;
+            z-index: 10;
+        }
+        .yfm-brand { display: flex; align-items: center; gap: 16px; }
+        .yfm-brand img { width: 60px; height: 60px; border-radius: 14px; }
+        .yfm-brand .name { color: white; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .yfm-brand .tagline { font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+        .partner-chip {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 14px 24px 14px 14px;
+        }
+        .partner-chip .plogo {
+            width: 76px; height: 76px;
+            border-radius: 14px;
+            background: white;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .partner-chip .plogo img { width: 64px; height: 64px; object-fit: contain; }
+        .partner-chip .ptxt .plabel { color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .partner-chip .ptxt .pname { color: white; font-size: 22px; font-weight: 800; margin-top: 3px; }
+
+        /* Hero (allineato a sinistra, mockup a destra) */
+        .hero {
+            padding: 44px 60px 0;
+            position: relative;
+            z-index: 10;
+            max-width: 640px;
+        }
+        .hero-pretitle {
+            color: #27AE60;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .hero-title {
+            color: white;
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.03;
+            letter-spacing: -1.5px;
+            margin-bottom: 18px;
+        }
+        .hero-title .accent {
+            background: linear-gradient(135deg, #e3c04d 0%, #c9a227 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            color: rgba(255,255,255,0.82);
+            font-size: 22px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .hero-subtitle strong { color: #27AE60; font-weight: 600; }
+
+        /* USP list */
+        .usp-list {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+        .usp-item { display: flex; align-items: center; gap: 14px; }
+        .usp-item .ic {
+            width: 40px; height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .usp-item .tx { color: white; font-size: 16px; font-weight: 600; }
+
+        /* Mockup app a destra */
+        .mockups {
+            position: absolute;
+            right: 42px;
+            top: 285px;
+            z-index: 6;
+        }
+        .mockup-phone {
+            width: 280px;
+            background: #11131f;
+            border-radius: 36px;
+            padding: 9px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.55);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .mockup-phone-screen {
+            background: white;
+            border-radius: 28px;
+            height: 470px;
+            overflow: hidden;
+        }
+        .mockup-phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        /* Offer band */
+        .offer {
+            position: absolute;
+            left: 60px; right: 60px;
+            bottom: 255px;
+            background: linear-gradient(135deg, #e3c04d 0%, #c9a227 100%);
+            border-radius: 20px;
+            padding: 26px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(201,162,39,0.35);
+            z-index: 12;
+        }
+        .offer-left .offer-eyebrow {
+            color: rgba(26,26,46,0.75);
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .offer-left .offer-main {
+            color: #1a1a2e;
+            font-size: 44px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-top: 4px;
+        }
+        .offer-code {
+            background: #1a1f3a;
+            border-radius: 14px;
+            padding: 15px 24px;
+            text-align: center;
+        }
+        .offer-code .lbl { color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+        .offer-code .val { color: #e3c04d; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-top: 4px; }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 90px;
+            left: 0; right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            z-index: 10;
+        }
+        .footer-message .main { color: white; font-size: 24px; font-weight: 800; letter-spacing: -0.3px; }
+        .footer-message .sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 6px; }
+        .footer-message .badges { display: flex; gap: 22px; margin-top: 14px; }
+        .footer-message .badges span { color: rgba(255,255,255,0.85); font-size: 14px; }
+        .footer-message .badges .check { color: #27AE60; font-weight: bold; }
+
+        .qr-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: white;
+            padding: 18px 22px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+        }
+        .qr-section img { width: 92px; height: 92px; }
+        .qr-section .qr-title { font-size: 15px; font-weight: 800; color: #1a202c; text-transform: uppercase; letter-spacing: 0.5px; }
+        .qr-section .qr-brand { font-size: 13px; color: #667eea; font-weight: 600; margin-top: 4px; }
+        .qr-section .qr-cta { font-size: 12px; color: #27AE60; font-weight: 700; margin-top: 8px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="locandina">
+        <div class="bg-field"></div>
+        <svg class="pitch" viewBox="0 0 1080 1080" preserveAspectRatio="xMidYMid slice">
+            <rect x="40" y="40" width="1000" height="1000" fill="none" stroke="#fff" stroke-width="3"/>
+            <line x1="40" y1="540" x2="1040" y2="540" stroke="#fff" stroke-width="3"/>
+            <circle cx="540" cy="540" r="150" fill="none" stroke="#fff" stroke-width="3"/>
+            <rect x="340" y="40" width="400" height="170" fill="none" stroke="#fff" stroke-width="3"/>
+            <rect x="340" y="870" width="400" height="170" fill="none" stroke="#fff" stroke-width="3"/>
+        </svg>
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+
+        <!-- Topbar co-branding -->
+        <div class="topbar">
+            <div class="yfm-brand">
+                <img src="icon.png" alt="YFM">
+                <div>
+                    <div class="name">Youth Football Manager</div>
+                    <div class="tagline">Gestionale per società sportive</div>
+                </div>
+            </div>
+            <div class="partner-chip">
+                <div class="plogo"><img src="img/societa/calcio-molise.png" alt="Calcio Molise"></div>
+                <div class="ptxt">
+                    <div class="plabel">In collaborazione con</div>
+                    <div class="pname">Calcio Molise</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-pretitle">La partnership che innova il tuo club</div>
+            <div class="hero-title">
+                Il gestionale<br>per le società<br><span class="accent">del Molise</span>
+            </div>
+            <div class="hero-subtitle">
+                Semplice per il mister.<br><strong>Completa per la società.</strong>
+            </div>
+
+            <div class="usp-list">
+                <div class="usp-item"><span class="ic">📋</span><span class="tx">Rosa, tesseramenti e certificati medici</span></div>
+                <div class="usp-item"><span class="ic">⚽</span><span class="tx">Convocazioni, formazioni e Match Center live</span></div>
+                <div class="usp-item"><span class="ic">💰</span><span class="tx">Quote e pagamenti sempre sotto controllo</span></div>
+                <div class="usp-item"><span class="ic">📱</span><span class="tx">Area famiglie con notifiche push</span></div>
+            </div>
+        </div>
+
+        <!-- Mockup app -->
+        <div class="mockups">
+            <div class="mockup-phone">
+                <div class="mockup-phone-screen">
+                    <img src="screenshot-mobile.png" alt="App YFM">
+                </div>
+            </div>
+        </div>
+
+        <!-- Offer band -->
+        <div class="offer">
+            <div class="offer-left">
+                <div class="offer-eyebrow">Per le società di Calcio Molise</div>
+                <div class="offer-main">-10% sul primo anno</div>
+            </div>
+            <div class="offer-code">
+                <div class="lbl">Codice partner</div>
+                <div class="val">CALCIO-MOLISE</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-message">
+                <div class="main">Attiva lo sconto</div>
+                <div class="sub">Dalla Scuola Calcio alla Prima Squadra, tutto in un'app</div>
+                <div class="badges">
+                    <span><span class="check">✓</span> 30 giorni gratis</span>
+                    <span><span class="check">✓</span> Nessun impegno</span>
+                    <span><span class="check">✓</span> Setup assistito</span>
+                </div>
+            </div>
+            <div class="qr-section">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://youth-football-manager.app/?partner=calcio-molise&bgcolor=ffffff&color=1a202c" alt="QR Code">
+                <div>
+                    <div class="qr-title">Scansiona il QR</div>
+                    <div class="qr-brand">Codice già precompilato</div>
+                    <div class="qr-cta">🎁 Prova gratuita</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
