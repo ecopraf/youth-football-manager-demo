@@ -3208,6 +3208,11 @@
             </label>
           </div>
           <div>
+            <label style="font-size:13px;font-weight:600;color:#333;display:block;">Codice sconto (facoltativo)
+              <input name="codice_sconto" type="text" maxlength="40" style="width:100%;margin-top:5px;padding:11px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:14px;box-sizing:border-box;text-transform:uppercase;">
+            </label>
+          </div>
+          <div>
             <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:8px;">Settori da gestire</label>
             <div id="leadSettori" style="display:flex;flex-wrap:wrap;gap:8px;">
               <button type="button" class="lead-pill" data-settore="scuola_calcio">⚽ Scuola Calcio</button>
@@ -3306,6 +3311,11 @@
         // 4) Apertura/chiusura modal — qualsiasi elemento con [data-lead] apre il form
         var modal = document.getElementById('leadModal');
         var form = document.getElementById('leadForm');
+        // Precompila il codice sconto dal link del partner (?codice=...), se presente
+        try {
+          var codiceUrl = new URLSearchParams(window.location.search).get('codice');
+          if (codiceUrl && form.elements['codice_sconto']) form.elements['codice_sconto'].value = codiceUrl.trim().toUpperCase().slice(0, 40);
+        } catch (e) {}
         var msg = document.getElementById('leadMsg');
         var btn = document.getElementById('leadSubmit');
         var doneBox = document.getElementById('leadDone');
